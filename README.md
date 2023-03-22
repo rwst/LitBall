@@ -1,5 +1,5 @@
 # LitBall
-Multiplatform desktop app for systematic literature collection.
+JVM desktop app for systematic literature collection.
 
 LitBall applies the literature snowballing algorithm[1] on an academic graph (AG) and returns a systematic literature collection on a specific topic. Search runs, starting with a small set of initial papers, are sequences of up- and down-sweeps within the AG, intertwined with filters. These sequences are archived in a local database, as well as all retrieved graph data. Output can be visualized or exported as database for import in any spreadsheet.
 
