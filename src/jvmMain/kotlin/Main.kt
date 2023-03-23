@@ -9,10 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import org.mapdb.DB
+import org.mapdb.DBMaker
 
 @Composable
 @Preview
-fun App() {
+fun app() {
     var text by remember { mutableStateOf("Hello, World!") }
 
     MaterialTheme {
@@ -25,7 +27,12 @@ fun App() {
 }
 
 fun main() = application {
+    val db = DBMaker.memoryDB().make()
+    val map = DB.HashMapMaker<String, String>(db, "map").createOrOpen()
+    map["a"] = "a"
+    db.close()
+
     Window(onCloseRequest = ::exitApplication) {
-        App()
+        app()
     }
 }

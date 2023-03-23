@@ -1,8 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose")
+    kotlin("multiplatform") version "1.8.10"
+    id("org.jetbrains.compose") version "1.3.1"
 }
 
 group = "org.reactome"
@@ -16,8 +16,17 @@ repositories {
 
 kotlin {
     jvm {
-        jvmToolchain(11)
+        jvmToolchain(15)
         withJava()
+    }
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation("org.mapdb:mapdb:3.0.9")
+            }
+        }
+        val jvmTest by getting
     }
 }
 
@@ -31,3 +40,4 @@ compose.desktop {
         }
     }
 }
+
