@@ -17,7 +17,6 @@ fun rememberApplicationState() = remember {
 
 class LitBallApplicationState {
     val settings = Settings()
-//    val tray = TrayState()
 
     private val _windows = mutableStateListOf<LitBallWindowState>()
     val windows: List<LitBallWindowState> get() = _windows
@@ -37,11 +36,8 @@ class LitBallApplicationState {
     }
 
     suspend fun exit() {
-        val windowsCopy = windows.reversed()
-        for (window in windowsCopy) {
-            if (!window.exit()) {
-                break
-            }
-        }
+//        if (!window.exit()) {
+//            throw Exception()
+//        }
     }
 }

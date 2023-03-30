@@ -12,7 +12,7 @@ object App {
         db.commit()
     }
 
-    fun setSize() : String { return querySet.size.toString() }
+    fun getDBSize() : String { return querySet.size.toString() }
 
     fun afterWindow() {
         println(querySet.size)

@@ -34,8 +34,8 @@ class LitBallWindowState(
     val saveDialog = DialogState<Path?>()
     val exitDialog = DialogState<AlertDialogResult>()
 
-    private var _notifications = Channel<NotepadWindowNotification>(0)
-    val notifications: Flow<NotepadWindowNotification> get() = _notifications.receiveAsFlow()
+    private var _notifications = Channel<LitBallWindowNotification>(0)
+    val notifications: Flow<LitBallWindowNotification> get() = _notifications.receiveAsFlow()
 
     private var _text by mutableStateOf("")
 
@@ -124,21 +124,23 @@ class LitBallWindowState(
 
         try {
             saveJob?.join()
-            _notifications.trySend(NotepadWindowNotification.SaveSuccess(path))
+            _notifications.trySend(LitBallWindowNotification.SaveSuccess(path))
         } catch (e: Exception) {
             isChanged = true
             e.printStackTrace()
-            _notifications.trySend(NotepadWindowNotification.SaveError(path))
+            _notifications.trySend(LitBallWindowNotification.SaveError(path))
         }
     }
 
     suspend fun exit(): Boolean {
-        return if (askToSave()) {
-            exit(this)
-            true
-        } else {
-            false
-        }
+        exit(this)
+        return true
+//        return if (askToSave()) {
+//            exit(this)
+//            true
+//        } else {
+//            false
+//        }
     }
 
     private suspend fun askToSave(): Boolean {
@@ -179,9 +181,9 @@ private suspend fun Path.readTextAsync() = withContext(Dispatchers.IO) {
     toFile().readText()
 }
 
-sealed class NotepadWindowNotification {
-    class SaveSuccess(val path: Path) : NotepadWindowNotification()
-    class SaveError(val path: Path) : NotepadWindowNotification()
+sealed class LitBallWindowNotification {
+    class SaveSuccess(val path: Path) : LitBallWindowNotification()
+    class SaveError(val path: Path) : LitBallWindowNotification()
 }
 
 class DialogState<T> {

@@ -30,9 +30,9 @@ kotlin {
                 implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.1.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
                 // Decompose : Decompose
-                val decomposeVersion = "0.2.5"
-                implementation("com.arkivanov.decompose:decompose-jvm:$decomposeVersion")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains-jvm:$decomposeVersion")
+//                val decomposeVersion = "0.2.5"
+//                implementation("com.arkivanov.decompose:decompose-jvm:$decomposeVersion")
+//                implementation("com.arkivanov.decompose:extensions-compose-jetbrains-jvm:$decomposeVersion")
             }
         }
         val jvmTest by getting

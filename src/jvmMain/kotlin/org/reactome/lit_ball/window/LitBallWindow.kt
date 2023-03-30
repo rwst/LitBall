@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LocalAppResources
 import org.reactome.lit_ball.util.FileDialog
 import org.reactome.lit_ball.util.YesNoCancelDialog
-import window.NotepadWindowNotification
+import window.LitBallWindowNotification
 import window.LitBallWindowState
 
 @Composable
@@ -28,8 +28,8 @@ fun LitBallWindow(state: LitBallWindowState) {
     ) {
         LaunchedEffect(Unit) { state.run() }
 
-        WindowNotifications(state)
-        WindowMenuBar(state)
+//        WindowNotifications(state)
+//        WindowMenuBar(state)
 
         // TextField isn't efficient for big text files, we use it for simplicity
         BasicTextField(
@@ -76,11 +76,11 @@ private fun titleOf(state: LitBallWindowState): String {
 @Composable
 private fun WindowNotifications(state: LitBallWindowState) {
     // Usually we take into account something like LocalLocale.current here
-    fun NotepadWindowNotification.format() = when (this) {
-        is NotepadWindowNotification.SaveSuccess -> Notification(
+    fun LitBallWindowNotification.format() = when (this) {
+        is LitBallWindowNotification.SaveSuccess -> Notification(
             "File is saved", path.toString(), Notification.Type.Info
         )
-        is NotepadWindowNotification.SaveError -> Notification(
+        is LitBallWindowNotification.SaveError -> Notification(
             "File isn't saved", path.toString(), Notification.Type.Error
         )
     }

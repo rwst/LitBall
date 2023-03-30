@@ -1,38 +1,12 @@
-import androidx.compose.material.MaterialTheme
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.Window
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.application
-import org.mapdb.DB
-import org.mapdb.DBMaker
-
-@Composable
-@Preview
-fun app() {
-    var text by remember { mutableStateOf("Hello, World!") }
-
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
-        }
-    }
-}
+import org.reactome.lit_ball.LitBallApplication
+import org.reactome.lit_ball.common.LocalAppResources
+import org.reactome.lit_ball.common.rememberAppResources
+import org.reactome.lit_ball.rememberApplicationState
 
 fun main() = application {
-    val db = DBMaker.memoryDB().make()
-    val map = DB.HashMapMaker<String, String>(db, "map").createOrOpen()
-    map["a"] = "a"
-    db.close()
-
-    Window(onCloseRequest = ::exitApplication) {
-        app()
+    CompositionLocalProvider(LocalAppResources provides rememberAppResources()) {
+        LitBallApplication(rememberApplicationState())
     }
 }
