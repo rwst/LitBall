@@ -1,7 +1,7 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.compose.compose
+//import org.jetbrains.compose.compose
 
 plugins {
     kotlin("multiplatform") version "1.8.10"

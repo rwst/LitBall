@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Notification
 //import androidx.compose.ui.window.TrayState
 import org.reactome.lit_ball.common.Settings
-import window.LitBallWindowState
+import org.reactome.lit_ball.window.LitBallWindowState
 
 @Composable
 fun rememberApplicationState() = remember {
@@ -31,13 +31,8 @@ class LitBallApplicationState {
         )
     }
 
+    @Suppress("UNUSED_PARAMETER", "unused")
     fun sendNotification(notification: Notification) {
 //        tray.sendNotification(notification)
-    }
-
-    suspend fun exit() {
-//        if (!window.exit()) {
-//            throw Exception()
-//        }
     }
 }

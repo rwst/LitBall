@@ -11,9 +11,8 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LocalAppResources
 import org.reactome.lit_ball.util.FileDialog
 import org.reactome.lit_ball.util.YesNoCancelDialog
-import window.LitBallWindowNotification
-import window.LitBallWindowState
 
+@Suppress("FunctionName")
 @Composable
 fun LitBallWindow(state: LitBallWindowState) {
     val scope = rememberCoroutineScope()
@@ -22,7 +21,7 @@ fun LitBallWindow(state: LitBallWindowState) {
 
     Window(
         state = state.window,
-        title = titleOf(state),
+        title = "LitBall",
         icon = LocalAppResources.current.icon,
         onCloseRequest = { exit() }
     ) {
@@ -67,55 +66,3 @@ fun LitBallWindow(state: LitBallWindowState) {
     }
 }
 
-private fun titleOf(state: LitBallWindowState): String {
-    val changeMark = if (state.isChanged) "*" else ""
-    val filePath = state.path ?: "Untitled"
-    return "$changeMark$filePath - Notepad"
-}
-
-@Composable
-private fun WindowNotifications(state: LitBallWindowState) {
-    // Usually we take into account something like LocalLocale.current here
-    fun LitBallWindowNotification.format() = when (this) {
-        is LitBallWindowNotification.SaveSuccess -> Notification(
-            "File is saved", path.toString(), Notification.Type.Info
-        )
-        is LitBallWindowNotification.SaveError -> Notification(
-            "File isn't saved", path.toString(), Notification.Type.Error
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        state.notifications.collect {
-            state.sendNotification(it.format())
-        }
-    }
-}
-
-@Composable
-private fun FrameWindowScope.WindowMenuBar(state: LitBallWindowState) = MenuBar {
-    val scope = rememberCoroutineScope()
-
-    fun save() = scope.launch { state.save() }
-    fun open() = scope.launch { state.open() }
-    fun exit() = scope.launch { state.exit() }
-
-    Menu("File") {
-        Item("New window", onClick = state::newWindow)
-        Item("Open...", onClick = { open() })
-        Item("Save", onClick = { save() }, enabled = state.isChanged || state.path == null)
-        Separator()
-        Item("Exit", onClick = { exit() })
-    }
-
-    Menu("Settings") {
-        Item(
-            if (state.settings.isTrayEnabled) "Hide tray" else "Show tray",
-            onClick = state.settings::toggleTray
-        )
-        Item(
-            if (state.window.placement == WindowPlacement.Fullscreen) "Exit fullscreen" else "Enter fullscreen",
-            onClick = state::toggleFullscreen
-        )
-    }
-}
