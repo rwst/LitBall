@@ -30,10 +30,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.1.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
-                // Decompose : Decompose
-//                val decomposeVersion = "0.2.5"
-//                implementation("com.arkivanov.decompose:decompose-jvm:$decomposeVersion")
-//                implementation("com.arkivanov.decompose:extensions-compose-jetbrains-jvm:$decomposeVersion")
+                implementation ("io.github.oshai:kotlin-logging-jvm:4.0.0-beta-22")
             }
         }
         val jvmTest by getting

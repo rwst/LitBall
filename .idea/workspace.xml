@@ -4,13 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="further reduction">
-      <change afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/util/SerialDB.kt" afterDir="false" />
+    <list default="true" id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="remove mapDB usage">
+      <change afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Logger.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/SerialDB.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Query.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Query.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/util/SerialDB.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +181,7 @@
       <workItem from="1680346761745" duration="48000" />
       <workItem from="1680346833889" duration="114000" />
       <workItem from="1680346993344" duration="1794000" />
-      <workItem from="1680420259506" duration="2160000" />
+      <workItem from="1680420259506" duration="9260000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1679416078452</created>
@@ -210,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680259877428</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="remove mapDB usage">
+      <created>1680422899793</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1680422899793</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,7 +229,8 @@
     <MESSAGE value="import Notepad example app initialization code" />
     <MESSAGE value="reduce original to 1 window, no menu" />
     <MESSAGE value="further reduction" />
-    <option name="LAST_COMMIT_MESSAGE" value="further reduction" />
+    <MESSAGE value="remove mapDB usage" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove mapDB usage" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
