@@ -5,6 +5,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.10"
     id("org.jetbrains.compose") version "1.3.1"
 }
 
@@ -25,8 +26,8 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
                 implementation(compose.desktop.currentOs)
-                implementation("org.mapdb:mapdb:3.0.9")
                 implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.1.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.0")
                 // Decompose : Decompose

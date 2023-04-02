@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.WindowState
 import kotlinx.coroutines.*
 import org.reactome.lit_ball.LitBallApplicationState
+import org.reactome.lit_ball.common.App
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.AlertDialogResult
 import java.nio.file.Path
@@ -56,9 +57,11 @@ class LitBallWindowState(
         _text = ""
         isInit = true
         isChanged = false
+        App.beforeWindow()
     }
 
     fun exit(): Boolean {
+        App.afterWindow()
         exit(this)
         return true
     }

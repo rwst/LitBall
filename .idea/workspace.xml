@@ -4,18 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="import Notepad example app initialization code">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/LitBall_jvm_1_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/LitBall_jvm_1_0_SNAPSHOT.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+    <list default="true" id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="further reduction">
+      <change afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/util/SerialDB.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/LitBallApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/LitBallApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/LitBallApplicationState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/LitBallApplicationState.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Query.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Query.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -87,25 +81,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/ralf/IdeaProjects/LitBall-1/src/jvmMain/kotlin/org/reactome/lit_ball",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "project.propDebugger",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ralf/IdeaProjects/LitBall-1/src/jvmMain/kotlin/org/reactome/lit_ball&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propDebugger&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball" />
@@ -182,7 +176,11 @@
       <workItem from="1680019184565" duration="3249000" />
       <workItem from="1680087835183" duration="14095000" />
       <workItem from="1680183975438" duration="768000" />
-      <workItem from="1680189590452" duration="2802000" />
+      <workItem from="1680189590452" duration="17108000" />
+      <workItem from="1680346761745" duration="48000" />
+      <workItem from="1680346833889" duration="114000" />
+      <workItem from="1680346993344" duration="1794000" />
+      <workItem from="1680420259506" duration="2160000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1679416078452</created>
@@ -198,7 +196,21 @@
       <option name="project" value="LOCAL" />
       <updated>1680102168395</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="reduce original to 1 window, no menu">
+      <created>1680192441211</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680192441211</updated>
+    </task>
+    <task id="LOCAL-00004" summary="further reduction">
+      <created>1680259877428</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1680259877428</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -207,7 +219,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="import Notepad example app initialization code" />
-    <option name="LAST_COMMIT_MESSAGE" value="import Notepad example app initialization code" />
+    <MESSAGE value="reduce original to 1 window, no menu" />
+    <MESSAGE value="further reduction" />
+    <option name="LAST_COMMIT_MESSAGE" value="further reduction" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -220,11 +234,6 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt</url>
-          <line>9</line>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

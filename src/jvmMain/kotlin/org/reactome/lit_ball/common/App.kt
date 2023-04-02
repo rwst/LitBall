@@ -1,21 +1,24 @@
 package org.reactome.lit_ball.common
 
-import org.mapdb.DB
-import org.mapdb.DBMaker
+import org.reactome.lit_ball.util.SerialDB
+
 
 object App {
-    private val db = DBMaker.fileDB("file.db").make()
-    private lateinit var querySet: QuerySet
+    private fun dbTest(i: Int) {
+        val map: MutableMap<String, Query> = SerialDB.get()
+        println(map.size)
+        val q = Query(i)
+        map["a$i"] = q
+        SerialDB.commit()
+        SerialDB.close()
+    }
     fun beforeWindow() {
-        querySet = DB.HashSetMaker<Query>(db, "querySet").createOrOpen()
-        querySet += Query()
-        db.commit()
+        dbTest(1)
+        dbTest(2)
     }
 
-    fun getDBSize() : String { return querySet.size.toString() }
+//    fun getDBSize() : String { return querySet.size.toString() }
 
     fun afterWindow() {
-        println(querySet.size)
-        db.close()
     }
 }
