@@ -1,16 +1,33 @@
 package org.reactome.lit_ball.common
 
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import java.io.File
 import java.io.IOException
 import kotlin.io.path.*
 
+val module = SerializersModule {
+    polymorphic(SerialDBClass::class) {
+        subclass(Query::class)
+    }
+}
+
+val format = Json { serializersModule = module }
+
+@Serializable
+sealed class SerialDBClass
+
+typealias DBType = MutableMap<String,SerialDBClass>
+
 object SerialDB {
     private const val path = "db/map.json"
     private val Json = Json { prettyPrint = true }
-    private lateinit var map : MutableMap<String,Query>
+    private lateinit var map : DBType
 
     fun open() {
         val dir = Path("db")
@@ -29,23 +46,20 @@ object SerialDB {
             catch (e: IOException) { Logger.error(e) }
         }
         map = try {
-            Json.decodeFromString<MutableMap<String, Query>>(text)
+            Json.decodeFromString<DBType>(text)
         } catch (e: Exception) {
             mutableMapOf()
         }
     }
-    fun get(): MutableMap<String, Query> {
+    fun get(): DBType {
         return map
     }
     fun commit() {
-        val db = Path(path)
-        if (db.isWritable()) {
-            try {
-                val text = Json.encodeToString(map)
-                File(path).writeText(text)
-            }
-            catch (e: IOException) { Logger.error(e) }
+        try {
+            val text = Json.encodeToString(map)
+            File(path).writeText(text)
         }
+        catch (e: IOException) { Logger.error(e) }
     }
     fun close() {}
 }

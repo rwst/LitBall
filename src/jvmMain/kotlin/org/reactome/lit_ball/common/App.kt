@@ -4,7 +4,7 @@ package org.reactome.lit_ball.common
 object App {
     private fun dbTest(i: Int) {
         SerialDB.open()
-        val map: MutableMap<String, Query> = SerialDB.get()
+        val map: DBType = SerialDB.get()
         println(map.size)
         val q = Query(i)
         map["a$i"] = q
