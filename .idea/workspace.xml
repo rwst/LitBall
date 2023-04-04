@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="raw layout of navigation">
-      <change afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +177,7 @@
       <workItem from="1680346761745" duration="48000" />
       <workItem from="1680346833889" duration="114000" />
       <workItem from="1680346993344" duration="1794000" />
-      <workItem from="1680420259506" duration="33936000" />
+      <workItem from="1680420259506" duration="37415000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1679416078452</created>
@@ -245,7 +242,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680528901614</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="raw layout of navigation">
+      <created>1680606875177</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1680606875177</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
