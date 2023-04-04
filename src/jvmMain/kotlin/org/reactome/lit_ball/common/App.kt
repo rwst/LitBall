@@ -10,4 +10,9 @@ object App {
 
     fun afterWindow() {
     }
+
+    fun buttonNew() {}
+    fun buttonHome() {}
+    fun buttonSearch() {}
+    fun buttonSettings() {}
 }
