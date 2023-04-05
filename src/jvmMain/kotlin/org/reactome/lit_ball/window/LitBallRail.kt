@@ -16,7 +16,7 @@ fun LitBallRail() {
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Info", "Settings", "Exit")
     val icons = listOf(Icons.Filled.Info, Icons.Filled.Settings, Icons.Filled.ExitToApp)
-    val actions = listOf( { App.buttonHome() } , { App.buttonSearch() }, { App.buttonSettings() } )
+    val actions = listOf( { App.buttonInfo() } , { App.buttonSettings() }, { App.buttonExit() } )
     NavigationRail {
         items.forEachIndexed { index, item ->
             NavigationRailItem(
