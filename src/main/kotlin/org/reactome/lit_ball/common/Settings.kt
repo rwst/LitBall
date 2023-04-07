@@ -1,14 +1,12 @@
 package org.reactome.lit_ball.common
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import kotlinx.serialization.Serializable
 
-class Settings {
-    var isTrayEnabled by mutableStateOf(true)
-        private set
-
-    fun toggleTray() {
-        isTrayEnabled = !isTrayEnabled
+@Serializable
+class Settings(
+    private var map: Map<String, String> = mutableMapOf()
+) : SerialDBClass() {
+    override fun toString(): String {
+        return "Settings()=$map"
     }
 }

@@ -20,12 +20,10 @@ val format = Json { serializersModule = module }
 @Serializable
 sealed class SerialDBClass
 
-typealias DBType = MutableMap<String,SerialDBClass>
-
 object SerialDB {
     private const val path = "db/map.json"
     private val Json = Json { prettyPrint = true }
-    private lateinit var map : DBType
+    private lateinit var map : MutableMap<String,SerialDBClass>
 
     fun open() {
         val dir = Path("db")
@@ -44,12 +42,12 @@ object SerialDB {
             catch (e: IOException) { Logger.error(e) }
         }
         map = try {
-            Json.decodeFromString<DBType>(text)
+            Json.decodeFromString<MutableMap<String,SerialDBClass>>(text)
         } catch (e: Exception) {
             mutableMapOf()
         }
     }
-    fun get(): DBType {
+    fun get(): MutableMap<String,SerialDBClass> {
         return map
     }
     fun commit() {

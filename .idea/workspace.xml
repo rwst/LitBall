@@ -4,30 +4,36 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="refine layout of navigation">
-      <change afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/App.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/SettingsDialog.kt" afterDir="false" />
+    <list default="true" id="ee8db13c-8c35-4dd7-917a-ab7029a1af87" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/QueryEditDialog.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Utils.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/MainContent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/RootContent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/LitBall_jvm_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/LitBall_jvm_1_0_SNAPSHOT.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/LitBallApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/LitBallApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/LitBallApplicationState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/LitBallApplicationState.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/App.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/AppResources.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/AppResources.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/FilterAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/FilterAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/LitAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/LitAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Logger.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/Logger.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Query.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/Query.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/QuerySetting.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/QuerySetting.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/SerialDB.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/SerialDB.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/Settings.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/Settings.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/common/SnowballAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/common/SnowballAction.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/util/Compose.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/util/Compose.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/util/Dialogs.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/LitBallApplication.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/LitBallApplicationState.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/App.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/App.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Query.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Query.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SerialDB.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SerialDB.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Settings.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Settings.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SettingsDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SettingsDialog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/Rail.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,18 +56,17 @@
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="LitBall" type="f1a62948:ProjectNode" />
+                <item name="LitBall-2" type="f1a62948:ProjectNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="LitBall" type="f1a62948:ProjectNode" />
+                <item name="LitBall-2" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="LitBall" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="compose desktop" type="c8890929:TasksNode$1" />
+                <item name="LitBall-2" type="f1a62948:ProjectNode" />
+                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
               </path>
             </expand>
             <select />
@@ -73,28 +78,17 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Object" />
         <option value="Kotlin Class" />
-        <option value="Kotlin File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="KotlinMultiplatform" KONAN_HOME="$USER_HOME$/.konan/kotlin-native-prebuilt-linux-x86_64-1.8.10" />
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="MavenImportPreferences">
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="workspaceImportEnabled" value="true" />
-      </MavenImportingSettings>
-    </option>
-  </component>
-  <component name="ProjectId" id="2NKb8LrC335ATprjnsO8ibxX7lC" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="2NjqusYjL8usnXSeqLy9gOYNply" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -103,43 +97,33 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/ralf/IdeaProjects/LitBall-1/src/jvmMain/kotlin/org/reactome/lit_ball&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ralf/IdeaProjects/notepad&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.kotlinCompiler&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball" />
-      <recent name="$PROJECT_DIR$/src/jvmMain/kotlin" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/commonMain" />
-      <recent name="$PROJECT_DIR$/src" />
-      <recent name="$PROJECT_DIR$/src/jvmMain/kotlin" />
-      <recent name="$PROJECT_DIR$/src/jvmMain/kotlin/org/reactome/lit_ball" />
-    </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="org.reactome.lit_ball.common" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="LitBall [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="LitBall-2 [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--stacktrace" />
+        <option name="scriptParameters" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -156,167 +140,67 @@
       <ForceTestExec>false</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="LitBall-1" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="LitBall-1" />
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.LitBall [run]" />
+        <item itemvalue="Gradle.LitBall-2 [run]" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="b1ab4001-f2d9-4c8b-880f-4537c386bacc" name="Changes" comment="" />
-      <created>1679415560441</created>
+      <changelist id="ee8db13c-8c35-4dd7-917a-ab7029a1af87" name="Changes" comment="" />
+      <created>1680188065513</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1679415560441</updated>
-      <workItem from="1679415561563" duration="7179000" />
-      <workItem from="1679566158753" duration="4495000" />
-      <workItem from="1679582071825" duration="39000" />
-      <workItem from="1679582141033" duration="104000" />
-      <workItem from="1679582341869" duration="2590000" />
-      <workItem from="1680009125208" duration="739000" />
-      <workItem from="1680009938953" duration="82000" />
-      <workItem from="1680010086330" duration="44000" />
-      <workItem from="1680010178033" duration="7532000" />
-      <workItem from="1680019093826" duration="53000" />
-      <workItem from="1680019184565" duration="3249000" />
-      <workItem from="1680087835183" duration="14095000" />
-      <workItem from="1680183975438" duration="768000" />
-      <workItem from="1680189590452" duration="17108000" />
-      <workItem from="1680346761745" duration="48000" />
-      <workItem from="1680346833889" duration="114000" />
-      <workItem from="1680346993344" duration="1794000" />
-      <workItem from="1680420259506" duration="42790000" />
-      <workItem from="1680691675855" duration="339000" />
-      <workItem from="1680692344056" duration="418000" />
-      <workItem from="1680692807992" duration="924000" />
-      <workItem from="1680693740472" duration="851000" />
-      <workItem from="1680701227358" duration="243000" />
-      <workItem from="1680701518538" duration="89000" />
-      <workItem from="1680701681512" duration="140000" />
+      <updated>1680188065513</updated>
+      <workItem from="1680188067206" duration="171000" />
+      <workItem from="1680188431042" duration="564000" />
+      <workItem from="1680189003748" duration="3590000" />
+      <workItem from="1680346972955" duration="14000" />
+      <workItem from="1680701826576" duration="63000" />
+      <workItem from="1680702858627" duration="27000" />
+      <workItem from="1680703323502" duration="341000" />
+      <workItem from="1680703758359" duration="92000" />
+      <workItem from="1680703895061" duration="100000" />
+      <workItem from="1680704104017" duration="155000" />
+      <workItem from="1680704284306" duration="157000" />
+      <workItem from="1680704616208" duration="1202000" />
+      <workItem from="1680706536140" duration="20000" />
+      <workItem from="1680706634324" duration="3267000" />
+      <workItem from="1680710253989" duration="1511000" />
+      <workItem from="1680775432018" duration="26000" />
+      <workItem from="1680775489161" duration="119000" />
+      <workItem from="1680775647118" duration="104000" />
+      <workItem from="1680775768704" duration="1615000" />
+      <workItem from="1680777561400" duration="966000" />
+      <workItem from="1680778583108" duration="999000" />
+      <workItem from="1680779664969" duration="22391000" />
     </task>
-    <task id="LOCAL-00001" summary="init">
-      <created>1679416078452</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1679416078452</updated>
-    </task>
-    <task id="LOCAL-00002" summary="import Notepad example app initialization code">
-      <created>1680102168395</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1680102168395</updated>
-    </task>
-    <task id="LOCAL-00003" summary="reduce original to 1 window, no menu">
-      <created>1680192441211</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1680192441211</updated>
-    </task>
-    <task id="LOCAL-00004" summary="further reduction">
-      <created>1680259877428</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1680259877428</updated>
-    </task>
-    <task id="LOCAL-00005" summary="remove mapDB usage">
-      <created>1680422899793</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1680422899793</updated>
-    </task>
-    <task id="LOCAL-00006" summary="simple DB based on JSON">
-      <created>1680431834351</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1680431834351</updated>
-    </task>
-    <task id="LOCAL-00007" summary="polymorphic Kotlin serialization">
-      <created>1680518574503</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1680518574503</updated>
-    </task>
-    <task id="LOCAL-00008" summary="raw class hierarchy">
-      <created>1680520841919</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1680520841919</updated>
-    </task>
-    <task id="LOCAL-00009" summary="star import recommended here">
-      <created>1680528901614</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1680528901614</updated>
-    </task>
-    <task id="LOCAL-00010" summary="raw layout of navigation">
-      <created>1680606875177</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1680606875177</updated>
-    </task>
-    <task id="LOCAL-00011" summary="refine layout of navigation">
-      <created>1680618615061</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1680618615061</updated>
-    </task>
-    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="init" />
-    <MESSAGE value="import Notepad example app initialization code" />
-    <MESSAGE value="reduce original to 1 window, no menu" />
-    <MESSAGE value="further reduction" />
-    <MESSAGE value="remove mapDB usage" />
-    <MESSAGE value="simple DB based on JSON" />
-    <MESSAGE value="polymorphic Kotlin serialization" />
-    <MESSAGE value="raw class hierarchy" />
-    <MESSAGE value="star import recommended here" />
-    <MESSAGE value="raw layout of navigation" />
-    <MESSAGE value="refine layout of navigation" />
-    <option name="LAST_COMMIT_MESSAGE" value="refine layout of navigation" />
-  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/window/NotepadWindow.kt</url>
+          <line>20</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-function">
-          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapdb/mapdb/3.0.9/f8ce9a03462e451cea08d6cabbc38911e243160a/mapdb-3.0.9-sources.jar!/org/mapdb/DB.kt</url>
-          <line>451</line>
-          <properties class="org.mapdb.DB" method="close">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/NotepadApplicationState.kt</url>
+          <line>36</line>
+          <properties class="NotepadApplicationState" method="exit">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
-          <option name="timeStamp" value="1" />
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
