@@ -4,36 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ee8db13c-8c35-4dd7-917a-ab7029a1af87" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/QueryEditDialog.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Utils.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/MainContent.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/RootContent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/LitBall_jvm_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/LitBall_jvm_1_0_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+    <list default="true" id="ee8db13c-8c35-4dd7-917a-ab7029a1af87" name="Changes" comment="fix off-by-one">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/LitBallApplication.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/LitBallApplicationState.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/App.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/App.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Query.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Query.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SerialDB.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SerialDB.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Settings.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Settings.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SettingsDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SettingsDialog.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/LitBallRail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/Rail.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/LitBallWindow.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/LitBallWindowState.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Utils.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/RootContent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/RootContent.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,12 +152,40 @@
       <workItem from="1680775768704" duration="1615000" />
       <workItem from="1680777561400" duration="966000" />
       <workItem from="1680778583108" duration="999000" />
-      <workItem from="1680779664969" duration="22391000" />
+      <workItem from="1680779664969" duration="39306000" />
     </task>
+    <task id="LOCAL-00001" summary="redesign according to todoapp">
+      <created>1680890131100</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1680890131100</updated>
+    </task>
+    <task id="LOCAL-00002" summary="start researching NLP methods">
+      <created>1680939705397</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1680939705397</updated>
+    </task>
+    <task id="LOCAL-00003" summary="fix off-by-one">
+      <created>1680943652690</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680943652690</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="redesign according to todoapp" />
+    <MESSAGE value="start researching NLP methods" />
+    <MESSAGE value="fix off-by-one" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix off-by-one" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -193,10 +198,20 @@
           </properties>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt</url>
+          <line>26</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt</url>
+          <line>48</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-function">
           <url>file://$PROJECT_DIR$/src/main/kotlin/NotepadApplicationState.kt</url>
           <line>36</line>
-          <properties class="NotepadApplicationState" method="exit">
+          <properties class="NotepadApplicationState">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>

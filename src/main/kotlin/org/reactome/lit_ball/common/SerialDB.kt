@@ -50,6 +50,11 @@ object SerialDB {
     fun get(): MutableMap<String,SerialDBClass> {
         return map
     }
+
+    fun set(key: String, value: SerialDBClass) {
+        map[key] = value
+    }
+
     fun commit() {
         try {
             val text = Json.encodeToString(map)

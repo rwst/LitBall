@@ -26,12 +26,12 @@ fun RootContent(modifier: Modifier = Modifier) {
 
     LaunchedEffect(Unit) {
         SerialDB.open()
-        model.map = SerialDB.get()
+        model.setFromDb(SerialDB.get())
     }
 
     state.editingItemId?.also { item ->
         QueryEditDialog(
-            item = state.items[item],
+            item = state.items.list[item],
             onCloseClicked = model::onEditorCloseClicked,
             onTextChanged = model::onEditorTextChanged,
             onDoneChanged = model::onEditorDoneChanged,

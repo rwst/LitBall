@@ -7,21 +7,24 @@ import androidx.compose.runtime.setValue
 internal class RootStore {
     var state: RootState by mutableStateOf(initialState())
         private set
-    var map: MutableMap<String,SerialDBClass> = mutableMapOf()
-        set(value) {
-            field = value
-            val items = value["queries"]
-            items.tryCast<List<Query>> {
-                setState { copy(items = this@tryCast) }
-            }
-            val settings = value["settings"]
-            if (settings is Settings) {
-                setState { copy(settings = settings) }
-            }
+
+    fun setFromDb(map: MutableMap<String,SerialDBClass>) {
+        val items = map["queries"]
+        if (items is QueryList) {
+            setState { copy(items = items) }
         }
+        val settings = map["settings"]
+        if (settings is Settings) {
+            setState { copy(settings = settings) }
+        }
+        SerialDB.commit()
+    }
 
     val onRailItemClicked: List<() -> Unit> = listOf(::buttonInfo, ::buttonSettings, ::buttonExit)
     private fun buttonInfo() {
+        SerialDB.set("queries", state.items)
+        SerialDB.set("settings", state.settings)
+        SerialDB.commit()
     }
     private fun buttonSettings() {
     }
@@ -32,19 +35,20 @@ internal class RootStore {
     }
 
     fun onItemDeleteClicked(id: Int) {
-        setState { copy(items = items.filterNot { it.id == id }) }
+        setState { copy(items = QueryList(items.list.filterNot { it.id == id }.toMutableList())) }
     }
 
     fun onNewItemClicked() {
         setState {
             val newItem =
                 Query(
-                    id = items.maxOfOrNull(Query::id)?.plus(1) ?: 1,
+                    id = items.list.maxOfOrNull(Query::id)?.plus(1) ?: 1,
                     text = "New Query"
                 )
 
-            copy(items = items + newItem)
+            copy(items = QueryList((items.list + newItem).toMutableList()))
         }
+        SerialDB.commit()
     }
 
     fun onEditorCloseClicked() {
@@ -66,14 +70,13 @@ internal class RootStore {
     private fun RootState.updateItem(id: Int, transformer: (Query) -> Query): RootState =
         copy(items = items.updateItem(id = id, transformer = transformer))
 
-    private fun List<Query>.updateItem(id: Int, transformer: (Query) -> Query): List<Query> =
-        map { item -> if (item.id == id) transformer(item) else item }
-
     private fun initialState(): RootState =
         RootState(
-            items = (1..5).map { id ->
-                Query(id = id, text = "Some text $id")
-            },
+            items = QueryList(
+                (1..5).map { id ->
+                    Query(id = id, text = "Some text $id")
+                }.toMutableList(),
+            )
         )
 
     private inline fun setState(update: RootState.() -> RootState) {
@@ -81,7 +84,7 @@ internal class RootStore {
     }
 
     data class RootState(
-        val items: List<Query> = emptyList(),
+        val items: QueryList = QueryList(),
         val settings: Settings = Settings(),
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
