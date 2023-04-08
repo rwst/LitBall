@@ -21,19 +21,19 @@ fun Rail(
 //    val actions = listOf( {  } , { App.buttonSettings() }, { App.buttonExit() } )
     NavigationRail {
         NavigationRailItem(
-            onClick = onRailItemClicked[1],
+            onClick = onRailItemClicked[0],
             icon = { Icon(Icons.Filled.Info, null) },
             label = { Text("Info") },
             selected = selectedItem == 1
         )
         NavigationRailItem(
-            onClick = onRailItemClicked[2],
+            onClick = onRailItemClicked[1],
             icon = { Icon(Icons.Filled.Settings, null) },
             label = { Text("Settings") },
             selected = selectedItem == 2
         )
         NavigationRailItem(
-            onClick = onRailItemClicked[3],
+            onClick = onRailItemClicked[2],
             icon = { Icon(Icons.Filled.ExitToApp, null) },
             label = { Text("Exit") },
             selected = selectedItem == 3

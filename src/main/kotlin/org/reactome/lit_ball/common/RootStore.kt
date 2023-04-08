@@ -19,11 +19,14 @@ internal class RootStore {
                 setState { copy(settings = settings) }
             }
         }
+
     val onRailItemClicked: List<() -> Unit> = listOf(::buttonInfo, ::buttonSettings, ::buttonExit)
-    private fun buttonInfo() {}
+    private fun buttonInfo() {
+    }
     private fun buttonSettings() {
     }
-    private fun buttonExit() {}
+    private fun buttonExit() {
+    }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
