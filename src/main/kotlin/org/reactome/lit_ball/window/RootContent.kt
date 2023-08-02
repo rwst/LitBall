@@ -2,6 +2,10 @@
 
 package org.reactome.lit_ball.window
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,14 +23,19 @@ fun RootContent(
     val state = model.state
     val scope = rememberCoroutineScope()
 
+    val railItems: List<RailItem> = listOf(
+        RailItem("Info", Icons.Filled.Info, 0, model::buttonInfo),
+        RailItem("Settings", Icons.Filled.Settings, 1, model::buttonSettings),
+        RailItem("Exit", Icons.Filled.ExitToApp, 3, model::buttonExit, onExit)
+    )
+
     MainContent(
         modifier = modifier,
         items = state.items,
-        onExit,
         onItemClicked = model::onItemClicked,
         onItemDeleteClicked = model::onItemDeleteClicked,
         onNewItemClicked = model::onNewItemClicked,
-        onRailItemClicked = model.onRailItemClicked
+        railItems = railItems,
     )
 
     scope.launch(Dispatchers.IO) {

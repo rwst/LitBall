@@ -16,14 +16,13 @@ internal class RootStore {
         SerialDB.commit()
     }
 
-    val onRailItemClicked: List<() -> Unit> = listOf(::buttonInfo, ::buttonSettings, ::buttonExit)
-    private fun buttonInfo() {
+    fun buttonInfo() {
         SerialDB.set("queries", state.items)
         SerialDB.commit()
     }
-    private fun buttonSettings() {
+    fun buttonSettings() {
     }
-    private fun buttonExit() {
+    fun buttonExit() {
     }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
