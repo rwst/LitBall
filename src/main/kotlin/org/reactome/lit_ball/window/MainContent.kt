@@ -27,13 +27,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.Query
+import org.reactome.lit_ball.common.QueryList
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(
     modifier: Modifier = Modifier,
-    items: List<Query>,
+    items: QueryList,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
@@ -57,7 +58,7 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
-    items: List<Query>,
+    items: QueryList,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
 ) {
@@ -65,7 +66,7 @@ private fun ListContent(
         val listState = rememberLazyListState()
 
         LazyColumn(state = listState) {
-            items(items) { item ->
+            items(items.list) { item ->
                 Item(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
