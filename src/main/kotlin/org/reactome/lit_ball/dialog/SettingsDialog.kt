@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.dialog
 
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable

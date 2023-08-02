@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.*
+import org.reactome.lit_ball.dialog.QueryEditDialog
+import org.reactome.lit_ball.dialog.SettingsDialog
 
 @Composable
 fun RootContent(
