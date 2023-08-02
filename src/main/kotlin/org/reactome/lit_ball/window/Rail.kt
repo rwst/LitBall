@@ -43,20 +43,20 @@ fun Rail(
                 label = { Text(item.text) },
                 selected = selectedItem == item.actionIndex
             )
-            ExtendedFloatingActionButton(
-                onClick = onNewButtonClicked,
-                icon = {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription = null,
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                },
-                text = {
-                    Text("New Query")
-                },
-                modifier = Modifier.padding(horizontal = 0.dp, vertical = 36.dp)
-            )
         }
+        ExtendedFloatingActionButton(
+            onClick = onNewButtonClicked,
+            icon = {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+            },
+            text = {
+                Text("New Query")
+            },
+            modifier = Modifier.padding(horizontal = 0.dp, vertical = 36.dp)
+        )
     }
 }
