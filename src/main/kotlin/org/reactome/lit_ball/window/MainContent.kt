@@ -35,6 +35,7 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 internal fun MainContent(
     modifier: Modifier = Modifier,
     items: QueryList,
+    onExit: () -> Unit,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
@@ -43,7 +44,8 @@ internal fun MainContent(
     Row(modifier) {
         Rail(
             onRailItemClicked = onRailItemClicked,
-            onNewButtonClicked = onNewItemClicked
+            onNewButtonClicked = onNewItemClicked,
+            onExit = onExit,
         )
 
         Box(Modifier.weight(1F)) {

@@ -13,17 +13,12 @@ internal class RootStore {
         if (items is QueryList) {
             setState { copy(items = items) }
         }
-        val settings = map["settings"]
-        if (settings is Settings) {
-            setState { copy(settings = settings) }
-        }
         SerialDB.commit()
     }
 
     val onRailItemClicked: List<() -> Unit> = listOf(::buttonInfo, ::buttonSettings, ::buttonExit)
     private fun buttonInfo() {
         SerialDB.set("queries", state.items)
-        SerialDB.set("settings", state.settings)
         SerialDB.commit()
     }
     private fun buttonSettings() {
@@ -85,7 +80,6 @@ internal class RootStore {
 
     data class RootState(
         val items: QueryList = QueryList(),
-        val settings: Settings = Settings(),
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,

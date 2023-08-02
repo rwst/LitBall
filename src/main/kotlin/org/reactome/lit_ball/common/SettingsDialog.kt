@@ -10,7 +10,6 @@ import androidx.compose.ui.window.Dialog
 
 @Composable
 internal fun SettingsDialog(
-    setting: Settings,
     onCloseClicked: () -> Unit)
   {
     Dialog(

@@ -3,28 +3,37 @@
 package org.reactome.lit_ball.window
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.*
-import org.reactome.lit_ball.common.RootStore
-import org.reactome.lit_ball.common.SettingsDialog
 
 @Composable
-fun RootContent(modifier: Modifier = Modifier) {
+fun RootContent(
+    modifier: Modifier = Modifier,
+    onExit: () -> Unit,
+) {
     val model = remember { RootStore() }
     val state = model.state
+    val scope = rememberCoroutineScope()
 
     MainContent(
         modifier = modifier,
         items = state.items,
+        onExit,
         onItemClicked = model::onItemClicked,
         onItemDeleteClicked = model::onItemDeleteClicked,
         onNewItemClicked = model::onNewItemClicked,
         onRailItemClicked = model.onRailItemClicked
     )
 
-    LaunchedEffect(Unit) {
+    scope.launch(Dispatchers.IO) {
+        Settings.load()
+    }
+
+    scope.launch(Dispatchers.IO) {
         SerialDB.open()
         model.setFromDb(SerialDB.get())
     }
@@ -40,10 +49,6 @@ fun RootContent(modifier: Modifier = Modifier) {
 
     if (state.editingSettings) {
         SettingsDialog(
-            state.settings,
             onCloseClicked = {})
     }
 }
-
-private fun List<Query>.firstById(id: Int): Query =
-    first { it.id == id }
