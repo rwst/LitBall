@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ee8db13c-8c35-4dd7-917a-ab7029a1af87" name="Changes" comment="fix off-by-one">
+    <list default="true" id="ee8db13c-8c35-4dd7-917a-ab7029a1af87" name="Changes" comment="reorg">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Query.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Query.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SerialDB.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/SerialDB.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/Utils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/RootContent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/window/RootContent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +52,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Class" />
+        <option value="Kotlin Data Class" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
@@ -65,6 +63,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2NjqusYjL8usnXSeqLy9gOYNply" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -76,7 +78,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/ralf/IdeaProjects/notepad&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ralf/IdeaProjects/LitBall-2&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -90,6 +92,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/dialog" />
+    </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="org.reactome.lit_ball.common" />
     </key>
@@ -114,7 +119,7 @@
       <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>false</ForceTestExec>
+      <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -152,7 +157,22 @@
       <workItem from="1680775768704" duration="1615000" />
       <workItem from="1680777561400" duration="966000" />
       <workItem from="1680778583108" duration="999000" />
-      <workItem from="1680779664969" duration="39306000" />
+      <workItem from="1680779664969" duration="42463000" />
+      <workItem from="1681312602161" duration="24000" />
+      <workItem from="1681312741118" duration="21000" />
+      <workItem from="1681314274446" duration="66000" />
+      <workItem from="1681321524132" duration="39000" />
+      <workItem from="1681322516317" duration="37000" />
+      <workItem from="1681322961532" duration="14000" />
+      <workItem from="1681385376951" duration="36000" />
+      <workItem from="1681385474838" duration="46000" />
+      <workItem from="1682085988206" duration="674000" />
+      <workItem from="1690913994152" duration="2837000" />
+      <workItem from="1690974180151" duration="75000" />
+      <workItem from="1690974268202" duration="432000" />
+      <workItem from="1690974712461" duration="30000" />
+      <workItem from="1690974754708" duration="10481000" />
+      <workItem from="1691058904839" duration="768000" />
     </task>
     <task id="LOCAL-00001" summary="redesign according to todoapp">
       <created>1680890131100</created>
@@ -175,7 +195,78 @@
       <option name="project" value="LOCAL" />
       <updated>1680943652690</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fix handling of query list">
+      <created>1680974175155</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1680974175155</updated>
+    </task>
+    <task id="LOCAL-00005" summary="query list">
+      <option name="closed" value="true" />
+      <created>1690972083329</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1690972083329</updated>
+    </task>
+    <task id="LOCAL-00006" summary="add">
+      <option name="closed" value="true" />
+      <created>1690972167575</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1690972167575</updated>
+    </task>
+    <task id="LOCAL-00007" summary="global and item settings">
+      <option name="closed" value="true" />
+      <created>1690985574566</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1690985574566</updated>
+    </task>
+    <task id="LOCAL-00008" summary="refactor">
+      <option name="closed" value="true" />
+      <created>1690985627829</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1690985627829</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix">
+      <option name="closed" value="true" />
+      <created>1690985759837</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1690985759837</updated>
+    </task>
+    <task id="LOCAL-00010" summary="refactor">
+      <option name="closed" value="true" />
+      <created>1690989781989</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1690989781989</updated>
+    </task>
+    <task id="LOCAL-00011" summary="refactor">
+      <option name="closed" value="true" />
+      <created>1690991319489</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1690991319489</updated>
+    </task>
+    <task id="LOCAL-00012" summary="reorg">
+      <option name="closed" value="true" />
+      <created>1690991769631</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1690991769631</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,7 +276,14 @@
     <MESSAGE value="redesign according to todoapp" />
     <MESSAGE value="start researching NLP methods" />
     <MESSAGE value="fix off-by-one" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix off-by-one" />
+    <MESSAGE value="fix handling of query list" />
+    <MESSAGE value="query list" />
+    <MESSAGE value="add" />
+    <MESSAGE value="global and item settings" />
+    <MESSAGE value="fix" />
+    <MESSAGE value="refactor" />
+    <MESSAGE value="reorg" />
+    <option name="LAST_COMMIT_MESSAGE" value="reorg" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -200,12 +298,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt</url>
-          <line>26</line>
+          <line>20</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/org/reactome/lit_ball/common/RootStore.kt</url>
-          <line>48</line>
+          <line>42</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-function">
