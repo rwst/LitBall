@@ -41,3 +41,4 @@ Must read:
 Merlini & Rossini, "Text categorization with WEKA: A survey"
 https://www.sciencedirect.com/science/article/pii/S2666827021000141
 
+What we did in the end can be read in: https://zenodo.org/record/8199859

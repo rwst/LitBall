@@ -13,3 +13,27 @@ While the starter papers, together with required terms, determine the topic(s) o
 
 [1]: Claes Wohlin. 2014. Guidelines for snowballing in systematic literature studies and a replication in software engineering. In Proceedings of the 18th International Conference on Evaluation and Assessment in Software Engineering (EASE '14). Association for Computing Machinery, New York, NY, USA, Article 38, 1–10. <https://doi.org/10.1145/2601248.2601268> 
 
+## States of queries
+
+Every query is associated with a directory and the files in it. Since the natural processing step of a query (consisting of 1. expansion, 2. filtering, 3. curation) produces two files, an expanded list of accepted papers, and an expanded list of rejected papers, every state after the last curation---let's call it  CURATED---of any step is indistinguishable. The start state can also be seen as an instance of CURATED, it just lacks rejected papers. In conclusion, there are only three alternating states during the query process: CURATED, EXPANDED and FILTERED. And they can be recognized by looking at the query directory.
+
+A query directory in CURATED state, the next action would be to expand the collection by looking for all references/citations of the accepted papers that are not in the rejected list:
+```
+XYZ.query
+   +---accepted
+   +---rejected
+```
+A query directory in EXPANDED state, the next step would be to apply all completely automatic filters to the expanded list and write the filtered list:
+```
+XYZ.query
+   +---accepted
+   +---rejected
+   +---expanded
+```
+A query directory in FILTERED state, the next step would be to present the filtered list to the user for curation, and when finished, add the papers to the accepted and rejected lists, deleting the filtered list:
+```
+XYZ.query
+   +---accepted
+   +---rejected
+   +---filtered
+```
