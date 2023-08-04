@@ -7,13 +7,19 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.IOException
+import java.nio.file.Paths
 
 @Serializable
 object Settings {
-    private var map: MutableMap<String, String> = mutableMapOf()
+    var map: MutableMap<String, String> = mutableMapOf()
+    private var initialized = false
     private const val PATH = "settings.json"
     private val Json = Json { prettyPrint = true }
     fun load() {
+        if (initialized)
+            return
+        else
+            initialized = true
         val file = File(PATH)
         if (file.canRead()) {
             val text = file.readText()
@@ -23,6 +29,15 @@ object Settings {
                 handleException(e)
             }
         }
+        else {
+            reset()
+            save()
+        }
+    }
+
+    private fun reset() {
+        map.clear()
+        map["path-to-queries"] = Paths.get("").toAbsolutePath().toString()
     }
 
     fun save() {
