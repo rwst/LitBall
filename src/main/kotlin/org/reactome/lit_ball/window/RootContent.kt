@@ -60,6 +60,7 @@ fun RootContent(
 
     if (state.editingSettings) {
         SettingsDialog(
-            onCloseClicked = {})
+            onCloseClicked = model::onSettingsCloseClicked
+        )
     }
 }

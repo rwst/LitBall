@@ -21,6 +21,7 @@ internal class RootStore {
         SerialDB.commit()
     }
     fun buttonSettings() {
+        setState { copy(editingSettings = true) }
     }
     fun buttonExit() {
     }
@@ -43,6 +44,9 @@ internal class RootStore {
             copy(items = QueryList((items.list + newItem).toMutableList()))
         }
         SerialDB.commit()
+    }
+    fun onSettingsCloseClicked() {
+        setState { copy(editingSettings = false) }
     }
 
     fun onEditorCloseClicked() {
