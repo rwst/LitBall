@@ -17,6 +17,7 @@ kotlin {
 }
 
 dependencies {
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.3.1")
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
