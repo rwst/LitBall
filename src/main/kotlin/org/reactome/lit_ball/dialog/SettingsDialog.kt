@@ -10,11 +10,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.Settings
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun SettingsDialog(
+    rootScope: CoroutineScope,
     onCloseClicked: () -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf(Settings.map["path-to-queries"] ?: "") }
@@ -26,6 +30,9 @@ internal fun SettingsDialog(
             TextButton(
                 onClick = {
                     Settings.map["path-to-queries"] = text
+                    rootScope.launch(Dispatchers.IO) {
+                        Settings.save()
+                    }
                     onCloseClicked.invoke()
                 }
             ) {
