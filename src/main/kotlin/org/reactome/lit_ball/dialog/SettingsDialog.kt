@@ -5,10 +5,8 @@ package org.reactome.lit_ball.dialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +19,8 @@ internal fun SettingsDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit
 ) {
-    var text by rememberSaveable { mutableStateOf(Settings.map["path-to-queries"] ?: "") }
+    val keys = Settings.map.keys.toList()
+    val textFields = rememberSaveable { keys.map { key -> mutableStateOf(Settings.map[key] ?: "") } }
 
     AlertDialog(
         title = { Text("Edit settings") },
@@ -29,11 +28,13 @@ internal fun SettingsDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    Settings.map["path-to-queries"] = text
+                    keys.forEachIndexed { index, key ->
+                        Settings.map[key] = textFields[index].value
+                    }
                     rootScope.launch(Dispatchers.IO) {
                         Settings.save()
                     }
-                    onCloseClicked.invoke()
+                    onCloseClicked()
                 }
             ) {
                 Text("Confirm")
@@ -48,12 +49,14 @@ internal fun SettingsDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    label = { Text("path-to-queries") },
-                    placeholder = { Text(Settings.map["path-to-queries"] ?: "") }
-                )
+                keys.forEachIndexed { index, key ->
+                    TextField(
+                        value = textFields[index].value,
+                        onValueChange = { textFields[index].value = it },
+                        label = { Text(key) },
+                        placeholder = { Text(Settings.map[key] ?: "") }
+                    )
+                }
             }
         },
     )

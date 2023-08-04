@@ -38,6 +38,7 @@ object Settings {
     private fun reset() {
         map.clear()
         map["path-to-queries"] = Paths.get("").toAbsolutePath().toString()
+        map["directory-prefix"] = "Query-"
     }
 
     fun save() {
