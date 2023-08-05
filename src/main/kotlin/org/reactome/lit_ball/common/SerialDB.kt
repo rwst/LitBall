@@ -4,24 +4,23 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.*
 import java.io.File
 import java.io.IOException
 import kotlin.io.path.*
 
-val module = SerializersModule {
-    polymorphic(SerialDBClass::class) {
-        subclass(Query::class)
-    }
-}
-
-val format = Json { serializersModule = module }
+//val module = SerializersModule {
+//    polymorphic(SerialDBClass::class) {
+//        subclass(Query::class)
+//    }
+//}
+//
+//val format = Json { serializersModule = module }
 
 @Serializable
 sealed class SerialDBClass
 
 object SerialDB {
-    private const val path = "db/map.json"
+    private const val PATH = "db/map.json"
     private val Json = Json { prettyPrint = true }
     private lateinit var map : MutableMap<String,SerialDBClass>
 
@@ -33,11 +32,11 @@ object SerialDB {
             }
             catch (e: IOException) { Logger.error(e) }
         }
-        val db = Path(path)
+        val db = Path(PATH)
         var text = ""
         if (db.isReadable()) {
             try {
-                text = File(path).readText()
+                text = File(PATH).readText()
             }
             catch (e: IOException) { Logger.error(e) }
         }
@@ -58,7 +57,7 @@ object SerialDB {
     fun commit() {
         try {
             val text = Json.encodeToString(map)
-            File(path).writeText(text)
+            File(PATH).writeText(text)
         }
         catch (e: IOException) { Logger.error(e) }
     }

@@ -18,7 +18,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.common.QueryList
+import org.reactome.lit_ball.common.Query
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 
@@ -26,9 +26,8 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 @Composable
 internal fun MainContent(
     modifier: Modifier = Modifier,
-    items: QueryList,
+    qItems: List<Query>,
     onItemClicked: (id: Int) -> Unit,
-    onItemDeleteClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
     railItems: List<RailItem>,
 ) {
@@ -39,9 +38,8 @@ internal fun MainContent(
         )
         Box(Modifier.weight(1F)) {
             ListContent(
-                items = items,
+                items = qItems,
                 onItemClicked = onItemClicked,
-                onItemDeleteClicked = onItemDeleteClicked
             )
         }
     }
@@ -49,9 +47,8 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
-    items: QueryList,
+    items: List<Query>,
     onItemClicked: (id: Int) -> Unit,
-    onItemDeleteClicked: (id: Int) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -67,12 +64,11 @@ private fun ListContent(
         ) {
             items(
                 key = { it.id },
-                items = items.list,
+                items = items,
             ) { item ->
                 QueryCard(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
-                    onDeleteClicked = { onItemDeleteClicked(item.id) },
                 )
                 Divider()
             }

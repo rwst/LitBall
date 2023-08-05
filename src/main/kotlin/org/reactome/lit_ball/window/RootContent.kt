@@ -33,29 +33,29 @@ fun RootContent(
 
     MainContent(
         modifier = modifier,
-        items = state.items,
+        qItems = state.items,
         onItemClicked = model::onItemClicked,
-        onItemDeleteClicked = model::onItemDeleteClicked,
         onNewItemClicked = model::onNewItemClicked,
         railItems = railItems,
     )
 
     scope.launch(Dispatchers.IO) {
         Settings.load()
+        QueryList.fill()
     }
 
-    scope.launch(Dispatchers.IO) {
-        SerialDB.open()
-        model.setFromDb(SerialDB.get())
-    }
+//    scope.launch(Dispatchers.IO) {
+//        SerialDB.open()
+//        model.setFromDb(SerialDB.get())
+//    }
 
     state.editingItemId?.also { item ->
-        QueryEditDialog(
-            item = state.items.list[item],
-            onCloseClicked = model::onEditorCloseClicked,
-            onTextChanged = model::onEditorTextChanged,
-            onDoneChanged = model::onEditorDoneChanged,
-        )
+//        QueryEditDialog(
+//            item = state.items.list[item],
+//            onCloseClicked = model::onEditorCloseClicked,
+//            onTextChanged = model::onEditorTextChanged,
+//            onDoneChanged = model::onEditorDoneChanged,
+//        )
     }
 
     if (state.editingSettings) {
