@@ -29,6 +29,7 @@ object QueryList
                 )
             }
         }
+        print(list)
     }
 }
 
@@ -42,6 +43,17 @@ data class Query(
     override fun toString(): String {
         return "Query(id=$id, name=$name, status=$status, setting=$setting)"
     }
+    fun nextActionText(): String {
+        return arrayOf(
+            "Complete the Setting",
+            "Start expansion",
+            "Start filtering",
+            "Go to Annotation")[status.ordinal]
+    }
+    fun nextAction(): () -> Unit {
+        return {}
+    }
+
 }
 
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {

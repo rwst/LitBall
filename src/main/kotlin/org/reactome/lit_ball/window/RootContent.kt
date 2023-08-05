@@ -12,8 +12,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.*
-import org.reactome.lit_ball.dialog.QueryEditDialog
+import org.reactome.lit_ball.common.QueryList
+import org.reactome.lit_ball.common.RootStore
+import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.SettingsDialog
 
 @Composable
@@ -42,6 +43,7 @@ fun RootContent(
     scope.launch(Dispatchers.IO) {
         Settings.load()
         QueryList.fill()
+        (model::onItemsChanged)()
     }
 
 //    scope.launch(Dispatchers.IO) {
