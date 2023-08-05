@@ -59,7 +59,7 @@ fun QueryCard(
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
-                text = "accepted: 844\nrejected: 7915\nstatus: ${item.status}",
+                text = "nrAccepted: ${item.nrAccepted()}\nnrRejected: ${item.nrRejected()}\nstatus: ${item.status}",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(vertical = 8.dp),

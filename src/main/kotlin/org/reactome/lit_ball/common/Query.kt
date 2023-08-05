@@ -4,7 +4,9 @@ import kotlinx.serialization.Serializable
 import java.io.File
 
 enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
-
+private const val ACCEPTED_NAME = "accepted.txt"
+private const val REJECTED_NAME = "rejected.txt"
+private const val SETTINGS_NAME = "settings.json"
 @Serializable
 object QueryList
 {
@@ -26,6 +28,8 @@ object QueryList
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
                     setting = getSetting(it),
+                    acceptedSet = getDOIs(it, ACCEPTED_NAME),
+                    rejectedSet = getDOIs(it, REJECTED_NAME),
                 )
             }
         }
@@ -33,15 +37,18 @@ object QueryList
     }
 }
 
-@Serializable
 data class Query(
     val id: Int,
     val name: String = "",
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
     val setting: QuerySetting? = null,
+    val acceptedSet: MutableSet<String> = mutableSetOf(),
+    val rejectedSet: MutableSet<String> = mutableSetOf(),
 ) {
+    fun nrAccepted() = acceptedSet.size
+    fun nrRejected() = rejectedSet.size
     override fun toString(): String {
-        return "Query(id=$id, name=$name, status=$status, setting=$setting)"
+        return "Query(id=$id, name=$name, status=$status, setting=$setting, nrAccepted=${nrAccepted()}, nrRejected=${nrRejected()})"
     }
     fun nextActionText(): String {
         return arrayOf(
@@ -71,7 +78,7 @@ private fun getStatus(dir: File): QueryStatus {
     val fileNames = dir.listFiles { file ->
         file.isFile && file.canRead()
     }?.map { it.name } ?: emptyList()
-    if (setOf("accepted", "settings.json").all { it in fileNames }) {
+    if (setOf(ACCEPTED_NAME, SETTINGS_NAME).all { it in fileNames }) {
         if ("expanded" in fileNames)
             return QueryStatus.EXPANDED
         if ("filtered" in fileNames)
@@ -82,9 +89,18 @@ private fun getStatus(dir: File): QueryStatus {
 }
 
 private fun getSetting(dir: File): QuerySetting? {
-    val filePath = dir.name + "/settings.json"
+    val filePath = dir.name + "/" + SETTINGS_NAME
     val settingsFile = File(filePath)
     if (settingsFile.exists() && settingsFile.isFile && settingsFile.canRead())
         return QuerySetting.fromFile(settingsFile)
     return null
+}
+
+private fun getDOIs(dir: File, fileName: String): MutableSet<String> {
+    val filePath = dir.absolutePath + "/" + fileName
+    val doiFile = File(filePath)
+    if (doiFile.exists() && doiFile.isFile && doiFile.canRead()) {
+        return doiFile.readLines().map { it.uppercase() }.toMutableSet()
+    }
+    return mutableSetOf()
 }
