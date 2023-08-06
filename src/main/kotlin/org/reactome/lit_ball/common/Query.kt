@@ -62,7 +62,12 @@ data class Query(
             "Go to Annotation")[status.ordinal]
     }
     fun nextAction(): () -> Unit {
-        return {}
+        return arrayOf(
+            { doExpand() }, // TODO: this is a hack
+            { doExpand() },
+            { doFilter() },
+            { doAnnotate() },
+        )[status.ordinal]
     }
     fun saveSettings() {
         val queryPath = Settings.map["path-to-queries"] ?: ""
@@ -84,6 +89,10 @@ data class Query(
             }
         }
     }
+
+    fun doExpand() {}
+    fun doFilter() {}
+    fun doAnnotate() {}
 }
 
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.Query
+import org.reactome.lit_ball.common.QueryStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +70,7 @@ fun QueryCard(
             Spacer(modifier = Modifier.width(4.dp))
 
             FilledTonalButton (
-                onClick = item.nextAction(),
+                onClick = if (item.status == QueryStatus.UNINITIALIZED) { { onSettingsClicked(item.id) } } else item.nextAction(),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(horizontal = 24.dp, vertical = 4.dp),
