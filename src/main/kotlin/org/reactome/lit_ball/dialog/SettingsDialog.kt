@@ -48,7 +48,7 @@ internal fun SettingsDialog(
             }
         },
         text = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.Start) {
                 keys.forEachIndexed { index, key ->
                     TextField(
                         value = textFields[index].value,
