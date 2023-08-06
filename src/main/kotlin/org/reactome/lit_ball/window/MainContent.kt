@@ -19,6 +19,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.Query
+import org.reactome.lit_ball.common.QueryStatus
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 
@@ -30,7 +31,8 @@ internal fun MainContent(
     onItemClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
     railItems: List<RailItem>,
-    onItemSettingsClicked: (id: Int?) -> Unit
+    onItemSettingsClicked: (id: Int?) -> Unit,
+    onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
 ) {
     Row(modifier) {
         Rail(
@@ -42,6 +44,7 @@ internal fun MainContent(
                 items = qItems,
                 onItemClicked = onItemClicked,
                 onItemSettingsClicked,
+                onItemGoClicked,
             )
         }
     }
@@ -51,7 +54,8 @@ internal fun MainContent(
 private fun ListContent(
     items: List<Query>,
     onItemClicked: (id: Int) -> Unit,
-    onItemSettingsClicked: (id: Int?) -> Unit
+    onItemSettingsClicked: (id: Int?) -> Unit,
+    onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -73,6 +77,7 @@ private fun ListContent(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
                     onItemSettingsClicked,
+                    onItemGoClicked,
                 )
                 Divider()
             }

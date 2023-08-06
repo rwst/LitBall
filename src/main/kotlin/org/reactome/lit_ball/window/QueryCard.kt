@@ -28,7 +28,8 @@ import org.reactome.lit_ball.common.QueryStatus
 fun QueryCard(
     item: Query,
     onClicked: () -> Unit,
-    onSettingsClicked: (Int?) -> Unit
+    onSettingsClicked: (Int?) -> Unit,
+    onGoClicked: (status: QueryStatus, id: Int) -> Unit,
 ) {
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
@@ -70,7 +71,7 @@ fun QueryCard(
             Spacer(modifier = Modifier.width(4.dp))
 
             FilledTonalButton (
-                onClick = if (item.status == QueryStatus.UNINITIALIZED) { { onSettingsClicked(item.id) } } else item.nextAction(),
+                onClick = { (onGoClicked)(item.status, item.id) },
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(horizontal = 24.dp, vertical = 4.dp),

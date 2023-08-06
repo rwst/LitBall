@@ -39,7 +39,8 @@ fun RootContent(
         onItemClicked = model::onItemClicked,
         onNewItemClicked = model::onNewItemClicked,
         railItems = railItems,
-        onItemSettingsClicked = model::onQuerySettingsClicked
+        onItemSettingsClicked = model::onQuerySettingsClicked,
+        onItemGoClicked = model::nextAction,
     )
 
     scope.launch(Dispatchers.IO) {

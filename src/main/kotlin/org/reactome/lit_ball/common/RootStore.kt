@@ -21,17 +21,31 @@ internal class RootStore {
     }
 
     fun onNewItemClicked() {
-//        setState {
-//            val newItem =
-//                Query(
-//                    id = items.list.maxOfOrNull(Query::id)?.plus(1) ?: 1,
-//                    text = "New Query"
-//                )
-//
-//            copy(items = QueryList((items.list + newItem).toMutableList()))
-//        }
-//        SerialDB.commit()
+        setState { copy(newItem = true) }
     }
+    fun onNewItemClosed() {
+        setState { copy(newItem = false) }
+    }
+
+    private fun onDoExpandStarted(id: Int) {
+        setState { copy(doExpand = id) }
+    }
+    fun onDoExpandStopped() {
+        setState { copy(doExpand = null) }
+    }
+    private fun onDoFilterStarted(id: Int) {
+        setState { copy(doFilter = id) }
+    }
+    fun onDoFilterStopped() {
+        setState { copy(doFilter = null) }
+    }
+    private fun onDoAnnotateStarted(id: Int) {
+        setState { copy(doAnnotate = id) }
+    }
+    fun onDoAnnotateStopped() {
+        setState { copy(doAnnotate = null) }
+    }
+
     suspend fun onItemsChanged() {
         // TODO: This is a hack.
         setState { copy(items = emptyList()) }
@@ -39,6 +53,14 @@ internal class RootStore {
         setState { copy(items = QueryList.list) }
     }
 
+    fun nextAction(status: QueryStatus, id: Int) {
+        when (status) {
+            QueryStatus.UNINITIALIZED -> onQuerySettingsClicked(id)
+            QueryStatus.ANNOTATED -> onDoExpandStarted(id)
+            QueryStatus.EXPANDED -> onDoFilterStarted(id)
+            QueryStatus.FILTERED -> onDoAnnotateStarted(id)
+        }
+    }
     fun onQuerySettingsClicked(id: Int?) {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
@@ -62,9 +84,13 @@ internal class RootStore {
     data class RootState(
         val items: List<Query> = QueryList.list,
         val activeRailItem: String = "",
+        val newItem: Boolean = false,
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
-        val editingQuerySettings: Query? = null,
+        val editingQuerySettings: Query? = null, // TODO: refactor this to Int?
+        val doExpand: Int? = null,
+        val doFilter: Int? = null,
+        val doAnnotate: Int? = null,
     )
 }
 
