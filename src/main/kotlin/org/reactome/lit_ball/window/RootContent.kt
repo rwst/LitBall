@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.RootStore
 import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.dialog.QuerySettingsDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
 
 @Composable
@@ -38,6 +39,7 @@ fun RootContent(
         onItemClicked = model::onItemClicked,
         onNewItemClicked = model::onNewItemClicked,
         railItems = railItems,
+        onItemSettingsClicked = model::onQuerySettingsClicked
     )
 
     scope.launch(Dispatchers.IO) {
@@ -64,6 +66,14 @@ fun RootContent(
         SettingsDialog(
             scope,
             onCloseClicked = model::onSettingsCloseClicked
+        )
+    }
+
+    state.editingQuerySettings?.also {
+        QuerySettingsDialog(
+            it,
+            scope,
+            model::onQuerySettingsCloseClicked,
         )
     }
 }

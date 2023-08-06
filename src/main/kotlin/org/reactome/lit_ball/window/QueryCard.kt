@@ -27,11 +27,12 @@ import org.reactome.lit_ball.common.Query
 fun QueryCard(
     item: Query,
     onClicked: () -> Unit,
+    onSettingsClicked: (Int?) -> Unit
 ) {
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
             IconButton(
-                onClick = {},
+                onClick = { (onSettingsClicked)(item.id) },
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             ) {

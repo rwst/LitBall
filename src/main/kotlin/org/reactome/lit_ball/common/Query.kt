@@ -1,6 +1,9 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import org.reactome.lit_ball.util.ConfiguredJson
+import org.reactome.lit_ball.util.handleException
 import java.io.File
 
 enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
@@ -35,13 +38,14 @@ object QueryList
         }
         print(list)
     }
+    fun itemFromId (id: Int?): Query? = id?.let { list.find { id == it.id } }
 }
 
 data class Query(
     val id: Int,
     val name: String = "",
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
-    val setting: QuerySetting? = null,
+    var setting: QuerySetting? = null,
     val acceptedSet: MutableSet<String> = mutableSetOf(),
     val rejectedSet: MutableSet<String> = mutableSetOf(),
 ) {
@@ -60,7 +64,26 @@ data class Query(
     fun nextAction(): () -> Unit {
         return {}
     }
-
+    fun saveSettings() {
+        val queryPath = Settings.map["path-to-queries"] ?: ""
+        val prefix = Settings.map["directory-prefix"] ?: ""
+        val directory = File(queryPath)
+        if (!directory.isDirectory || !directory.exists()) {
+            throw IllegalArgumentException("Invalid directory path: $queryPath")
+        }
+        val file = File("$queryPath/$prefix$name")
+        if (file.isDirectory && file.canWrite()) {
+            val json = ConfiguredJson.get()
+            val text = json.encodeToString<QuerySetting>(setting?: QuerySetting())
+            println(setting.toString())
+            println(text)
+            try {
+                File("$queryPath/$prefix$name/$SETTINGS_NAME").writeText(text)
+            } catch (e: Exception) {
+                handleException(e)
+            }
+        }
+    }
 }
 
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {
@@ -89,7 +112,7 @@ private fun getStatus(dir: File): QueryStatus {
 }
 
 private fun getSetting(dir: File): QuerySetting? {
-    val filePath = dir.name + "/" + SETTINGS_NAME
+    val filePath = dir.absolutePath + "/" + SETTINGS_NAME
     val settingsFile = File(filePath)
     if (settingsFile.exists() && settingsFile.isFile && settingsFile.canRead())
         return QuerySetting.fromFile(settingsFile)

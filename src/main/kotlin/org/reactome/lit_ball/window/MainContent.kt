@@ -30,6 +30,7 @@ internal fun MainContent(
     onItemClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
     railItems: List<RailItem>,
+    onItemSettingsClicked: (id: Int?) -> Unit
 ) {
     Row(modifier) {
         Rail(
@@ -40,6 +41,7 @@ internal fun MainContent(
             ListContent(
                 items = qItems,
                 onItemClicked = onItemClicked,
+                onItemSettingsClicked,
             )
         }
     }
@@ -49,6 +51,7 @@ internal fun MainContent(
 private fun ListContent(
     items: List<Query>,
     onItemClicked: (id: Int) -> Unit,
+    onItemSettingsClicked: (id: Int?) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -69,6 +72,7 @@ private fun ListContent(
                 QueryCard(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
+                    onItemSettingsClicked,
                 )
                 Divider()
             }

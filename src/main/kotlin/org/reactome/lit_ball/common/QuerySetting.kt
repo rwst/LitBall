@@ -2,24 +2,26 @@ package org.reactome.lit_ball.common
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import org.reactome.lit_ball.util.ConfiguredJson
 import java.io.File
 
 @Serializable
-class QuerySetting {
-    private var posKeyWords = mutableSetOf <String>()
-    private var negKeyWords = mutableSetOf <String>()
-    private var classifier = "virus-EXP"
+data class QuerySetting(
+    var mandatoryKeyWords: MutableSet<String> = mutableSetOf(),
+    var forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
+    var classifier: String = "virus-EXP",
+) {
     override fun toString(): String {
-        return "QuerySetting(posKeyWords=$posKeyWords, negKeyWords=$negKeyWords, classifier=$classifier)"
+        return "QuerySetting(posKeyWords=$mandatoryKeyWords, negKeyWords=$forbiddenKeyWords, classifier=$classifier)"
     }
     companion object {
-        private val json = Json { prettyPrint = true }
+        private val json = ConfiguredJson.get()
         fun fromFile(file: File): QuerySetting {
             val text = file.readText()
             return try {
                 json.decodeFromString<QuerySetting>(text)
             } catch (e: Exception) {
+                println(e)
                 Logger.error(e)
                 QuerySetting()
             }

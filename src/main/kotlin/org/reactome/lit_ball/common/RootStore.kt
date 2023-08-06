@@ -38,6 +38,16 @@ internal class RootStore {
         delay(50)
         setState { copy(items = QueryList.list) }
     }
+
+    fun onQuerySettingsClicked(id: Int?) {
+        setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
+    }
+    suspend fun onQuerySettingsCloseClicked() {
+        setState { copy(items = emptyList()) }
+        delay(50)
+        setState { copy(editingQuerySettings = null, items = QueryList.list) }
+    }
+
     fun onSettingsCloseClicked() {
         setState { copy(editingSettings = false) }
     }
@@ -54,6 +64,7 @@ internal class RootStore {
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
+        val editingQuerySettings: Query? = null,
     )
 }
 
