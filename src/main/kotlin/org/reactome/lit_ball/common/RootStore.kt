@@ -11,11 +11,14 @@ internal class RootStore {
 
     fun buttonInfo() {
     }
+
     fun buttonSettings() {
         setState { copy(editingSettings = true) }
     }
+
     fun buttonExit() {
     }
+
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
@@ -23,6 +26,7 @@ internal class RootStore {
     fun onNewItemClicked() {
         setState { copy(newItem = true) }
     }
+
     fun onNewItemClosed() {
         setState { copy(newItem = false) }
     }
@@ -30,18 +34,23 @@ internal class RootStore {
     private fun onDoExpandStarted(id: Int) {
         setState { copy(doExpand = id) }
     }
+
     fun onDoExpandStopped() {
         setState { copy(doExpand = null) }
     }
+
     private fun onDoFilterStarted(id: Int) {
         setState { copy(doFilter = id) }
     }
+
     fun onDoFilterStopped() {
         setState { copy(doFilter = null) }
     }
+
     private fun onDoAnnotateStarted(id: Int) {
         setState { copy(doAnnotate = id) }
     }
+
     fun onDoAnnotateStopped() {
         setState { copy(doAnnotate = null) }
     }
@@ -61,9 +70,11 @@ internal class RootStore {
             QueryStatus.FILTERED -> onDoAnnotateStarted(id)
         }
     }
+
     fun onQuerySettingsClicked(id: Int?) {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
+
     suspend fun onQuerySettingsCloseClicked() {
         setState { copy(items = emptyList()) }
         delay(50)

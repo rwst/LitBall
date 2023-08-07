@@ -1,4 +1,5 @@
 @file:Suppress("FunctionName")
+
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.layout.Column
@@ -18,10 +19,9 @@ import org.reactome.lit_ball.common.QueryList
 fun NewItemDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
-)
-{
-    val fieldValue = rememberSaveable { mutableStateOf( "") }
-    val nameValue = rememberSaveable { mutableStateOf( "") }
+) {
+    val fieldValue = rememberSaveable { mutableStateOf("") }
+    val nameValue = rememberSaveable { mutableStateOf("") }
     val checkValue = rememberSaveable { mutableStateOf(true) }
 
     AlertDialog(

@@ -11,6 +11,7 @@ fun handleException(e: Exception) {
             Logger.error(e)
             Settings.map = mutableMapOf()
         }
+
         else -> throw e
     }
 }

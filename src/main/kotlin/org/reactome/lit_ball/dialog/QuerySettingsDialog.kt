@@ -24,9 +24,11 @@ fun QuerySettingsDialog(
     onCloseClicked: KSuspendFunction0<Unit>,
 ) {
     item.setting = item.setting ?: QuerySetting()
-    val field1Value = rememberSaveable { mutableStateOf( item.setting?.mandatoryKeyWords?.joinToString(separator = ", ")?: "") }
-    val field2Value = rememberSaveable{ mutableStateOf( item.setting?.forbiddenKeyWords?.joinToString(separator = ", ")?: "") }
-    val field3Value = rememberSaveable{ mutableStateOf( item.setting?.classifier?: "") }
+    val field1Value =
+        rememberSaveable { mutableStateOf(item.setting?.mandatoryKeyWords?.joinToString(separator = ", ") ?: "") }
+    val field2Value =
+        rememberSaveable { mutableStateOf(item.setting?.forbiddenKeyWords?.joinToString(separator = ", ") ?: "") }
+    val field3Value = rememberSaveable { mutableStateOf(item.setting?.classifier ?: "") }
 
     AlertDialog(
         onDismissRequest = {
@@ -74,13 +76,13 @@ fun QuerySettingsDialog(
                     value = field1Value.value,
                     onValueChange = { field1Value.value = it },
                     label = { Text("Mandatory keywords") },
-                    placeholder = { Text("text1, text2, ...")}
+                    placeholder = { Text("text1, text2, ...") }
                 )
                 TextField(
                     value = field2Value.value,
                     onValueChange = { field2Value.value = it },
                     label = { Text("Forbidden keywords") },
-                    placeholder = { Text("text1, text2, ...")}
+                    placeholder = { Text("text1, text2, ...") }
                 )
                 TextField(
                     value = field3Value.value,

@@ -60,10 +60,10 @@ fun RootContent(
     }
 
     if (state.newItem) {
-       NewItemDialog(
-           scope,
-           onCloseClicked = model::onNewItemClosed,
-       )
+        NewItemDialog(
+            scope,
+            onCloseClicked = model::onNewItemClosed,
+        )
     }
 
     if (state.editingSettings) {

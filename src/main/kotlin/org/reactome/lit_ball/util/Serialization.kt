@@ -8,5 +8,6 @@ object ConfiguredJson {
         isLenient = true
         encodeDefaults = true
     }
+
     fun get() = json
 }

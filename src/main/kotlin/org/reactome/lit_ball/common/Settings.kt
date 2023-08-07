@@ -27,8 +27,7 @@ object Settings {
             } catch (e: Exception) {
                 handleException(e)
             }
-        }
-        else {
+        } else {
             reset()
             save()
         }

@@ -1,4 +1,5 @@
 @file:Suppress("FunctionName")
+
 package org.reactome.lit_ball.window
 
 import androidx.compose.foundation.clickable
@@ -46,7 +47,7 @@ fun QueryCard(
                 )
             }
             Spacer(modifier = Modifier.width(14.dp))
-            SuggestionChip (
+            SuggestionChip(
                 onClick = {},
                 label = {
                     Text(
@@ -54,7 +55,8 @@ fun QueryCard(
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                    ) },
+                    )
+                },
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
             )
@@ -70,7 +72,7 @@ fun QueryCard(
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            FilledTonalButton (
+            FilledTonalButton(
                 onClick = { (onGoClicked)(item.status, item.id) },
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

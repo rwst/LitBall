@@ -9,12 +9,13 @@ import java.io.IOException
 import java.nio.file.Files
 
 enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
+
 private const val ACCEPTED_NAME = "accepted.txt"
 private const val REJECTED_NAME = "rejected.txt"
 private const val SETTINGS_NAME = "settings.json"
+
 @Serializable
-object QueryList
-{
+object QueryList {
     var list: MutableList<Query> = mutableListOf()
     fun updateItem(id: Int, transformer: (Query) -> Query): QueryList {
         list.replaceFirst(transformer) { it.id == id }
@@ -40,7 +41,8 @@ object QueryList
         }
         print(list)
     }
-    fun itemFromId (id: Int?): Query? = id?.let { list.find { id == it.id } }
+
+    fun itemFromId(id: Int?): Query? = id?.let { list.find { id == it.id } }
     fun addNewItem(name: String, dois: Set<String>) {
         val queryDir = getQueryDir(name)
         if (queryDir.exists()) {
@@ -60,11 +62,13 @@ object QueryList
             return
         }
         val maxId: Int = list.maxOf { it.id }
-        list.add(Query(
-            id = maxId + 1,
-            name = name,
-            acceptedSet = dois.toMutableSet()
-        ))
+        list.add(
+            Query(
+                id = maxId + 1,
+                name = name,
+                acceptedSet = dois.toMutableSet()
+            )
+        )
     }
 }
 
@@ -91,19 +95,21 @@ data class Query(
     override fun toString(): String {
         return "Query(id=$id, name=$name, status=$status, setting=$setting, nrAccepted=${nrAccepted()}, nrRejected=${nrRejected()})"
     }
+
     fun nextActionText(): String {
         return arrayOf(
             "Complete the Setting",
             "Start expansion",
             "Start filtering",
-            "Go to Annotation")[status.ordinal]
+            "Go to Annotation"
+        )[status.ordinal]
     }
 
     fun saveSettings() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val json = ConfiguredJson.get()
-            val text = json.encodeToString<QuerySetting>(setting?: QuerySetting())
+            val text = json.encodeToString<QuerySetting>(setting ?: QuerySetting())
             println(setting.toString())
             println(text)
             try {
