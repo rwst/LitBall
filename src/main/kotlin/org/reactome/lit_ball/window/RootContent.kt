@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.RootStore
 import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.dialog.NewItemDialog
 import org.reactome.lit_ball.dialog.QuerySettingsDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
 
@@ -49,11 +50,6 @@ fun RootContent(
         (model::onItemsChanged)()
     }
 
-//    scope.launch(Dispatchers.IO) {
-//        SerialDB.open()
-//        model.setFromDb(SerialDB.get())
-//    }
-
     state.editingItemId?.also { item ->
 //        QueryEditDialog(
 //            item = state.items.list[item],
@@ -61,6 +57,13 @@ fun RootContent(
 //            onTextChanged = model::onEditorTextChanged,
 //            onDoneChanged = model::onEditorDoneChanged,
 //        )
+    }
+
+    if (state.newItem) {
+       NewItemDialog(
+           scope,
+           onCloseClicked = model::onNewItemClosed,
+       )
     }
 
     if (state.editingSettings) {

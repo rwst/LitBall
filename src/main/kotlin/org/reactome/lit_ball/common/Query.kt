@@ -5,6 +5,8 @@ import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.handleException
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
 enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
 private const val ACCEPTED_NAME = "accepted.txt"
@@ -39,6 +41,41 @@ object QueryList
         print(list)
     }
     fun itemFromId (id: Int?): Query? = id?.let { list.find { id == it.id } }
+    fun addNewItem(name: String, dois: Set<String>) {
+        val queryDir = getQueryDir(name)
+        if (queryDir.exists()) {
+            handleException(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
+            return
+        }
+        try {
+            Files.createDirectory(queryDir.toPath())
+        } catch (e: Exception) {
+            handleException(e)
+            return
+        }
+        try {
+            File("${queryDir.absolutePath}/$ACCEPTED_NAME").writeText(dois.joinToString("\n"))
+        } catch (e: Exception) {
+            handleException(e)
+            return
+        }
+        val maxId: Int = list.maxOf { it.id }
+        list.add(Query(
+            id = maxId + 1,
+            name = name,
+            acceptedSet = dois.toMutableSet()
+        ))
+    }
+}
+
+private fun getQueryDir(name: String): File {
+    val queryPath = Settings.map["path-to-queries"] ?: ""
+    val prefix = Settings.map["directory-prefix"] ?: ""
+    val directory = File(queryPath)
+    if (!directory.isDirectory || !directory.exists()) {
+        throw IllegalArgumentException("Invalid directory path: $queryPath")
+    }
+    return File("$queryPath/$prefix$name")
 }
 
 data class Query(
@@ -62,15 +99,6 @@ data class Query(
             "Go to Annotation")[status.ordinal]
     }
 
-    fun getQueryDir(name: String): File {
-        val queryPath = Settings.map["path-to-queries"] ?: ""
-        val prefix = Settings.map["directory-prefix"] ?: ""
-        val directory = File(queryPath)
-        if (!directory.isDirectory || !directory.exists()) {
-            throw IllegalArgumentException("Invalid directory path: $queryPath")
-        }
-        return File("$queryPath/$prefix$name")
-    }
     fun saveSettings() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
