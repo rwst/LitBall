@@ -17,10 +17,6 @@ private const val SETTINGS_NAME = "settings.json"
 @Serializable
 object QueryList {
     var list: MutableList<Query> = mutableListOf()
-    fun updateItem(id: Int, transformer: (Query) -> Query): QueryList {
-        list.replaceFirst(transformer) { it.id == id }
-        return this
-    }
 
     fun fill() {
         if (list.isNotEmpty()) return

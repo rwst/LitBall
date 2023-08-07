@@ -50,15 +50,6 @@ fun RootContent(
         (model::onItemsChanged)()
     }
 
-    state.editingItemId?.also { item ->
-//        QueryEditDialog(
-//            item = state.items.list[item],
-//            onCloseClicked = model::onEditorCloseClicked,
-//            onTextChanged = model::onEditorTextChanged,
-//            onDoneChanged = model::onEditorDoneChanged,
-//        )
-    }
-
     if (state.newItem) {
         NewItemDialog(
             scope,

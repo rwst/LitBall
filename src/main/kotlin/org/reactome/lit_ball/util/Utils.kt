@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.util
 
 inline fun <reified T> Any?.tryCast(block: T.() -> Unit) {
     if (this is T) {
