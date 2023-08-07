@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.Query
+import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
 import org.reactome.lit_ball.common.QueryStatus
 import kotlin.reflect.KSuspendFunction0
@@ -19,7 +19,7 @@ import kotlin.reflect.KSuspendFunction0
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun QuerySettingsDialog(
-    item: Query,
+    item: LitBallQuery,
     rootScope: CoroutineScope,
     onCloseClicked: KSuspendFunction0<Unit>,
 ) {

@@ -16,7 +16,7 @@ private const val SETTINGS_NAME = "settings.json"
 
 @Serializable
 object QueryList {
-    var list: MutableList<Query> = mutableListOf()
+    var list: MutableList<LitBallQuery> = mutableListOf()
 
     fun fill() {
         if (list.isNotEmpty()) return
@@ -25,7 +25,7 @@ object QueryList {
         val dirs = queryDirectories(queryPath, prefix)
         list = MutableList(dirs.size) { index ->
             dirs[index].let {
-                Query(
+                LitBallQuery(
                     id = index,
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
@@ -38,7 +38,7 @@ object QueryList {
         print(list)
     }
 
-    fun itemFromId(id: Int?): Query? = id?.let { list.find { id == it.id } }
+    fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
     fun addNewItem(name: String, dois: Set<String>) {
         val queryDir = getQueryDir(name)
         if (queryDir.exists()) {
@@ -59,7 +59,7 @@ object QueryList {
         }
         val maxId: Int = list.maxOf { it.id }
         list.add(
-            Query(
+            LitBallQuery(
                 id = maxId + 1,
                 name = name,
                 acceptedSet = dois.toMutableSet()
@@ -78,7 +78,7 @@ private fun getQueryDir(name: String): File {
     return File("$queryPath/$prefix$name")
 }
 
-data class Query(
+data class LitBallQuery(
     val id: Int,
     val name: String = "",
     var status: QueryStatus = QueryStatus.UNINITIALIZED,

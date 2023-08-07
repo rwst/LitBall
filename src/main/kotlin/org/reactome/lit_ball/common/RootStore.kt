@@ -93,12 +93,12 @@ internal class RootStore {
     }
 
     data class RootState(
-        val items: List<Query> = QueryList.list,
+        val items: List<LitBallQuery> = QueryList.list,
         val activeRailItem: String = "",
         val newItem: Boolean = false,
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
-        val editingQuerySettings: Query? = null, // TODO: refactor this to Int?
+        val editingQuerySettings: LitBallQuery? = null, // TODO: refactor this to Int?
         val doExpand: Int? = null,
         val doFilter: Int? = null,
         val doAnnotate: Int? = null,

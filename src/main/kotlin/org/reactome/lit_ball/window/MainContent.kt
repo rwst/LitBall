@@ -18,7 +18,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.common.Query
+import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
@@ -27,7 +27,7 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 @Composable
 internal fun MainContent(
     modifier: Modifier = Modifier,
-    qItems: List<Query>,
+    qItems: List<LitBallQuery>,
     onItemClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
     railItems: List<RailItem>,
@@ -52,7 +52,7 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
-    items: List<Query>,
+    items: List<LitBallQuery>,
     onItemClicked: (id: Int) -> Unit,
     onItemSettingsClicked: (id: Int?) -> Unit,
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,

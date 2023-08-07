@@ -21,13 +21,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.common.Query
+import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QueryCard(
-    item: Query,
+    item: LitBallQuery,
     onClicked: () -> Unit,
     onSettingsClicked: (Int?) -> Unit,
     onGoClicked: (status: QueryStatus, id: Int) -> Unit,
