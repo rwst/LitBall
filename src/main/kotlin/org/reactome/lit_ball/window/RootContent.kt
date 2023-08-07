@@ -15,8 +15,7 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.RootStore
 import org.reactome.lit_ball.common.Settings
-import org.reactome.lit_ball.dialog.NewItemDialog
-import org.reactome.lit_ball.dialog.QuerySettingsDialog
+import org.reactome.lit_ball.dialog.*
 import org.reactome.lit_ball.dialog.SettingsDialog
 
 @Composable
@@ -27,6 +26,7 @@ fun RootContent(
     val model = remember { RootStore() }
     val state = model.state
     val scope = rememberCoroutineScope()
+    model.scope = scope
 
     val railItems: List<RailItem> = listOf(
         RailItem("Info", Icons.Filled.Info, 0, model::buttonInfo),
@@ -70,5 +70,9 @@ fun RootContent(
             scope,
             model::onQuerySettingsCloseClicked,
         )
+    }
+
+    state.doExpand?.also {
+        expandQueryBottomSheet()
     }
 }

@@ -101,6 +101,10 @@ data class LitBallQuery(
         )[status.ordinal]
     }
 
+    fun expand() {
+
+    }
+
     fun saveSettings() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {

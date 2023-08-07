@@ -3,12 +3,16 @@ package org.reactome.lit_ball.common
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 internal class RootStore {
     var state: RootState by mutableStateOf(initialState())
         private set
 
+    lateinit var scope: CoroutineScope
     fun buttonInfo() {
     }
 
@@ -32,7 +36,12 @@ internal class RootStore {
     }
 
     private fun onDoExpandStarted(id: Int) {
-        setState { copy(doExpand = id) }
+        setState {
+            scope.launch(Dispatchers.IO) {
+                QueryList.itemFromId(id)?.expand()
+            }
+            copy(doExpand = id)
+        }
     }
 
     fun onDoExpandStopped() {

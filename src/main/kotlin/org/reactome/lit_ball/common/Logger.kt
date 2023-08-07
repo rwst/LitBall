@@ -7,4 +7,7 @@ object Logger {
     fun error(e: Exception) {
         logger.error(e.message)
     }
+    fun i(tag: String, s: String) {
+        logger.info("$tag: $s")
+    }
 }
