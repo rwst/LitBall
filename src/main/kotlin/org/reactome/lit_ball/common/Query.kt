@@ -61,21 +61,25 @@ data class Query(
             "Start filtering",
             "Go to Annotation")[status.ordinal]
     }
-    fun saveSettings() {
+
+    fun getQueryDir(name: String): File {
         val queryPath = Settings.map["path-to-queries"] ?: ""
         val prefix = Settings.map["directory-prefix"] ?: ""
         val directory = File(queryPath)
         if (!directory.isDirectory || !directory.exists()) {
             throw IllegalArgumentException("Invalid directory path: $queryPath")
         }
-        val file = File("$queryPath/$prefix$name")
-        if (file.isDirectory && file.canWrite()) {
+        return File("$queryPath/$prefix$name")
+    }
+    fun saveSettings() {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canWrite()) {
             val json = ConfiguredJson.get()
             val text = json.encodeToString<QuerySetting>(setting?: QuerySetting())
             println(setting.toString())
             println(text)
             try {
-                File("$queryPath/$prefix$name/$SETTINGS_NAME").writeText(text)
+                File("${queryDir.absolutePath}/$SETTINGS_NAME").writeText(text)
             } catch (e: Exception) {
                 handleException(e)
             }
