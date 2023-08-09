@@ -13,10 +13,9 @@ object S2client : ScholarClient {
         )
     }
 
-    suspend fun getDataWithAbstractFor(doiSet: List<String>)
+    suspend fun getBulkPaperDetailsWithAbstract(doiSet: List<String>)
     : List<S2Service.PaperDetailsWithAbstract?>? {
-        return S2Service.getBulkPaperDetails(
-            S2Service.BulkPaperWithAbstractApi::class.java,
+        return S2Service.getBulkPaperDetailsWithAbstract(
             doiSet,
             "paperId,externalIds,title,abstract,publicationTypes,tldr"
         )
@@ -24,10 +23,8 @@ object S2client : ScholarClient {
 
     suspend fun getPaperDetails(
         doiSet: List<String>,
-        type: String
     ): List<S2Service.PaperDetails?>? {
         return S2Service.getBulkPaperDetails(
-            S2Service.BulkPaperApi::class.java,
             doiSet,
             "paperId,externalIds,title,tldr"
         )
@@ -36,10 +33,9 @@ object S2client : ScholarClient {
     suspend fun getRefs(
         doiSet: List<String>,
     ): List<S2Service.PaperRefs?>? {
-        return S2Service.getBulkPaperDetails(
-            S2Service.BulkPaperRefsApi::class.java,
+        return S2Service.getBulkPaperRefs(
             doiSet,
-            "paperId,citations,references"
+            "paperId,citations,citations.externalIds,references,references.externalIds"
         )
     }
 }

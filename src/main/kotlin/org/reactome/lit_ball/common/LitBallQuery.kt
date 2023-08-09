@@ -12,6 +12,8 @@ enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
 
 private const val ACCEPTED_NAME = "accepted.txt"
 private const val REJECTED_NAME = "rejected.txt"
+private const val EXPANDED_NAME = "expanded.txt"
+private const val FILTERED_NAME = "filtered.txt"
 private const val SETTINGS_NAME = "settings.json"
 
 @Serializable
@@ -101,8 +103,35 @@ data class LitBallQuery(
         )[status.ordinal]
     }
 
-    fun expand() {
-
+    suspend fun expand() {
+        val tag = "EXPAND"
+        val doiSet = mutableSetOf<String>()
+        acceptedSet.chunked(450).forEach {
+            val refs: List<S2Service.PaperRefs?> = try {
+                S2client.getRefs(it)
+            } catch (e: Exception) {
+                handleException(e)
+                null
+            } ?: return
+            Logger.i(tag, "Received ${refs.size} records")
+            refs.forEach { paperRef ->
+                doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
+                doiSet.addAll(paperRef?.references?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
+            }
+        }
+        val newDoiSet = doiSet.minus(acceptedSet)
+        println("${newDoiSet.size} new refs received. Writing to expanded...")
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canWrite()) {
+            val text = newDoiSet.joinToString("\n").uppercase()
+            status = try {
+                File("${queryDir.absolutePath}/$EXPANDED_NAME").writeText(text)
+                QueryStatus.EXPANDED
+            } catch (e: Exception) {
+                handleException(e)
+                QueryStatus.ANNOTATED
+            }
+        }
     }
 
     fun saveSettings() {

@@ -62,8 +62,8 @@ object S2Service {
     @Serializable
     data class PaperRefs(
         val paperId: String? = "",
-        var citations: Citations = Citations(),
-        var references: References = References()
+        var citations: List<Citations>? = null,
+        var references: List<References>? = null,
     )
 
     interface SinglePaperApi {
@@ -74,26 +74,24 @@ object S2Service {
         ): Response<PaperDetailsWithAbstract>
     }
 
-    interface BulkPaperApiBase<T> {
+    interface BulkPaperApiBase {
+        //suspend fun postRequest(map: Map<String, List<String>>, fields: String): Response<Any>?
+    }
+
+    interface BulkPaperWithAbstractApi: BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
             @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
             @Query("fields") fields: String,
-        ): Response<List<T>>
+        ): Response<List<PaperDetailsWithAbstract>>
     }
-
-    interface BulkPaperWithAbstractApi : BulkPaperApiBase<PaperDetailsWithAbstract>
-    interface BulkPaperApi : BulkPaperApiBase<PaperDetails>
-    interface BulkPaperRefsApi : BulkPaperApiBase<PaperRefs>
-
-    suspend fun <T> getBulkPaperDetails(
-        apiClass: Class<out BulkPaperApiBase<T>>,
+    suspend fun getBulkPaperDetailsWithAbstract(
         ids: List<String>,
         fields: String
-    ): List<T?>? {
-        val bulkPaperApi = RetrofitHelper.getInstance().create(apiClass)
+    ): List<PaperDetailsWithAbstract>? {
+        val api = RetrofitHelper.getInstance().create(BulkPaperWithAbstractApi::class.java)
         val map = mapOf("ids" to ids)
-        val result = bulkPaperApi.postRequest(map, fields)
+        val result = api.postRequest(map, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()
@@ -101,6 +99,49 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
     }
+    interface BulkPaperApi : BulkPaperApiBase {
+        @POST("/graph/v1/paper/batch")
+        suspend fun postRequest(
+            @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
+            @Query("fields") fields: String,
+        ): Response<List<PaperDetails>>
+    }
+    suspend fun getBulkPaperDetails(
+        ids: List<String>,
+        fields: String
+    ): List<PaperDetails>? {
+        val api = RetrofitHelper.getInstance().create(BulkPaperApi::class.java)
+        val map = mapOf("ids" to ids)
+        val result = api.postRequest(map, fields)
+        if (result.isSuccessful) {
+            Logger.i(TAG, result.body().toString())
+            return result.body()
+        }
+        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
+        return null
+    }
+    interface BulkPaperRefsApi : BulkPaperApiBase {
+        @POST("/graph/v1/paper/batch")
+        suspend fun postRequest(
+            @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
+            @Query("fields") fields: String,
+        ): Response<List<PaperRefs>>
+    }
+    suspend fun getBulkPaperRefs(
+        ids: List<String>,
+        fields: String
+    ): List<PaperRefs>? {
+        val api = RetrofitHelper.getInstance().create(BulkPaperRefsApi::class.java)
+        val map = mapOf("ids" to ids)
+        val result = api.postRequest(map, fields)
+        if (result.isSuccessful) {
+            Logger.i(TAG, result.body().toString())
+            return result.body()
+        }
+        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
+        return null
+    }
+
 
     suspend fun getPaperDetails(paperId: String, fields: String): PaperDetailsWithAbstract? {
         val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)

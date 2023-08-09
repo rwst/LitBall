@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.RootStore
 import org.reactome.lit_ball.common.Settings
-import org.reactome.lit_ball.dialog.*
+import org.reactome.lit_ball.dialog.NewItemDialog
+import org.reactome.lit_ball.dialog.QuerySettingsDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
 
 @Composable
@@ -70,9 +71,5 @@ fun RootContent(
             scope,
             model::onQuerySettingsCloseClicked,
         )
-    }
-
-    state.doExpand?.also {
-        expandQueryBottomSheet()
     }
 }
