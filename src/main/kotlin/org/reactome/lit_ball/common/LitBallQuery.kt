@@ -1,5 +1,6 @@
 package org.reactome.lit_ball.common
 
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -118,9 +119,10 @@ data class LitBallQuery(
                 doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
                 doiSet.addAll(paperRef?.references?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
             }
+            delay(1000)
         }
         val newDoiSet = doiSet.minus(acceptedSet)
-        println("${newDoiSet.size} new refs received. Writing to expanded...")
+        Logger.i(tag, "${newDoiSet.size} new refs received. Writing to expanded...")
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase()
@@ -132,6 +134,52 @@ data class LitBallQuery(
                 QueryStatus.ANNOTATED
             }
         }
+    }
+
+    suspend fun filter() {
+        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex() }?: emptyList()
+        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex() }?: emptyList()
+        val tag = "FILTER"
+        val queryDir = getQueryDir(name)
+        val paperSet = mutableSetOf<S2Service.PaperDetailsWithAbstract>()
+        if (queryDir.isDirectory && queryDir.canRead()) {
+            val doiSet = getDOIs(queryDir, EXPANDED_NAME)
+            doiSet.chunked(450).forEach {
+                val papers: List<S2Service.PaperDetailsWithAbstract?> = try {
+                    S2client.getBulkPaperDetailsWithAbstract(it)
+                } catch (e: Exception) {
+                    handleException(e)
+                    null
+                } ?: return
+                Logger.i(tag, "Received ${papers.size} records")
+                paperSet.addAll(papers.filterNotNull().filter { paper ->
+                    val textsOfPaper: Set<String> = setOf(
+                            paper.title ?: "",
+                            paper.tldr?.get("text") ?: "",
+                            paper.abstract ?: ""
+                        )
+                    mandatoryKeyWordRegexes.any { regex ->
+                        textsOfPaper.any { text -> regex.containsMatchIn(text) }
+                    } && forbiddenKeyWordRegexes.none { regex ->
+                        textsOfPaper.any { text -> regex.containsMatchIn(text) }
+                    }
+                })
+                Logger.i(tag, "Retained ${paperSet.size} records")
+                delay(1000)
+            }
+        }
+        val json = ConfiguredJson.get()
+        if (queryDir.isDirectory && queryDir.canWrite()) {
+            try {
+                val file = File("${queryDir.absolutePath}/$FILTERED_NAME")
+                val text = paperSet.joinToString("\n") { json.encodeToString(it) }
+                file.writeText(text)
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+        }
+        status = QueryStatus.FILTERED
     }
 
     fun saveSettings() {
@@ -166,9 +214,9 @@ private fun getStatus(dir: File): QueryStatus {
         file.isFile && file.canRead()
     }?.map { it.name } ?: emptyList()
     if (setOf(ACCEPTED_NAME, SETTINGS_NAME).all { it in fileNames }) {
-        if ("expanded" in fileNames)
+        if (EXPANDED_NAME in fileNames)
             return QueryStatus.EXPANDED
-        if ("filtered" in fileNames)
+        if (FILTERED_NAME in fileNames)
             return QueryStatus.FILTERED
         return QueryStatus.ANNOTATED
     }

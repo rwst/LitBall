@@ -49,7 +49,12 @@ internal class RootStore {
     }
 
     private fun onDoFilterStarted(id: Int) {
-        setState { copy(doFilter = id) }
+        setState {
+            scope.launch(Dispatchers.IO) {
+                QueryList.itemFromId(id)?.filter()
+            }
+            copy(doFilter = id)
+        }
     }
 
     fun onDoFilterStopped() {
