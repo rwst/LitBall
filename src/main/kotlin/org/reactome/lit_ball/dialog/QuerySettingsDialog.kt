@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
-import org.reactome.lit_ball.common.QueryStatus
 import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -44,9 +43,6 @@ fun QuerySettingsDialog(
                         .map { it.trim() }
                         .toMutableSet()
                     item.setting!!.classifier = field3Value.value
-                    if (item.setting!!.mandatoryKeyWords.size > 0)
-                        item.status = QueryStatus.ANNOTATED
-                    println(field3Value.value)
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }
