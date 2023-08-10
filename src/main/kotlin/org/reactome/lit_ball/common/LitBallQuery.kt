@@ -137,11 +137,12 @@ data class LitBallQuery(
     }
 
     suspend fun filter() {
-        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex() }?: emptyList()
-        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex() }?: emptyList()
+        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }?: emptyList()
+        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }?: emptyList()
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
-        val paperSet = mutableSetOf<S2Service.PaperDetailsWithAbstract>()
+        val paperList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
+        val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
             val doiSet = getDOIs(queryDir, EXPANDED_NAME)
             doiSet.chunked(450).forEach {
@@ -152,7 +153,7 @@ data class LitBallQuery(
                     null
                 } ?: return
                 Logger.i(tag, "Received ${papers.size} records")
-                paperSet.addAll(papers.filterNotNull().filter { paper ->
+                paperList.addAll(papers.filterNotNull().filter { paper ->
                     val textsOfPaper: Set<String> = setOf(
                             paper.title ?: "",
                             paper.tldr?.get("text") ?: "",
@@ -161,19 +162,33 @@ data class LitBallQuery(
                     mandatoryKeyWordRegexes.any { regex ->
                         textsOfPaper.any { text -> regex.containsMatchIn(text) }
                     } && forbiddenKeyWordRegexes.none { regex ->
-                        textsOfPaper.any { text -> regex.containsMatchIn(text) }
+                        regex.containsMatchIn(paper.title?: "")
                     }
                 })
-                Logger.i(tag, "Retained ${paperSet.size} records")
+                Logger.i(tag, "Retained ${paperList.size} records")
                 delay(1000)
             }
+            val filteredDOIs = paperList.mapNotNull { it.externalIds?.get("DOI") }
+            rejectedDOIs = doiSet.minus(filteredDOIs.toSet())
         }
+        else {
+            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
+            return
+        }
+        sanitize(paperList)
+        Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {
                 val file = File("${queryDir.absolutePath}/$FILTERED_NAME")
-                val text = paperSet.joinToString("\n") { json.encodeToString(it) }
-                file.writeText(text)
+                file.writeText(json.encodeToString(paperList))
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+            val text = rejectedDOIs.joinToString("\n").uppercase()
+            try {
+                File("${queryDir.absolutePath}/$REJECTED_NAME").appendText(text)
             } catch (e: Exception) {
                 handleException(e)
                 return
@@ -196,6 +211,7 @@ data class LitBallQuery(
             }
         }
     }
+
 }
 
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {
@@ -238,4 +254,32 @@ private fun getDOIs(dir: File, fileName: String): MutableSet<String> {
         return doiFile.readLines().map { it.uppercase() }.toMutableSet()
     }
     return mutableSetOf()
+}
+
+@Suppress("SENSELESS_COMPARISON")
+private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
+    val extIds = map?.toMutableMap()
+    extIds?.entries?.forEach {
+        if (it.value == null) {
+            extIds.remove(it.key)
+            onChanged(extIds)
+        }
+    }
+}
+
+private fun sanitize(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+    list.forEachIndexed { index, paper ->
+        val newPaper = paper.copy()
+        var isChanged = false
+        sanitizeMap(paper.externalIds) {
+            newPaper.externalIds = it
+            isChanged = true
+        }
+        sanitizeMap(paper.tldr) {
+            newPaper.tldr = it
+            isChanged = true
+        }
+        if (isChanged)
+            list[index] = newPaper
+    }
 }
