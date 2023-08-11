@@ -230,10 +230,10 @@ private fun getStatus(dir: File): QueryStatus {
         file.isFile && file.canRead()
     }?.map { it.name } ?: emptyList()
     if (setOf(ACCEPTED_NAME, SETTINGS_NAME).all { it in fileNames }) {
-        if (EXPANDED_NAME in fileNames)
-            return QueryStatus.EXPANDED
         if (FILTERED_NAME in fileNames)
             return QueryStatus.FILTERED
+        if (EXPANDED_NAME in fileNames)
+            return QueryStatus.EXPANDED
         return QueryStatus.ANNOTATED
     }
     return QueryStatus.UNINITIALIZED
