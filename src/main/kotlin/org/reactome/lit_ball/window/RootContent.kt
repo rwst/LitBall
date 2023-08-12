@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -23,45 +24,47 @@ import org.reactome.lit_ball.dialog.SettingsDialog
 fun RootContent(
     modifier: Modifier = Modifier,
     onExit: () -> Unit,
+    rootSwitch: MutableState<Boolean>,
 ) {
-    val model = remember { RootStore() }
+    val model = remember { RootStore }
     val state = model.state
     val scope = rememberCoroutineScope()
-    model.scope = scope
+    RootStore.scope = scope
+    RootStore.state = state
+    RootStore.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Info", Icons.Filled.Info, 0, model::buttonInfo),
-        RailItem("Settings", Icons.Filled.Settings, 1, model::buttonSettings),
-        RailItem("Exit", Icons.Filled.ExitToApp, 3, model::buttonExit, onExit)
+        RailItem("Info", Icons.Filled.Info, 0, RootStore::buttonInfo),
+        RailItem("Settings", Icons.Filled.Settings, 1, RootStore::buttonSettings),
+        RailItem("Exit", Icons.Filled.ExitToApp, 3, RootStore::buttonExit, onExit)
     )
 
     MainContent(
         modifier = modifier,
         qItems = state.items,
-        onItemClicked = model::onItemClicked,
-        onNewItemClicked = model::onNewItemClicked,
+        onItemClicked = RootStore::onItemClicked,
         railItems = railItems,
-        onItemSettingsClicked = model::onQuerySettingsClicked,
-        onItemGoClicked = model::nextAction,
+        onNewItemClicked = RootStore::onNewItemClicked,
+        onItemSettingsClicked = RootStore::onQuerySettingsClicked,
+        onItemGoClicked = RootStore::nextAction,
     )
 
     scope.launch(Dispatchers.IO) {
         Settings.load()
         QueryList.fill()
-        (model::onItemsChanged)()
     }
 
     if (state.newItem) {
         NewItemDialog(
             scope,
-            onCloseClicked = model::onNewItemClosed,
+            onCloseClicked = RootStore::onNewItemClosed,
         )
     }
 
     if (state.editingSettings) {
         SettingsDialog(
             scope,
-            onCloseClicked = model::onSettingsCloseClicked
+            onCloseClicked = RootStore::onSettingsCloseClicked
         )
     }
 
@@ -69,7 +72,7 @@ fun RootContent(
         QuerySettingsDialog(
             it,
             scope,
-            model::onQuerySettingsCloseClicked,
+            RootStore::onQuerySettingsCloseClicked,
         )
     }
 }

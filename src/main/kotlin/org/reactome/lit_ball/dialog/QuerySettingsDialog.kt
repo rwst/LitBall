@@ -23,6 +23,8 @@ fun QuerySettingsDialog(
     onCloseClicked: KSuspendFunction0<Unit>,
 ) {
     item.setting = item.setting ?: QuerySetting()
+    println(item.setting!!.mandatoryKeyWords)
+    println(item.setting!!.forbiddenKeyWords)
     val field1Value =
         rememberSaveable { mutableStateOf(item.setting?.mandatoryKeyWords?.joinToString(separator = ", ") ?: "") }
     val field2Value =

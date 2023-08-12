@@ -1,5 +1,6 @@
 package org.reactome.lit_ball.common
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,12 +9,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-internal class RootStore {
+object RootStore {
     var state: RootState by mutableStateOf(initialState())
-        private set
 
     lateinit var scope: CoroutineScope
-    fun buttonInfo() {
+    lateinit var rootSwitch: MutableState<Boolean>
+
+     fun buttonInfo() {
+         refreshList()
     }
 
     fun buttonSettings() {
@@ -23,6 +26,9 @@ internal class RootStore {
     fun buttonExit() {
     }
 
+    fun refreshList() {
+        scope.launch { onItemsChanged() }
+    }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
@@ -62,14 +68,13 @@ internal class RootStore {
     }
 
     private fun onDoAnnotateStarted(id: Int) {
-        setState { copy(doAnnotate = id) }
+        setState {
+            rootSwitch.value = true
+            copy(doAnnotate = id)// TODO: doAnnotate is probably unused
+        }
     }
 
-    fun onDoAnnotateStopped() {
-        setState { copy(doAnnotate = null) }
-    }
-
-    suspend fun onItemsChanged() {
+    private suspend fun onItemsChanged() {
         // TODO: This is a hack.
         setState { copy(items = emptyList()) }
         delay(50)
@@ -105,17 +110,16 @@ internal class RootStore {
     private inline fun setState(update: RootState.() -> RootState) {
         state = state.update()
     }
-
-    data class RootState(
-        val items: List<LitBallQuery> = QueryList.list,
-        val activeRailItem: String = "",
-        val newItem: Boolean = false,
-        val editingItemId: Int? = null,
-        val editingSettings: Boolean = false,
-        val editingQuerySettings: LitBallQuery? = null, // TODO: refactor this to Int?
-        val doExpand: Int? = null,
-        val doFilter: Int? = null,
-        val doAnnotate: Int? = null,
-    )
 }
 
+data class RootState(
+    val items: List<LitBallQuery> = QueryList.list,
+    val activeRailItem: String = "",
+    val newItem: Boolean = false,
+    val editingItemId: Int? = null,
+    val editingSettings: Boolean = false,
+    val editingQuerySettings: LitBallQuery? = null, // TODO: refactor this to Int?
+    val doExpand: Int? = null,
+    val doFilter: Int? = null,
+    val doAnnotate: Int? = null,
+)

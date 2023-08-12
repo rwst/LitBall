@@ -1,6 +1,7 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -38,7 +39,10 @@ object QueryList {
                 )
             }
         }
-        print(list)
+        runBlocking {
+            delay(200)
+            RootStore.refreshList()
+        }
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
@@ -139,6 +143,9 @@ data class LitBallQuery(
     suspend fun filter() {
         val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }?: emptyList()
         val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }?: emptyList()
+        println(mandatoryKeyWordRegexes.toString())
+        println(forbiddenKeyWordRegexes.toString())
+//        exitProcess(0)
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
         val paperList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
@@ -195,6 +202,18 @@ data class LitBallQuery(
             }
         }
         status = QueryStatus.FILTERED
+    }
+
+    fun annotate() {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canRead()) {
+            try {
+                val file = File("${queryDir.absolutePath}/$FILTERED_NAME")
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+        }
     }
 
     fun saveSettings() {
