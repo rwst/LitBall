@@ -28,8 +28,15 @@ fun Rail(
                     item.onClicked.invoke()
                     item.extraAction?.invoke()
                 },
-                icon = { Icon(item.icon, null) },
-                label = { Text(item.text) },
+                icon = {
+                    Icon(
+                        item.icon,
+                        null,
+                    ) },
+                label = {
+                    Text(item.text,
+                        modifier = Modifier.padding(vertical = 6.dp)
+                    ) },
                 selected = selectedItem == item.actionIndex
             )
         }

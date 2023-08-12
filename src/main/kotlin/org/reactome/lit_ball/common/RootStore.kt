@@ -16,7 +16,6 @@ object RootStore {
     lateinit var rootSwitch: MutableState<Boolean>
 
      fun buttonInfo() {
-         refreshList()
     }
 
     fun buttonSettings() {

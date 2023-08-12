@@ -11,11 +11,6 @@ internal class AnnotatingRootStore {
         private set
 
     lateinit var rootSwitch: MutableState<Boolean>
-    val onRailItemClicked: List<() -> Unit> = listOf(
-        ::buttonExport,
-        ::buttonSave,
-        ::buttonExit
-    )
 
     fun buttonExport() {
         setState { copy(doExport = true) }

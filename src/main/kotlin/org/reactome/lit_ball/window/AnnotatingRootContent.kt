@@ -30,7 +30,7 @@ fun AnnotatingRootContent(
     val railItems: List<RailItem> = listOf(
         RailItem("Save", Icons.Filled.Save, 0, model::buttonSave),
         RailItem("Export", Icons.Filled.Publish, 1, model::buttonExport),
-        RailItem("Back", Icons.Filled.ArrowLeft, 2, model::onDoAnnotateStopped),
+        RailItem("Main", Icons.Filled.ExitToApp, 2, model::onDoAnnotateStopped),
         RailItem("Exit", Icons.Filled.ExitToApp, 3, model::buttonExit, onExit)
     )
 
