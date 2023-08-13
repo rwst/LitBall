@@ -12,11 +12,13 @@ import java.nio.file.Files
 
 enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
 
-private const val ACCEPTED_NAME = "accepted.txt"
-private const val REJECTED_NAME = "rejected.txt"
-private const val EXPANDED_NAME = "expanded.txt"
-private const val FILTERED_NAME = "filtered.txt"
-private const val SETTINGS_NAME = "settings.json"
+enum class FileType(val fileName: String) {
+    ACCEPTED("accepted.txt"),
+    REJECTED("rejected.txt"),
+    EXPANDED("expanded.txt"),
+    FILTERED("filtered.txt"),
+    SETTINGS("settings.json");
+}
 
 @Serializable
 object QueryList {
@@ -34,8 +36,8 @@ object QueryList {
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
                     setting = getSetting(it),
-                    acceptedSet = getDOIs(it, ACCEPTED_NAME),
-                    rejectedSet = getDOIs(it, REJECTED_NAME),
+                    acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName),
+                    rejectedSet = getDOIs(it, FileType.REJECTED.fileName),
                 )
             }
         }
@@ -59,7 +61,7 @@ object QueryList {
             return
         }
         try {
-            File("${queryDir.absolutePath}/$ACCEPTED_NAME").writeText(dois.joinToString("\n"))
+            File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}").writeText(dois.joinToString("\n"))
         } catch (e: Exception) {
             handleException(e)
             return
@@ -131,7 +133,7 @@ data class LitBallQuery(
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase()
             status = try {
-                File("${queryDir.absolutePath}/$EXPANDED_NAME").writeText(text)
+                File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").writeText(text)
                 QueryStatus.EXPANDED
             } catch (e: Exception) {
                 handleException(e)
@@ -151,7 +153,7 @@ data class LitBallQuery(
         val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
         val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
-            val doiSet = getDOIs(queryDir, EXPANDED_NAME)
+            val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName)
             doiSet.chunked(450).forEach {
                 val papers: List<S2Service.PaperDetailsWithAbstract?> = try {
                     S2client.getBulkPaperDetailsWithAbstract(it)
@@ -187,7 +189,7 @@ data class LitBallQuery(
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {
-                val file = File("${queryDir.absolutePath}/$FILTERED_NAME")
+                val file = File("${queryDir.absolutePath}/${FileType.FILTERED.fileName}")
                 file.writeText(json.encodeToString(
                     paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd) })
                 )
@@ -197,7 +199,7 @@ data class LitBallQuery(
             }
             val text = rejectedDOIs.joinToString("\n").uppercase()
             try {
-                File("${queryDir.absolutePath}/$REJECTED_NAME").appendText(text)
+                File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
             } catch (e: Exception) {
                 handleException(e)
                 return
@@ -212,7 +214,7 @@ data class LitBallQuery(
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
             try {
-                file = File("${queryDir.absolutePath}/$FILTERED_NAME")
+                file = File("${queryDir.absolutePath}/${FileType.FILTERED.fileName}")
             } catch (e: Exception) {
                 handleException(e)
                 return
@@ -233,13 +235,13 @@ data class LitBallQuery(
             println(setting.toString())
             println(text)
             try {
-                File("${queryDir.absolutePath}/$SETTINGS_NAME").writeText(text)
+                File("${queryDir.absolutePath}/${FileType.SETTINGS.fileName}").writeText(text)
+
             } catch (e: Exception) {
                 handleException(e)
             }
         }
     }
-
 }
 
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {
@@ -257,10 +259,10 @@ private fun getStatus(dir: File): QueryStatus {
     val fileNames = dir.listFiles { file ->
         file.isFile && file.canRead()
     }?.map { it.name } ?: emptyList()
-    if (setOf(ACCEPTED_NAME, SETTINGS_NAME).all { it in fileNames }) {
-        if (FILTERED_NAME in fileNames)
+    if (setOf(FileType.ACCEPTED.fileName, FileType.SETTINGS.fileName).all { it in fileNames }) {
+        if (FileType.FILTERED.fileName in fileNames)
             return QueryStatus.FILTERED
-        if (EXPANDED_NAME in fileNames)
+        if (FileType.EXPANDED.fileName in fileNames)
             return QueryStatus.EXPANDED
         return QueryStatus.ANNOTATED
     }
@@ -268,7 +270,7 @@ private fun getStatus(dir: File): QueryStatus {
 }
 
 private fun getSetting(dir: File): QuerySetting? {
-    val filePath = dir.absolutePath + "/" + SETTINGS_NAME
+    val filePath = dir.absolutePath + "/" + FileType.SETTINGS.fileName
     val settingsFile = File(filePath)
     if (settingsFile.exists() && settingsFile.isFile && settingsFile.canRead())
         return QuerySetting.fromFile(settingsFile)
