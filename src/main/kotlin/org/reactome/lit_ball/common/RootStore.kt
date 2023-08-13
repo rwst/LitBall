@@ -15,7 +15,7 @@ object RootStore {
     lateinit var rootSwitch: MutableState<Boolean>
 
      fun buttonInfo() {
-    }
+     }
 
     fun buttonSettings() {
         setState { copy(editingSettings = true) }
@@ -49,7 +49,7 @@ object RootStore {
     }
 
     fun onDoExpandStopped() {
-        setState { copy(doExpand = null) }
+        setState { copy(doExpand = null, items = QueryList.list.toList()) }
     }
 
     private fun onDoFilterStarted(id: Int) {
@@ -62,7 +62,7 @@ object RootStore {
     }
 
     fun onDoFilterStopped() {
-        setState { copy(doFilter = null) }
+        setState { copy(doFilter = null, items = QueryList.list.toList()) }
     }
 
     private fun onDoAnnotateStarted(id: Int) {

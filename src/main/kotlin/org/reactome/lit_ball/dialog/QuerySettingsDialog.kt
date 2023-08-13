@@ -39,9 +39,11 @@ fun QuerySettingsDialog(
                 onClick = {
                     item.setting!!.mandatoryKeyWords = field1Value.value.split(",")
                         .map { it.trim() }
+                        .filter { it.isNotEmpty() }
                         .toMutableSet()
                     item.setting!!.forbiddenKeyWords = field2Value.value.split(",")
                         .map { it.trim() }
+                        .filter { it.isNotEmpty() }
                         .toMutableSet()
                     item.setting!!.classifier = field3Value.value
                     rootScope.launch(Dispatchers.IO) {

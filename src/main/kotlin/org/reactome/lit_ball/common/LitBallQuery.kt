@@ -20,6 +20,9 @@ enum class FileType(val fileName: String) {
     SETTINGS("settings.json");
 }
 
+const val CHUNK_SIZE = 20
+const val QUERY_DELAY = 5000L
+
 @Serializable
 object QueryList {
     var list: List<LitBallQuery> = listOf()
@@ -111,7 +114,7 @@ data class LitBallQuery(
     suspend fun expand() {
         val tag = "EXPAND"
         val doiSet = mutableSetOf<String>()
-        acceptedSet.chunked(450).forEach {
+        acceptedSet.chunked(CHUNK_SIZE).forEach {
             val refs: List<S2Service.PaperRefs?> = try {
                 S2client.getRefs(it)
             } catch (e: Exception) {
@@ -123,7 +126,7 @@ data class LitBallQuery(
                 doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
                 doiSet.addAll(paperRef?.references?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
             }
-            delay(1000)
+            delay(QUERY_DELAY)
         }
         val newDoiSet = doiSet.minus(acceptedSet)
         Logger.i(tag, "${newDoiSet.size} new refs received. Writing to expanded...")
@@ -137,22 +140,22 @@ data class LitBallQuery(
                 handleException(e)
                 QueryStatus.ANNOTATED
             }
+            RootStore.onDoExpandStopped()
         }
     }
 
     suspend fun filter() {
-        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }?: emptyList()
-        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }?: emptyList()
-        println(mandatoryKeyWordRegexes.toString())
-        println(forbiddenKeyWordRegexes.toString())
-//        exitProcess(0)
+        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.filter { it.isNotEmpty() }?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
+            ?: emptyList()
+        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.filter { it.isNotEmpty() }?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
+            ?: emptyList()
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
         val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName)
-            doiSet.chunked(450).forEach {
+            doiSet.chunked(CHUNK_SIZE).forEach {
                 val papers: List<S2Service.PaperDetailsWithAbstract?> = try {
                     S2client.getBulkPaperDetailsWithAbstract(it)
                 } catch (e: Exception) {
@@ -166,14 +169,16 @@ data class LitBallQuery(
                             paper.tldr?.get("text") ?: "",
                             paper.abstract ?: ""
                         )
-                    mandatoryKeyWordRegexes.any { regex ->
-                        textsOfPaper.any { text -> regex.containsMatchIn(text) }
-                    } && forbiddenKeyWordRegexes.none { regex ->
-                        regex.containsMatchIn(paper.title?: "")
+                    val bool = mandatoryKeyWordRegexes.any { regex1 ->
+                        textsOfPaper.any { text ->
+                            regex1.containsMatchIn(text) }
+                    } && forbiddenKeyWordRegexes.none { regex2 ->
+                        regex2.containsMatchIn(paper.title?: "")
                     }
+                    bool
                 })
                 Logger.i(tag, "Retained ${paperDetailsList.size} records")
-                delay(1000)
+                delay(QUERY_DELAY)
             }
             val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI") }
             rejectedDOIs = doiSet.minus(filteredDOIs.toSet())
@@ -205,6 +210,7 @@ data class LitBallQuery(
         }
         File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
         status = QueryStatus.FILTERED
+        RootStore.onDoFilterStopped()
     }
 
     fun annotate() {
