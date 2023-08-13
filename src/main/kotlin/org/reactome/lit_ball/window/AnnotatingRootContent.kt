@@ -29,7 +29,7 @@ fun AnnotatingRootContent(
 
     val railItems: List<RailItem> = listOf(
         RailItem("Save", Icons.Filled.Save, 0, model::buttonSave),
-        RailItem("Export", Icons.Filled.Publish, 1, model::buttonExport),
+        RailItem("Finish", Icons.Filled.Publish, 1, model::buttonExport),
         RailItem("Main", Icons.Filled.ExitToApp, 2, model::onDoAnnotateStopped),
         RailItem("Exit", Icons.Filled.ExitToApp, 3, model::buttonExit, onExit)
     )
@@ -60,20 +60,15 @@ fun AnnotatingRootContent(
     }
 
     if (state.doExport) {
-        PopupActionDialog(
-            PaperList.exportLabels,
-            onResult = {
-                scope.launch(Dispatchers.IO) {
-                    PaperList.exportFuncs[it]()
-                }
-            },
-            onDoneChanged = model::onExportDoneChanged,
-        )
+        scope.launch(Dispatchers.IO) {
+            PaperList.export()
+            (model::onExportDoneChanged)()
+        }
     }
     if (state.doSave) {
         scope.launch(Dispatchers.IO) {
-            (model::onSaveDoneChanged)()
             PaperList.save()
+            (model::onSaveDoneChanged)()
         }
     }
 }

@@ -6,10 +6,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.util.ConfiguredJson
+import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.util.*
 import kotlin.math.min
-import kotlin.reflect.KFunction3
 
 object PaperList {
     var list: MutableList<Paper> = mutableListOf()
@@ -126,43 +126,22 @@ object PaperList {
         File(pathStr).writeText(text)
     }
 
-    val exportFuncs: List<() -> Unit> = listOf(
-        { export(processFun = ::chooseAccepted) },
-    )
-    val exportLabels = listOf(
-        "Export papers with EXP tag",
-        "Export preprocessed",
-        "Export flag-specific CSV"
-    )
-
-    private fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseAccepted) {
-        path ?: return
-        val distinctPapers: MutableMap<String, Paper> = mutableMapOf()
-
-        list.forEach {
-            val doi = it.details.externalIds?.get("DOI") ?: return@forEach
-            val alreadyFound = distinctPapers[doi]
-            if (alreadyFound == null) {
-                distinctPapers[doi] = it
-            } else {
-                if (alreadyFound.tag != it.tag) {
-                    println("$doi: ${it.details.title}")
+    fun export() {
+        val acceptedPath = path?.substringBeforeLast("/") + "/" + FileType.ACCEPTED.fileName
+        try {
+            list.filter { it.tag == Tag.Accepted }.forEach {
+                it.details.externalIds?.get("DOI")?.also { doi ->
+                    File(acceptedPath).appendText("${doi.uppercase()}\n")
                 }
             }
         }
-        distinctPapers.forEach { (id, paper) ->
-            processFun(paper, id, path as String)
+        catch (e: Exception) {
+            handleException(e)
+            return
         }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun chooseAccepted(paper: Paper, id: String, path: String) {
-        val json = ConfiguredJson.get()
-        if (paper.tag == Tag.Accepted) {
-            json.encodeToString(paper).also { jString ->
-                File("$path-EXP").appendText("$jString,\n")
-            }
-        }
+        path?.let { File(it).delete() }
+        RootStore.setAnnotated()
+        AnnotatingRootStore.switchRoot()
     }
 
     fun import(files: List<File>): PaperList {

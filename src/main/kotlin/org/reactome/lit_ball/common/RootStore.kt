@@ -69,10 +69,13 @@ object RootStore {
     private fun onDoAnnotateStarted(id: Int) {
         setState {
             rootSwitch.value = true
-            copy(doAnnotate = id)// TODO: doAnnotate is probably unused
+            copy(doAnnotate = id)
         }
     }
 
+    fun setAnnotated() {
+        QueryList.itemFromId(state.doAnnotate)?.let { it.status = QueryStatus.ANNOTATED }
+    }
     private suspend fun onItemsChanged() {
         // TODO: This is a hack.
         setState { copy(items = emptyList()) }

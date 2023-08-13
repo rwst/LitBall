@@ -4,9 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 object AnnotatingRootStore {
     var state: AnnotatingRootState by mutableStateOf(initialState())
@@ -26,6 +24,9 @@ object AnnotatingRootStore {
     }
 
     fun buttonExit() {
+        runBlocking {
+            PaperList.save()
+        }
     }
 
     fun onTagsButtonClicked() {
@@ -67,7 +68,7 @@ object AnnotatingRootStore {
         setState { copy(doSave = false) }
     }
 
-    suspend fun onItemsChanged() {
+    private suspend fun onItemsChanged() {
         // TODO: This is a hack.
         setState { copy(items = emptyList()) }
         delay(50)
@@ -75,9 +76,16 @@ object AnnotatingRootStore {
     }
 
     fun onDoAnnotateStopped() {
+        runBlocking {
+            PaperList.save()
+        }
+        switchRoot()
+    }
+
+    fun switchRoot() {
         rootSwitch.value = false
         (RootStore::refreshList)()
-    }
+}
 
 //    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
 //        copy(items = items.updateItem(id = id, transformer = transformer))

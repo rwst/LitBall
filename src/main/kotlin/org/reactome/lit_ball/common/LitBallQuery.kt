@@ -61,7 +61,7 @@ object QueryList {
             return
         }
         try {
-            File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}").writeText(dois.joinToString("\n"))
+            File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}").writeText(dois.joinToString("\n") + "\n")
         } catch (e: Exception) {
             handleException(e)
             return
@@ -205,6 +205,7 @@ data class LitBallQuery(
                 return
             }
         }
+        File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
         status = QueryStatus.FILTERED
     }
 
@@ -222,8 +223,12 @@ data class LitBallQuery(
             PaperList.readFromFile(file)
             runBlocking {
                 delay(200)
-                RootStore.refreshList()
+                AnnotatingRootStore.refreshList()
             }
+        }
+        else {
+            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
+            return
         }
     }
 
