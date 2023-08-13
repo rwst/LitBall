@@ -1,16 +1,18 @@
 package org.reactome.lit_ball.common
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import org.reactome.lit_ball.util.ConfiguredJson
 import java.io.File
 import java.util.*
 import kotlin.math.min
 import kotlin.reflect.KFunction3
 
 object PaperList {
-    private var list: MutableList<Paper> = mutableListOf()
+    var list: MutableList<Paper> = mutableListOf()
     private var path: String? = null
     var fileName: String = ""
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
@@ -22,7 +24,7 @@ object PaperList {
             return field
         }
 
-fun toList(): List<Paper> {
+    fun toList(): List<Paper> {
         return list.toList()
     }
 
@@ -95,64 +97,45 @@ fun toList(): List<Paper> {
         return this
     }
 
-    fun open(files: List<File>): PaperList {
-        Settings.map["list-path"] = files.first().absolutePath.substringBeforeLast('/')
-        Settings.save()
-        files.forEach {file ->
-            readFromFile(file)
-        }
-
-        when {
-            files.size > 1 -> {
-                path = "${path?.substringBeforeLast('/')}/Untitled"
-                fileName = "/Untitled"
-            }
-
-            files.size == 1 -> {
-                path = files.first().absolutePath
-                fileName = files.first().name
-            }
-        }
-
-        list.sortBy { it.details.title }
-        list.forEachIndexed { index, paper -> paper.id = index }
-        updateShadowMap()
-        return this
-    }
-
     @OptIn(ExperimentalSerializationApi::class)
-    private fun readFromFile(file: File) {
+    fun readFromFile(file: File) {
+        val json = ConfiguredJson.get()
         if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
 
         if (path == null) path = file.absolutePath
         val f = File(file.absolutePath)
 
         if (f.exists()) {
-            val papers = Json.decodeFromStream<MutableList<Paper>>(f.inputStream())
-            if (list.isEmpty()) {
-                list = papers
-            } else {
-                list.addAll(papers)
-            }
+            val papers = json.decodeFromStream<List<Paper>>(f.inputStream())
+            list = papers.toMutableList()
         } else {
             throw Exception("File to open: $fileName does not exist")
         }
+        runBlocking {
+            updateShadowMap()
+            delay(200)
+            AnnotatingRootStore.refreshList()
+        }
     }
+
     fun save() {
+        val json = ConfiguredJson.get()
         if (path == null) return
         val pathStr: String = path as String
-        val text = Json.encodeToString(list)
+        val text = json.encodeToString(list)
         File(pathStr).writeText(text)
     }
 
     val exportFuncs: List<() -> Unit> = listOf(
-        { export(processFun = ::chooseEXP) },
+        { export(processFun = ::chooseAccepted) },
     )
     val exportLabels = listOf(
         "Export papers with EXP tag",
         "Export preprocessed",
-        "Export flag-specific CSV")
-    private fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseEXP) {
+        "Export flag-specific CSV"
+    )
+
+    private fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseAccepted) {
         path ?: return
         val distinctPapers: MutableMap<String, Paper> = mutableMapOf()
 
@@ -171,16 +154,18 @@ fun toList(): List<Paper> {
             processFun(paper, id, path as String)
         }
     }
+
     @Suppress("UNUSED_PARAMETER")
-    private fun chooseEXP(paper: Paper, id: String, path: String) {
-        if (paper.tag == Tag.Exp) {
-            Json.encodeToString(paper).also { json ->
-                File("$path-EXP").appendText("$json,\n")
+    private fun chooseAccepted(paper: Paper, id: String, path: String) {
+        val json = ConfiguredJson.get()
+        if (paper.tag == Tag.Accepted) {
+            json.encodeToString(paper).also { jString ->
+                File("$path-EXP").appendText("$jString,\n")
             }
         }
     }
 
-    suspend fun import(files: List<File>): PaperList {
+    fun import(files: List<File>): PaperList {
         files.forEach { file ->
             setImportPath(file)
             if (file.isDirectory) return this
@@ -193,6 +178,7 @@ fun toList(): List<Paper> {
 
         return this
     }
+
     private fun setImportPath(file: File) {
         val importPath =
             if (file.isDirectory)
@@ -202,6 +188,7 @@ fun toList(): List<Paper> {
         Settings.map["import-path"] = importPath
         Settings.save()
     }
+
     private fun prepareLines(file: File): List<String> {
         return file.readLines()
             .filter { it.isNotBlank() }
@@ -213,7 +200,8 @@ fun toList(): List<Paper> {
             .toSet()
             .toList()
     }
-    private suspend fun processLines(lines: List<String>): MutableSet<String> {
+
+    private fun processLines(lines: List<String>): MutableSet<String> {
         val doisRequested = lines.toMutableSet()
         val chunkSize = 450
         // TODO: use List.chunk()
@@ -234,21 +222,18 @@ fun toList(): List<Paper> {
 
         return doisRequested
     }
+
     private fun writeDoisIfNotEmpty(path: String, doisRequested: MutableSet<String>) {
         if (doisRequested.isNotEmpty())
             File("$path-DOIs-not-found").writeText(doisRequested.toString())
     }
 
     fun setTag(id: Int, btn: Int) {
-        val newTag = Tag.values()[btn]
+        val newTag = Tag.entries[btn]
         updateItem(id) {
             it.tag = newTag
             return@updateItem it
         }
-    }
-
-    fun setAllTags(tag: Tag) {
-        list.forEach { it.tag = tag }
     }
 
     fun setFlag(id: Int, flagNo: Int, value: Boolean) {

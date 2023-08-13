@@ -148,7 +148,7 @@ data class LitBallQuery(
 //        exitProcess(0)
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
-        val paperList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
+        val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
         val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
             val doiSet = getDOIs(queryDir, EXPANDED_NAME)
@@ -160,7 +160,7 @@ data class LitBallQuery(
                     null
                 } ?: return
                 Logger.i(tag, "Received ${papers.size} records")
-                paperList.addAll(papers.filterNotNull().filter { paper ->
+                paperDetailsList.addAll(papers.filterNotNull().filter { paper ->
                     val textsOfPaper: Set<String> = setOf(
                             paper.title ?: "",
                             paper.tldr?.get("text") ?: "",
@@ -172,23 +172,25 @@ data class LitBallQuery(
                         regex.containsMatchIn(paper.title?: "")
                     }
                 })
-                Logger.i(tag, "Retained ${paperList.size} records")
+                Logger.i(tag, "Retained ${paperDetailsList.size} records")
                 delay(1000)
             }
-            val filteredDOIs = paperList.mapNotNull { it.externalIds?.get("DOI") }
+            val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI") }
             rejectedDOIs = doiSet.minus(filteredDOIs.toSet())
         }
         else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return
         }
-        sanitize(paperList)
+        sanitize(paperDetailsList)
         Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {
                 val file = File("${queryDir.absolutePath}/$FILTERED_NAME")
-                file.writeText(json.encodeToString(paperList))
+                file.writeText(json.encodeToString(
+                    paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd) })
+                )
             } catch (e: Exception) {
                 handleException(e)
                 return
@@ -205,13 +207,20 @@ data class LitBallQuery(
     }
 
     fun annotate() {
+        if (PaperList.list.isNotEmpty()) return
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
+            val file: File
             try {
-                val file = File("${queryDir.absolutePath}/$FILTERED_NAME")
+                file = File("${queryDir.absolutePath}/$FILTERED_NAME")
             } catch (e: Exception) {
                 handleException(e)
                 return
+            }
+            PaperList.readFromFile(file)
+            runBlocking {
+                delay(200)
+                RootStore.refreshList()
             }
         }
     }

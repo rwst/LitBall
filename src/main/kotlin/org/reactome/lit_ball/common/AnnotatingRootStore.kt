@@ -4,14 +4,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-internal class AnnotatingRootStore {
-    var state: RootState by mutableStateOf(initialState())
-        private set
+object AnnotatingRootStore {
+    var state: AnnotatingRootState by mutableStateOf(initialState())
 
+    lateinit var scope: CoroutineScope
     lateinit var rootSwitch: MutableState<Boolean>
 
+    fun refreshList() {
+        scope.launch { onItemsChanged() }
+    }
     fun buttonExport() {
         setState { copy(doExport = true) }
     }
@@ -77,27 +82,26 @@ internal class AnnotatingRootStore {
 //    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
 //        copy(items = items.updateItem(id = id, transformer = transformer))
 
-    private fun initialState(): RootState = RootState()
+    private fun initialState(): AnnotatingRootState = AnnotatingRootState()
 
-    private inline fun setState(update: RootState.() -> RootState) {
+    private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
         state = state.update()
     }
-
-    data class RootState(
-        val items: List<Paper> = PaperList.toList(),
-        val settings: Settings = Settings,
-        val activeRailItem: String = "",
-        val editingItemId: Int? = null,
-        val editingSettings: Boolean = false,
-        val infoList: Boolean = false,
-        val newList: Boolean = false,
-        val openList: Boolean = false,
-        val doImport: Boolean = false,
-        val doExport: Boolean = false,
-        val doSave: Boolean = false,
-        val editTags: Boolean = false,
-        val enrichItems: Boolean = false,
-        val itemFlags: Boolean = false,
-    )
 }
 
+data class AnnotatingRootState(
+    val items: List<Paper> = PaperList.toList(),
+    val settings: Settings = Settings,
+    val activeRailItem: String = "",
+    val editingItemId: Int? = null,
+    val editingSettings: Boolean = false,
+    val infoList: Boolean = false,
+    val newList: Boolean = false,
+    val openList: Boolean = false,
+    val doImport: Boolean = false,
+    val doExport: Boolean = false,
+    val doSave: Boolean = false,
+    val editTags: Boolean = false,
+    val enrichItems: Boolean = false,
+    val itemFlags: Boolean = false,
+)

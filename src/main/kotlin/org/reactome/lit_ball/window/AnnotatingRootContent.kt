@@ -11,9 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.AnnotatingRootStore
-import org.reactome.lit_ball.common.PaperList
-import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.*
 
 @Composable
@@ -22,9 +20,11 @@ fun AnnotatingRootContent(
     onExit: () -> Unit,
     rootSwitch: MutableState<Boolean>,
 ) {
-    val model = remember { AnnotatingRootStore() }
+    val model = remember { AnnotatingRootStore }
     val state = model.state
     val scope = rememberCoroutineScope()
+    AnnotatingRootStore.scope = scope
+    AnnotatingRootStore.state = state
     model.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
@@ -49,7 +49,7 @@ fun AnnotatingRootContent(
     )
 
     scope.launch(Dispatchers.IO) {
-        Settings.load()
+        RootStore.state.doAnnotate?.let { RootStore.state.items[it].annotate() }
     }
 
     state.editingItemId?.also { item ->
