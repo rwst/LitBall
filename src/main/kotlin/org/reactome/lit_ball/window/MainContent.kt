@@ -70,7 +70,7 @@ private fun ListContent(
             lazyListState
         ) {
             items(
-                key = { it.id },
+                key = { it.hashCode() },
                 items = items,
             ) { item ->
                 QueryCard(

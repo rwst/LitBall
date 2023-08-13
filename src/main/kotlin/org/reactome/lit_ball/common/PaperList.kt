@@ -127,20 +127,25 @@ object PaperList {
     }
 
     fun export() {
-        val acceptedPath = path?.substringBeforeLast("/") + "/" + FileType.ACCEPTED.fileName
-        try {
-            list.filter { it.tag == Tag.Accepted }.forEach {
-                it.details.externalIds?.get("DOI")?.also { doi ->
-                    File(acceptedPath).appendText("${doi.uppercase()}\n")
+        val pathPrefix = path?.substringBeforeLast("/")
+        fun writeToPath(tag: Tag, fileType: FileType) {
+            val path = "$pathPrefix/${fileType.fileName}"
+            list.filter { it.tag == tag }.forEach { item ->
+                item.details.externalIds?.get("DOI")?.uppercase()?.let { uppercaseDOI ->
+                    File(path).appendText("$uppercaseDOI\n")
                 }
             }
+        }
+        try {
+            writeToPath(Tag.Accepted, FileType.ACCEPTED)
+            writeToPath(Tag.Rejected, FileType.REJECTED)
         }
         catch (e: Exception) {
             handleException(e)
             return
         }
         path?.let { File(it).delete() }
-        RootStore.setAnnotated()
+        RootStore.setAnnotated(RootStore.state.doAnnotate)
         AnnotatingRootStore.switchRoot()
     }
 

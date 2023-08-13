@@ -22,7 +22,7 @@ enum class FileType(val fileName: String) {
 
 @Serializable
 object QueryList {
-    var list: MutableList<LitBallQuery> = mutableListOf()
+    var list: List<LitBallQuery> = listOf()
 
     fun fill() {
         if (list.isNotEmpty()) return
@@ -41,10 +41,7 @@ object QueryList {
                 )
             }
         }
-        runBlocking {
-            delay(200)
-            RootStore.refreshList()
-        }
+        RootStore.setItems(list)
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
@@ -67,13 +64,14 @@ object QueryList {
             return
         }
         val maxId: Int = list.maxOf { it.id }
-        list.add(
+        list = list.plus(
             LitBallQuery(
                 id = maxId + 1,
                 name = name,
                 acceptedSet = dois.toMutableSet()
             )
         )
+        RootStore.setItems(list)
     }
 }
 
@@ -197,7 +195,7 @@ data class LitBallQuery(
                 handleException(e)
                 return
             }
-            val text = rejectedDOIs.joinToString("\n").uppercase()
+            val text = rejectedDOIs.joinToString("\n")
             try {
                 File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
             } catch (e: Exception) {
@@ -241,7 +239,6 @@ data class LitBallQuery(
             println(text)
             try {
                 File("${queryDir.absolutePath}/${FileType.SETTINGS.fileName}").writeText(text)
-
             } catch (e: Exception) {
                 handleException(e)
             }

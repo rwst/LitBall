@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object RootStore {
@@ -26,7 +25,7 @@ object RootStore {
     }
 
     fun refreshList() {
-        scope.launch { onItemsChanged() }
+//        scope.launch { onItemsChanged() }
     }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
@@ -73,14 +72,8 @@ object RootStore {
         }
     }
 
-    fun setAnnotated() {
-        QueryList.itemFromId(state.doAnnotate)?.let { it.status = QueryStatus.ANNOTATED }
-    }
-    private suspend fun onItemsChanged() {
-        // TODO: This is a hack.
-        setState { copy(items = emptyList()) }
-        delay(50)
-        setState { copy(items = QueryList.list) }
+    fun setAnnotated(id: Int?) {
+        QueryList.itemFromId(id)?.let { it.status = QueryStatus.ANNOTATED }
     }
 
     fun nextAction(status: QueryStatus, id: Int) {
@@ -96,14 +89,17 @@ object RootStore {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
-    suspend fun onQuerySettingsCloseClicked() {
-        setState { copy(items = emptyList()) }
-        delay(50)
-        setState { copy(editingQuerySettings = null, items = QueryList.list) }
+    fun onQuerySettingsCloseClicked() {
+        setAnnotated(state.editingQuerySettings?.id)
+        setState { copy(editingQuerySettings = null, items = QueryList.list.toList()) }
     }
 
     fun onSettingsCloseClicked() {
         setState { copy(editingSettings = false) }
+    }
+
+    fun setItems(items: List<LitBallQuery>) {
+        setState { copy(items = items) }
     }
 
     private fun initialState(): RootState =

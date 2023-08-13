@@ -13,14 +13,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
-import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun QuerySettingsDialog(
     item: LitBallQuery,
     rootScope: CoroutineScope,
-    onCloseClicked: KSuspendFunction0<Unit>,
+    onCloseClicked: () -> Unit,
 ) {
     item.setting = item.setting ?: QuerySetting()
     println(item.setting!!.mandatoryKeyWords)
