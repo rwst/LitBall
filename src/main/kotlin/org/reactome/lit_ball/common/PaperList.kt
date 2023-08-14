@@ -12,9 +12,10 @@ import java.util.*
 import kotlin.math.min
 
 object PaperList {
-    var list: MutableList<Paper> = mutableListOf()
+    var list: List<Paper> = listOf()
     private var path: String? = null
     var fileName: String = ""
+    var query: LitBallQuery? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     var flagList: List<String>? = null
         get() {
@@ -43,7 +44,9 @@ object PaperList {
 
     private fun updateItem(id: Int, transformer: (Paper) -> Paper): PaperList {
         val index = shadowMap[id] ?: return this
-        list[index] = transformer(list[index])
+        list = list.toMutableList().apply {
+            this[index] = transformer(list[index])
+        }.toList()
         return this
     }
 
@@ -71,7 +74,9 @@ object PaperList {
                 isChanged = true
             }
             if (isChanged)
-                list[index] = newPaper
+                list = list.toMutableList().apply {
+                    this[index] = newPaper
+                }.toList()
         }
     }
 
@@ -104,10 +109,11 @@ object PaperList {
 
         if (path == null) path = file.absolutePath
         val f = File(file.absolutePath)
+        println(path)
 
         if (f.exists()) {
             val papers = json.decodeFromStream<List<Paper>>(f.inputStream())
-            list = papers.toMutableList()
+            list = papers
         } else {
             throw Exception("File to open: $fileName does not exist")
         }

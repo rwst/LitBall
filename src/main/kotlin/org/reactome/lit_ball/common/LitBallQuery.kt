@@ -1,7 +1,6 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -20,7 +19,8 @@ enum class FileType(val fileName: String) {
     SETTINGS("settings.json");
 }
 
-const val CHUNK_SIZE = 20
+const val EXPAND_CHUNK_SIZE = 20
+const val FILTER_CHUNK_SIZE = 30
 const val QUERY_DELAY = 5000L
 
 @Serializable
@@ -118,13 +118,22 @@ data class LitBallQuery(
     suspend fun expand() {
         val tag = "EXPAND"
         val doiSet = mutableSetOf<String>()
-        acceptedSet.chunked(CHUNK_SIZE).forEach {
-            val refs: List<S2Service.PaperRefs?> = try {
-                S2client.getRefs(it)
-            } catch (e: Exception) {
-                handleException(e)
-                null
-            } ?: return
+        acceptedSet.chunked(EXPAND_CHUNK_SIZE).forEach {
+            var refs: List<S2Service.PaperRefs?>?
+            do {
+                 refs = try {
+                    S2client.getRefs(it)
+                } catch (e: Exception) {
+                    handleException(e)
+                    null
+                }
+                if (refs != null) {
+                    if (refs.isNotEmpty()) break
+                }
+                delay(QUERY_DELAY)
+            }
+            while (refs.isNullOrEmpty())
+            if (refs == null) return
             Logger.i(tag, "Received ${refs.size} records")
             refs.forEach { paperRef ->
                 doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
@@ -132,7 +141,7 @@ data class LitBallQuery(
             }
             delay(QUERY_DELAY)
         }
-        val newDoiSet = doiSet.minus(acceptedSet)
+        val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
         Logger.i(tag, "${newDoiSet.size} new refs received. Writing to expanded...")
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
@@ -159,28 +168,38 @@ data class LitBallQuery(
         val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName)
-            doiSet.chunked(CHUNK_SIZE).forEach {
-                val papers: List<S2Service.PaperDetailsWithAbstract?> = try {
-                    S2client.getBulkPaperDetailsWithAbstract(it)
-                } catch (e: Exception) {
-                    handleException(e)
-                    null
-                } ?: return
-                Logger.i(tag, "Received ${papers.size} records")
-                paperDetailsList.addAll(papers.filterNotNull().filter { paper ->
-                    val textsOfPaper: Set<String> = setOf(
+            var papers: List<S2Service.PaperDetailsWithAbstract?>?
+            doiSet.chunked(FILTER_CHUNK_SIZE).forEach {
+                do {
+                    papers = try {
+                        S2client.getBulkPaperDetailsWithAbstract(it)
+                    } catch (e: Exception) {
+                        handleException(e)
+                        null
+                    }
+                    if (papers != null) {
+                        if (papers!!.isNotEmpty()) break
+                    }
+                    delay(QUERY_DELAY)
+                }
+                while (papers.isNullOrEmpty())
+                Logger.i(tag, "Received ${papers?.size} records")
+                papers?.filterNotNull()?.let { it1 ->
+                    paperDetailsList.addAll(it1.filter { paper ->
+                        val textsOfPaper: Set<String> = setOf(
                             paper.title ?: "",
                             paper.tldr?.get("text") ?: "",
                             paper.abstract ?: ""
                         )
-                    val bool = mandatoryKeyWordRegexes.any { regex1 ->
-                        textsOfPaper.any { text ->
-                            regex1.containsMatchIn(text) }
-                    } && forbiddenKeyWordRegexes.none { regex2 ->
-                        regex2.containsMatchIn(paper.title?: "")
-                    }
-                    bool
-                })
+                        val bool = mandatoryKeyWordRegexes.any { regex1 ->
+                            textsOfPaper.any { text ->
+                                regex1.containsMatchIn(text) }
+                        } && forbiddenKeyWordRegexes.none { regex2 ->
+                            regex2.containsMatchIn(paper.title?: "")
+                        }
+                        bool
+                    })
+                }
                 Logger.i(tag, "Retained ${paperDetailsList.size} records")
                 delay(QUERY_DELAY)
             }
@@ -219,7 +238,7 @@ data class LitBallQuery(
     }
 
     fun annotate() {
-        if (PaperList.list.isNotEmpty()) return
+        if (PaperList.query == this) return
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
@@ -229,11 +248,9 @@ data class LitBallQuery(
                 handleException(e)
                 return
             }
+            PaperList.query = this
             PaperList.readFromFile(file)
-            runBlocking {
-                delay(200)
-                AnnotatingRootStore.refreshList()
-            }
+            AnnotatingRootStore.refreshList()
         }
         else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))

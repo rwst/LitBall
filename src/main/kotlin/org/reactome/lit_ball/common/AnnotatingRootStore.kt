@@ -13,7 +13,7 @@ object AnnotatingRootStore {
     lateinit var rootSwitch: MutableState<Boolean>
 
     fun refreshList() {
-        scope.launch { onItemsChanged() }
+        setState { copy(items = PaperList.toList()) }
     }
     fun buttonExport() {
         setState { copy(doExport = true) }
@@ -66,13 +66,6 @@ object AnnotatingRootStore {
 
     fun onSaveDoneChanged() {
         setState { copy(doSave = false) }
-    }
-
-    private suspend fun onItemsChanged() {
-        // TODO: This is a hack.
-        setState { copy(items = emptyList()) }
-        delay(50)
-        setState { copy(items = PaperList.toList()) }
     }
 
     fun onDoAnnotateStopped() {
