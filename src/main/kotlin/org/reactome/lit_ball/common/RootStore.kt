@@ -73,7 +73,10 @@ object RootStore {
     }
 
     fun setAnnotated(id: Int?) {
-        QueryList.itemFromId(id)?.let { it.status = QueryStatus.ANNOTATED }
+        QueryList.itemFromId(id)?.let {
+            it.syncBuffers()
+            it.status = QueryStatus.ANNOTATED
+        }
     }
 
     fun nextAction(status: QueryStatus, id: Int) {

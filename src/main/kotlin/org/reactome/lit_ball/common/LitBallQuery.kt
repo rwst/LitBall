@@ -39,8 +39,8 @@ object QueryList {
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
                     setting = getSetting(it),
-                    acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName),
-                    rejectedSet = getDOIs(it, FileType.REJECTED.fileName),
+                    acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }.toMutableSet(),
+                    rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }.toMutableSet(),
                 )
             }
         }
@@ -93,9 +93,13 @@ data class LitBallQuery(
     val name: String = "",
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
     var setting: QuerySetting? = null,
-    val acceptedSet: MutableSet<String> = mutableSetOf(),
-    val rejectedSet: MutableSet<String> = mutableSetOf(),
+    var acceptedSet: MutableSet<String> = mutableSetOf(),
+    var rejectedSet: MutableSet<String> = mutableSetOf(),
 ) {
+    fun syncBuffers() {
+        acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()
+        rejectedSet = getDOIs(getQueryDir(name), FileType.REJECTED.fileName).filter { it.isNotBlank() }.toMutableSet()
+    }
     fun nrAccepted() = acceptedSet.size
     fun nrRejected() = rejectedSet.size
     override fun toString(): String {
@@ -182,6 +186,7 @@ data class LitBallQuery(
             }
             val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
             rejectedDOIs = doiSet.minus(filteredDOIs.toSet())
+            rejectedSet.addAll(rejectedDOIs)
         }
         else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
