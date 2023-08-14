@@ -24,6 +24,14 @@ object PaperList {
             }
             return field
         }
+    fun setFromQuery(query: LitBallQuery, file: File) {
+        this.query = query
+        fileName = query.name
+        path = file.absolutePath
+        readFromFile(file)
+        sanitize()
+        updateShadowMap()
+    }
 
     fun toList(): List<Paper> {
         return list.toList()
@@ -151,6 +159,7 @@ object PaperList {
             return
         }
         path?.let { File(it).delete() }
+        println("$path deleted")
         RootStore.setAnnotated(RootStore.state.doAnnotate)
         AnnotatingRootStore.switchRoot()
     }

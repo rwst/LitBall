@@ -248,8 +248,7 @@ data class LitBallQuery(
                 handleException(e)
                 return
             }
-            PaperList.query = this
-            PaperList.readFromFile(file)
+            PaperList.setFromQuery(this, file)
             AnnotatingRootStore.refreshList()
         }
         else {
