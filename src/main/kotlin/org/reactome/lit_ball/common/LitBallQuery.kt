@@ -180,7 +180,7 @@ data class LitBallQuery(
                 Logger.i(tag, "Retained ${paperDetailsList.size} records")
                 delay(QUERY_DELAY)
             }
-            val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI") }
+            val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
             rejectedDOIs = doiSet.minus(filteredDOIs.toSet())
         }
         else {
@@ -200,7 +200,7 @@ data class LitBallQuery(
                 handleException(e)
                 return
             }
-            val text = rejectedDOIs.joinToString("\n")
+            val text = rejectedDOIs.joinToString("\n") + "\n"
             try {
                 File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
             } catch (e: Exception) {
