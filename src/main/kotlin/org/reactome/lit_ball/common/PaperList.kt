@@ -26,7 +26,7 @@ object PaperList {
         }
     fun setFromQuery(query: LitBallQuery, file: File) {
         this.query = query
-        fileName = query.name
+        fileName = FileType.FILTERED.fileName
         path = file.absolutePath
         readFromFile(file)
         sanitize()

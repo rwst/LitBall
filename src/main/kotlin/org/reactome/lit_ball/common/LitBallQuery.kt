@@ -136,8 +136,8 @@ data class LitBallQuery(
             if (refs == null) return
             Logger.i(tag, "Received ${refs.size} records")
             refs.forEach { paperRef ->
-                doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
-                doiSet.addAll(paperRef?.references?.mapNotNull { cit -> cit.externalIds?.get("DOI") } ?: emptyList())
+                doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+                doiSet.addAll(paperRef?.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
             }
             delay(QUERY_DELAY)
         }
