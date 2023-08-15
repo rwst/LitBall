@@ -1,0 +1,2 @@
+Features:
+- below each query's next action button, place "Last change: $date" where date is the younger of file touches of accepted.txt and rejected.txt. Provided as guidance to the user.
