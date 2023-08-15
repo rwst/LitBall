@@ -65,7 +65,7 @@ object S2Client : ScholarClient {
         action: (S2Service.PaperDetailsWithAbstract) -> Unit
     ): Boolean {
         doiSet.forEach {
-            var paper: S2Service.PaperDetailsWithAbstract?
+            var paper: S2Service.PaperDetailsWithAbstract? = null
             do {
                 paper = try {
                     S2Service.getSinglePaperDetailsWithAbstract(
@@ -78,13 +78,11 @@ object S2Client : ScholarClient {
                 }
                 catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
-                    null
+                    continue
                 }
-                if (paper != null)
-                    break
                 delay(SINGLE_QUERY_DELAY)
             }
-            while (true)
+            while (false)
             paper?.also (action)
         }
         return true
