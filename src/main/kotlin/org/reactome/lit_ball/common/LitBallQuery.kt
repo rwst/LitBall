@@ -145,7 +145,7 @@ data class LitBallQuery(
         Logger.i(tag, "${newDoiSet.size} new refs received. Writing to expanded...")
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
-            val text = newDoiSet.joinToString("\n").uppercase()
+            val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
                 File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").writeText(text)
                 QueryStatus.EXPANDED

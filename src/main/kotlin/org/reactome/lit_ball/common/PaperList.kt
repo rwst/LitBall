@@ -162,6 +162,7 @@ object PaperList {
         println("$path deleted")
         RootStore.setAnnotated(RootStore.state.doAnnotate)
         AnnotatingRootStore.switchRoot()
+        query = null
     }
 
     fun import(files: List<File>): PaperList {
