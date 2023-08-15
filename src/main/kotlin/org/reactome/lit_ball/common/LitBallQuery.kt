@@ -1,6 +1,5 @@
 package org.reactome.lit_ball.common
 
-import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -18,10 +17,6 @@ enum class FileType(val fileName: String) {
     FILTERED("filtered.txt"),
     SETTINGS("settings.json");
 }
-
-const val EXPAND_CHUNK_SIZE = 20
-const val FILTER_CHUNK_SIZE = 30
-const val QUERY_DELAY = 5000L
 
 @Serializable
 object QueryList {
@@ -118,31 +113,14 @@ data class LitBallQuery(
     suspend fun expand() {
         val tag = "EXPAND"
         val doiSet = mutableSetOf<String>()
-        acceptedSet.chunked(EXPAND_CHUNK_SIZE).forEach {
-            var refs: List<S2Service.PaperRefs?>?
-            do {
-                 refs = try {
-                    S2client.getRefs(it)
-                } catch (e: Exception) {
-                    handleException(e)
-                    null
-                }
-                if (refs != null) {
-                    if (refs.isNotEmpty()) break
-                }
-                delay(QUERY_DELAY)
+        val result = S2Client.getRefs(acceptedSet.toList()) {
+            doiSet.addAll(it.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+            doiSet.addAll(it.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
             }
-            while (refs.isNullOrEmpty())
-            if (refs == null) return
-            Logger.i(tag, "Received ${refs.size} records")
-            refs.forEach { paperRef ->
-                doiSet.addAll(paperRef?.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
-                doiSet.addAll(paperRef?.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
-            }
-            delay(QUERY_DELAY)
-        }
+        if (!result) return
+        Logger.i(tag, "Received ${doiSet.size} DOIs")
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
-        Logger.i(tag, "${newDoiSet.size} new refs received. Writing to expanded...")
+        Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
@@ -167,44 +145,24 @@ data class LitBallQuery(
         val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
         val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
-            val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName)
-            var papers: List<S2Service.PaperDetailsWithAbstract?>?
-            doiSet.chunked(FILTER_CHUNK_SIZE).forEach {
-                do {
-                    papers = try {
-                        S2client.getBulkPaperDetailsWithAbstract(it)
-                    } catch (e: Exception) {
-                        handleException(e)
-                        null
-                    }
-                    if (papers != null) {
-                        if (papers!!.isNotEmpty()) break
-                    }
-                    delay(QUERY_DELAY)
-                }
-                while (papers.isNullOrEmpty())
-                Logger.i(tag, "Received ${papers?.size} records")
-                papers?.filterNotNull()?.let { it1 ->
-                    paperDetailsList.addAll(it1.filter { paper ->
-                        val textsOfPaper: Set<String> = setOf(
-                            paper.title ?: "",
-                            paper.tldr?.get("text") ?: "",
-                            paper.abstract ?: ""
-                        )
-                        val bool = mandatoryKeyWordRegexes.any { regex1 ->
-                            textsOfPaper.any { text ->
-                                regex1.containsMatchIn(text) }
-                        } && forbiddenKeyWordRegexes.none { regex2 ->
-                            regex2.containsMatchIn(paper.title?: "")
-                        }
-                        bool
-                    })
-                }
-                Logger.i(tag, "Retained ${paperDetailsList.size} records")
-                delay(QUERY_DELAY)
+            val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
+            S2Client.getPaperDetailsWithAbstract(doiSet) {
+                val textsOfPaper: Set<String> = setOf(
+                    it.title ?: "",
+                    it.tldr?.get("text") ?: "",
+                    it.abstract ?: ""
+                )
+                if (mandatoryKeyWordRegexes.any { regex1 ->
+                    textsOfPaper.any { text ->
+                        regex1.containsMatchIn(text) }
+                } && forbiddenKeyWordRegexes.none { regex2 ->
+                    regex2.containsMatchIn(it.title?: "")
+                })
+                    paperDetailsList.add(it)
             }
+            Logger.i(tag, "Retained ${paperDetailsList.size} records")
             val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
-            rejectedDOIs = doiSet.minus(filteredDOIs.toSet())
+            rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
             rejectedSet.addAll(rejectedDOIs)
         }
         else {

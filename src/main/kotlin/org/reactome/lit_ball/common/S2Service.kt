@@ -66,6 +66,13 @@ object S2Service {
         var references: List<References>? = null,
     )
 
+    interface PaperRefsApi {
+        @GET("/graph/v1/paper/{paper_id}")
+        suspend fun get(
+            @Path("paper_id") paperId: String,
+            @Query("fields") fields: String,
+        ): Response<PaperRefs>
+    }
     interface SinglePaperApi {
         @GET("/graph/v1/paper/{paper_id}")
         suspend fun get(
@@ -142,7 +149,27 @@ object S2Service {
         return null
     }
 
+    suspend fun getSinglePaperDetailsWithAbstract(paperId: String, fields: String): PaperDetailsWithAbstract? {
+        val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
+        val result = singlePaperApi.get(paperId, fields)
+        if (result.isSuccessful) {
+            Logger.i(TAG, result.body().toString())
+            return result.body()
+        }
+        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
+        return null
+    }
 
+    suspend fun getPaperRefs(paperId: String, fields: String): PaperRefs? {
+        val singleRefApi = RetrofitHelper.getInstance().create(PaperRefsApi::class.java)
+        val result = singleRefApi.get(paperId, fields)
+        if (result.isSuccessful) {
+            Logger.i(TAG, result.body().toString())
+            return result.body()
+        }
+        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
+        return null
+    }
     suspend fun getPaperDetails(paperId: String, fields: String): PaperDetailsWithAbstract? {
         val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
         val result = singlePaperApi.get(paperId, fields)
