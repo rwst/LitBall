@@ -12,7 +12,9 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -26,13 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.*
-import org.reactome.lit_ball.dialog.FlagBoxes
+import org.reactome.lit_ball.common.PaperList
+import org.reactome.lit_ball.common.Tag
 import org.reactome.lit_ball.dialog.RadioButtonOptions
 
 @Suppress("FunctionName")
 @Composable
-internal fun MainContent(
+internal fun AnnotatingMainContent(
     modifier: Modifier = Modifier,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
@@ -40,10 +42,6 @@ internal fun MainContent(
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onExit: () -> Unit,
-    onTagsButtonClicked: () -> Unit,
-    onEnrichButtonClicked: () -> Unit,
-    onItemFlagsClicked: (Boolean) -> Unit,
-    onFlagSet: (Int, Int, Boolean) -> Unit,
     rootSwitch: MutableState<Boolean>,
 ) {
     Row(modifier) {
@@ -53,30 +51,22 @@ internal fun MainContent(
             rootSwitch = rootSwitch,
         )
 
-        ListContent(
+        AnnotatingListContent(
             items = items,
             onItemClicked = onItemClicked,
             onItemDeleteClicked = onItemDeleteClicked,
             onItemRadioButtonClicked = onItemRadioButtonClicked,
-            onTagsButtonClicked = onTagsButtonClicked,
-            onEnrichButtonClicked = onEnrichButtonClicked,
-            onItemFlagsClicked = onItemFlagsClicked,
-            onFlagSet = onFlagSet,
         )
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ListContent(
+fun AnnotatingListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
-    onTagsButtonClicked: () -> Unit,
-    onEnrichButtonClicked: () -> Unit,
-    onItemFlagsClicked: (Boolean) -> Unit,
-    onFlagSet: (Int, Int, Boolean) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -121,8 +111,6 @@ fun ListContent(
             .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
-        var switchChecked by remember { mutableStateOf(false) }
-
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -155,8 +143,6 @@ fun ListContent(
                         onClicked = { onItemClicked(item.id) },
                         onDeleteClicked = { onItemDeleteClicked(item.id) },
                         onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
-                        switchChecked,
-                        onFlagSet = { idx,value -> onFlagSet(item.id, idx, value) }
                     )
                     Divider()
                 }
@@ -177,8 +163,6 @@ fun CardWithTextIconAndRadiobutton(
     onClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onOptionSelected: (btn: Int) -> Unit,
-    switchChecked: Boolean,
-    onFlagSet: (Int, Boolean) -> Unit,
 ) {
     val cardTitle = item.details.title
     val radioButtonOptions = Tag.entries.map { it.name }
@@ -214,21 +198,11 @@ fun CardWithTextIconAndRadiobutton(
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.width(16.dp))
-            if (!switchChecked) {
-                RadioButtonOptions(
-                    radioButtonOptions,
-                    item.tag.ordinal,
-                    onOptionSelected,
-                )
-            }
-            else {
-                val fList = PaperList.flagList ?: emptyList()
-                FlagBoxes(
-                    fList,
-                    item.flags,
-                    onFlagSet,
-                    )
-            }
+            RadioButtonOptions(
+                radioButtonOptions,
+                item.tag.ordinal,
+                onOptionSelected,
+            )
         }
     }
 }

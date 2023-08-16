@@ -7,27 +7,10 @@ import java.net.SocketTimeoutException
 interface ScholarClient
 
 object S2Client : ScholarClient {
-    const val REFS_CHUNK_SIZE = 5
     private const val DETAILS_CHUNK_SIZE = 30
     private const val SINGLE_QUERY_DELAY = 500L
     private const val BULK_QUERY_DELAY = 5000L
     private const val TAG = "S2Client"
-    suspend fun getDataFor(doi: String)
-    : S2Service.PaperDetailsWithAbstract? {
-        return S2Service.getPaperDetails(
-            "DOI:$doi",
-            "paperId,externalIds,title,abstract,publicationTypes,tldr"
-        )
-    }
-
-    suspend fun getPaperDetails(
-        doiSet: List<String>,
-    ): List<S2Service.PaperDetails?>? {
-        return S2Service.getBulkPaperDetails(
-            doiSet,
-            "paperId,externalIds,title,tldr"
-        )
-    }
 
     suspend fun getBulkPaperDetailsWithAbstract(
         doiSet: List<String>,

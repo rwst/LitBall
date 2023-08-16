@@ -29,14 +29,6 @@ object AnnotatingRootStore {
         }
     }
 
-    fun onTagsButtonClicked() {
-        setState { copy(editTags = true) }
-    }
-
-    fun onEnrichButtonClicked() {
-        setState { copy(enrichItems = true) }
-    }
-
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
@@ -46,14 +38,6 @@ object AnnotatingRootStore {
 
     fun onItemRadioButtonClicked(id: Int, btn: Int) {
         PaperList.setTag(id, btn)
-    }
-
-    fun onItemFlagsClicked(active: Boolean) {
-        setState { copy(itemFlags = active) }
-    }
-
-    fun onFlagSet(id: Int, flagNo: Int, value: Boolean) {
-        PaperList.setFlag(id, flagNo, value)
     }
 
     fun onEditorCloseClicked() {
@@ -102,7 +86,4 @@ data class AnnotatingRootState(
     val doImport: Boolean = false,
     val doExport: Boolean = false,
     val doSave: Boolean = false,
-    val editTags: Boolean = false,
-    val enrichItems: Boolean = false,
-    val itemFlags: Boolean = false,
 )

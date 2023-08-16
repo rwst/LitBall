@@ -34,7 +34,7 @@ fun AnnotatingRootContent(
         RailItem("Exit", Icons.Filled.ExitToApp, 3, model::buttonExit, onExit)
     )
 
-    MainContent(
+    AnnotatingMainContent(
         modifier = modifier,
         items = state.items,
         onItemClicked = model::onItemClicked,
@@ -42,10 +42,6 @@ fun AnnotatingRootContent(
         onItemDeleteClicked = model::onItemDeleteClicked,
         onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onExit,
-        onTagsButtonClicked = model::onTagsButtonClicked,
-        onEnrichButtonClicked = model::onEnrichButtonClicked,
-        onItemFlagsClicked = model::onItemFlagsClicked,
-        onFlagSet = model::onFlagSet,
         rootSwitch = rootSwitch,
     )
 
