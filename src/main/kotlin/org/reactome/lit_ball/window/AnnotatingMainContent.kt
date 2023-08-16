@@ -135,25 +135,12 @@ fun ListContent(
                     Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
                 }
                 Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
-                Switch (
-                    checked = switchChecked,
-                    onCheckedChange = {
-                        switchChecked = it
-                        onItemFlagsClicked(it)
-                    },
-                )
-                Button(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    onClick = onEnrichButtonClicked,
-                ) {
-                    Text("Enrich Items")
-                }
-                Button(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    onClick = onTagsButtonClicked,
-                ) {
-                    Text("Set all tags")
-                }
+//                Button(
+//                    modifier = Modifier.padding(horizontal = 24.dp),
+//                    onClick = onTagsButtonClicked,
+//                ) {
+//                    Text("Set all tags")
+//                }
             }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
