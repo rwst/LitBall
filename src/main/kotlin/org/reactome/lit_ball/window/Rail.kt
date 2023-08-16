@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -18,7 +15,8 @@ import androidx.compose.ui.unit.dp
 fun Rail(
     railItems: List<RailItem>,
     onNewButtonClicked: () -> Unit,
-) {
+    rootSwitch: MutableState<Boolean>,
+    ) {
     val selectedItem by remember { mutableStateOf(0) }
 
     NavigationRail {
@@ -40,19 +38,21 @@ fun Rail(
                 selected = selectedItem == item.actionIndex
             )
         }
-        ExtendedFloatingActionButton(
-            onClick = onNewButtonClicked,
-            icon = {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize)
-                )
-            },
-            text = {
-                Text("New Query")
-            },
-            modifier = Modifier.padding(horizontal = 0.dp, vertical = 36.dp)
-        )
+        if (!rootSwitch.value) {
+            ExtendedFloatingActionButton(
+                onClick = onNewButtonClicked,
+                icon = {
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
+                },
+                text = {
+                    Text("New Query")
+                },
+                modifier = Modifier.padding(horizontal = 0.dp, vertical = 36.dp)
+            )
+        }
     }
 }

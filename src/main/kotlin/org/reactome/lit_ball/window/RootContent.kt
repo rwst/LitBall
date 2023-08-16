@@ -47,6 +47,7 @@ fun RootContent(
         onNewItemClicked = RootStore::onNewItemClicked,
         onItemSettingsClicked = RootStore::onQuerySettingsClicked,
         onItemGoClicked = RootStore::nextAction,
+        rootSwitch = rootSwitch,
     )
 
     scope.launch(Dispatchers.IO) {

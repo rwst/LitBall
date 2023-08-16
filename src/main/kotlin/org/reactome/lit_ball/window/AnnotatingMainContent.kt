@@ -43,12 +43,14 @@ internal fun MainContent(
     onTagsButtonClicked: () -> Unit,
     onEnrichButtonClicked: () -> Unit,
     onItemFlagsClicked: (Boolean) -> Unit,
-    onFlagSet: (Int, Int, Boolean) -> Unit
+    onFlagSet: (Int, Int, Boolean) -> Unit,
+    rootSwitch: MutableState<Boolean>,
 ) {
     Row(modifier) {
         Rail(
             railItems = railItems,
             onExit,
+            rootSwitch = rootSwitch,
         )
 
         ListContent(

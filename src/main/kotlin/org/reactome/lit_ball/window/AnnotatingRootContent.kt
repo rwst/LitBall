@@ -46,6 +46,7 @@ fun AnnotatingRootContent(
         onEnrichButtonClicked = model::onEnrichButtonClicked,
         onItemFlagsClicked = model::onItemFlagsClicked,
         onFlagSet = model::onFlagSet,
+        rootSwitch = rootSwitch,
     )
 
     scope.launch(Dispatchers.IO) {

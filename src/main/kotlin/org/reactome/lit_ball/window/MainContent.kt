@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +34,13 @@ internal fun MainContent(
     railItems: List<RailItem>,
     onItemSettingsClicked: (id: Int?) -> Unit,
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
+    rootSwitch: MutableState<Boolean>,
 ) {
     Row(modifier) {
         Rail(
             railItems = railItems,
             onNewButtonClicked = onNewItemClicked,
+            rootSwitch = rootSwitch,
         )
         Box(Modifier.weight(1F)) {
             ListContent(
