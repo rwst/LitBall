@@ -220,8 +220,6 @@ data class LitBallQuery(
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val json = ConfiguredJson.get()
             val text = json.encodeToString<QuerySetting>(setting ?: QuerySetting())
-            println(setting.toString())
-            println(text)
             try {
                 File("${queryDir.absolutePath}/${FileType.SETTINGS.fileName}").writeText(text)
             } catch (e: Exception) {

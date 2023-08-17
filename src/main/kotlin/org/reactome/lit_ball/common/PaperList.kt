@@ -117,7 +117,6 @@ object PaperList {
 
         if (path == null) path = file.absolutePath
         val f = File(file.absolutePath)
-        println(path)
 
         if (f.exists()) {
             val papers = json.decodeFromStream<List<Paper>>(f.inputStream())
