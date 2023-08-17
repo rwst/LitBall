@@ -72,8 +72,8 @@ object RootStore {
         }
     }
 
-    fun setAnnotated(id: Int?) {
-        QueryList.itemFromId(id)?.let {
+    fun setAnnotated() {
+        QueryList.itemFromId(state.doAnnotate)?.let {
             it.syncBuffers()
             it.status = QueryStatus.ANNOTATED
         }
@@ -93,7 +93,7 @@ object RootStore {
     }
 
     fun onQuerySettingsCloseClicked() {
-        setAnnotated(state.editingQuerySettings?.id)
+        setAnnotated()
         setState { copy(editingQuerySettings = null, items = QueryList.list.toList()) }
     }
 

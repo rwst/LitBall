@@ -160,7 +160,7 @@ object PaperList {
         }
         path?.let { File(it).delete() }
         println("$path deleted")
-        RootStore.setAnnotated(RootStore.state.doAnnotate)
+        RootStore.setAnnotated()
         AnnotatingRootStore.switchRoot()
         query = null
     }
