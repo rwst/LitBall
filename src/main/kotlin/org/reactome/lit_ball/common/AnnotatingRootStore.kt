@@ -13,7 +13,10 @@ object AnnotatingRootStore {
     lateinit var rootSwitch: MutableState<Boolean>
 
     fun refreshList() {
-        setState { copy(items = PaperList.toList()) }
+        setState { copy(
+            isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false,
+            items = PaperList.toList(),
+            ) }
     }
     fun buttonExport() {
         setState { copy(doExport = true) }
@@ -97,4 +100,5 @@ data class AnnotatingRootState(
     val doExport: Boolean = false,
     val doSave: Boolean = false,
     val classifierAlert: Boolean = false,
+    val isClassifierSet: Boolean = false,
     )

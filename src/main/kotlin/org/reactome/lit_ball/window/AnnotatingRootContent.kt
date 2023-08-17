@@ -43,6 +43,7 @@ fun AnnotatingRootContent(
         onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onExit,
         rootSwitch = rootSwitch,
+        isClassifierSet = state.isClassifierSet,
         onClassifierButtonClicked = model::onClassifierButtonClicked,
     )
 

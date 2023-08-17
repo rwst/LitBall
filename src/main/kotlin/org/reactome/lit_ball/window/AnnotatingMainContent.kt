@@ -43,6 +43,7 @@ internal fun AnnotatingMainContent(
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onExit: () -> Unit,
     rootSwitch: MutableState<Boolean>,
+    isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
     ) {
     Row(modifier) {
@@ -57,6 +58,7 @@ internal fun AnnotatingMainContent(
             onItemClicked = onItemClicked,
             onItemDeleteClicked = onItemDeleteClicked,
             onItemRadioButtonClicked = onItemRadioButtonClicked,
+            isClassifierSet = isClassifierSet,
             onClassifierButtonClicked = onClassifierButtonClicked,
         )
     }
@@ -69,6 +71,7 @@ fun AnnotatingListContent(
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
+    isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -126,12 +129,13 @@ fun AnnotatingListContent(
                     Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
                 }
                 Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
-                Button(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    onClick = onClassifierButtonClicked,
-                ) {
-                    Text("Apply Classifier")
-                }
+                if (isClassifierSet)
+                    Button(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        onClick = onClassifierButtonClicked,
+                    ) {
+                        Text("Apply Classifier")
+                    }
             }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
