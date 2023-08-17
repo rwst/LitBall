@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.reactome.lit_ball.util.CantHappenException
 
 object RootStore {
     var state: RootState by mutableStateOf(initialState())
@@ -93,8 +94,12 @@ object RootStore {
     }
 
     fun onQuerySettingsCloseClicked() {
-        setAnnotated()
-        setState { copy(editingQuerySettings = null, items = QueryList.list.toList()) }
+        val query = state.editingQuerySettings ?: throw CantHappenException()
+        if (query.status == QueryStatus.UNINITIALIZED) {
+            query.status = QueryStatus.ANNOTATED // TODO: make this dependent on what is set
+            setState { copy(items = QueryList.list.toList()) }
+        }
+        setState { copy(editingQuerySettings = null) }
     }
 
     fun onSettingsCloseClicked() {
