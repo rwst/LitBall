@@ -43,6 +43,7 @@ fun AnnotatingRootContent(
         onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onExit,
         rootSwitch = rootSwitch,
+        onClassifierButtonClicked = model::onClassifierButtonClicked,
     )
 
     scope.launch(Dispatchers.IO) {
@@ -67,5 +68,13 @@ fun AnnotatingRootContent(
             PaperList.save()
             (model::onSaveDoneChanged)()
         }
+    }
+    if (state.classifierAlert) {
+        GenericAlert(
+            title = "NOTE",
+            text = "Applying the classifier will potentially change tags of all papers. Confirm?",
+            onCloseClicked = model::onClassifierConfirmed,
+            onConfirmClicked = model::onClassifierDone,
+        )
     }
 }

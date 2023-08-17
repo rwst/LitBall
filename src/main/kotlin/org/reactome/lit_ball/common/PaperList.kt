@@ -286,4 +286,8 @@ object PaperList {
             DOI: ${p.details.externalIds?.get("DOI")}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
         """.trimIndent()
     }
+
+    fun applyClassifier() {
+
+    }
 }

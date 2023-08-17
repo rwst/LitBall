@@ -29,6 +29,16 @@ object AnnotatingRootStore {
         }
     }
 
+    fun onClassifierButtonClicked() {
+        setState { copy(classifierAlert = true) }
+    }
+
+    fun onClassifierConfirmed() {
+        PaperList.applyClassifier()
+    }
+    fun onClassifierDone() {
+        setState { copy(classifierAlert = false) }
+    }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
@@ -86,4 +96,5 @@ data class AnnotatingRootState(
     val doImport: Boolean = false,
     val doExport: Boolean = false,
     val doSave: Boolean = false,
-)
+    val classifierAlert: Boolean = false,
+    )

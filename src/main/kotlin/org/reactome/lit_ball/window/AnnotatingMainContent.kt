@@ -43,7 +43,8 @@ internal fun AnnotatingMainContent(
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onExit: () -> Unit,
     rootSwitch: MutableState<Boolean>,
-) {
+    onClassifierButtonClicked: () -> Unit,
+    ) {
     Row(modifier) {
         Rail(
             railItems = railItems,
@@ -56,6 +57,7 @@ internal fun AnnotatingMainContent(
             onItemClicked = onItemClicked,
             onItemDeleteClicked = onItemDeleteClicked,
             onItemRadioButtonClicked = onItemRadioButtonClicked,
+            onClassifierButtonClicked = onClassifierButtonClicked,
         )
     }
 }
@@ -67,6 +69,7 @@ fun AnnotatingListContent(
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
+    onClassifierButtonClicked: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -123,12 +126,12 @@ fun AnnotatingListContent(
                     Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
                 }
                 Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
-//                Button(
-//                    modifier = Modifier.padding(horizontal = 24.dp),
-//                    onClick = onTagsButtonClicked,
-//                ) {
-//                    Text("Set all tags")
-//                }
+                Button(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    onClick = onClassifierButtonClicked,
+                ) {
+                    Text("Apply Classifier")
+                }
             }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
