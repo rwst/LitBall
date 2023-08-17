@@ -100,6 +100,7 @@ object RootStore {
             setState { copy(items = QueryList.list.toList()) }
         }
         setState { copy(editingQuerySettings = null) }
+        AnnotatingRootStore.refreshClassifierButton()
     }
 
     fun onSettingsCloseClicked() {

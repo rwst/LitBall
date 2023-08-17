@@ -13,10 +13,11 @@ object AnnotatingRootStore {
     lateinit var rootSwitch: MutableState<Boolean>
 
     fun refreshList() {
-        setState { copy(
-            isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false,
-            items = PaperList.toList(),
-            ) }
+        setState { copy(items = PaperList.toList()) }
+    }
+
+    fun refreshClassifierButton() {
+        setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false) }
     }
     fun buttonExport() {
         setState { copy(doExport = true) }

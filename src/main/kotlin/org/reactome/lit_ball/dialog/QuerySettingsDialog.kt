@@ -22,8 +22,6 @@ fun QuerySettingsDialog(
     onCloseClicked: () -> Unit,
 ) {
     item.setting = item.setting ?: QuerySetting()
-    println(item.setting!!.mandatoryKeyWords)
-    println(item.setting!!.forbiddenKeyWords)
     val field1Value =
         rememberSaveable { mutableStateOf(item.setting?.mandatoryKeyWords?.joinToString(separator = ", ") ?: "") }
     val field2Value =
@@ -45,7 +43,7 @@ fun QuerySettingsDialog(
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
                         .toMutableSet()
-                    item.setting!!.classifier = field3Value.value
+                    item.setting!!.classifier = field3Value.value.trim()
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }

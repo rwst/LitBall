@@ -128,6 +128,7 @@ object PaperList {
             updateShadowMap()
             delay(200)
             AnnotatingRootStore.refreshList()
+            AnnotatingRootStore.refreshClassifierButton()
         }
     }
 
