@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun GenericAlert(
+internal fun ConfirmationDialog(
     title: String,
     text: String,
     onCloseClicked: () -> Unit,
@@ -26,14 +26,14 @@ internal fun GenericAlert(
                     onCloseClicked()
                 }
             ) {
-                Text("Confirm")
+                Text("OK")
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onCloseClicked
             ) {
-                Text("Dismiss")
+                Text("Cancel")
             }
         },
         text = { Text(text) }

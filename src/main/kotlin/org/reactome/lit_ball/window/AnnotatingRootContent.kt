@@ -71,7 +71,7 @@ fun AnnotatingRootContent(
         }
     }
     if (state.classifierAlert) {
-        GenericAlert(
+        ConfirmationDialog(
             title = "NOTE",
             text = "Applying the classifier will potentially change tags of all papers. Confirm?",
             onCloseClicked = model::onClassifierConfirmed,
