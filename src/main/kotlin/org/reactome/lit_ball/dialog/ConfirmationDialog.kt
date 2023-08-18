@@ -39,3 +39,25 @@ internal fun ConfirmationDialog(
         text = { Text(text) }
     )
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+internal fun InformationalDialog(
+    title: String,
+    text: String,
+    onCloseClicked: () -> Unit,
+) {
+    AlertDialog(
+        title = { Text(title) },
+        onDismissRequest = onCloseClicked,
+        confirmButton = {},
+        dismissButton = {
+            TextButton(
+                onClick = onCloseClicked
+            ) {
+                Text("Dismiss")
+            }
+        },
+        text = { Text(text) }
+    )
+}
