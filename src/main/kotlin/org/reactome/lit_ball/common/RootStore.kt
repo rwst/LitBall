@@ -15,29 +15,21 @@ object RootStore {
     lateinit var scope: CoroutineScope
     lateinit var rootSwitch: MutableState<Boolean>
 
-     fun buttonInfo() {
-     }
+    private fun initialState(): RootState =
+        RootState()
 
-    fun buttonSettings() {
-        setState { copy(editingSettings = true) }
+    private inline fun setState(update: RootState.() -> RootState) {
+        state = state.update()
     }
+
+    fun buttonInfo() {
+     }
 
     fun buttonExit() {
     }
 
     fun refreshList() {
 //        scope.launch { onItemsChanged() }
-    }
-    fun onItemClicked(id: Int) {
-        setState { copy(editingItemId = id) }
-    }
-
-    fun onNewItemClicked() {
-        setState { copy(newItem = true) }
-    }
-
-    fun onNewItemClosed() {
-        setState { copy(newItem = false) }
     }
 
     private fun onDoExpandStarted(id: Int) {
@@ -49,27 +41,12 @@ object RootStore {
         }
     }
 
-    fun onDoExpandStopped() {
-        setState { copy(doExpand = null, items = QueryList.list.toList()) }
-    }
-
     private fun onDoFilterStarted(id: Int) {
         setState {
             scope.launch(Dispatchers.IO) {
                 QueryList.itemFromId(id)?.filter()
             }
             copy(doFilter = id)
-        }
-    }
-
-    fun onDoFilterStopped() {
-        setState { copy(doFilter = null, items = QueryList.list.toList()) }
-    }
-
-    private fun onDoAnnotateStarted(id: Int) {
-        setState {
-            rootSwitch.value = true
-            copy(doAnnotate = id)
         }
     }
 
@@ -89,10 +66,6 @@ object RootStore {
         }
     }
 
-    fun onQuerySettingsClicked(id: Int?) {
-        setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
-    }
-
     fun onQuerySettingsCloseClicked() {
         val query = state.editingQuerySettings ?: throw CantHappenException()
         if (query.status == QueryStatus.UNINITIALIZED) {
@@ -103,19 +76,37 @@ object RootStore {
         AnnotatingRootStore.refreshClassifierButton()
     }
 
-    fun onSettingsCloseClicked() {
-        setState { copy(editingSettings = false) }
+    fun setEditingSettings(boolean: Boolean) {
+        setState { copy(editingSettings = boolean) }
+    }
+
+    fun setEditingItemId(id: Int) {
+        setState { copy(editingItemId = id) }
+    }
+
+    fun setNewItem(boolean: Boolean) {
+        setState { copy(newItem = boolean) }
+    }
+
+    fun onDoExpandStopped() {
+        setState { copy(doExpand = null, items = QueryList.list.toList()) }
+    }
+    fun onDoFilterStopped() {
+        setState { copy(doFilter = null, items = QueryList.list.toList()) }
+    }
+
+    private fun onDoAnnotateStarted(id: Int) {
+        setState {
+            rootSwitch.value = true
+            copy(doAnnotate = id)
+        }
+    }
+    fun onQuerySettingsClicked(id: Int?) {
+        setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
     fun setItems(items: List<LitBallQuery>) {
         setState { copy(items = items) }
-    }
-
-    private fun initialState(): RootState =
-        RootState()
-
-    private inline fun setState(update: RootState.() -> RootState) {
-        state = state.update()
     }
 }
 

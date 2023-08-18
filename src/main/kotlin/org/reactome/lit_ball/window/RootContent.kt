@@ -35,16 +35,16 @@ fun RootContent(
 
     val railItems: List<RailItem> = listOf(
         RailItem("Info", Icons.Filled.Info, 0, onClicked = RootStore::buttonInfo),
-        RailItem("Settings", Icons.Filled.Settings, 1, onClicked = RootStore::buttonSettings),
+        RailItem("Settings", Icons.Filled.Settings, 1) { model.setEditingSettings(true) },
         RailItem("Exit", Icons.Filled.ExitToApp, 3, onClicked = RootStore::buttonExit, extraAction = onExit)
     )
 
     MainContent(
         modifier = modifier,
         qItems = state.items,
-        onItemClicked = RootStore::onItemClicked,
+        onItemClicked = { id -> model.setEditingItemId(id) },
         railItems = railItems,
-        onNewItemClicked = RootStore::onNewItemClicked,
+        onNewItemClicked = { model.setNewItem(true) },
         onItemSettingsClicked = RootStore::onQuerySettingsClicked,
         onItemGoClicked = RootStore::nextAction,
         rootSwitch = rootSwitch,
@@ -58,14 +58,14 @@ fun RootContent(
     if (state.newItem) {
         NewItemDialog(
             scope,
-            onCloseClicked = RootStore::onNewItemClosed,
+            onCloseClicked = { model.setNewItem(false) },
         )
     }
 
     if (state.editingSettings) {
         SettingsDialog(
             scope,
-            onCloseClicked = RootStore::onSettingsCloseClicked
+            onCloseClicked = { model.setEditingSettings(false) }
         )
     }
 
