@@ -1,7 +1,9 @@
 package org.reactome.lit_ball.common
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.handleException
 import java.io.File
@@ -15,6 +17,7 @@ enum class FileType(val fileName: String) {
     REJECTED("rejected.txt"),
     EXPANDED("expanded.txt"),
     FILTERED("filtered.txt"),
+    ARCHIVED("archived.txt"),
     SETTINGS("settings.json");
 }
 
@@ -178,6 +181,7 @@ data class LitBallQuery(
                 file.writeText(json.encodeToString(
                     paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd) })
                 )
+                mergeIntoArchive(paperDetailsList)
             } catch (e: Exception) {
                 handleException(e)
                 return
@@ -193,6 +197,30 @@ data class LitBallQuery(
         File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
         status = QueryStatus.FILTERED
         RootStore.onDoFilterStopped()
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun mergeIntoArchive(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canRead()) {
+            val file: File
+            try {
+                file = File("${queryDir.absolutePath}/${FileType.ARCHIVED.fileName}")
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+            val json = ConfiguredJson.get()
+            val papers: MutableSet<S2Service.PaperDetailsWithAbstract> = if (file.exists()) {
+                json.decodeFromStream<List<S2Service.PaperDetailsWithAbstract>>(file.inputStream()).toMutableSet()
+            } else {
+                mutableSetOf()
+            }
+            papers.addAll(list)
+            file.writeText(json.encodeToString(
+                papers.mapIndexed { idx, pd -> Paper(idx, pd) })
+            )
+        }
     }
 
     fun annotate() {
