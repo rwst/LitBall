@@ -74,7 +74,8 @@ object S2Client : ScholarClient {
         doiSet: List<String>,
         action: (S2Service.PaperRefs) -> Unit
     ): Boolean {
-        doiSet.forEach {
+        val size = doiSet.size
+        doiSet.forEachIndexed { index, it ->
             var refs: S2Service.PaperRefs?
             do {
                 refs = try {
@@ -84,14 +85,18 @@ object S2Client : ScholarClient {
                     )
                 } catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
+                    RootStore.setProgressIndication(Pair((1f*index)/size, "TIMEOUT"))
                     continue
                 }
                 delay(SINGLE_QUERY_DELAY)
-                if (refs != null)
+                if (refs != null) {
                     break
+                }
             } while (true)
             refs?.also(action)
+            RootStore.setProgressIndication(Pair((1f*index)/size, "$index/$size"))
         }
+        RootStore.setProgressIndication(null)
         return true
     }
 }

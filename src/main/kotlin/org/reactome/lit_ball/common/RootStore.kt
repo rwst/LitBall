@@ -108,6 +108,10 @@ object RootStore {
     fun setItems(items: List<LitBallQuery>) {
         setState { copy(items = items) }
     }
+
+    fun setProgressIndication(progressIndication: Pair<Float, String>?) {
+        setState { copy(progressIndication = progressIndication) }
+    }
 }
 
 data class RootState(
@@ -120,4 +124,5 @@ data class RootState(
     val doExpand: Int? = null,
     val doFilter: Int? = null,
     val doAnnotate: Int? = null,
+    val progressIndication: Pair<Float, String>? = null,
 )

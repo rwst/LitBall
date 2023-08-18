@@ -17,6 +17,7 @@ import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.RootStore
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.NewItemDialog
+import org.reactome.lit_ball.dialog.ProgressIndicator
 import org.reactome.lit_ball.dialog.QuerySettingsDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
 
@@ -66,6 +67,13 @@ fun RootContent(
         SettingsDialog(
             scope,
             onCloseClicked = { model.setEditingSettings(false) }
+        )
+    }
+
+    state.progressIndication?.also {
+        ProgressIndicator(
+            state.progressIndication.first,
+            state.progressIndication.second
         )
     }
 
