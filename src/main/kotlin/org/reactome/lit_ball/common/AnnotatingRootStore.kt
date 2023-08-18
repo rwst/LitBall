@@ -12,6 +12,19 @@ object AnnotatingRootStore {
     lateinit var scope: CoroutineScope
     lateinit var rootSwitch: MutableState<Boolean>
 
+    fun switchRoot() {
+        rootSwitch.value = false
+        (RootStore::refreshList)()
+    }
+
+//    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
+//        copy(items = items.updateItem(id = id, transformer = transformer))
+
+    private fun initialState(): AnnotatingRootState = AnnotatingRootState()
+
+    private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
+        state = state.update()
+    }
     fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
@@ -19,29 +32,14 @@ object AnnotatingRootStore {
     fun refreshClassifierButton() {
         setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false) }
     }
-    fun buttonExport() {
-        setState { copy(doExport = true) }
-    }
-
-    fun buttonSave() {
-        setState { copy(doSave = true) }
-    }
 
     fun buttonExit() {
         runBlocking {
             PaperList.save()
         }
     }
-
-    fun onClassifierButtonClicked() {
-        setState { copy(classifierAlert = true) }
-    }
-
     fun onClassifierConfirmed() {
         PaperList.applyClassifier()
-    }
-    fun onClassifierDone() {
-        setState { copy(classifierAlert = false) }
     }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
@@ -58,14 +56,6 @@ object AnnotatingRootStore {
         setState { copy(editingItemId = null) }
     }
 
-    fun onExportDoneChanged() {
-        setState { copy(doExport = false) }
-    }
-
-    fun onSaveDoneChanged() {
-        setState { copy(doSave = false) }
-    }
-
     fun onDoAnnotateStopped() {
         runBlocking {
             PaperList.save()
@@ -73,18 +63,16 @@ object AnnotatingRootStore {
         switchRoot()
     }
 
-    fun switchRoot() {
-        rootSwitch.value = false
-        (RootStore::refreshList)()
-}
+    fun setClassifierAlert(isAlertActive: Boolean) {
+        setState { copy(classifierAlert = isAlertActive) }
+    }
 
-//    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
-//        copy(items = items.updateItem(id = id, transformer = transformer))
+    fun setDoExport(doExport: Boolean) {
+        setState { copy(doExport = doExport) }
+    }
 
-    private fun initialState(): AnnotatingRootState = AnnotatingRootState()
-
-    private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
-        state = state.update()
+    fun setDoSave(doSave: Boolean) {
+        setState { copy(doSave = doSave) }
     }
 }
 

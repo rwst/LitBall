@@ -28,10 +28,10 @@ fun AnnotatingRootContent(
     model.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Save", Icons.Filled.Save, 0, model::buttonSave),
-        RailItem("Finish", Icons.Filled.Publish, 1, model::buttonExport),
-        RailItem("Main", Icons.Filled.ExitToApp, 2, model::onDoAnnotateStopped),
-        RailItem("Exit", Icons.Filled.ExitToApp, 3, model::buttonExit, onExit)
+        RailItem("Save", Icons.Filled.Save, 0) { model.setDoSave(true) },
+        RailItem("Finish", Icons.Filled.Publish, 1) { model.setDoExport(true) },
+        RailItem("Main", Icons.Filled.ExitToApp, 2, onClicked = model::onDoAnnotateStopped),
+        RailItem("Exit", Icons.Filled.ExitToApp, 3, extraAction = onExit, onClicked = model::buttonExit)
     )
 
     AnnotatingMainContent(
@@ -44,7 +44,7 @@ fun AnnotatingRootContent(
         onExit,
         rootSwitch = rootSwitch,
         isClassifierSet = state.isClassifierSet,
-        onClassifierButtonClicked = model::onClassifierButtonClicked,
+        onClassifierButtonClicked = { model.setClassifierAlert(true) },
     )
 
     scope.launch(Dispatchers.IO) {
@@ -61,13 +61,13 @@ fun AnnotatingRootContent(
     if (state.doExport) {
         scope.launch(Dispatchers.IO) {
             PaperList.export()
-            (model::onExportDoneChanged)()
+            model.setDoExport(false)
         }
     }
     if (state.doSave) {
         scope.launch(Dispatchers.IO) {
             PaperList.save()
-            (model::onSaveDoneChanged)()
+            model.setDoSave(false)
         }
     }
     if (state.classifierAlert) {
@@ -75,7 +75,7 @@ fun AnnotatingRootContent(
             title = "NOTE",
             text = "Applying the classifier will potentially change tags of all papers. Confirm?",
             onCloseClicked = model::onClassifierConfirmed,
-            onConfirmClicked = model::onClassifierDone,
+            onConfirmClicked = { model.setClassifierAlert(false) }
         )
     }
 }

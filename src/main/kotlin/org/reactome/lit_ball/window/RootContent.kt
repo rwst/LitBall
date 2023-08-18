@@ -34,9 +34,9 @@ fun RootContent(
     RootStore.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Info", Icons.Filled.Info, 0, RootStore::buttonInfo),
-        RailItem("Settings", Icons.Filled.Settings, 1, RootStore::buttonSettings),
-        RailItem("Exit", Icons.Filled.ExitToApp, 3, RootStore::buttonExit, onExit)
+        RailItem("Info", Icons.Filled.Info, 0, onClicked = RootStore::buttonInfo),
+        RailItem("Settings", Icons.Filled.Settings, 1, onClicked = RootStore::buttonSettings),
+        RailItem("Exit", Icons.Filled.ExitToApp, 3, onClicked = RootStore::buttonExit, extraAction = onExit)
     )
 
     MainContent(
