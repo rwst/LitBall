@@ -17,7 +17,7 @@ object PaperList {
     var fileName: String = ""
     var query: LitBallQuery? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
-    var flagList: List<String>? = null
+    private var flagList: List<String>? = null
         get() {
             if (field == null) {
                 field = Settings.map["flags"]?.split(" ")
@@ -288,6 +288,6 @@ object PaperList {
     }
 
     fun applyClassifier() {
-
+        AnnotatingRootStore.setClassifierExceptionAlert(true)
     }
 }

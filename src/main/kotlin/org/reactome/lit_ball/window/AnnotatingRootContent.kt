@@ -78,4 +78,11 @@ fun AnnotatingRootContent(
             onConfirmClicked = { model.setClassifierAlert(false) }
         )
     }
+    if (state.classifierExceptionAlert) {
+        InformationalDialog(
+            title = "NOTE",
+            text = "Classifier name not set in query settings, or directory in settings not found, or problems when running the classifier.\n\nPlease see the console output for details.",
+            onCloseClicked = { model.setClassifierExceptionAlert(false) }
+        )
+    }
 }

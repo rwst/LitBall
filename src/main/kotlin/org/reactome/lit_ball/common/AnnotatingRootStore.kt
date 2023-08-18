@@ -4,7 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 
 object AnnotatingRootStore {
     var state: AnnotatingRootState by mutableStateOf(initialState())
@@ -74,6 +75,10 @@ object AnnotatingRootStore {
     fun setDoSave(doSave: Boolean) {
         setState { copy(doSave = doSave) }
     }
+
+    fun setClassifierExceptionAlert(classifierExceptionAlert: Boolean) {
+        setState { copy(classifierExceptionAlert = classifierExceptionAlert) }
+    }
 }
 
 data class AnnotatingRootState(
@@ -90,4 +95,5 @@ data class AnnotatingRootState(
     val doSave: Boolean = false,
     val classifierAlert: Boolean = false,
     val isClassifierSet: Boolean = false,
+    val classifierExceptionAlert: Boolean = false,
     )
