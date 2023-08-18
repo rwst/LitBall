@@ -34,9 +34,9 @@ fun RootContent(
     RootStore.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Info", Icons.Filled.Info, 0, onClicked = RootStore::buttonInfo),
+        RailItem("Info", Icons.Filled.Info, 0, onClicked = { model.buttonInfo() }),
         RailItem("Settings", Icons.Filled.Settings, 1) { model.setEditingSettings(true) },
-        RailItem("Exit", Icons.Filled.ExitToApp, 3, onClicked = RootStore::buttonExit, extraAction = onExit)
+        RailItem("Exit", Icons.Filled.ExitToApp, 3, onClicked = { model.buttonExit() }, extraAction = onExit)
     )
 
     MainContent(
@@ -45,8 +45,8 @@ fun RootContent(
         onItemClicked = { id -> model.setEditingItemId(id) },
         railItems = railItems,
         onNewItemClicked = { model.setNewItem(true) },
-        onItemSettingsClicked = RootStore::onQuerySettingsClicked,
-        onItemGoClicked = RootStore::nextAction,
+        onItemSettingsClicked = { id ->model.onQuerySettingsClicked(id) },
+        onItemGoClicked = { status, id -> model.nextAction(status, id) },
         rootSwitch = rootSwitch,
     )
 
@@ -73,7 +73,6 @@ fun RootContent(
         QuerySettingsDialog(
             it,
             scope,
-            RootStore::onQuerySettingsCloseClicked,
-        )
+        ) { model.onQuerySettingsCloseClicked() }
     }
 }
