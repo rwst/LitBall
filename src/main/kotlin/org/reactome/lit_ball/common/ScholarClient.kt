@@ -48,8 +48,9 @@ object S2Client : ScholarClient {
         action: (S2Service.PaperDetailsWithAbstract) -> Unit
     ): Boolean {
         val size = doiSet.size
+        val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         doiSet.forEachIndexed { index, it ->
-            var paper: S2Service.PaperDetailsWithAbstract? = null
+            var paper: S2Service.PaperDetailsWithAbstract?
             do {
                 paper = try {
                     S2Service.getSinglePaperDetailsWithAbstract(
@@ -63,7 +64,7 @@ object S2Client : ScholarClient {
                         Pair((1f * index) / size, "TIMEOUT"))
                     continue
                 }
-                delay(SINGLE_QUERY_DELAY)
+                delay(strategy.delay(paper != null))
                 if (paper != null)
                     break
             } while (true)
@@ -78,6 +79,7 @@ object S2Client : ScholarClient {
         action: (S2Service.PaperRefs) -> Unit
     ): Boolean {
         val size = doiSet.size
+        val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         doiSet.forEachIndexed { index, it ->
             var refs: S2Service.PaperRefs?
             do {
@@ -91,7 +93,7 @@ object S2Client : ScholarClient {
                     RootStore.setProgressIndication(Pair((1f*index)/size, "TIMEOUT"))
                     continue
                 }
-                delay(SINGLE_QUERY_DELAY)
+                delay(strategy.delay(refs != null))
                 if (refs != null) {
                     break
                 }
@@ -101,5 +103,22 @@ object S2Client : ScholarClient {
         }
         RootStore.setProgressIndication(null)
         return true
+    }
+}
+
+internal class DelayStrategy(private val minDelay: Long) {
+    fun delay(wasSuccessful: Boolean): Long {
+        return if (wasSuccessful) {
+            noFails = 0
+            minDelay
+        } else {
+            noFails += 1
+            val mul = if (noFails <= multiplier.size) multiplier[noFails] else multiplier.last()
+            mul * minDelay
+        }
+    }
+    companion object {
+        var noFails = 0
+        val multiplier = listOf(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024)
     }
 }
