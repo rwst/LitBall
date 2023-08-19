@@ -211,14 +211,15 @@ data class LitBallQuery(
                 return
             }
             val json = ConfiguredJson.get()
-            val papers: MutableSet<S2Service.PaperDetailsWithAbstract> = if (file.exists()) {
-                json.decodeFromStream<List<S2Service.PaperDetailsWithAbstract>>(file.inputStream()).toMutableSet()
+            val papers: MutableSet<Paper> = if (file.exists()) {
+                json.decodeFromStream<List<Paper>>(file.inputStream()).toMutableSet()
             } else {
                 mutableSetOf()
             }
-            papers.addAll(list)
+            val details: MutableSet<S2Service.PaperDetailsWithAbstract> = papers.map { it.details }.toMutableSet()
+            details.addAll(list)
             file.writeText(json.encodeToString(
-                papers.mapIndexed { idx, pd -> Paper(idx, pd) })
+                details.mapIndexed { idx, pd -> Paper(idx, pd) })
             )
         }
     }
