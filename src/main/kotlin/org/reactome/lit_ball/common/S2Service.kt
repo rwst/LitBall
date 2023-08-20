@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
+import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -157,7 +158,7 @@ object S2Service {
             return result.body()
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
+        throw HttpException(result)
     }
 
     suspend fun getPaperRefs(paperId: String, fields: String): PaperRefs? {
@@ -168,7 +169,7 @@ object S2Service {
             return result.body()
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
+        throw HttpException(result)
     }
     suspend fun getPaperDetails(paperId: String, fields: String): PaperDetailsWithAbstract? {
         val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)

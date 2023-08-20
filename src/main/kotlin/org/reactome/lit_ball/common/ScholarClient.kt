@@ -2,6 +2,7 @@ package org.reactome.lit_ball.common
 
 import kotlinx.coroutines.delay
 import org.reactome.lit_ball.util.handleException
+import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
 interface ScholarClient
@@ -63,11 +64,21 @@ object S2Client : ScholarClient {
                     RootStore.setProgressIndication(
                         Pair((1f * index) / size, "TIMEOUT"))
                     continue
+                } catch (e: HttpException) {
+                    paper = null
+                    RootStore.setProgressIndication(Pair((1f*index)/size, "ERROR ${e.code()}"))
+                    if (e.code() == 404) {
+                        break
+                    }
+                    if (e.code() == 429) {
+                        delay(strategy.delay(false))
+                        continue
+                    }
+                    throw (e)
                 }
-                delay(strategy.delay(paper != null))
-                if (paper != null)
-                    break
+                break
             } while (true)
+            delay(strategy.delay(true))
             paper?.also (action)
             RootStore.setProgressIndication(Pair((1f*index)/size, "$index/$size"))
         }
@@ -92,12 +103,21 @@ object S2Client : ScholarClient {
                     Logger.i(TAG, "TIMEOUT")
                     RootStore.setProgressIndication(Pair((1f*index)/size, "TIMEOUT"))
                     continue
+                } catch (e: HttpException) {
+                    refs = null
+                    RootStore.setProgressIndication(Pair((1f*index)/size, "ERROR ${e.code()}"))
+                    if (e.code() == 404) {
+                        break
+                    }
+                    if (e.code() == 429) {
+                        delay(strategy.delay(false))
+                        continue
+                    }
+                    throw (e)
                 }
-                delay(strategy.delay(refs != null))
-                if (refs != null) {
-                    break
-                }
+                break
             } while (true)
+            delay(strategy.delay(true))
             refs?.also(action)
             RootStore.setProgressIndication(Pair((1f*index)/size, "$index/$size"))
         }
