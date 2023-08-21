@@ -1,9 +1,10 @@
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.service
 
 import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
+import org.reactome.lit_ball.util.Logger
 import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit

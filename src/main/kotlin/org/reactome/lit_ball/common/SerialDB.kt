@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.reactome.lit_ball.util.Logger
 import java.io.File
 import java.io.IOException
 import kotlin.io.path.Path

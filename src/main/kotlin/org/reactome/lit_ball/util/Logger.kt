@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.util
 
 import io.github.oshai.KotlinLogging
 

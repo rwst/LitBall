@@ -2,6 +2,7 @@ package org.reactome.lit_ball.common
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.reactome.lit_ball.service.S2Service
 
 enum class Tag {
     @SerialName("REJECTED")

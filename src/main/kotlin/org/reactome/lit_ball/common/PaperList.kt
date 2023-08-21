@@ -7,7 +7,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.handleException
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.math.min
 
@@ -288,6 +290,21 @@ object PaperList {
     }
 
     fun applyClassifier() {
-        AnnotatingRootStore.setClassifierExceptionAlert(true)
+        val classifierName = query?.setting?.classifier?: ""
+        val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
+        val file = File(classifierPath)
+        if (classifierName.isBlank() || !file.canRead()) {
+            AnnotatingRootStore.setClassifierExceptionAlert(true)
+            return
+        }
+        if (!YDFService.doPredict(
+            modelPath = classifierPath,
+            datasetPath = "",
+            resultPath = "",
+            key = "doi",
+        )) {
+            AnnotatingRootStore.setYdfNotFoundAlert(true)
+            return
+        }
     }
 }
