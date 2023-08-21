@@ -5,13 +5,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
+import org.reactome.lit_ball.service.NLPService
+import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.handleException
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
-import java.util.*
-import kotlin.math.min
 
 object PaperList {
     var list: List<Paper> = listOf()
@@ -230,19 +228,34 @@ object PaperList {
     fun applyClassifier() {
         val classifierName = query?.setting?.classifier?: ""
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
-        val file = File(classifierPath)
-        if (classifierName.isBlank() || !file.canRead()) {
+        val modelFile = File(classifierPath)
+        if (query == null || classifierName.isBlank() || !modelFile.canRead()) {
             AnnotatingRootStore.setClassifierExceptionAlert(true)
             return
         }
+        val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
+        val resultPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
+        writeCsvTo(datasetPath)
         if (!YDFService.doPredict(
             modelPath = classifierPath,
-            datasetPath = "",
-            resultPath = "",
+            datasetPath = datasetPath,
+            resultPath = resultPath,
             key = "doi",
         )) {
             AnnotatingRootStore.setYdfNotFoundAlert(true)
             return
         }
+    }
+
+    private fun writeCsvTo(path: String) {
+        NLPService.init()
+        val stringBuilder = StringBuilder()
+        stringBuilder.append("text,doi\n")
+        list.forEach {
+            val text = (it.details.title ?: "") + " " + (it.details.tldr ?: "")
+            stringBuilder.append("\"" + NLPService.preprocess(text) + "\",")
+            stringBuilder.append("\"${it.details.externalIds?.get("DOI") ?: ""}\"\n")
+        }
+        File(path).writeText(stringBuilder.toString())
     }
 }

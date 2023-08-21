@@ -58,6 +58,13 @@ fun AnnotatingRootContent(
         )
     }
 
+    state.progressIndication?.also {
+        ProgressIndicator(
+            state.progressIndication.first,
+            state.progressIndication.second
+        )
+    }
+
     if (state.doExport) {
         scope.launch(Dispatchers.IO) {
             PaperList.export()
@@ -83,6 +90,13 @@ fun AnnotatingRootContent(
             title = "NOTE",
             text = "Classifier name not set in query settings, or directory in settings not found, or problems when running the classifier.\n\nPlease see the console output for details.",
             onCloseClicked = { model.setClassifierExceptionAlert(false) }
+        )
+    }
+    if (state.ydfNotFoundAlert) {
+        InformationalDialog(
+            title = "NOTE",
+            text = "LitBall could not run the command\"predict\".\n\nPlease make sure YDF is installed.",
+            onCloseClicked = { model.setYdfNotFoundAlert(false) }
         )
     }
 }

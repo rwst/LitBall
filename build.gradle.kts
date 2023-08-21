@@ -29,6 +29,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.slf4j:slf4j-log4j12:2.0.5")
+    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4")
+    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models")
+    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english")
+    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english-kbp")
 }
 
 compose.desktop {

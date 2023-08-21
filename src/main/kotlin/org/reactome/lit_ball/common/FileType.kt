@@ -6,5 +6,7 @@ enum class FileType(val fileName: String) {
     EXPANDED("expanded.txt"),
     FILTERED("filtered.txt"),
     ARCHIVED("archived.txt"),
+    CLASSIFIER_INPUT("cl-input.csv"),
+    CLASSIFIER_OUTPUT("cl-output.csv"),
     SETTINGS("settings.json");
 }
