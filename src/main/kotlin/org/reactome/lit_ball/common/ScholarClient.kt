@@ -67,14 +67,14 @@ object S2Client : ScholarClient {
                 } catch (e: HttpException) {
                     paper = null
                     RootStore.setProgressIndication(Pair((1f*index)/size, "ERROR ${e.code()}"))
-                    if (e.code() == 404) {
-                        break
+                    when (e.code()) {
+                        400, 404 -> break // assume DOI defect or unknown
+                        429 -> {          // API says too fast, so delay and repeat
+                            delay(strategy.delay(false))
+                            continue
+                        }
+                        else -> throw (e)
                     }
-                    if (e.code() == 429) {
-                        delay(strategy.delay(false))
-                        continue
-                    }
-                    throw (e)
                 }
                 break
             } while (true)
@@ -106,14 +106,14 @@ object S2Client : ScholarClient {
                 } catch (e: HttpException) {
                     refs = null
                     RootStore.setProgressIndication(Pair((1f*index)/size, "ERROR ${e.code()}"))
-                    if (e.code() == 404) {
-                        break
+                    when (e.code()) {
+                        400, 404 -> break // assume DOI defect or unknown
+                        429 -> {          // API says too fast, so delay and repeat
+                            delay(strategy.delay(false))
+                            continue
+                        }
+                        else -> throw (e)
                     }
-                    if (e.code() == 429) {
-                        delay(strategy.delay(false))
-                        continue
-                    }
-                    throw (e)
                 }
                 break
             } while (true)
