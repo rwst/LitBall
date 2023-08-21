@@ -167,68 +167,6 @@ object PaperList {
         query = null
     }
 
-    fun import(files: List<File>): PaperList {
-        files.forEach { file ->
-            setImportPath(file)
-            if (file.isDirectory) return this
-            val lines = prepareLines(file)
-            val doisRequested = processLines(lines)
-            sanitize()
-            writeDoisIfNotEmpty(file.absolutePath, doisRequested)
-        }
-        updateShadowMap()
-
-        return this
-    }
-
-    private fun setImportPath(file: File) {
-        val importPath =
-            if (file.isDirectory)
-                file.absolutePath
-            else
-                file.absolutePath.substringBeforeLast('/')
-        Settings.map["import-path"] = importPath
-        Settings.save()
-    }
-
-    private fun prepareLines(file: File): List<String> {
-        return file.readLines()
-            .filter { it.isNotBlank() }
-            .map {
-                it.uppercase(Locale.ENGLISH)
-                    .removeSuffix("^M")
-                    .trimEnd()
-            }
-            .toSet()
-            .toList()
-    }
-
-    private fun processLines(lines: List<String>): MutableSet<String> {
-        val doisRequested = lines.toMutableSet()
-        val chunkSize = 450
-        // TODO: use List.chunk()
-        val chunksCount = (lines.size + chunkSize - 1) / chunkSize
-
-        for (n in 1..chunksCount) {
-            val maxId: Int = list.maxOfOrNull { it.id } ?: 0
-            val upper = min(n * chunkSize - 1, lines.size - 1)
-            val lower = (n - 1) * chunkSize
-
-//            S2client.getDataFor(lines.subList(lower, upper + 1))?.mapIndexed { index, paperDetails ->
-//                if (paperDetails != null) {
-//                    list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
-//                    doisRequested.remove(paperDetails.externalIds?.get("DOI").toString().uppercase(Locale.ENGLISH))
-//                }
-//            }
-        }
-
-        return doisRequested
-    }
-
-    private fun writeDoisIfNotEmpty(path: String, doisRequested: MutableSet<String>) {
-        if (doisRequested.isNotEmpty())
-            File("$path-DOIs-not-found").writeText(doisRequested.toString())
-    }
 
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]
