@@ -10,14 +10,6 @@ import java.io.IOException
 
 enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
 
-enum class FileType(val fileName: String) {
-    ACCEPTED("accepted.txt"),
-    REJECTED("rejected.txt"),
-    EXPANDED("expanded.txt"),
-    FILTERED("filtered.txt"),
-    ARCHIVED("archived.txt"),
-    SETTINGS("settings.json");
-}
 
 fun getQueryDir(name: String): File {
     val queryPath = Settings.map["path-to-queries"] ?: ""
