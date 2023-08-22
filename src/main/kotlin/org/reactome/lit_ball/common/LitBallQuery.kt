@@ -207,6 +207,12 @@ data class LitBallQuery(
 @Suppress("SENSELESS_COMPARISON")
 private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
     val extIds = map?.toMutableMap()
+    if (extIds != null) {
+        val doi = extIds["DOI"]
+        if (doi != null) {
+            extIds["DOI"] = doi.uppercase()
+        }
+    }
     extIds?.entries?.forEach {
         if (it.value == null) {
             extIds.remove(it.key)
