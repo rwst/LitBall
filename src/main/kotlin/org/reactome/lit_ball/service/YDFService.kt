@@ -6,11 +6,13 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.AnnotatingRootStore
+import org.reactome.lit_ball.util.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 const val CONSOLE_MAX_LIFE = 1000000L
 object YDFService {
+    const val tag = "YDFService"
     @OptIn(ExperimentalCoroutinesApi::class)
     fun doPredict(
         modelPath: String,
@@ -39,15 +41,15 @@ object YDFService {
         AnnotatingRootStore.scope.launch(Dispatchers.IO) {
             while (true) {
                 val line = stdoutChannel.receive()
-                if (line.contains("xyz"))
-                    AnnotatingRootStore.setProgressIndication(Pair(.5f, "5/10"))
+                if (line.startsWith("[INFO "))
+                    Logger.i(tag, line)
             }
         }
         AnnotatingRootStore.scope.launch(Dispatchers.IO) {
             while (true) {
                 val line = stderrChannel.receive()
-                if (line.contains("abc"))
-                    throw Exception()
+                if (line.contains("[FATAL"))
+                    throw Exception(line)
             }
         }
         AnnotatingRootStore.scope.launch (Dispatchers.IO) {

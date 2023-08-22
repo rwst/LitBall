@@ -10,12 +10,14 @@ import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.handleException
 import java.io.File
+import java.io.IOException
 
 object PaperList {
     var list: List<Paper> = listOf()
     private var path: String? = null
     var fileName: String = ""
     var query: LitBallQuery? = null
+    var classifications: Map<String, Int>? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     private var flagList: List<String>? = null
         get() {
@@ -236,15 +238,23 @@ object PaperList {
         val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
         val resultPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
         writeCsvTo(datasetPath)
-        if (!YDFService.doPredict(
-            modelPath = classifierPath,
-            datasetPath = datasetPath,
-            resultPath = resultPath,
-            key = "doi",
-        )) {
+        try {
+            if (!YDFService.doPredict(
+                    modelPath = classifierPath,
+                    datasetPath = datasetPath,
+                    resultPath = resultPath,
+                    key = "doi",
+                )
+            ) {
+                AnnotatingRootStore.setYdfNotFoundAlert(true)
+                return
+            }
+        }
+        catch (e: IOException) {
             AnnotatingRootStore.setYdfNotFoundAlert(true)
             return
         }
+        classifications = processCsvFile(resultPath)
     }
 
     private fun writeCsvTo(path: String) {
@@ -252,10 +262,17 @@ object PaperList {
         val stringBuilder = StringBuilder()
         stringBuilder.append("text,doi\n")
         list.forEach {
-            val text = (it.details.title ?: "") + " " + (it.details.tldr ?: "")
+            val text = (it.details.title ?: "") + " " + (it.details.tldr?.get("text") ?: "")
             stringBuilder.append("\"" + NLPService.preprocess(text) + "\",")
-            stringBuilder.append("\"${it.details.externalIds?.get("DOI") ?: ""}\"\n")
+            stringBuilder.append("\"${it.details.externalIds?.get("DOI")?.uppercase() ?: ""}\"\n")
         }
         File(path).writeText(stringBuilder.toString())
+    }
+
+    fun processCsvFile(path: String): MutableMap<String, Int> {
+        return File(path).readLines().map { it.split(",") }.associateBy(
+            { it[2] },
+            { (it[1].toFloat() * 100).toInt() }
+        ).toMutableMap()
     }
 }
