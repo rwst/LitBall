@@ -118,6 +118,7 @@ data class LitBallQuery(
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return
         }
+        uppercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
         Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
         val json = ConfiguredJson.get()
@@ -207,12 +208,6 @@ data class LitBallQuery(
 @Suppress("SENSELESS_COMPARISON")
 private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
     val extIds = map?.toMutableMap()
-    if (extIds != null) {
-        val doi = extIds["DOI"]
-        if (doi != null) {
-            extIds["DOI"] = doi.uppercase()
-        }
-    }
     extIds?.entries?.forEach {
         if (it.value == null) {
             extIds.remove(it.key)
@@ -235,5 +230,19 @@ private fun sanitize(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
         }
         if (isChanged)
             list[index] = newPaper
+    }
+}
+
+private fun uppercaseDois(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+    list.forEach {
+        val doi = it.externalIds?.get("DOI")
+        if (it.externalIds != null && doi != null) {
+            val upperDoi = doi.uppercase()
+            if (doi != upperDoi) {
+                val map = it.externalIds!!.toMutableMap()
+                map["DOI"] = upperDoi
+                it.externalIds = map
+            }
+        }
     }
 }
