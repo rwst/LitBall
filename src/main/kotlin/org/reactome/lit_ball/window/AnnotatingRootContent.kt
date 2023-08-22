@@ -95,7 +95,7 @@ fun AnnotatingRootContent(
     if (state.ydfNotFoundAlert) {
         InformationalDialog(
             title = "NOTE",
-            text = "LitBall could not run the command \"predict\".\n\nPlease make sure YDF is installed.",
+            text = "LitBall could not run the command \"predict\".\n\nPlease make sure YDF is installed and the path to it is set in Settings.",
             onCloseClicked = { model.setYdfNotFoundAlert(false) }
         )
     }

@@ -13,6 +13,7 @@ import java.io.InputStreamReader
 const val CONSOLE_MAX_LIFE = 1000000L
 object YDFService {
     const val tag = "YDFService"
+    var path: String = ""
     @OptIn(ExperimentalCoroutinesApi::class)
     fun doPredict(
         modelPath: String,
@@ -24,7 +25,7 @@ object YDFService {
             val builder = ProcessBuilder()
             return builder.command(*command.split(" ").toTypedArray()).start()
         }
-        val process = executeCommand("predict --model=$modelPath --dataset=csv:$datasetPath --key=$key --output=csv:$resultPath")
+        val process = executeCommand("${path}/predict --model=$modelPath --dataset=csv:$datasetPath --key=$key --output=csv:$resultPath")
         if (!process.isAlive)
             return false
         val stdoutReader = BufferedReader(InputStreamReader(process.inputStream))

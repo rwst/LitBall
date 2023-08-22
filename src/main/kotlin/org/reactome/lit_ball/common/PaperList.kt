@@ -17,7 +17,6 @@ object PaperList {
     private var path: String? = null
     var fileName: String = ""
     var query: LitBallQuery? = null
-    var classifications: Map<String, Int>? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     private var flagList: List<String>? = null
         get() {
@@ -238,6 +237,7 @@ object PaperList {
         val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
         val resultPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
         writeCsvTo(datasetPath)
+        YDFService.path = Settings.map["path-to-YDF"]?: ""
         try {
             if (!YDFService.doPredict(
                     modelPath = classifierPath,
@@ -254,7 +254,12 @@ object PaperList {
             AnnotatingRootStore.setYdfNotFoundAlert(true)
             return
         }
-        classifications = processCsvFile(resultPath)
+        val classificationsMap = processCsvFile(resultPath)
+        list = list.map {
+            it.tag = if ((classificationsMap[it.details.externalIds?.get("DOI")?.uppercase() ?: ""] ?: 0) > 54) Tag.Accepted else Tag.Rejected
+            it
+        }
+        AnnotatingRootStore.refreshList()
     }
 
     private fun writeCsvTo(path: String) {
@@ -269,7 +274,7 @@ object PaperList {
         File(path).writeText(stringBuilder.toString())
     }
 
-    fun processCsvFile(path: String): MutableMap<String, Int> {
+    private fun processCsvFile(path: String): MutableMap<String, Int> {
         return File(path).readLines().map { it.split(",") }.associateBy(
             { it[2] },
             { (it[1].toFloat() * 100).toInt() }

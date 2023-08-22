@@ -37,6 +37,7 @@ object Settings {
         map.clear()
         map["path-to-queries"] = Paths.get("").toAbsolutePath().toString()
         map["directory-prefix"] = "Query-"
+        map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
         map["path-to-classifiers"] = Paths.get("").toAbsolutePath().toString() + "/classifier"
     }
 
