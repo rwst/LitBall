@@ -8,11 +8,13 @@ import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.service.NLPService
 import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
+import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.io.IOException
 
 object PaperList {
+    const val TAG = "PaperList"
     var list: List<Paper> = listOf()
     private var path: String? = null
     var fileName: String = ""
@@ -226,7 +228,7 @@ object PaperList {
         """.trimIndent()
     }
 
-    fun applyClassifier() {
+    suspend fun applyClassifier() {
         val classifierName = query?.setting?.classifier?: ""
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
         val modelFile = File(classifierPath)
@@ -238,27 +240,31 @@ object PaperList {
         val resultPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
         writeCsvTo(datasetPath)
         YDFService.path = Settings.map["path-to-YDF"]?: ""
-        try {
-            if (!YDFService.doPredict(
-                    modelPath = classifierPath,
-                    datasetPath = datasetPath,
-                    resultPath = resultPath,
-                    key = "doi",
-                )
-            ) {
-                AnnotatingRootStore.setYdfNotFoundAlert(true)
-                return
+        val processJob = try {
+            YDFService.doPredict(
+            modelPath = classifierPath,
+            datasetPath = datasetPath,
+            resultPath = resultPath,
+            key = "doi",
+            ) }
+            catch (e: IOException) {
+                Logger.i(TAG, e.toString())
+                null
             }
-        }
-        catch (e: IOException) {
+        if (processJob == null) {
             AnnotatingRootStore.setYdfNotFoundAlert(true)
             return
         }
+        processJob.join()
+        println("abc")
         val classificationsMap = processCsvFile(resultPath)
         list = list.map {
-            it.tag = if ((classificationsMap[it.details.externalIds?.get("DOI")?.uppercase() ?: ""] ?: 0) > 54) Tag.Accepted else Tag.Rejected
+            it.tag = if ((classificationsMap[it.details.externalIds?.get("DOI")?.uppercase() ?: ""] ?: 0) > 54)
+                Tag.Accepted
+            else
+                Tag.Rejected
             it
-        }
+        }.toList()
         AnnotatingRootStore.refreshList()
     }
 

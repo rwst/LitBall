@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 object AnnotatingRootStore {
@@ -40,7 +42,7 @@ object AnnotatingRootStore {
         }
     }
     fun onClassifierConfirmed() {
-        PaperList.applyClassifier()
+        scope.launch(Dispatchers.IO) {PaperList.applyClassifier() }
     }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
