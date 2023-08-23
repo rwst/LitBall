@@ -12,7 +12,7 @@ enum class Tag {
 }
 
 @Serializable
-class Paper(var id: Int, val details: S2Service.PaperDetailsWithAbstract, var tag: Tag = Tag.Rejected, var flags: MutableSet<String> = mutableSetOf()) {
+class Paper(var id: Int = -1, val details: S2Service.PaperDetailsWithAbstract = S2Service.PaperDetailsWithAbstract(), var tag: Tag = Tag.Rejected, var flags: MutableSet<String> = mutableSetOf()) {
 
     override fun toString(): String {
         return "Paper(details=$details, tag=$tag, flags=$flags)"

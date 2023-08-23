@@ -142,7 +142,7 @@ fun AnnotatingListContent(
                 lazyListState
             ) {
                 items(
-                    key = { it.id },
+                    key = { it.hashCode() },
                     items = items,
                 ) { item ->
                     CardWithTextIconAndRadiobutton(

@@ -14,7 +14,7 @@ import java.io.File
 import java.io.IOException
 
 object PaperList {
-    const val TAG = "PaperList"
+    private const val TAG = "PaperList"
     var list: List<Paper> = listOf()
     private var path: String? = null
     var fileName: String = ""
@@ -171,9 +171,12 @@ object PaperList {
 
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]
+        setTag(id, newTag)
+    }
+    private fun setTag(id: Int, tag: Tag) {
         updateItem(id) {
-            it.tag = newTag
-            return@updateItem it
+            if (it.tag == tag) return@updateItem it
+            return@updateItem Paper(it.id, it.details, tag, it.flags)
         }
     }
 
@@ -228,6 +231,7 @@ object PaperList {
         """.trimIndent()
     }
 
+    private const val THRESHOLD = 54
     suspend fun applyClassifier() {
         val classifierName = query?.setting?.classifier?: ""
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
@@ -256,15 +260,16 @@ object PaperList {
             return
         }
         processJob.join()
-        println("abc")
         val classificationsMap = processCsvFile(resultPath)
-        list = list.map {
-            it.tag = if ((classificationsMap[it.details.externalIds?.get("DOI")?.uppercase() ?: ""] ?: 0) > 54)
+
+        list.forEach { paper ->
+            val doi = paper.details.externalIds?.get("DOI")?.uppercase() ?: return@forEach
+            val tag = if ((classificationsMap[doi] ?: 0) > THRESHOLD)
                 Tag.Accepted
             else
                 Tag.Rejected
-            it
-        }.toList()
+            setTag(paper.id, tag)
+        }
         AnnotatingRootStore.refreshList()
     }
 
