@@ -4,6 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
@@ -21,7 +23,7 @@ fun main() {
             title = "LitBall",
             state = rememberWindowState(
                 position = WindowPosition(alignment = Alignment.Center),
-//                size = DpSize(1280.dp, 768.dp),
+                size = DpSize(1024.dp, 768.dp),
             ),
         ) {
             MaterialTheme {

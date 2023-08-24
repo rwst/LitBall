@@ -4,7 +4,6 @@ package org.reactome.lit_ball.window
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -65,18 +64,6 @@ fun QueryCard(
                     text = "Accepted: ${item.nrAccepted()}",
                     fontSize = 14.sp
                     )
-                ElevatedButton(
-                    onClick = { (onGoClicked)(item.status, item.id) },
-                    modifier = Modifier
-                        .align(Alignment.Start),
-                    elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                    contentPadding = PaddingValues(10.dp),
-                ) {
-                    Text(
-                        text ="Annotate",
-                        fontSize = 14.sp
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.width(24.dp))
@@ -99,6 +86,18 @@ fun QueryCard(
                 elevation = ButtonDefaults.elevatedButtonElevation(6.dp),
             ) {
                 Text(item.nextActionText())
+            }
+            ElevatedButton(
+                onClick = { (onGoClicked)(item.status, item.id) },
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
+                contentPadding = PaddingValues(10.dp),
+            ) {
+                Text(
+                    text ="Annotate",
+                    fontSize = 14.sp
+                )
             }
 
             Spacer(modifier = Modifier.width(MARGIN_SCROLLBAR))
