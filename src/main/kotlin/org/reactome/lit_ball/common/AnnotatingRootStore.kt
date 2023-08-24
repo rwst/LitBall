@@ -86,7 +86,7 @@ object AnnotatingRootStore {
         setState { copy(ydfNotFoundAlert = ydfNotFoundAlert) }
     }
 
-    fun setProgressIndication(progressIndication: Pair<Float, String>?) {
+    fun setProgressIndication(progressIndication: Triple<String, Float, String>?) {
         setState { copy(progressIndication = progressIndication) }
     }
 }
@@ -107,5 +107,5 @@ data class AnnotatingRootState(
     val isClassifierSet: Boolean = false,
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
-    val progressIndication: Pair<Float, String>? = null,
+    val progressIndication: Triple<String, Float, String>? = null,
     )

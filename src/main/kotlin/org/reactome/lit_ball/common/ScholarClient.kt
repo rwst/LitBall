@@ -52,6 +52,7 @@ object S2Client : ScholarClient {
     ): Boolean {
         val size = doiSet.size
         val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
+        val indicatorTitle = "Downloading titles, TLDRs,\nand abstracts for automatic filtering"
         doiSet.forEachIndexed { index, it ->
             var paper: S2Service.PaperDetailsWithAbstract?
             do {
@@ -64,11 +65,11 @@ object S2Client : ScholarClient {
                 catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
                     RootStore.setProgressIndication(
-                        Pair((1f * index) / size, "TIMEOUT"))
+                        Triple(indicatorTitle,(1f * index) / size, "TIMEOUT"))
                     continue
                 } catch (e: HttpException) {
                     paper = null
-                    RootStore.setProgressIndication(Pair((1f*index)/size, "ERROR ${e.code()}"))
+                    RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "ERROR ${e.code()}"))
                     when (e.code()) {
                         400, 404 -> break // assume DOI defect or unknown
                         429 -> {          // API says too fast, so delay and repeat
@@ -82,7 +83,7 @@ object S2Client : ScholarClient {
             } while (true)
             delay(strategy.delay(true))
             paper?.also (action)
-            RootStore.setProgressIndication(Pair((1f*index)/size, "$index/$size"))
+            RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "$index/$size"))
         }
         RootStore.setProgressIndication(null)
         return true
@@ -93,6 +94,7 @@ object S2Client : ScholarClient {
     ): Boolean {
         val size = doiSet.size
         val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
+        val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
         doiSet.forEachIndexed { index, it ->
             var refs: S2Service.PaperRefs?
             do {
@@ -103,11 +105,12 @@ object S2Client : ScholarClient {
                     )
                 } catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
-                    RootStore.setProgressIndication(Pair((1f*index)/size, "TIMEOUT"))
+                    RootStore.setProgressIndication(
+                        Triple(indicatorTitle, (1f*index)/size, "TIMEOUT"))
                     continue
                 } catch (e: HttpException) {
                     refs = null
-                    RootStore.setProgressIndication(Pair((1f*index)/size, "ERROR ${e.code()}"))
+                    RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "ERROR ${e.code()}"))
                     when (e.code()) {
                         400, 404 -> break // assume DOI defect or unknown
                         429 -> {          // API says too fast, so delay and repeat
@@ -121,7 +124,7 @@ object S2Client : ScholarClient {
             } while (true)
             delay(strategy.delay(true))
             refs?.also(action)
-            RootStore.setProgressIndication(Pair((1f*index)/size, "$index/$size"))
+            RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "$index/$size"))
         }
         RootStore.setProgressIndication(null)
         return true

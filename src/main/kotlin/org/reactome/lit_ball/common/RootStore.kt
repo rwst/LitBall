@@ -109,7 +109,7 @@ object RootStore {
         setState { copy(items = items) }
     }
 
-    fun setProgressIndication(progressIndication: Pair<Float, String>?) {
+    fun setProgressIndication(progressIndication: Triple<String, Float, String>?) {
         setState { copy(progressIndication = progressIndication) }
     }
 }
@@ -124,5 +124,5 @@ data class RootState(
     val doExpand: Int? = null,
     val doFilter1: Int? = null,
     val doFilter2: Int? = null,
-    val progressIndication: Pair<Float, String>? = null,
+    val progressIndication: Triple<String, Float, String>? = null,
 )

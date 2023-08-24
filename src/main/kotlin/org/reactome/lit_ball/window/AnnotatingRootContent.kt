@@ -61,7 +61,8 @@ fun AnnotatingRootContent(
     state.progressIndication?.also {
         ProgressIndicator(
             state.progressIndication.first,
-            state.progressIndication.second
+            state.progressIndication.second,
+            state.progressIndication.third,
         )
     }
 

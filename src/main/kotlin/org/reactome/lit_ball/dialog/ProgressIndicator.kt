@@ -11,9 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
-fun ProgressIndicator(value: Float, text: String) {
+fun ProgressIndicator(title: String, value: Float, text: String) {
     Box(
         modifier = Modifier
             .progressSemantics(value)
@@ -25,6 +26,11 @@ fun ProgressIndicator(value: Float, text: String) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Text(
+                text = title,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(8.dp)
+                )
             CircularProgressIndicator(
                 value,
                 strokeWidth = 8.dp,
