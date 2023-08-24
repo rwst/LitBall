@@ -9,6 +9,7 @@ import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.io.IOException
+import java.util.Date
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
 
@@ -39,6 +40,7 @@ data class LitBallQuery(
     var setting: QuerySetting? = null,
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
+    var lastExpansionDate: Date? = null,
 ) {
     fun syncBuffers() {
         acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()
@@ -47,7 +49,7 @@ data class LitBallQuery(
     fun nrAccepted() = acceptedSet.size
     fun nrRejected() = rejectedSet.size
     override fun toString(): String {
-        return "Query(id=$id, name=$name, status=$status, setting=$setting, nrAccepted=${nrAccepted()}, nrRejected=${nrRejected()})"
+        return "Query(id=$id, name=$name, status=$status, setting=$setting, nrAccepted=${nrAccepted()}, nrRejected=${nrRejected()}, lastExpansionDate=$lastExpansionDate)"
     }
 
     fun nextActionText(): String {
@@ -57,6 +59,21 @@ data class LitBallQuery(
             "Automatic filtering",
             "Supervised filtering"
         )[status.ordinal]
+    }
+
+     fun getLastExpansionDate(fromFile: Boolean = false): Date? {
+        return if (fromFile) {
+            val queryDir = getQueryDir(name)
+            if (queryDir.isDirectory && queryDir.canRead()) {
+                val file = File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}")
+                if (file.canRead())
+                    Date(file.lastModified())
+                else
+                    null
+            } else
+                null
+        } else
+            Date()
     }
 
     suspend fun expand() {
@@ -75,6 +92,7 @@ data class LitBallQuery(
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
                 File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").writeText(text)
+                lastExpansionDate = getLastExpansionDate()
                 QueryStatus.EXPANDED
             } catch (e: Exception) {
                 handleException(e)

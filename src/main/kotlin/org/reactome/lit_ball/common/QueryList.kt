@@ -17,7 +17,7 @@ object QueryList {
         val dirs = queryDirectories(queryPath, prefix)
         list = MutableList(dirs.size) { index ->
             dirs[index].let {
-                LitBallQuery(
+                val newQuery = LitBallQuery(
                     id = index,
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
@@ -25,6 +25,8 @@ object QueryList {
                     acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }.toMutableSet(),
                     rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }.toMutableSet(),
                 )
+                newQuery.lastExpansionDate = newQuery.getLastExpansionDate(fromFile = true)
+                newQuery
             }
         }
         RootStore.setItems(list)
