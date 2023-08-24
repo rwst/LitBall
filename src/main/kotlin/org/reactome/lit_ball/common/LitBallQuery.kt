@@ -10,7 +10,7 @@ import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.io.IOException
 
-enum class QueryStatus { UNINITIALIZED, ANNOTATED, EXPANDED, FILTERED }
+enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
 
 
 fun getQueryDir(name: String): File {
@@ -54,8 +54,8 @@ data class LitBallQuery(
         return arrayOf(
             "Complete the Setting",
             "Start expansion",
-            "Start filtering",
-            "Go to Annotation"
+            "Automatic filtering",
+            "Supervised filtering"
         )[status.ordinal]
     }
 
@@ -78,13 +78,13 @@ data class LitBallQuery(
                 QueryStatus.EXPANDED
             } catch (e: Exception) {
                 handleException(e)
-                QueryStatus.ANNOTATED
+                QueryStatus.FILTERED2
             }
             RootStore.onDoExpandStopped()
         }
     }
 
-    suspend fun filter() {
+    suspend fun filter1() {
         val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.filter { it.isNotEmpty() }?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
             ?: emptyList()
         val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.filter { it.isNotEmpty() }?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
@@ -124,7 +124,7 @@ data class LitBallQuery(
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {
-                val file = File("${queryDir.absolutePath}/${FileType.FILTERED.fileName}")
+                val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
                 file.writeText(json.encodeToString(
                     paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd) })
                 )
@@ -142,8 +142,8 @@ data class LitBallQuery(
             }
         }
         File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
-        status = QueryStatus.FILTERED
-        RootStore.onDoFilterStopped()
+        status = QueryStatus.FILTERED1
+        RootStore.onDoFilter1Stopped()
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -171,13 +171,13 @@ data class LitBallQuery(
         }
     }
 
-    fun annotate() {
+    fun filter2() {
         if (PaperList.query == this) return
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
             try {
-                file = File("${queryDir.absolutePath}/${FileType.FILTERED.fileName}")
+                file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
             } catch (e: Exception) {
                 handleException(e)
                 return

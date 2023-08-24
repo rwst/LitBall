@@ -29,7 +29,7 @@ object PaperList {
         }
     fun setFromQuery(query: LitBallQuery, file: File) {
         this.query = query
-        fileName = FileType.FILTERED.fileName
+        fileName = FileType.FILTERED1.fileName
         path = file.absolutePath
         readFromFile(file)
         sanitize()
@@ -163,7 +163,7 @@ object PaperList {
         }
         path?.let { File(it).delete() }
         println("$path deleted")
-        RootStore.setAnnotated()
+        RootStore.setFiltered2()
         AnnotatingRootStore.switchRoot()
         query = null
     }

@@ -77,11 +77,11 @@ private fun getStatus(dir: File): QueryStatus {
         file.isFile && file.canRead()
     }?.map { it.name } ?: emptyList()
     if (setOf(FileType.ACCEPTED.fileName, FileType.SETTINGS.fileName).all { it in fileNames }) {
-        if (FileType.FILTERED.fileName in fileNames)
-            return QueryStatus.FILTERED
+        if (FileType.FILTERED1.fileName in fileNames)
+            return QueryStatus.FILTERED1
         if (FileType.EXPANDED.fileName in fileNames)
             return QueryStatus.EXPANDED
-        return QueryStatus.ANNOTATED
+        return QueryStatus.FILTERED2
     }
     return QueryStatus.UNINITIALIZED
 }

@@ -41,35 +41,35 @@ object RootStore {
         }
     }
 
-    private fun onDoFilterStarted(id: Int) {
+    private fun onDoFilter1Started(id: Int) {
         setState {
             scope.launch(Dispatchers.IO) {
-                QueryList.itemFromId(id)?.filter()
+                QueryList.itemFromId(id)?.filter1()
             }
-            copy(doFilter = id)
+            copy(doFilter1 = id)
         }
     }
 
-    fun setAnnotated() {
-        QueryList.itemFromId(state.doAnnotate)?.let {
+    fun setFiltered2() {
+        QueryList.itemFromId(state.doFilter2)?.let {
             it.syncBuffers()
-            it.status = QueryStatus.ANNOTATED
+            it.status = QueryStatus.FILTERED2
         }
     }
 
     fun nextAction(status: QueryStatus, id: Int) {
         when (status) {
             QueryStatus.UNINITIALIZED -> onQuerySettingsClicked(id)
-            QueryStatus.ANNOTATED -> onDoExpandStarted(id)
-            QueryStatus.EXPANDED -> onDoFilterStarted(id)
-            QueryStatus.FILTERED -> onDoAnnotateStarted(id)
+            QueryStatus.FILTERED2 -> onDoExpandStarted(id)
+            QueryStatus.EXPANDED -> onDoFilter1Started(id)
+            QueryStatus.FILTERED1 -> onDoFilter2Started(id)
         }
     }
 
     fun onQuerySettingsCloseClicked() {
         val query = state.editingQuerySettings ?: throw CantHappenException()
         if (query.status == QueryStatus.UNINITIALIZED) {
-            query.status = QueryStatus.ANNOTATED // TODO: make this dependent on what is set
+            query.status = QueryStatus.FILTERED2 // TODO: make this dependent on what is set
             setState { copy(items = QueryList.list.toList()) }
         }
         setState { copy(editingQuerySettings = null) }
@@ -91,14 +91,14 @@ object RootStore {
     fun onDoExpandStopped() {
         setState { copy(doExpand = null, items = QueryList.list.toList()) }
     }
-    fun onDoFilterStopped() {
-        setState { copy(doFilter = null, items = QueryList.list.toList()) }
+    fun onDoFilter1Stopped() {
+        setState { copy(doFilter1 = null, items = QueryList.list.toList()) }
     }
 
-    private fun onDoAnnotateStarted(id: Int) {
+    private fun onDoFilter2Started(id: Int) {
         setState {
             rootSwitch.value = true
-            copy(doAnnotate = id)
+            copy(doFilter2 = id)
         }
     }
     fun onQuerySettingsClicked(id: Int?) {
@@ -122,7 +122,7 @@ data class RootState(
     val editingSettings: Boolean = false,
     val editingQuerySettings: LitBallQuery? = null, // TODO: refactor this to Int?
     val doExpand: Int? = null,
-    val doFilter: Int? = null,
-    val doAnnotate: Int? = null,
+    val doFilter1: Int? = null,
+    val doFilter2: Int? = null,
     val progressIndication: Pair<Float, String>? = null,
 )

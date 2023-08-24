@@ -48,7 +48,7 @@ fun AnnotatingRootContent(
     )
 
     scope.launch(Dispatchers.IO) {
-        RootStore.state.doAnnotate?.let { RootStore.state.items[it].annotate() }
+        RootStore.state.doFilter2?.let { RootStore.state.items[it].filter2() }
     }
 
     state.editingItemId?.also { item ->
