@@ -4,15 +4,13 @@ package org.reactome.lit_ball.window
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +19,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 
@@ -47,36 +46,56 @@ fun QueryCard(
                 )
             }
             Spacer(modifier = Modifier.width(14.dp))
-            SuggestionChip(
-                onClick = {},
-                label = {
-                    Text(
-                        text = AnnotatedString(item.name),
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+            Column {
+                SuggestionChip(
+                    onClick = {},
+                    label = {
+                        Text(
+                            text = AnnotatedString(item.name),
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    modifier = Modifier
+                        .align(Alignment.Start),
+                )
+                Text(
+                    text = "Accepted: ${item.nrAccepted()}",
+                    fontSize = 14.sp
                     )
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-            )
+                ElevatedButton(
+                    onClick = { (onGoClicked)(item.status, item.id) },
+                    modifier = Modifier
+                        .align(Alignment.Start),
+                    elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
+                    contentPadding = PaddingValues(10.dp),
+                ) {
+                    Text(
+                        text ="Annotate",
+                        fontSize = 14.sp
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
-                text = "accepted: ${item.nrAccepted()}\nrejected: ${item.nrRejected()}\nstatus: ${item.status}",
+                text = "Rejected: ${item.nrRejected()}\nStatus: ${item.status}\nLast expansion: 2023-Abc-15",
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.Top)
                     .padding(vertical = 8.dp),
+                fontSize = 14.sp
             )
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            FilledTonalButton(
+            ElevatedButton(
                 onClick = { (onGoClicked)(item.status, item.id) },
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(horizontal = 24.dp, vertical = 4.dp),
+                elevation = ButtonDefaults.elevatedButtonElevation(6.dp),
             ) {
                 Text(item.nextActionText())
             }
