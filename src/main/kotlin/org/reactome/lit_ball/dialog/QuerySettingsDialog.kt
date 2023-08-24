@@ -27,6 +27,8 @@ fun QuerySettingsDialog(
     val field2Value =
         rememberSaveable { mutableStateOf(item.setting?.forbiddenKeyWords?.joinToString(separator = ", ") ?: "") }
     val field3Value = rememberSaveable { mutableStateOf(item.setting?.classifier ?: "") }
+    val field4Value =
+        rememberSaveable { mutableStateOf(item.setting?.annotationClasses?.joinToString(separator = ", ") ?: "") }
 
     AlertDialog(
         onDismissRequest = {
@@ -44,6 +46,10 @@ fun QuerySettingsDialog(
                         .filter { it.isNotEmpty() }
                         .toMutableSet()
                     item.setting!!.classifier = field3Value.value.trim()
+                    item.setting!!.annotationClasses = field4Value.value.split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+                        .toMutableSet()
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }
@@ -85,6 +91,12 @@ fun QuerySettingsDialog(
                     value = field3Value.value,
                     onValueChange = { field3Value.value = it },
                     label = { Text("Classifier model name") },
+                )
+                TextField(
+                    value = field4Value.value,
+                    onValueChange = { field4Value.value = it },
+                    label = { Text("Annotation classes") },
+                    placeholder = { Text("text1, text2, ...") }
                 )
             }
         },
