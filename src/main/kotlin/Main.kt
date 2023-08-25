@@ -11,13 +11,14 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.apache.log4j.BasicConfigurator
-import org.reactome.lit_ball.window.AnnotatingRootContent
+import org.reactome.lit_ball.window.Filtering2RootContent
 import org.reactome.lit_ball.window.RootContent
 
+enum class RootType { MAIN_ROOT, FILTER2_ROOT, ANNOTATE_ROOT }
 fun main() {
     BasicConfigurator.configure()
     application {
-        val rootSwitch = remember { mutableStateOf(false) }
+        val rootSwitch = remember { mutableStateOf(RootType.MAIN_ROOT) }
         Window(
             onCloseRequest = ::exitApplication,
             title = "LitBall",
@@ -27,19 +28,18 @@ fun main() {
             ),
         ) {
             MaterialTheme {
-                if (rootSwitch.value) {
-                    AnnotatingRootContent(
+                when (rootSwitch.value) {
+                    RootType.MAIN_ROOT -> RootContent(
                         modifier = Modifier.fillMaxSize(),
                         onExit = ::exitApplication,
                         rootSwitch,
                     )
-                }
-                else {
-                    RootContent(
+                    RootType.FILTER2_ROOT -> Filtering2RootContent(
                         modifier = Modifier.fillMaxSize(),
                         onExit = ::exitApplication,
                         rootSwitch,
                     )
+                    RootType.ANNOTATE_ROOT -> {}
                 }
             }
         }

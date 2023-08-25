@@ -2,6 +2,7 @@
 
 package org.reactome.lit_ball.window
 
+import RootType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
@@ -15,16 +16,16 @@ import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.*
 
 @Composable
-fun AnnotatingRootContent(
+fun Filtering2RootContent(
     modifier: Modifier = Modifier,
     onExit: () -> Unit,
-    rootSwitch: MutableState<Boolean>,
+    rootSwitch: MutableState<RootType>,
 ) {
-    val model = remember { AnnotatingRootStore }
+    val model = remember { Filtering2RootStore }
     val state = model.state
     val scope = rememberCoroutineScope()
-    AnnotatingRootStore.scope = scope
-    AnnotatingRootStore.state = state
+    Filtering2RootStore.scope = scope
+    Filtering2RootStore.state = state
     model.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
@@ -34,7 +35,7 @@ fun AnnotatingRootContent(
         RailItem("Exit", Icons.Filled.ExitToApp, 3, extraAction = onExit, onClicked = model::buttonExit)
     )
 
-    AnnotatingMainContent(
+    Filtering2MainContent(
         modifier = modifier,
         items = state.items,
         onItemClicked = model::onItemClicked,

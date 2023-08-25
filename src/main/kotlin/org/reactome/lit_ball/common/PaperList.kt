@@ -130,8 +130,8 @@ object PaperList {
         runBlocking {
             updateShadowMap()
             delay(200)
-            AnnotatingRootStore.refreshList()
-            AnnotatingRootStore.refreshClassifierButton()
+            Filtering2RootStore.refreshList()
+            Filtering2RootStore.refreshClassifierButton()
         }
     }
 
@@ -164,7 +164,7 @@ object PaperList {
         path?.let { File(it).delete() }
         println("$path deleted")
         RootStore.setFiltered2()
-        AnnotatingRootStore.switchRoot()
+        Filtering2RootStore.switchRoot()
         query = null
     }
 
@@ -237,7 +237,7 @@ object PaperList {
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
         val modelFile = File(classifierPath)
         if (query == null || classifierName.isBlank() || !modelFile.canRead()) {
-            AnnotatingRootStore.setClassifierExceptionAlert(true)
+            Filtering2RootStore.setClassifierExceptionAlert(true)
             return
         }
         val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
@@ -256,7 +256,7 @@ object PaperList {
                 null
             }
         if (processJob == null) {
-            AnnotatingRootStore.setYdfNotFoundAlert(true)
+            Filtering2RootStore.setYdfNotFoundAlert(true)
             return
         }
         processJob.join()
@@ -270,7 +270,7 @@ object PaperList {
                 Tag.Rejected
             setTag(paper.id, tag)
         }
-        AnnotatingRootStore.refreshList()
+        Filtering2RootStore.refreshList()
     }
 
     private fun writeCsvTo(path: String) {

@@ -2,6 +2,7 @@
 
 package org.reactome.lit_ball.window
 
+import RootType
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
@@ -15,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun Rail(
     railItems: List<RailItem>,
     onNewButtonClicked: () -> Unit,
-    rootSwitch: MutableState<Boolean>,
+    rootSwitch: MutableState<RootType>,
     ) {
     val selectedItem by remember { mutableStateOf(0) }
 
@@ -38,7 +39,7 @@ fun Rail(
                 selected = selectedItem == item.actionIndex
             )
         }
-        if (!rootSwitch.value) {
+        if (rootSwitch.value == RootType.MAIN_ROOT) {
             ExtendedFloatingActionButton(
                 onClick = onNewButtonClicked,
                 icon = {

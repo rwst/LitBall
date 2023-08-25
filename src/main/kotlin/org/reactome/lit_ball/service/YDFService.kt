@@ -2,7 +2,7 @@ package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.reactome.lit_ball.common.AnnotatingRootStore
+import org.reactome.lit_ball.common.Filtering2RootStore
 import org.reactome.lit_ball.util.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -26,14 +26,14 @@ object YDFService {
             return null
         val stderrReader = BufferedReader(InputStreamReader(process.errorStream))
         val stderrChannel = Channel<String>()
-        AnnotatingRootStore.scope.launch (Dispatchers.IO) {
+        Filtering2RootStore.scope.launch (Dispatchers.IO) {
             do {
                 val line = stderrReader.readLine() ?: break
                 stderrChannel.send(line)
             }
             while (true)
         }
-        AnnotatingRootStore.scope.launch(Dispatchers.IO) {
+        Filtering2RootStore.scope.launch(Dispatchers.IO) {
             while (true) {
                 val line = stderrChannel.receive()
                 if (line.startsWith("[INFO "))
@@ -42,11 +42,11 @@ object YDFService {
                     throw Exception(line)
             }
         }
-        val job = AnnotatingRootStore.scope.launch (Dispatchers.IO) {
+        val job = Filtering2RootStore.scope.launch (Dispatchers.IO) {
             process.onExit().get()
             stderrChannel.cancel()
         }
-        AnnotatingRootStore.scope.launch (Dispatchers.IO) {
+        Filtering2RootStore.scope.launch (Dispatchers.IO) {
             delay(CONSOLE_MAX_LIFE)
             process.destroy()
         }

@@ -1,5 +1,6 @@
 package org.reactome.lit_ball.common
 
+import RootType
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,23 +11,23 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
-object AnnotatingRootStore {
-    var state: AnnotatingRootState by mutableStateOf(initialState())
+object Filtering2RootStore {
+    var state: Filtering2RootState by mutableStateOf(initialState())
 
     lateinit var scope: CoroutineScope
-    lateinit var rootSwitch: MutableState<Boolean>
+    lateinit var rootSwitch: MutableState<RootType>
 
     fun switchRoot() {
-        rootSwitch.value = false
+        rootSwitch.value = RootType.MAIN_ROOT
         (RootStore::refreshList)()
     }
 
 //    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
 //        copy(items = items.updateItem(id = id, transformer = transformer))
 
-    private fun initialState(): AnnotatingRootState = AnnotatingRootState()
+    private fun initialState(): Filtering2RootState = Filtering2RootState()
 
-    private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
+    private inline fun setState(update: Filtering2RootState.() -> Filtering2RootState) {
         state = state.update()
     }
     fun refreshList() {
@@ -115,7 +116,7 @@ object AnnotatingRootStore {
     }
 }
 
-data class AnnotatingRootState(
+data class Filtering2RootState(
     val items: List<Paper> = PaperList.toList(),
     val settings: Settings = Settings,
     val activeRailItem: String = "",

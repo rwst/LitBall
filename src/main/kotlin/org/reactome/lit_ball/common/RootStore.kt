@@ -1,5 +1,6 @@
 package org.reactome.lit_ball.common
 
+import RootType
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +15,7 @@ object RootStore {
     var state: RootState by mutableStateOf(initialState())
 
     lateinit var scope: CoroutineScope
-    lateinit var rootSwitch: MutableState<Boolean>
+    lateinit var rootSwitch: MutableState<RootType>
 
     private fun initialState(): RootState =
         RootState()
@@ -74,7 +75,7 @@ object RootStore {
             setState { copy(items = QueryList.list.toList()) }
         }
         setState { copy(editingQuerySettings = null) }
-        AnnotatingRootStore.refreshClassifierButton()
+        Filtering2RootStore.refreshClassifierButton()
     }
 
     fun setEditingSettings(boolean: Boolean) {
@@ -98,13 +99,13 @@ object RootStore {
 
     private fun onDoFilter2Started(id: Int) {
         setState {
-            rootSwitch.value = true
+            rootSwitch.value = RootType.FILTER2_ROOT
             copy(doFilter2 = id)
         }
     }
     fun onAnnotateStarted(id: Int) {
         setState {
-            rootSwitch.value = true
+            rootSwitch.value = RootType.ANNOTATE_ROOT
             copy(doAnnotate = id)
         }
     }

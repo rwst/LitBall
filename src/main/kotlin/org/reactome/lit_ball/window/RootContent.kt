@@ -2,6 +2,7 @@
 
 package org.reactome.lit_ball.window
 
+import RootType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
@@ -25,7 +26,7 @@ import org.reactome.lit_ball.dialog.SettingsDialog
 fun RootContent(
     modifier: Modifier = Modifier,
     onExit: () -> Unit,
-    rootSwitch: MutableState<Boolean>,
+    rootSwitch: MutableState<RootType>,
 ) {
     val model = remember { RootStore }
     val state = model.state

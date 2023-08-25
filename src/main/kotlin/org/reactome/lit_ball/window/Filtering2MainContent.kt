@@ -2,6 +2,7 @@
 
 package org.reactome.lit_ball.window
 
+import RootType
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,7 +35,7 @@ import org.reactome.lit_ball.dialog.RadioButtonOptions
 
 @Suppress("FunctionName")
 @Composable
-internal fun AnnotatingMainContent(
+internal fun Filtering2MainContent(
     modifier: Modifier = Modifier,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
@@ -42,7 +43,7 @@ internal fun AnnotatingMainContent(
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onExit: () -> Unit,
-    rootSwitch: MutableState<Boolean>,
+    rootSwitch: MutableState<RootType>,
     isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
     ) {
@@ -53,7 +54,7 @@ internal fun AnnotatingMainContent(
             rootSwitch = rootSwitch,
         )
 
-        AnnotatingListContent(
+        Filtering2ListContent(
             items = items,
             onItemClicked = onItemClicked,
             onItemDeleteClicked = onItemDeleteClicked,
@@ -66,7 +67,7 @@ internal fun AnnotatingMainContent(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AnnotatingListContent(
+fun Filtering2ListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,

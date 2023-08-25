@@ -202,7 +202,7 @@ data class LitBallQuery(
                 return
             }
             PaperList.setFromQuery(this, file)
-            AnnotatingRootStore.refreshList()
+            Filtering2RootStore.refreshList()
         }
         else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))

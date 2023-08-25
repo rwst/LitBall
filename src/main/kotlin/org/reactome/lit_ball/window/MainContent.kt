@@ -2,6 +2,7 @@
 
 package org.reactome.lit_ball.window
 
+import RootType
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,7 +35,7 @@ internal fun MainContent(
     railItems: List<RailItem>,
     onItemSettingsClicked: (id: Int?) -> Unit,
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
-    rootSwitch: MutableState<Boolean>,
+    rootSwitch: MutableState<RootType>,
     onItemAnnotateClicked: (id: Int) -> Unit
 ) {
     Row(modifier) {
