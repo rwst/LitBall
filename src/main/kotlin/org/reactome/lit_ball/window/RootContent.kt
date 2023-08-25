@@ -49,6 +49,7 @@ fun RootContent(
         onItemSettingsClicked = { id ->model.onQuerySettingsClicked(id) },
         onItemGoClicked = { status, id -> model.nextAction(status, id) },
         rootSwitch = rootSwitch,
+        onItemAnnotateClicked = { id ->model.onAnnotateStarted(id) },
     )
 
     scope.launch(Dispatchers.IO) {

@@ -35,6 +35,7 @@ internal fun MainContent(
     onItemSettingsClicked: (id: Int?) -> Unit,
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
     rootSwitch: MutableState<Boolean>,
+    onItemAnnotateClicked: (id: Int) -> Unit
 ) {
     Row(modifier) {
         Rail(
@@ -48,6 +49,7 @@ internal fun MainContent(
                 onItemClicked = onItemClicked,
                 onItemSettingsClicked,
                 onItemGoClicked,
+                onItemAnnotateClicked,
             )
         }
     }
@@ -59,6 +61,7 @@ private fun ListContent(
     onItemClicked: (id: Int) -> Unit,
     onItemSettingsClicked: (id: Int?) -> Unit,
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
+    onItemAnnotateClicked: (id: Int) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -80,7 +83,8 @@ private fun ListContent(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
                     onItemSettingsClicked,
-                    onItemGoClicked,
+                    onGoClicked = onItemGoClicked,
+                    onAnnotateClicked = { onItemAnnotateClicked(item.id) },
                 )
                 Divider()
             }

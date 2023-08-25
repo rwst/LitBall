@@ -102,6 +102,12 @@ object RootStore {
             copy(doFilter2 = id)
         }
     }
+    fun onAnnotateStarted(id: Int) {
+        setState {
+            rootSwitch.value = true
+            copy(doAnnotate = id)
+        }
+    }
     fun onQuerySettingsClicked(id: Int?) {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
@@ -146,5 +152,6 @@ data class RootState(
     val doExpand: Int? = null,
     val doFilter1: Int? = null,
     val doFilter2: Int? = null,
+    val doAnnotate: Int? = null,
     val progressIndication: ProgressIndicatorParameter? = null,
 )

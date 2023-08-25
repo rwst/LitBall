@@ -30,6 +30,7 @@ fun QueryCard(
     onClicked: () -> Unit,
     onSettingsClicked: (Int?) -> Unit,
     onGoClicked: (status: QueryStatus, id: Int) -> Unit,
+    onAnnotateClicked: () -> Unit,
 ) {
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
@@ -88,7 +89,7 @@ fun QueryCard(
                 Text(item.nextActionText())
             }
             ElevatedButton(
-                onClick = { (onGoClicked)(item.status, item.id) },
+                onClick = onAnnotateClicked,
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
