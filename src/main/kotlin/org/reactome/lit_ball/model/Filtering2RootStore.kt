@@ -14,7 +14,7 @@ import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
-object Filtering2RootStore {
+object Filtering2RootStore: Store {
     var state: Filtering2RootState by mutableStateOf(initialState())
 
     lateinit var scope: CoroutineScope
@@ -33,11 +33,11 @@ object Filtering2RootStore {
     private inline fun setState(update: Filtering2RootState.() -> Filtering2RootState) {
         state = state.update()
     }
-    fun refreshList() {
+    override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
 
-    fun refreshClassifierButton() {
+    override fun refreshClassifierButton() {
         setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false) }
     }
 

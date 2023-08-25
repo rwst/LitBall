@@ -96,7 +96,7 @@ fun QueryCard(
                 contentPadding = PaddingValues(10.dp),
             ) {
                 Text(
-                    text ="Annotate",
+                    text ="Annotate\naccepted",
                     fontSize = 14.sp
                 )
             }

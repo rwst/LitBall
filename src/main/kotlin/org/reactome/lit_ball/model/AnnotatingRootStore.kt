@@ -14,13 +14,17 @@ import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
-object AnnotatingRootStore {
-    var state: Filtering2RootState by mutableStateOf(initialState())
+interface Store {
+    fun refreshList()
+    fun refreshClassifierButton()
+}
+object AnnotatingRootStore: Store {
+    var state: AnnotatingRootState by mutableStateOf(initialState())
 
     lateinit var scope: CoroutineScope
     lateinit var rootSwitch: MutableState<RootType>
 
-    fun switchRoot() {
+    private fun switchRoot() {
         rootSwitch.value = RootType.MAIN_ROOT
         (RootStore::refreshList)()
     }
@@ -28,16 +32,16 @@ object AnnotatingRootStore {
 //    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
 //        copy(items = items.updateItem(id = id, transformer = transformer))
 
-    private fun initialState(): Filtering2RootState = Filtering2RootState()
+    private fun initialState(): AnnotatingRootState = AnnotatingRootState()
 
-    private inline fun setState(update: Filtering2RootState.() -> Filtering2RootState) {
+    private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
         state = state.update()
     }
-    fun refreshList() {
+    override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
 
-    fun refreshClassifierButton() {
+    override fun refreshClassifierButton() {
         setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false) }
     }
 
@@ -52,13 +56,6 @@ object AnnotatingRootStore {
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
-    fun onItemDeleteClicked(id: Int) {
-        setState { copy(items = PaperList.toListWithItemRemoved(id)) }
-    }
-
-    fun onItemRadioButtonClicked(id: Int, btn: Int) {
-        PaperList.setTag(id, btn)
-    }
 
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
@@ -69,7 +66,7 @@ object AnnotatingRootStore {
 
     fun onDoAnnotateStopped() {
         runBlocking {
-            PaperList.save()
+            PaperList.saveAnnotated()
         }
         switchRoot()
     }

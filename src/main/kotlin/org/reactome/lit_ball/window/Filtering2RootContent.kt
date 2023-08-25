@@ -4,7 +4,9 @@ package org.reactome.lit_ball.window
 
 import RootType
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Publish
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -12,10 +14,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.*
-import org.reactome.lit_ball.dialog.*
+import org.reactome.lit_ball.common.PaperList
+import org.reactome.lit_ball.dialog.ConfirmationDialog
+import org.reactome.lit_ball.dialog.InformationalDialog
+import org.reactome.lit_ball.dialog.ItemClickedDialog
+import org.reactome.lit_ball.dialog.ProgressIndicator
 import org.reactome.lit_ball.model.Filtering2RootStore
-import org.reactome.lit_ball.model.RootStore
 
 @Composable
 fun Filtering2RootContent(
@@ -49,10 +53,6 @@ fun Filtering2RootContent(
         isClassifierSet = state.isClassifierSet,
         onClassifierButtonClicked = { model.setClassifierAlert(true) },
     )
-
-    scope.launch(Dispatchers.IO) {
-        RootStore.state.doFilter2?.let { RootStore.state.items[it].filter2() }
-    }
 
     state.editingItemId?.also { item ->
         ItemClickedDialog(

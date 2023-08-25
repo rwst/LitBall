@@ -3,6 +3,7 @@ package org.reactome.lit_ball.common
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
+import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.S2Client
@@ -194,7 +195,6 @@ data class LitBallQuery(
     }
 
     fun filter2() {
-        if (PaperList.query == this) return
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
@@ -206,6 +206,25 @@ data class LitBallQuery(
             }
             PaperList.setFromQuery(this, file)
             Filtering2RootStore.refreshList()
+        }
+        else {
+            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
+            return
+        }
+    }
+
+    fun annotate() {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canRead()) {
+            val file: File
+            try {
+                file = File("${queryDir.absolutePath}/${FileType.ARCHIVED.fileName}")
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+            PaperList.setFromQuery(this, file, acceptedSet)
+            AnnotatingRootStore.refreshList()
         }
         else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))

@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
+import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
@@ -102,12 +103,16 @@ object RootStore {
 
     private fun onDoFilter2Started(id: Int) {
         setState {
+            PaperList.model = Filtering2RootStore
+            state.items[id].filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
             copy(doFilter2 = id)
         }
     }
     fun onAnnotateStarted(id: Int) {
         setState {
+            PaperList.model = AnnotatingRootStore
+            state.items[id].annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
             copy(doAnnotate = id)
         }

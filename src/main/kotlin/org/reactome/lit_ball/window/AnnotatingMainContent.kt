@@ -140,7 +140,7 @@ fun AnnotatingListContent(
                     key = { it.hashCode() },
                     items = items,
                 ) { item ->
-                    CardWithTextIconAndFlagBoxes(
+                    CardWithFlagBoxes(
                         item = item,
                         onClicked = { onItemClicked(item.id) },
                         onFlagSet = { idx,value -> onFlagSet(item.id, idx, value) },
@@ -158,8 +158,8 @@ fun AnnotatingListContent(
     }
 }
 
-
-fun CardWithTextIconAndFlagBoxes(
+@Composable
+fun CardWithFlagBoxes(
     item: Paper,
     onClicked: () -> Unit,
     onFlagSet: (Int, Boolean) -> Unit,

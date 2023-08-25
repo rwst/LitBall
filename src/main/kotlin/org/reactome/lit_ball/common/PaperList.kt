@@ -7,6 +7,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
+import org.reactome.lit_ball.model.Store
 import org.reactome.lit_ball.service.NLPService
 import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -21,6 +22,7 @@ object PaperList {
     private var path: String? = null
     var fileName: String = ""
     var query: LitBallQuery? = null
+    var model: Store? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     var flagList: List<String>? = null
         get() {
@@ -29,11 +31,11 @@ object PaperList {
             }
             return field
         }
-    fun setFromQuery(query: LitBallQuery, file: File) {
+    fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
         this.query = query
-        fileName = FileType.FILTERED1.fileName
+        fileName = file.name
         path = file.absolutePath
-        readFromFile(file)
+        readFromFile(file, accepted)
         sanitize()
         updateShadowMap()
     }
@@ -116,7 +118,7 @@ object PaperList {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun readFromFile(file: File) {
+    fun readFromFile(file: File, accepted: MutableSet<String>?) {
         val json = ConfiguredJson.get()
         if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
 
@@ -124,7 +126,8 @@ object PaperList {
         val f = File(file.absolutePath)
 
         if (f.exists()) {
-            val papers = json.decodeFromStream<List<Paper>>(f.inputStream())
+            var papers = json.decodeFromStream<List<Paper>>(f.inputStream())
+            accepted?.let { papers = papers.filter { it.details.externalIds?.get("DOI") in accepted } }
             list = papers
         } else {
             throw Exception("File to open: $fileName does not exist")
@@ -132,12 +135,20 @@ object PaperList {
         runBlocking {
             updateShadowMap()
             delay(200)
-            Filtering2RootStore.refreshList()
-            Filtering2RootStore.refreshClassifierButton()
+            model?.refreshList()
+            model?.refreshClassifierButton()
         }
     }
 
     fun save() {
+        val json = ConfiguredJson.get()
+        if (path == null) return
+        val pathStr: String = path as String
+        val text = json.encodeToString(list)
+        File(pathStr).writeText(text)
+    }
+
+    fun saveAnnotated() {
         val json = ConfiguredJson.get()
         if (path == null) return
         val pathStr: String = path as String
@@ -170,7 +181,9 @@ object PaperList {
         query = null
     }
 
+    fun exportAnnotated() {
 
+    }
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]
         setTag(id, newTag)
