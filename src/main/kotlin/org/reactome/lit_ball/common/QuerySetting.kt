@@ -14,7 +14,7 @@ data class QuerySetting(
     var annotationClasses: MutableSet<String> = mutableSetOf(),
 ) {
     override fun toString(): String {
-        return "QuerySetting(posKeyWords=$mandatoryKeyWords, negKeyWords=$forbiddenKeyWords, classifier=$classifier)"
+        return "QuerySetting(posKeyWords=$mandatoryKeyWords, negKeyWords=$forbiddenKeyWords, classifier=$classifier), annotationClasses=$annotationClasses"
     }
 
     companion object {

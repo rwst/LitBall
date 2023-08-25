@@ -27,7 +27,7 @@ object PaperList {
     var flagList: List<String>? = null
         get() {
             if (field == null) {
-                field = Settings.map["flags"]?.split(" ")
+                field = query?.setting?.annotationClasses?.toList()
             }
             return field
         }
@@ -149,11 +149,7 @@ object PaperList {
     }
 
     fun saveAnnotated() {
-        val json = ConfiguredJson.get()
-        if (path == null) return
-        val pathStr: String = path as String
-        val text = json.encodeToString(list)
-        File(pathStr).writeText(text)
+        save()
     }
 
     fun export() {
