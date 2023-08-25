@@ -14,16 +14,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.*
+import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 
 @Composable
-fun Filtering2RootContent(
+fun AnnotatingRootContent(
     modifier: Modifier = Modifier,
     onExit: () -> Unit,
     rootSwitch: MutableState<RootType>,
 ) {
-    val model = remember { Filtering2RootStore }
+    val model = remember { AnnotatingRootStore }
     val state = model.state
     val scope = rememberCoroutineScope()
     Filtering2RootStore.scope = scope
@@ -37,17 +38,16 @@ fun Filtering2RootContent(
         RailItem("Exit", Icons.Filled.ExitToApp, 3, extraAction = onExit, onClicked = model::buttonExit)
     )
 
-    Filtering2MainContent(
+    AnnotatingMainContent(
         modifier = modifier,
         items = state.items,
         onItemClicked = model::onItemClicked,
         railItems = railItems,
-        onItemDeleteClicked = model::onItemDeleteClicked,
-        onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onExit,
         rootSwitch = rootSwitch,
         isClassifierSet = state.isClassifierSet,
         onClassifierButtonClicked = { model.setClassifierAlert(true) },
+        onFlagSet = model::onFlagSet,
     )
 
     scope.launch(Dispatchers.IO) {

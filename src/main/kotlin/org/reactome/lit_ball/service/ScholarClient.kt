@@ -1,7 +1,7 @@
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.delay
-import org.reactome.lit_ball.service.S2Service
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import retrofit2.HttpException

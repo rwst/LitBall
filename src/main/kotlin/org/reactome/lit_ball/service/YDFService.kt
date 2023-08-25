@@ -2,7 +2,7 @@ package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.reactome.lit_ball.common.Filtering2RootStore
+import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.util.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader

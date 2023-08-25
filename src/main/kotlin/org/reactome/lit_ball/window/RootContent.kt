@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
-import org.reactome.lit_ball.common.RootStore
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.NewItemDialog
 import org.reactome.lit_ball.dialog.ProgressIndicator

@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.model
 
 import RootType
 import androidx.compose.runtime.MutableState
@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.reactome.lit_ball.common.LitBallQuery
+import org.reactome.lit_ball.common.QueryList
+import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
 

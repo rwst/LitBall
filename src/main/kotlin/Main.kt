@@ -11,6 +11,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.apache.log4j.BasicConfigurator
+import org.reactome.lit_ball.window.AnnotatingRootContent
 import org.reactome.lit_ball.window.Filtering2RootContent
 import org.reactome.lit_ball.window.RootContent
 
@@ -39,7 +40,11 @@ fun main() {
                         onExit = ::exitApplication,
                         rootSwitch,
                     )
-                    RootType.ANNOTATE_ROOT -> {}
+                    RootType.ANNOTATE_ROOT -> AnnotatingRootContent(
+                        modifier = Modifier.fillMaxSize(),
+                        onExit = ::exitApplication,
+                        rootSwitch,
+                    )
                 }
             }
         }

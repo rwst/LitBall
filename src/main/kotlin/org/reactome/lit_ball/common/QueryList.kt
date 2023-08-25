@@ -1,6 +1,7 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.serialization.Serializable
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.io.IOException

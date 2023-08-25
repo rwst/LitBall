@@ -5,6 +5,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
+import org.reactome.lit_ball.model.Filtering2RootStore
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.NLPService
 import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -20,7 +22,7 @@ object PaperList {
     var fileName: String = ""
     var query: LitBallQuery? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
-    private var flagList: List<String>? = null
+    var flagList: List<String>? = null
         get() {
             if (field == null) {
                 field = Settings.map["flags"]?.split(" ")

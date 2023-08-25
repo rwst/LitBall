@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package org.reactome.lit_ball.model
 
 import RootType
 import androidx.compose.runtime.MutableState
@@ -9,6 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.reactome.lit_ball.common.Paper
+import org.reactome.lit_ball.common.PaperList
+import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
 object Filtering2RootStore {
@@ -44,7 +47,7 @@ object Filtering2RootStore {
         }
     }
     fun onClassifierConfirmed() {
-        scope.launch(Dispatchers.IO) {PaperList.applyClassifier() }
+        scope.launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
