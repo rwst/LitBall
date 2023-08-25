@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
 object AnnotatingRootStore {
     var state: AnnotatingRootState by mutableStateOf(initialState())
@@ -86,8 +87,31 @@ object AnnotatingRootStore {
         setState { copy(ydfNotFoundAlert = ydfNotFoundAlert) }
     }
 
-    fun setProgressIndication(progressIndication: Triple<String, Float, String>?) {
-        setState { copy(progressIndication = progressIndication) }
+    private object Signal {
+        var signal = false
+        fun set() { signal = true }
+        fun clear() { signal = false }
+    }
+    fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
+        if (Signal.signal) {
+            setState { copy(progressIndication = null) }
+            Signal.clear()
+            return false
+        }
+        if (value >= 0) {
+            setState {
+                copy(progressIndication = ProgressIndicatorParameter(title, value, text) {
+                    Signal.set()
+                    setState { copy(progressIndication = null) }
+                }
+                )
+            }
+        }
+        else {
+            setState { copy(progressIndication = null) }
+            Signal.clear()
+        }
+        return true
     }
 }
 
@@ -107,5 +131,5 @@ data class AnnotatingRootState(
     val isClassifierSet: Boolean = false,
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
-    val progressIndication: Triple<String, Float, String>? = null,
+    val progressIndication: ProgressIndicatorParameter? = null,
     )

@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
 
 object RootStore {
@@ -109,8 +110,29 @@ object RootStore {
         setState { copy(items = items) }
     }
 
-    fun setProgressIndication(progressIndication: Triple<String, Float, String>?) {
-        setState { copy(progressIndication = progressIndication) }
+    private object Signal {
+        var signal = false
+        fun set() { signal = true }
+        fun clear() { signal = false }
+    }
+    fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
+        if (Signal.signal) {
+            setState { copy(progressIndication = null) }
+            Signal.clear()
+            return false
+        }
+        if (value >= 0) {
+            setState { copy(progressIndication = ProgressIndicatorParameter(title, value, text) {
+                Signal.set()
+                setState { copy(progressIndication = null) }
+            }
+            )}
+        }
+        else {
+            setState { copy(progressIndication = null) }
+            Signal.clear()
+        }
+        return true
     }
 }
 
@@ -124,5 +146,5 @@ data class RootState(
     val doExpand: Int? = null,
     val doFilter1: Int? = null,
     val doFilter2: Int? = null,
-    val progressIndication: Triple<String, Float, String>? = null,
+    val progressIndication: ProgressIndicatorParameter? = null,
 )

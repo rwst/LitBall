@@ -59,11 +59,7 @@ fun AnnotatingRootContent(
     }
 
     state.progressIndication?.also {
-        ProgressIndicator(
-            state.progressIndication.first,
-            state.progressIndication.second,
-            state.progressIndication.third,
-        )
+        ProgressIndicator(state.progressIndication)
     }
 
     if (state.doExport) {

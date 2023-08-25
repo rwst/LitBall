@@ -64,12 +64,13 @@ object S2Client : ScholarClient {
                 }
                 catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
-                    RootStore.setProgressIndication(
-                        Triple(indicatorTitle,(1f * index) / size, "TIMEOUT"))
-                    continue
+                    if (RootStore.setProgressIndication(indicatorTitle,(1f * index) / size, "TIMEOUT"))
+                        continue
+                    else return false
                 } catch (e: HttpException) {
                     paper = null
-                    RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "ERROR ${e.code()}"))
+                    if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size,  "ERROR ${e.code()}"))
+                        return false
                     when (e.code()) {
                         400, 404 -> break // assume DOI defect or unknown
                         429 -> {          // API says too fast, so delay and repeat
@@ -83,9 +84,10 @@ object S2Client : ScholarClient {
             } while (true)
             delay(strategy.delay(true))
             paper?.also (action)
-            RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "$index/$size"))
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "$index/$size"))
+                return false
         }
-        RootStore.setProgressIndication(null)
+        RootStore.setProgressIndication()
         return true
     }
     suspend fun getRefs(
@@ -105,12 +107,13 @@ object S2Client : ScholarClient {
                     )
                 } catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
-                    RootStore.setProgressIndication(
-                        Triple(indicatorTitle, (1f*index)/size, "TIMEOUT"))
-                    continue
+                    if (RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "TIMEOUT"))
+                        continue
+                    else return false
                 } catch (e: HttpException) {
                     refs = null
-                    RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "ERROR ${e.code()}"))
+                    if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "ERROR ${e.code()}"))
+                        return false
                     when (e.code()) {
                         400, 404 -> break // assume DOI defect or unknown
                         429 -> {          // API says too fast, so delay and repeat
@@ -124,9 +127,10 @@ object S2Client : ScholarClient {
             } while (true)
             delay(strategy.delay(true))
             refs?.also(action)
-            RootStore.setProgressIndication(Triple(indicatorTitle, (1f*index)/size, "$index/$size"))
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "$index/$size"))
+                return false
         }
-        RootStore.setProgressIndication(null)
+        RootStore.setProgressIndication()
         return true
     }
 }

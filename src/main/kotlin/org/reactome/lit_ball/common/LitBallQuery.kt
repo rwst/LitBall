@@ -113,7 +113,7 @@ data class LitBallQuery(
         val rejectedDOIs: Set<String>
         if (queryDir.isDirectory && queryDir.canRead()) {
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
-            S2Client.getPaperDetailsWithAbstract(doiSet) {
+            val result = S2Client.getPaperDetailsWithAbstract(doiSet) {
                 val textsOfPaper: Set<String> = setOf(
                     it.title ?: "",
                     it.tldr?.get("text") ?: "",
@@ -127,6 +127,7 @@ data class LitBallQuery(
                 })
                     paperDetailsList.add(it)
             }
+            if (!result) return
             Logger.i(tag, "Retained ${paperDetailsList.size} records")
             val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
             rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
