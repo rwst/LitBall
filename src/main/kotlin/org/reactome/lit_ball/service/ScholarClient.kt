@@ -52,7 +52,7 @@ object S2Client : ScholarClient {
     ): Boolean {
         val size = doiSet.size
         val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
-        val indicatorTitle = "Downloading titles, TLDRs,\nand abstracts for automatic filtering"
+        val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         doiSet.forEachIndexed { index, it ->
             var paper: S2Service.PaperDetailsWithAbstract?
             do {
