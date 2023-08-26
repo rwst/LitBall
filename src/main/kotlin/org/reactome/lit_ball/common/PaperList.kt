@@ -9,6 +9,7 @@ import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.model.Store
 import org.reactome.lit_ball.service.NLPService
+import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.Logger
@@ -31,7 +32,7 @@ object PaperList {
             }
             return field
         }
-    fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
+    suspend fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
         this.query = query
         fileName = file.name
         path = file.absolutePath
@@ -118,20 +119,35 @@ object PaperList {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun readFromFile(file: File, accepted: MutableSet<String>?) {
+    suspend fun readFromFile(file: File, accepted: MutableSet<String>?) {
         val json = ConfiguredJson.get()
         if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
 
         if (path == null) path = file.absolutePath
         val f = File(file.absolutePath)
-
-        if (f.exists()) {
-            var papers = json.decodeFromStream<List<Paper>>(f.inputStream())
-            accepted?.let { papers = papers.filter { it.details.externalIds?.get("DOI") in accepted } }
-            list = papers
+        var papers = if (f.exists()) {
+            json.decodeFromStream<List<Paper>>(f.inputStream()).toMutableList()
         } else {
-            throw Exception("File to open: $fileName does not exist")
+            mutableListOf()
         }
+        accepted?.let {
+            papers = papers.filter { it.details.externalIds?.get("DOI") in accepted }.toMutableList()
+            var maxId = if (papers.isNotEmpty()) papers.maxOf { it.id } else 0
+            val acceptedWithDetails = papers.map { it.details.externalIds?.get("DOI")?.uppercase() ?: "" }.toSet()
+            val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
+            S2Client.getPaperDetailsWithAbstract(acceptedWithoutDetails) {
+                maxId += 1
+                val oldDoi = it.externalIds?.get("DOI")
+                val doi = oldDoi?.uppercase()
+                if (doi != null && doi != oldDoi) {
+                    val newExtIds = it.externalIds!!.toMutableMap()
+                    newExtIds["DOI"] = doi
+                    it.externalIds = newExtIds
+                }
+                papers.add(Paper(id = maxId, details = it))
+            }
+        }
+        list = papers
         runBlocking {
             updateShadowMap()
             delay(200)

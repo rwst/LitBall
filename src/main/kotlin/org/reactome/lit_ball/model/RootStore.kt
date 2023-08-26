@@ -102,19 +102,19 @@ object RootStore {
     }
 
     private fun onDoFilter2Started(id: Int) {
-        setState {
-            PaperList.model = Filtering2RootStore
+        scope.launch(Dispatchers.IO) {
             state.items[id].filter2()
+            PaperList.model = Filtering2RootStore
             rootSwitch.value = RootType.FILTER2_ROOT
-            copy(doFilter2 = id)
+            setState { copy(doFilter2 = id) }
         }
     }
     fun onAnnotateStarted(id: Int) {
-        setState {
-            PaperList.model = AnnotatingRootStore
+        scope.launch(Dispatchers.IO) {
             state.items[id].annotate()
+            PaperList.model = AnnotatingRootStore
             rootSwitch.value = RootType.ANNOTATE_ROOT
-            copy(doAnnotate = id)
+            setState { copy(doAnnotate = id) }
         }
     }
     fun onQuerySettingsClicked(id: Int?) {

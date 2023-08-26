@@ -194,7 +194,7 @@ data class LitBallQuery(
         }
     }
 
-    fun filter2() {
+    suspend fun filter2() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
@@ -213,7 +213,7 @@ data class LitBallQuery(
         }
     }
 
-    fun annotate() {
+    suspend fun annotate() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
@@ -274,7 +274,7 @@ private fun sanitize(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
     }
 }
 
-private fun uppercaseDois(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+fun uppercaseDois(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
     list.forEach {
         val doi = it.externalIds?.get("DOI")
         if (it.externalIds != null && doi != null) {
