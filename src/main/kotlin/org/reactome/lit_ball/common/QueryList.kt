@@ -52,7 +52,7 @@ object QueryList {
             handleException(e)
             return
         }
-        val maxId: Int = list.maxOf { it.id }
+        val maxId = if (list.isNotEmpty()) list.maxOf { it.id } else 0
         list = list.plus(
             LitBallQuery(
                 id = maxId + 1,
@@ -69,6 +69,9 @@ private fun queryDirectories(directoryPath: String, prefix: String): List<File> 
     if (!directory.exists()) {
         if (!directory.mkdir())
             throw IllegalArgumentException("Directory could not be created: $directoryPath")
+    }
+    if (!directory.isDirectory) {
+        throw IllegalArgumentException("Not a directory: $directoryPath")
     }
     val directories = directory.listFiles { file ->
         file.isDirectory && file.canRead() && file.name.startsWith(prefix)
