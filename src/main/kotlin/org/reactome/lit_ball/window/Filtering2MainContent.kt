@@ -46,7 +46,7 @@ internal fun Filtering2MainContent(
     rootSwitch: MutableState<RootType>,
     isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
-    ) {
+) {
     Row(modifier) {
         Rail(
             railItems = railItems,

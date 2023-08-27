@@ -18,7 +18,8 @@ interface Store {
     fun refreshList()
     fun refreshClassifierButton()
 }
-object AnnotatingRootStore: Store {
+
+object AnnotatingRootStore : Store {
     var state: AnnotatingRootState by mutableStateOf(initialState())
 
     lateinit var scope: CoroutineScope
@@ -26,23 +27,20 @@ object AnnotatingRootStore: Store {
 
     private fun switchRoot() {
         rootSwitch.value = RootType.MAIN_ROOT
-        (RootStore::refreshList)()
     }
-
-//    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
-//        copy(items = items.updateItem(id = id, transformer = transformer))
 
     private fun initialState(): AnnotatingRootState = AnnotatingRootState()
 
     private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
         state = state.update()
     }
+
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
 
     override fun refreshClassifierButton() {
-        setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false) }
+        setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank() ?: false) }
     }
 
     fun buttonExit() {
@@ -50,9 +48,11 @@ object AnnotatingRootStore: Store {
             PaperList.save()
         }
     }
+
     fun onClassifierConfirmed() {
         scope.launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
+
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
@@ -60,6 +60,7 @@ object AnnotatingRootStore: Store {
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
     }
+
     fun onFlagSet(id: Int, flagNo: Int, value: Boolean) {
         PaperList.setFlag(id, flagNo, value)
     }
@@ -101,9 +102,15 @@ object AnnotatingRootStore: Store {
 
     private object Signal {
         var signal = false
-        fun set() { signal = true }
-        fun clear() { signal = false }
+        fun set() {
+            signal = true
+        }
+
+        fun clear() {
+            signal = false
+        }
     }
+
     fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
         if (Signal.signal) {
             setState { copy(progressIndication = null) }
@@ -118,8 +125,7 @@ object AnnotatingRootStore: Store {
                 }
                 )
             }
-        }
-        else {
+        } else {
             setState { copy(progressIndication = null) }
             Signal.clear()
         }
@@ -144,4 +150,4 @@ data class AnnotatingRootState(
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
     val progressIndication: ProgressIndicatorParameter? = null,
-    )
+)

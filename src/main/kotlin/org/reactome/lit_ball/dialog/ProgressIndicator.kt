@@ -1,19 +1,16 @@
 @file:Suppress("FunctionName")
+
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.BackdropScaffold
-import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +23,7 @@ data class ProgressIndicatorParameter(
     val text: String,
     val onCancelClicked: () -> Unit,
 )
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProgressIndicator(parameter: ProgressIndicatorParameter) {

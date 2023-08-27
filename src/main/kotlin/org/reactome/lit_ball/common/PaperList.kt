@@ -32,6 +32,7 @@ object PaperList {
             }
             return field
         }
+
     suspend fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
         this.query = query
         fileName = file.name
@@ -181,8 +182,7 @@ object PaperList {
         try {
             writeToPath(Tag.Accepted, FileType.ACCEPTED)
             writeToPath(Tag.Rejected, FileType.REJECTED)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             handleException(e)
             return
         }
@@ -196,10 +196,12 @@ object PaperList {
     fun exportAnnotated() {
 
     }
+
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]
         setTag(id, newTag)
     }
+
     private fun setTag(id: Int, tag: Tag) {
         updateItem(id) {
             if (it.tag == tag) return@updateItem it
@@ -260,7 +262,7 @@ object PaperList {
 
     private const val THRESHOLD = 54
     suspend fun applyClassifier() {
-        val classifierName = query?.setting?.classifier?: ""
+        val classifierName = query?.setting?.classifier ?: ""
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
         val modelFile = File(classifierPath)
         if (query == null || classifierName.isBlank() || !modelFile.canRead()) {
@@ -270,18 +272,18 @@ object PaperList {
         val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
         val resultPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
         writeCsvTo(datasetPath)
-        YDFService.path = Settings.map["path-to-YDF"]?: ""
+        YDFService.path = Settings.map["path-to-YDF"] ?: ""
         val processJob = try {
             YDFService.doPredict(
-            modelPath = classifierPath,
-            datasetPath = datasetPath,
-            resultPath = resultPath,
-            key = "doi",
-            ) }
-            catch (e: IOException) {
-                Logger.i(TAG, e.toString())
-                null
-            }
+                modelPath = classifierPath,
+                datasetPath = datasetPath,
+                resultPath = resultPath,
+                key = "doi",
+            )
+        } catch (e: IOException) {
+            Logger.i(TAG, e.toString())
+            null
+        }
         if (processJob == null) {
             Filtering2RootStore.setYdfNotFoundAlert(true)
             return

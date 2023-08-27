@@ -64,13 +64,17 @@ fun QueryCard(
                 Text(
                     text = "Accepted: ${item.nrAccepted()}",
                     fontSize = 14.sp
-                    )
+                )
             }
 
             Spacer(modifier = Modifier.width(24.dp))
 
             Text(
-                text = "Rejected: ${item.nrRejected()}\nStatus: ${item.status}\nLast expansion: ${formatDateToyyyyMMMddFormat(item.lastExpansionDate)}",
+                text = "Rejected: ${item.nrRejected()}\nStatus: ${item.status}\nLast expansion: ${
+                    formatDateToyyyyMMMddFormat(
+                        item.lastExpansionDate
+                    )
+                }",
                 modifier = Modifier
                     .align(Alignment.Top)
                     .padding(vertical = 8.dp),
@@ -96,7 +100,7 @@ fun QueryCard(
                 contentPadding = PaddingValues(10.dp),
             ) {
                 Text(
-                    text ="Annotate\naccepted",
+                    text = "Annotate\naccepted",
                     fontSize = 14.sp
                 )
             }

@@ -29,13 +29,9 @@ object RootStore {
     }
 
     fun buttonInfo() {
-     }
-
-    fun buttonExit() {
     }
 
-    fun refreshList() {
-//        scope.launch { onItemsChanged() }
+    fun buttonExit() {
     }
 
     private fun onDoExpandStarted(id: Int) {
@@ -99,6 +95,7 @@ object RootStore {
     fun onDoExpandStopped() {
         setState { copy(doExpand = null, items = QueryList.list.toList()) }
     }
+
     fun onDoFilter1Stopped() {
         setState { copy(doFilter1 = null, items = QueryList.list.toList()) }
     }
@@ -111,6 +108,7 @@ object RootStore {
             setState { copy(doFilter2 = id) }
         }
     }
+
     fun onAnnotateStarted(id: Int) {
         scope.launch(Dispatchers.IO) {
             state.items[id].annotate()
@@ -119,6 +117,7 @@ object RootStore {
             setState { copy(doAnnotate = id) }
         }
     }
+
     fun onQuerySettingsClicked(id: Int?) {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
@@ -129,9 +128,15 @@ object RootStore {
 
     private object Signal {
         var signal = false
-        fun set() { signal = true }
-        fun clear() { signal = false }
+        fun set() {
+            signal = true
+        }
+
+        fun clear() {
+            signal = false
+        }
     }
+
     fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
         if (Signal.signal) {
             setState { copy(progressIndication = null) }
@@ -139,13 +144,14 @@ object RootStore {
             return false
         }
         if (value >= 0) {
-            setState { copy(progressIndication = ProgressIndicatorParameter(title, value, text) {
-                Signal.set()
-                setState { copy(progressIndication = null) }
+            setState {
+                copy(progressIndication = ProgressIndicatorParameter(title, value, text) {
+                    Signal.set()
+                    setState { copy(progressIndication = null) }
+                }
+                )
             }
-            )}
-        }
-        else {
+        } else {
             setState { copy(progressIndication = null) }
             Signal.clear()
         }

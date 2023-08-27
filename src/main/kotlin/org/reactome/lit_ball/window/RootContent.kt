@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
-import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.NewItemDialog
 import org.reactome.lit_ball.dialog.ProgressIndicator
 import org.reactome.lit_ball.dialog.QuerySettingsDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.once
 
 @Composable
@@ -48,10 +48,10 @@ fun RootContent(
         onItemClicked = { id -> model.setEditingItemId(id) },
         railItems = railItems,
         onNewItemClicked = { model.setNewItem(true) },
-        onItemSettingsClicked = { id ->model.onQuerySettingsClicked(id) },
+        onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
         onItemGoClicked = { status, id -> model.nextAction(status, id) },
         rootSwitch = rootSwitch,
-        onItemAnnotateClicked = { id ->model.onAnnotateStarted(id) },
+        onItemAnnotateClicked = { id -> model.onAnnotateStarted(id) },
     )
 
     once {

@@ -30,8 +30,7 @@ object S2Client : ScholarClient {
                 } catch (e: Exception) {
                     handleException(e)
                     return false
-                }
-                catch (e: SocketTimeoutException) {
+                } catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
                     null
                 }
@@ -39,8 +38,7 @@ object S2Client : ScholarClient {
                     if (papers.isNotEmpty()) break
                 }
                 delay(BULK_QUERY_DELAY)
-            }
-            while (papers.isNullOrEmpty())
+            } while (papers.isNullOrEmpty())
             papers?.filterNotNull()?.forEach(action)
         }
         return true
@@ -61,15 +59,14 @@ object S2Client : ScholarClient {
                         "DOI:$it",
                         "paperId,externalIds,title,abstract,publicationTypes,tldr"
                     )
-                }
-                catch (e: SocketTimeoutException) {
+                } catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
-                    if (RootStore.setProgressIndication(indicatorTitle,(1f * index) / size, "TIMEOUT"))
+                    if (RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
                         continue
                     else return false
                 } catch (e: HttpException) {
                     paper = null
-                    if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size,  "ERROR ${e.code()}"))
+                    if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
                         return false
                     when (e.code()) {
                         400, 404 -> break // assume DOI defect or unknown
@@ -77,19 +74,21 @@ object S2Client : ScholarClient {
                             delay(strategy.delay(false))
                             continue
                         }
+
                         else -> throw (e)
                     }
                 }
                 break
             } while (true)
             delay(strategy.delay(true))
-            paper?.also (action)
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "$index/$size"))
+            paper?.also(action)
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
         RootStore.setProgressIndication()
         return true
     }
+
     suspend fun getRefs(
         doiSet: List<String>,
         action: (S2Service.PaperRefs) -> Unit
@@ -107,12 +106,12 @@ object S2Client : ScholarClient {
                     )
                 } catch (e: SocketTimeoutException) {
                     Logger.i(TAG, "TIMEOUT")
-                    if (RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "TIMEOUT"))
+                    if (RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
                         continue
                     else return false
                 } catch (e: HttpException) {
                     refs = null
-                    if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "ERROR ${e.code()}"))
+                    if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
                         return false
                     when (e.code()) {
                         400, 404 -> break // assume DOI defect or unknown
@@ -120,6 +119,7 @@ object S2Client : ScholarClient {
                             delay(strategy.delay(false))
                             continue
                         }
+
                         else -> throw (e)
                     }
                 }
@@ -127,7 +127,7 @@ object S2Client : ScholarClient {
             } while (true)
             delay(strategy.delay(true))
             refs?.also(action)
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f*index)/size, "$index/$size"))
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
         RootStore.setProgressIndication()
@@ -146,6 +146,7 @@ internal class DelayStrategy(private val minDelay: Long) {
             mul * minDelay
         }
     }
+
     companion object {
         var noFails = 0
         val multiplier = listOf(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024)

@@ -17,7 +17,8 @@ object NLPService {
         punctRegex = "(?U)\\p{Punct}".toRegex()
         initialized = true
     }
-    fun preprocess (s: String?) : String {
+
+    fun preprocess(s: String?): String {
         if (!initialized) init()
         if (s == null) return ""
         var str = ""

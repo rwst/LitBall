@@ -23,8 +23,10 @@ object QueryList {
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
                     setting = getSetting(it),
-                    acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }.toMutableSet(),
-                    rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }.toMutableSet(),
+                    acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }
+                        .toMutableSet(),
+                    rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }
+                        .toMutableSet(),
                 )
                 newQuery.lastExpansionDate = newQuery.getLastExpansionDate(fromFile = true)
                 newQuery

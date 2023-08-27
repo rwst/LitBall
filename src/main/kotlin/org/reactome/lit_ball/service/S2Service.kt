@@ -42,6 +42,7 @@ object S2Service {
         var publicationTypes: List<String>? = emptyList(),
         var tldr: Map<String, String>? = emptyMap(),
     )
+
     @Serializable
     data class PaperDetails(
         val paperId: String? = "",
@@ -56,11 +57,13 @@ object S2Service {
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
     )
+
     @Serializable
     data class References(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
     )
+
     @Serializable
     data class PaperRefs(
         val paperId: String? = "",
@@ -75,6 +78,7 @@ object S2Service {
             @Query("fields") fields: String,
         ): Response<PaperRefs>
     }
+
     interface SinglePaperApi {
         @GET("/graph/v1/paper/{paper_id}")
         suspend fun get(
@@ -87,13 +91,14 @@ object S2Service {
         //suspend fun postRequest(map: Map<String, List<String>>, fields: String): Response<Any>?
     }
 
-    interface BulkPaperWithAbstractApi: BulkPaperApiBase {
+    interface BulkPaperWithAbstractApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
             @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
             @Query("fields") fields: String,
         ): Response<List<PaperDetailsWithAbstract>>
     }
+
     suspend fun getBulkPaperDetailsWithAbstract(
         ids: List<String>,
         fields: String
@@ -108,6 +113,7 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
     }
+
     interface BulkPaperApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
@@ -115,6 +121,7 @@ object S2Service {
             @Query("fields") fields: String,
         ): Response<List<PaperDetails>>
     }
+
     suspend fun getBulkPaperDetails(
         ids: List<String>,
         fields: String
@@ -129,6 +136,7 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
     }
+
     interface BulkPaperRefsApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
@@ -136,6 +144,7 @@ object S2Service {
             @Query("fields") fields: String,
         ): Response<List<PaperRefs>>
     }
+
     suspend fun getBulkPaperRefs(
         ids: List<String>,
         fields: String
@@ -172,6 +181,7 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         throw HttpException(result)
     }
+
     suspend fun getPaperDetails(paperId: String, fields: String): PaperDetailsWithAbstract? {
         val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
         val result = singlePaperApi.get(paperId, fields)

@@ -14,7 +14,7 @@ import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
-object Filtering2RootStore: Store {
+object Filtering2RootStore : Store {
     var state: Filtering2RootState by mutableStateOf(initialState())
 
     lateinit var scope: CoroutineScope
@@ -22,23 +22,20 @@ object Filtering2RootStore: Store {
 
     fun switchRoot() {
         rootSwitch.value = RootType.MAIN_ROOT
-        (RootStore::refreshList)()
     }
-
-//    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
-//        copy(items = items.updateItem(id = id, transformer = transformer))
 
     private fun initialState(): Filtering2RootState = Filtering2RootState()
 
     private inline fun setState(update: Filtering2RootState.() -> Filtering2RootState) {
         state = state.update()
     }
+
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
 
     override fun refreshClassifierButton() {
-        setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank()?: false) }
+        setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank() ?: false) }
     }
 
     fun buttonExit() {
@@ -46,12 +43,15 @@ object Filtering2RootStore: Store {
             PaperList.save()
         }
     }
+
     fun onClassifierConfirmed() {
         scope.launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
+
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
+
     fun onItemDeleteClicked(id: Int) {
         setState { copy(items = PaperList.toListWithItemRemoved(id)) }
     }
@@ -93,9 +93,15 @@ object Filtering2RootStore: Store {
 
     private object Signal {
         var signal = false
-        fun set() { signal = true }
-        fun clear() { signal = false }
+        fun set() {
+            signal = true
+        }
+
+        fun clear() {
+            signal = false
+        }
     }
+
     fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
         if (Signal.signal) {
             setState { copy(progressIndication = null) }
@@ -110,8 +116,7 @@ object Filtering2RootStore: Store {
                 }
                 )
             }
-        }
-        else {
+        } else {
             setState { copy(progressIndication = null) }
             Signal.clear()
         }
@@ -136,4 +141,4 @@ data class Filtering2RootState(
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
     val progressIndication: ProgressIndicatorParameter? = null,
-    )
+)

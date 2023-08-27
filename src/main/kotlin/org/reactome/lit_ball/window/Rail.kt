@@ -17,7 +17,7 @@ fun Rail(
     railItems: List<RailItem>,
     onNewButtonClicked: () -> Unit,
     rootSwitch: MutableState<RootType>,
-    ) {
+) {
     val selectedItem by remember { mutableStateOf(0) }
 
     NavigationRail {
@@ -31,11 +31,14 @@ fun Rail(
                     Icon(
                         item.icon,
                         null,
-                    ) },
+                    )
+                },
                 label = {
-                    Text(item.text,
+                    Text(
+                        item.text,
                         modifier = Modifier.padding(vertical = 6.dp)
-                    ) },
+                    )
+                },
                 selected = selectedItem == item.actionIndex
             )
         }

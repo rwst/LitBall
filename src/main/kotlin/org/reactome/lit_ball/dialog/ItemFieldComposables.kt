@@ -4,7 +4,9 @@ package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.RadioButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,8 +52,7 @@ fun FlagBoxes(
     flags: List<String>,
     checkedFlags: Set<String>,
     onFlagChanged: (Int, Boolean) -> Unit,
-)
-{
+) {
     Column {
         val nColsPerRow = 8
         val nRows = (flags.size + nColsPerRow - 1) / nColsPerRow
@@ -60,20 +61,20 @@ fun FlagBoxes(
         val textHeights = listOf(18.sp, 16.sp, 12.sp, 10.sp, 8.sp, 8.sp, 8.sp, 8.sp, 8.sp)
         val boxScales = listOf(1.0f, 1.0f, 0.8f, 0.7f, 0.6f, 0.6f, 0.6f, 0.6f, 0.6f)
         for (rowNr in 1..nRows) {
-            Row (
+            Row(
                 modifier = Modifier
                     .height(rowHeights[nRows]),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 for (colNr in 1..nCols) {
-                    val flagNr = nColsPerRow*(rowNr-1) + colNr
+                    val flagNr = nColsPerRow * (rowNr - 1) + colNr
                     if (flagNr > flags.size) continue
-                    val (checkedState, onStateChange) = remember { mutableStateOf(flags[flagNr-1] in checkedFlags) }
-                    Column (
+                    val (checkedState, onStateChange) = remember { mutableStateOf(flags[flagNr - 1] in checkedFlags) }
+                    Column(
                         modifier = Modifier
                             .absolutePadding(left = 0.dp)
-                    ){
-                        Row (
+                    ) {
+                        Row(
                             modifier = Modifier
                                 .absolutePadding(left = 0.dp)
                                 .toggleable(

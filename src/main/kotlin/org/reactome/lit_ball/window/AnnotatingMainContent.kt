@@ -42,7 +42,7 @@ internal fun AnnotatingMainContent(
     isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
     onFlagSet: (Int, Int, Boolean) -> Unit
-    ) {
+) {
     Row(modifier) {
         Rail(
             railItems = railItems,
@@ -143,7 +143,7 @@ fun AnnotatingListContent(
                     CardWithFlagBoxes(
                         item = item,
                         onClicked = { onItemClicked(item.id) },
-                        onFlagSet = { idx,value -> onFlagSet(item.id, idx, value) },
+                        onFlagSet = { idx, value -> onFlagSet(item.id, idx, value) },
                     )
                     Divider()
                 }

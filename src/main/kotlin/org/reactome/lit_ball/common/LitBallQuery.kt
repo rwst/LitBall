@@ -13,7 +13,7 @@ import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.io.IOException
-import java.util.Date
+import java.util.*
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
 
@@ -50,6 +50,7 @@ data class LitBallQuery(
         acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()
         rejectedSet = getDOIs(getQueryDir(name), FileType.REJECTED.fileName).filter { it.isNotBlank() }.toMutableSet()
     }
+
     fun nrAccepted() = acceptedSet.size
     fun nrRejected() = rejectedSet.size
     override fun toString(): String {
@@ -65,7 +66,7 @@ data class LitBallQuery(
         )[status.ordinal]
     }
 
-     fun getLastExpansionDate(fromFile: Boolean = false): Date? {
+    fun getLastExpansionDate(fromFile: Boolean = false): Date? {
         return if (fromFile) {
             val queryDir = getQueryDir(name)
             if (queryDir.isDirectory && queryDir.canRead()) {
@@ -86,7 +87,7 @@ data class LitBallQuery(
         val result = S2Client.getRefs(acceptedSet.toList()) {
             doiSet.addAll(it.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
             doiSet.addAll(it.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
-            }
+        }
         if (!result) return
         Logger.i(tag, "Received ${doiSet.size} DOIs")
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
@@ -107,9 +108,11 @@ data class LitBallQuery(
     }
 
     suspend fun filter1() {
-        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.filter { it.isNotEmpty() }?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
+        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.filter { it.isNotEmpty() }
+            ?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
             ?: emptyList()
-        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.filter { it.isNotEmpty() }?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
+        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.filter { it.isNotEmpty() }
+            ?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
             ?: emptyList()
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
@@ -124,11 +127,12 @@ data class LitBallQuery(
                     it.abstract ?: ""
                 )
                 if (mandatoryKeyWordRegexes.any { regex1 ->
-                    textsOfPaper.any { text ->
-                        regex1.containsMatchIn(text) }
-                } && forbiddenKeyWordRegexes.none { regex2 ->
-                    regex2.containsMatchIn(it.title?: "")
-                })
+                        textsOfPaper.any { text ->
+                            regex1.containsMatchIn(text)
+                        }
+                    } && forbiddenKeyWordRegexes.none { regex2 ->
+                        regex2.containsMatchIn(it.title ?: "")
+                    })
                     paperDetailsList.add(it)
             }
             if (!result) return
@@ -136,8 +140,7 @@ data class LitBallQuery(
             val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
             rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
             rejectedSet.addAll(rejectedDOIs)
-        }
-        else {
+        } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return
         }
@@ -148,8 +151,9 @@ data class LitBallQuery(
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {
                 val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
-                file.writeText(json.encodeToString(
-                    paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd) })
+                file.writeText(
+                    json.encodeToString(
+                        paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd) })
                 )
                 mergeIntoArchive(paperDetailsList)
             } catch (e: Exception) {
@@ -188,8 +192,9 @@ data class LitBallQuery(
             }
             val details: MutableSet<S2Service.PaperDetailsWithAbstract> = papers.map { it.details }.toMutableSet()
             details.addAll(list)
-            file.writeText(json.encodeToString(
-                details.mapIndexed { idx, pd -> Paper(idx, pd) })
+            file.writeText(
+                json.encodeToString(
+                    details.mapIndexed { idx, pd -> Paper(idx, pd) })
             )
         }
     }
@@ -206,8 +211,7 @@ data class LitBallQuery(
             }
             PaperList.setFromQuery(this, file)
             Filtering2RootStore.refreshList()
-        }
-        else {
+        } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return
         }
@@ -225,8 +229,7 @@ data class LitBallQuery(
             }
             PaperList.setFromQuery(this, file, acceptedSet)
             AnnotatingRootStore.refreshList()
-        }
-        else {
+        } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return
         }
