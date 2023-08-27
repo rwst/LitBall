@@ -58,6 +58,7 @@ object Filtering2RootStore : Store {
 
     fun onItemRadioButtonClicked(id: Int, btn: Int) {
         PaperList.setTag(id, btn)
+        refreshList()
     }
 
     fun onEditorCloseClicked() {

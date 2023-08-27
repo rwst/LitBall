@@ -58,8 +58,12 @@ object PaperList {
 
     private fun updateItem(id: Int, transformer: (Paper) -> Paper): PaperList {
         val index = shadowMap[id] ?: return this
+        val old = list[index]
+        val new = transformer(list[index])
+        if (old == new)
+            return this
         list = list.toMutableList().apply {
-            this[index] = transformer(list[index])
+            this[index] = new
         }.toList()
         return this
     }
