@@ -66,8 +66,9 @@ object QueryList {
 
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {
     val directory = File(directoryPath)
-    if (!directory.isDirectory || !directory.exists()) {
-        throw IllegalArgumentException("Invalid directory path: $directoryPath")
+    if (!directory.exists()) {
+        if (!directory.mkdir())
+            throw IllegalArgumentException("Directory could not be created: $directoryPath")
     }
     val directories = directory.listFiles { file ->
         file.isDirectory && file.canRead() && file.name.startsWith(prefix)
