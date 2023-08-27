@@ -75,10 +75,10 @@ object Filtering2RootStore : Store {
         setState { copy(classifierAlert = isAlertActive) }
     }
 
-    fun setDoExport(doExport: Boolean) {
-        if (doExport) {
+    fun doFinish(doit: Boolean) {
+        if (doit) {
             scope.launch(Dispatchers.IO) {
-                PaperList.export()
+                PaperList.finish()
             }
         }
     }

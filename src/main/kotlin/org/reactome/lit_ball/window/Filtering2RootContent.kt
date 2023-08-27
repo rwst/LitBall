@@ -12,9 +12,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.dialog.ConfirmationDialog
 import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.ItemClickedDialog
@@ -36,7 +33,7 @@ fun Filtering2RootContent(
 
     val railItems: List<RailItem> = listOf(
         RailItem("Save", Icons.Filled.Save, 0) { model.setDoSave(true) },
-        RailItem("Finish", Icons.Filled.Publish, 1) { model.setDoExport(true) },
+        RailItem("Finish", Icons.Filled.Publish, 1) { model.doFinish(true) },
         RailItem("Main", Icons.Filled.ExitToApp, 2, onClicked = model::onDoAnnotateStopped),
         RailItem("Exit", Icons.Filled.ExitToApp, 3, extraAction = onExit, onClicked = model::buttonExit)
     )

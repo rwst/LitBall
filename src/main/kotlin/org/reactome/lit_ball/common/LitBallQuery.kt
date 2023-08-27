@@ -92,6 +92,7 @@ data class LitBallQuery(
         Logger.i(tag, "Received ${doiSet.size} DOIs")
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
+        RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
@@ -147,6 +148,7 @@ data class LitBallQuery(
         uppercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
         Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
+        RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {

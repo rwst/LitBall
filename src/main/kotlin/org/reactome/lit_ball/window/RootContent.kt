@@ -16,9 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.Settings
-import org.reactome.lit_ball.dialog.NewItemDialog
-import org.reactome.lit_ball.dialog.ProgressIndicator
-import org.reactome.lit_ball.dialog.QuerySettingsDialog
+import org.reactome.lit_ball.dialog.*
+import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.once
@@ -84,5 +83,9 @@ fun RootContent(
             it,
             scope,
         ) { model.onQuerySettingsCloseClicked() }
+    }
+
+    state.doInformationalDialog?.also {
+        InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
     }
 }

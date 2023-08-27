@@ -169,7 +169,7 @@ object PaperList {
         save()
     }
 
-    fun export() {
+    fun finish() {
         val pathPrefix = path?.substringBeforeLast("/")
         fun writeToPath(tag: Tag, fileType: FileType) {
             val path = "$pathPrefix/${fileType.fileName}"

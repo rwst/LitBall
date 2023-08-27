@@ -157,7 +157,12 @@ object RootStore {
         }
         return true
     }
+
+    fun setInformationalDialog(text: String?) {
+        setState { copy(doInformationalDialog = text) }
+    }
 }
+
 
 data class RootState(
     val items: List<LitBallQuery> = QueryList.list,
@@ -171,4 +176,5 @@ data class RootState(
     val doFilter2: Int? = null,
     val doAnnotate: Int? = null,
     val progressIndication: ProgressIndicatorParameter? = null,
+    val doInformationalDialog: String? = null,
 )

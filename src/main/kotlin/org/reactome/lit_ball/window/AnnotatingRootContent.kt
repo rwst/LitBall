@@ -12,9 +12,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.dialog.ConfirmationDialog
 import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.ItemClickedDialog
