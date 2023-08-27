@@ -21,6 +21,7 @@ import org.reactome.lit_ball.dialog.NewItemDialog
 import org.reactome.lit_ball.dialog.ProgressIndicator
 import org.reactome.lit_ball.dialog.QuerySettingsDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
+import org.reactome.lit_ball.util.Once
 
 @Composable
 fun RootContent(
@@ -53,10 +54,13 @@ fun RootContent(
         onItemAnnotateClicked = { id ->model.onAnnotateStarted(id) },
     )
 
-    scope.launch(Dispatchers.IO) {
-        Settings.load()
-        QueryList.fill()
+    val OnceLoadSettingsFunction = Once {
+        scope.launch(Dispatchers.IO) {
+            Settings.load()
+            QueryList.fill()
+        }
     }
+    OnceLoadSettingsFunction()
 
     if (state.newItem) {
         NewItemDialog(

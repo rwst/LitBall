@@ -12,7 +12,7 @@ object QueryList {
     var list: List<LitBallQuery> = listOf()
 
     fun fill() {
-        if (list.isNotEmpty()) return
+        list = listOf()
         val queryPath = Settings.map["path-to-queries"] ?: ""
         val prefix = Settings.map["directory-prefix"] ?: ""
         val dirs = queryDirectories(queryPath, prefix)

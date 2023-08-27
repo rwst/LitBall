@@ -20,3 +20,14 @@ fun formatDateToyyyyMMMddFormat(date: Date?): String {
     val format = SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH)
     return format.format(date)
 }
+
+fun Once(action: () -> Unit): () -> Unit {
+    var executed = false
+
+    return {
+        if (!executed) {
+            action()
+            executed = true
+        }
+    }
+}

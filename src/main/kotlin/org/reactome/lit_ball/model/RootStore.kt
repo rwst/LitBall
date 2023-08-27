@@ -83,7 +83,9 @@ object RootStore {
     }
 
     fun setEditingSettings(boolean: Boolean) {
-        setState { copy(editingSettings = boolean) }
+        if (!boolean)
+            QueryList.fill()
+        setState { copy(editingSettings = boolean, items = QueryList.list.toList()) }
     }
 
     fun setEditingItemId(id: Int) {
