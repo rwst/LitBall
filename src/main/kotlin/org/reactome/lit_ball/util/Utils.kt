@@ -21,13 +21,15 @@ fun formatDateToyyyyMMMddFormat(date: Date?): String {
     return format.format(date)
 }
 
-fun Once(action: () -> Unit): () -> Unit {
-    var executed = false
+object Once {
+    private val executedActions = mutableSetOf<() -> Unit>()
 
-    return {
-        if (!executed) {
+    fun invoke(action: () -> Unit) {
+        if (action !in executedActions) {
             action()
-            executed = true
+            executedActions.add(action)
         }
     }
 }
+
+fun once(action: () -> Unit): Unit = Once.invoke(action)
