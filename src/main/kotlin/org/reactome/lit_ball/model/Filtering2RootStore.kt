@@ -76,11 +76,19 @@ object Filtering2RootStore : Store {
     }
 
     fun setDoExport(doExport: Boolean) {
-        setState { copy(doExport = doExport) }
+        if (doExport) {
+            scope.launch(Dispatchers.IO) {
+                PaperList.export()
+            }
+        }
     }
 
     fun setDoSave(doSave: Boolean) {
-        setState { copy(doSave = doSave) }
+        if (doSave) {
+            scope.launch(Dispatchers.IO) {
+                PaperList.save()
+            }
+        }
     }
 
     fun setClassifierExceptionAlert(classifierExceptionAlert: Boolean) {
@@ -134,8 +142,6 @@ data class Filtering2RootState(
     val newList: Boolean = false,
     val openList: Boolean = false,
     val doImport: Boolean = false,
-    val doExport: Boolean = false,
-    val doSave: Boolean = false,
     val classifierAlert: Boolean = false,
     val isClassifierSet: Boolean = false,
     val classifierExceptionAlert: Boolean = false,

@@ -143,8 +143,6 @@ data class AnnotatingRootState(
     val newList: Boolean = false,
     val openList: Boolean = false,
     val doImport: Boolean = false,
-    val doExport: Boolean = false,
-    val doSave: Boolean = false,
     val classifierAlert: Boolean = false,
     val isClassifierSet: Boolean = false,
     val classifierExceptionAlert: Boolean = false,

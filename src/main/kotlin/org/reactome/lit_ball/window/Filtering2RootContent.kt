@@ -65,18 +65,6 @@ fun Filtering2RootContent(
         ProgressIndicator(state.progressIndication)
     }
 
-    if (state.doExport) {
-        scope.launch(Dispatchers.IO) {
-            PaperList.export()
-            model.setDoExport(false)
-        }
-    }
-    if (state.doSave) {
-        scope.launch(Dispatchers.IO) {
-            PaperList.save()
-            model.setDoSave(false)
-        }
-    }
     if (state.classifierAlert) {
         ConfirmationDialog(
             title = "NOTE",

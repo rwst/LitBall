@@ -64,12 +64,6 @@ fun AnnotatingRootContent(
         ProgressIndicator(state.progressIndication)
     }
 
-    if (state.doSave) {
-        scope.launch(Dispatchers.IO) {
-            PaperList.saveAnnotated()
-            model.setDoSave(false)
-        }
-    }
     if (state.classifierAlert) {
         ConfirmationDialog(
             title = "NOTE",
