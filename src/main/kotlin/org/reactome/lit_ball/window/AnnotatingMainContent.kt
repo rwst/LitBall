@@ -187,7 +187,7 @@ fun CardWithFlagBoxes(
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.width(16.dp))
-            val fList = PaperList.flagList ?: emptyList()
+            val fList = PaperList.flagList
             FlagBoxes(
                 fList,
                 item.flags,

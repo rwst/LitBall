@@ -119,6 +119,7 @@ object RootStore {
     }
 
     fun onQuerySettingsClicked(id: Int?) {
+        AnnotatingRootStore.refreshList()
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 

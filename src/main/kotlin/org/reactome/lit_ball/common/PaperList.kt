@@ -25,12 +25,9 @@ object PaperList {
     var query: LitBallQuery? = null
     var model: Store? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
-    var flagList: List<String>? = null
+    val flagList: List<String>
         get() {
-            if (field == null) {
-                field = query?.setting?.annotationClasses?.toList()
-            }
-            return field
+            return query?.setting?.annotationClasses?.toList() ?: emptyList()
         }
 
     suspend fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
@@ -204,19 +201,21 @@ object PaperList {
 
     private fun setTag(id: Int, tag: Tag) {
         updateItem(id) {
-            if (it.tag == tag) return@updateItem it
-            return@updateItem Paper(it.id, it.details, tag, it.flags)
+            if (it.tag == tag)
+                it
+            else
+                Paper(it.id, it.details, tag, it.flags)
         }
     }
 
     fun setFlag(id: Int, flagNo: Int, value: Boolean) {
-        val flag = flagList?.get(flagNo)
+        val flag = flagList[flagNo]
         updateItem(id) {
             if (!value)
-                flag?.let { it1 -> it.flags.add(it1) }
+                flag.let { it1 -> it.flags.add(it1) }
             else
                 it.flags.remove(flag)
-            return@updateItem it
+            it
         }
     }
 
