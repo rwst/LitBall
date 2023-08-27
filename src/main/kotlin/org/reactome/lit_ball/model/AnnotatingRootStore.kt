@@ -76,11 +76,19 @@ object AnnotatingRootStore: Store {
     }
 
     fun setDoExport(doExport: Boolean) {
-        setState { copy(doExport = doExport) }
+        if (doExport) {
+            scope.launch(Dispatchers.IO) {
+                PaperList.exportAnnotated()
+            }
+        }
     }
 
     fun setDoSave(doSave: Boolean) {
-        setState { copy(doSave = doSave) }
+        if (doSave) {
+            scope.launch(Dispatchers.IO) {
+                PaperList.saveAnnotated()
+            }
+        }
     }
 
     fun setClassifierExceptionAlert(classifierExceptionAlert: Boolean) {

@@ -64,12 +64,6 @@ fun AnnotatingRootContent(
         ProgressIndicator(state.progressIndication)
     }
 
-    if (state.doExport) {
-        scope.launch(Dispatchers.IO) {
-            PaperList.exportAnnotated()
-            model.setDoExport(false)
-        }
-    }
     if (state.doSave) {
         scope.launch(Dispatchers.IO) {
             PaperList.saveAnnotated()
