@@ -192,6 +192,8 @@ object PaperList {
         println("$path deleted")
         RootStore.setFiltered2()
         Filtering2RootStore.switchRoot()
+        val noAcc = list.count { it.tag == Tag.Accepted }
+        RootStore.setInformationalDialog("$noAcc papers added to accepted")
         query = null
     }
 
