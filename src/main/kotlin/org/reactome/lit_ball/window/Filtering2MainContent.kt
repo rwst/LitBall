@@ -173,12 +173,14 @@ fun CardWithTextIconAndRadiobutton(
     onOptionSelected: (btn: Int) -> Unit,
 ) {
     val cardTitle = item.details.title
+    val isReview = item.details.publicationTypes?.contains("Review") ?: false
     val radioButtonOptions = Tag.entries.map { it.name }
     Card(
         elevation = 4.dp,
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        backgroundColor = if (!isReview) Color.White else Color.LightGray,
     ) {
         Row(
             modifier = Modifier.padding(0.dp),

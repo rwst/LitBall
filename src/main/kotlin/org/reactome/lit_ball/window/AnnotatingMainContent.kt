@@ -165,9 +165,10 @@ fun CardWithFlagBoxes(
     onFlagSet: (Int, Boolean) -> Unit,
 ) {
     val cardTitle = item.details.title
+    val isReview = item.details.publicationTypes?.contains("Review") ?: false
     Card(
         elevation = 4.dp,
-        backgroundColor = Color.White,
+        backgroundColor = if (!isReview) Color.White else Color.LightGray,
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
