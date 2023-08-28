@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.serialization") version "1.9.0"
     id("org.jetbrains.compose") version "1.4.3"
+    id("com.github.gmazzo.buildconfig") version "4.1.2"
 }
 
 repositories {
@@ -35,6 +36,12 @@ dependencies {
     implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english-kbp")
 }
 
+buildConfig {
+    packageName("org.reactome.lit-ball")  // forces the package. Defaults to '${project.group}'
+    buildConfigField("String", "APP_NAME", "\"LitBall\"")
+    buildConfigField("String", "APP_VERSION", provider { "\"2308\"" })
+}
+
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -42,7 +49,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "LitBall"
-            packageVersion = "1.0.0"
+            packageVersion = "23.08.0"
         }
     }
 }

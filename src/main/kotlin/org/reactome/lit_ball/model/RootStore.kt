@@ -8,10 +8,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.LitBallQuery
-import org.reactome.lit_ball.common.PaperList
-import org.reactome.lit_ball.common.QueryList
-import org.reactome.lit_ball.common.QueryStatus
+import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
 
@@ -29,6 +26,7 @@ object RootStore {
     }
 
     fun buttonInfo() {
+        setInformationalDialog(About.text)
     }
 
     fun buttonExit() {
