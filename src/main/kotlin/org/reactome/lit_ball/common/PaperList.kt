@@ -198,7 +198,25 @@ object PaperList {
     }
 
     fun exportAnnotated() {
-
+        val pathPrefix = path?.substringBeforeLast("/")
+        val exportedPath = "$pathPrefix/${FileType.EXPORTED.fileName}"
+        File(exportedPath).writeText("Title,Review,DOI,Scholar\n")
+        list.forEach {
+            val doi = it.details.externalIds?.get("DOI")?.uppercase()
+            val title = it.details.title ?: ""
+            val sanTitle = title.replace(",","%2C")
+            val outStr = java.lang.StringBuilder()
+                .append("\"$title\",")
+                .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
+                .append("https://doi.org/$doi,")
+                .append(
+                    if (title.isEmpty()) "" else
+                        "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${sanTitle.replace(" ", "+")}&btnG="
+                )
+                .append("\n")
+                .toString()
+            File(exportedPath).appendText(outStr)
+        }
     }
 
     fun setTag(id: Int, btn: Int) {
