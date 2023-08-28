@@ -231,6 +231,7 @@ data class LitBallQuery(
             }
             PaperList.setFromQuery(this, file, acceptedSet)
             AnnotatingRootStore.refreshList()
+            PaperList.saveAnnotated()
         } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return

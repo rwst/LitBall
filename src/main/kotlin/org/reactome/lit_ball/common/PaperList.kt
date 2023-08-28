@@ -167,6 +167,7 @@ object PaperList {
     }
 
     fun saveAnnotated() {
+        list.forEach { it.tag = Tag.Accepted }
         save()
     }
 
