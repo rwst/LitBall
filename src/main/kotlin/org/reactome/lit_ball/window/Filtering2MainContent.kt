@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Web
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -27,11 +28,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Tag
 import org.reactome.lit_ball.dialog.RadioButtonOptions
+import org.reactome.lit_ball.model.Filtering2RootStore
+import org.reactome.lit_ball.util.openInBrowser
+import java.net.URI
 
 @Suppress("FunctionName")
 @Composable
@@ -186,15 +192,29 @@ fun CardWithTextIconAndRadiobutton(
             modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                IconButton(onClick = onDeleteClicked) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Item",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(24.dp)
-                    )
+            IconButton(onClick = onDeleteClicked) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Item",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            IconButton(
+                onClick = {
+                    Filtering2RootStore.scope.launch(Dispatchers.IO) {
+                        if (cardTitle != null) {
+                            openInBrowser(URI("https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${cardTitle.replace(" ","+")}&btnG="))
+                        }
+                    }
                 }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Web,
+                    contentDescription = "Open in Browser",
+                    tint = Color.Blue,
+                    modifier = Modifier.size(18.dp)
+                )
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
