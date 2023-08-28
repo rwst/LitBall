@@ -170,7 +170,7 @@ fun CardWithFlagBoxes(
         elevation = 4.dp,
         backgroundColor = if (!isReview) Color.White else Color.LightGray,
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp)
             .fillMaxWidth()
     ) {
         Row(
