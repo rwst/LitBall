@@ -6,6 +6,8 @@ LitBall applies the literature snowballing algorithm[1] on an academic graph (AG
 LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://rwst.github.io/Litball-download, there are binaries for Linux/Windows/Mac. Please give us feedback, especially on Win/Mac, as we only test on Linux.
 
 ## Quick Install
+Note: download will not work at the moment, the workflow needs to be set up with Github Large Files, may take some time...
+
 Download link: https://rwst.github.io/Litball-download 
 
 Optionally, if you want to use AI filters, you need the YDF package, see https://github.com/google/yggdrasil-decision-forests
