@@ -38,10 +38,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.slf4j:slf4j-log4j12:2.0.5")
-    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4")
-    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models")
-    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english")
-    implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english-kbp")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
@@ -52,7 +48,7 @@ dependencies {
 buildConfig {
     packageName("org.reactome.lit-ball")  // forces the package. Defaults to '${project.group}'
     buildConfigField("String", "APP_NAME", "\"LitBall\"")
-    buildConfigField("String", "APP_VERSION", provider { "\"2308\"" })
+    buildConfigField("String", "APP_VERSION", provider { "\"2309\"" })
 }
 
 configurations.all {
@@ -64,7 +60,7 @@ configurations.all {
 compose.desktop {
     application {
         mainClass = "MainKt"
-        version = "2308"
+        version = "2309"
         group = "org.reactome"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

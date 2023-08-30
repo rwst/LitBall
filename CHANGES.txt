@@ -1,0 +1,4 @@
+v2309:
+ - upgrade Kotlin Compose Multiplatform from 1.4.3 to 1.5.0
+ - remove StanfordNLP dependencies for their size
+ - changes to make download of Linux/Mac/Windows binaries possible
