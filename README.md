@@ -3,18 +3,12 @@ JVM desktop app for systematic literature collection.
 
 LitBall applies the literature snowballing algorithm[1] on an academic graph (AG) and facilitates the creation of a systematic literature collection on a specific topic. Search runs, starting with a small set of initial papers, are sequences of up- and down-sweeps within the AG, intertwined with filtering using different filters. LitBall saves the state of these processing steps in a local database and all retrieved graph data. Output can be visualized or exported as a database for import in any spreadsheet.
 
-LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Users can only try the application in alpha versions by running it in IntelliJ IDEA. Later, we plan to use [Conveyor](https://www.hydraulic.software/index.html) to provide binaries for Linux/Windows/Mac.
+LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://rwst.github.io/Litball-download, there are binaries for Linux/Windows/Mac. Please give us feedback, especially on Win/Mac, as we only test on Linux.
 
 ## Quick Install
-Since LitBall is still alpha (but usable), you need to install IntelliJ IDEA and, optionally, if you want to use AI filters, the YDF package.
+Download link: https://rwst.github.io/Litball-download 
 
-For IntelliJ IDEA, please refer to https://www.jetbrains.com/idea/. The free version suffices.
-
-After you install IntelliJ IDEA:
-Start it and create a new project from version control.
-Give this repository URL (https://github.com/rwst/LitBall).
-Click Clone.
-After some background indexing, start LitBall by clicking the triangle in the top toolbar, right of center.
+Optionally, if you want to use AI filters, you need the YDF package, see https://github.com/google/yggdrasil-decision-forests
 
 ## LitBall Configuration
 See Settings on the Main screen. The first path will be the directory that holds your current queries. Changing this will read and display all queries in that directory.
