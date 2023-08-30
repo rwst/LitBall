@@ -1,10 +1,12 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.serialization") version "1.9.0"
     id("org.jetbrains.compose") version "1.4.3"
     id("com.github.gmazzo.buildconfig") version "4.1.2"
+    id("dev.hydraulic.conveyor") version "1.5"
 }
 
 repositories {
@@ -14,8 +16,14 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(11)
-}
+    jvmToolchain(20)
+    sourceSets {
+        val main: KotlinSourceSet by getting {
+            dependencies {
+                // ...
+            }
+        }
+    }}
 
 dependencies {
     implementation("org.jetbrains.compose.material3:material3-desktop:1.4.3")
@@ -34,6 +42,11 @@ dependencies {
     implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models")
     implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english")
     implementation("edu.stanford.nlp:stanford-corenlp:4.5.4:models-english-kbp")
+
+    linuxAmd64(compose.desktop.linux_x64)
+    macAmd64(compose.desktop.macos_x64)
+    macAarch64(compose.desktop.macos_arm64)
+    windowsAmd64(compose.desktop.windows_x64)
 }
 
 buildConfig {
@@ -42,10 +55,17 @@ buildConfig {
     buildConfigField("String", "APP_VERSION", provider { "\"2308\"" })
 }
 
+configurations.all {
+    attributes {
+        attribute(Attribute.of("ui", String::class.java), "awt")
+    }
+}
+
 compose.desktop {
     application {
         mainClass = "MainKt"
-
+        version = "2308"
+        group = "org.reactome"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "LitBall"
