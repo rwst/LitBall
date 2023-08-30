@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.serialization") version "1.9.0"
-    id("org.jetbrains.compose") version "1.4.3"
+    id("org.jetbrains.compose") version "1.5.0"
     id("com.github.gmazzo.buildconfig") version "4.1.2"
     id("dev.hydraulic.conveyor") version "1.5"
 }
@@ -26,11 +26,11 @@ kotlin {
     }}
 
 dependencies {
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.4.3")
+    implementation("org.jetbrains.compose.material3:material3-desktop:1.5.0")
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-    implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.4.3")
+    implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.5.0")
     implementation ("io.github.oshai:kotlin-logging-jvm:4.0.0-beta-22")
     implementation("com.squareup.okio:okio:3.3.0")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
