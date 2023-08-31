@@ -66,11 +66,11 @@ data class LitBallQuery(
         )[status.ordinal]
     }
 
-    fun getLastExpansionDate(fromFile: Boolean = false): Date? {
+    fun getFileDate(fromFile: Boolean = false, fileType: FileType): Date? {
         return if (fromFile) {
             val queryDir = getQueryDir(name)
             if (queryDir.isDirectory && queryDir.canRead()) {
-                val file = File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}")
+                val file = File("${queryDir.absolutePath}/${fileType.fileName}")
                 if (file.canRead())
                     Date(file.lastModified())
                 else
@@ -98,7 +98,7 @@ data class LitBallQuery(
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
                 File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").writeText(text)
-                lastExpansionDate = getLastExpansionDate()
+                lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
                 QueryStatus.EXPANDED
             } catch (e: Exception) {
                 handleException(e)
