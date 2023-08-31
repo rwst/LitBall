@@ -32,12 +32,7 @@ object QueryList {
                     fromFile = true,
                     fileType = FileType.ACCEPTED
                 )
-                val rejDate = newQuery.getFileDate(
-                    fromFile = true,
-                    fileType = FileType.REJECTED
-                )
-                if (newQuery.lastExpansionDate != null && rejDate != null)
-                    newQuery.noNewAccepted = newQuery.lastExpansionDate!! < rejDate
+                newQuery.noNewAccepted = newQuery.readNoNewAccepted()
                 newQuery
             }
         }

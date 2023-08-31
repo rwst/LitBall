@@ -12,6 +12,7 @@ import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
 
@@ -238,6 +239,31 @@ data class LitBallQuery(
         }
     }
 
+    fun writeNoNewAccepted() {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canWrite()) {
+            val text = noNewAccepted.toString()
+            try {
+                File("${queryDir.absolutePath}/${FileType.NONEWACCEPTED.fileName}").writeText(text)
+            } catch (e: Exception) {
+                handleException(e)
+            }
+        }
+    }
+    fun readNoNewAccepted(): Boolean {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canRead()) {
+            try {
+                return File("${queryDir.absolutePath}/${FileType.NONEWACCEPTED.fileName}").readText().trim() == "true"
+            } catch (e: FileNotFoundException) {
+                return false
+            }
+            catch (e: Exception) {
+                handleException(e)
+            }
+        }
+        return false
+    }
     fun saveSettings() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {

@@ -196,7 +196,7 @@ object PaperList {
         RootStore.setInformationalDialog("$noAcc papers added to accepted")
         query?.let {
             it.noNewAccepted = (noAcc == 0)
-            println("noNewAccepted set to ${query!!.noNewAccepted}")
+            it.writeNoNewAccepted()
         }
         query = null
         RootStore.refreshList()

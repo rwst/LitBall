@@ -9,5 +9,6 @@ enum class FileType(val fileName: String) {
     CLASSIFIER_INPUT("cl-input.csv"),
     CLASSIFIER_OUTPUT("cl-output.csv"),
     EXPORTED("exported.csv"),
+    NONEWACCEPTED("no-new-accepted.txt"),
     SETTINGS("settings.json");
 }
