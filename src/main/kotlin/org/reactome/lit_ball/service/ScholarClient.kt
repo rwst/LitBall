@@ -14,6 +14,7 @@ object S2Client : ScholarClient {
     private const val SINGLE_QUERY_DELAY = 500L
     private const val BULK_QUERY_DELAY = 5000L
     private const val TAG = "S2Client"
+    private val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
 
     suspend fun getBulkPaperDetailsWithAbstract(
         doiSet: List<String>,
@@ -44,44 +45,51 @@ object S2Client : ScholarClient {
         return true
     }
 
+    private suspend fun <T> getDataOrHandleExceptions(
+        doi: String,
+        index: Int,
+        size: Int,
+        indicatorTitle: String,
+        getData: suspend (doi: String) -> T
+    ): Pair<T?, Boolean> {
+        while (true) {
+            try {
+                val data = getData("DOI:$doi")
+                return Pair(data, true)
+            } catch (e: SocketTimeoutException) {
+                Logger.i(TAG, "TIMEOUT")
+                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
+                    return Pair(null, false)
+            } catch (e: HttpException) {
+                Logger.i(TAG, "ERROR ${e.code()}")
+                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
+                    return Pair(null, false)
+                when (e.code()) {
+                    400, 404 -> return Pair(null, true) // assume DOI defect or unknown
+                    429 -> delay(strategy.delay(false))
+                    // API says too fast, so delay and repeat
+                    else -> throw e
+                }
+            }
+        }
+    }
+
     suspend fun getPaperDetailsWithAbstract(
         doiSet: List<String>,
         action: (S2Service.PaperDetailsWithAbstract) -> Unit
     ): Boolean {
         val size = doiSet.size
-        val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         doiSet.forEachIndexed { index, it ->
-            var paper: S2Service.PaperDetailsWithAbstract?
-            do {
-                paper = try {
-                    S2Service.getSinglePaperDetailsWithAbstract(
-                        "DOI:$it",
-                        "paperId,externalIds,title,abstract,publicationTypes,tldr"
-                    )
-                } catch (e: SocketTimeoutException) {
-                    Logger.i(TAG, "TIMEOUT")
-                    if (RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
-                        continue
-                    else return false
-                } catch (e: HttpException) {
-                    paper = null
-                    if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
-                        return false
-                    when (e.code()) {
-                        400, 404 -> break // assume DOI defect or unknown
-                        429 -> {          // API says too fast, so delay and repeat
-                            delay(strategy.delay(false))
-                            continue
-                        }
-
-                        else -> throw (e)
-                    }
-                }
-                break
-            } while (true)
+            val pair = getDataOrHandleExceptions(it, index, size, indicatorTitle) {
+                S2Service.getSinglePaperDetailsWithAbstract(
+                    it,
+                    "paperId,externalIds,title,abstract,publicationTypes,tldr"
+                )
+            }
+            if (!pair.second) return false
             delay(strategy.delay(true))
-            paper?.also(action)
+            pair.first?.also(action)
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
@@ -94,39 +102,17 @@ object S2Client : ScholarClient {
         action: (S2Service.PaperRefs) -> Unit
     ): Boolean {
         val size = doiSet.size
-        val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
         doiSet.forEachIndexed { index, it ->
-            var refs: S2Service.PaperRefs?
-            do {
-                refs = try {
-                    S2Service.getPaperRefs(
-                        "DOI:$it",
-                        "paperId,citations,citations.externalIds,references,references.externalIds"
-                    )
-                } catch (e: SocketTimeoutException) {
-                    Logger.i(TAG, "TIMEOUT")
-                    if (RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
-                        continue
-                    else return false
-                } catch (e: HttpException) {
-                    refs = null
-                    if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
-                        return false
-                    when (e.code()) {
-                        400, 404 -> break // assume DOI defect or unknown
-                        429 -> {          // API says too fast, so delay and repeat
-                            delay(strategy.delay(false))
-                            continue
-                        }
-
-                        else -> throw (e)
-                    }
-                }
-                break
-            } while (true)
+            val pair = getDataOrHandleExceptions(it, index, size, indicatorTitle) {
+                S2Service.getPaperRefs(
+                    it,
+                    "paperId,citations,citations.externalIds,references,references.externalIds"
+                )
+            }
+            if (!pair.second) return false
             delay(strategy.delay(true))
-            refs?.also(action)
+            pair.first?.also(action)
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
@@ -135,7 +121,7 @@ object S2Client : ScholarClient {
     }
 }
 
-internal class DelayStrategy(private val minDelay: Long) {
+class DelayStrategy(private val minDelay: Long) {
     fun delay(wasSuccessful: Boolean): Long {
         return if (wasSuccessful) {
             noFails = 0
