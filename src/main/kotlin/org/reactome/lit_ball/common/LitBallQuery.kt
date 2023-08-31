@@ -17,7 +17,6 @@ import java.util.*
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
 
-
 fun getQueryDir(name: String): File {
     val queryPath = Settings.map["path-to-queries"] ?: ""
     val prefix = Settings.map["directory-prefix"] ?: ""
@@ -45,6 +44,7 @@ data class LitBallQuery(
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
     var lastExpansionDate: Date? = null,
+    var noNewAccepted: Boolean = false
 ) {
     fun syncBuffers() {
         acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()

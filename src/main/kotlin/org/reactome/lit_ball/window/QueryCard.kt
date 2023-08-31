@@ -23,7 +23,6 @@ import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.util.formatDateToyyyyMMMddFormat
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QueryCard(
     item: LitBallQuery,
@@ -63,7 +62,8 @@ fun QueryCard(
                 )
                 Text(
                     text = "Accepted: ${item.nrAccepted()}",
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    fontWeight = if (item.noNewAccepted) FontWeight.Bold else FontWeight.Normal
                 )
             }
 

@@ -194,7 +194,12 @@ object PaperList {
         Filtering2RootStore.switchRoot()
         val noAcc = list.count { it.tag == Tag.Accepted }
         RootStore.setInformationalDialog("$noAcc papers added to accepted")
+        query?.let {
+            it.noNewAccepted = (noAcc == 0)
+            println("noNewAccepted set to ${query!!.noNewAccepted}")
+        }
         query = null
+        RootStore.refreshList()
     }
 
     fun exportAnnotated() {

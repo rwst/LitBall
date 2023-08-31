@@ -28,7 +28,16 @@ object QueryList {
                     rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }
                         .toMutableSet(),
                 )
-                newQuery.lastExpansionDate = newQuery.getLastExpansionDate(fromFile = true)
+                newQuery.lastExpansionDate = newQuery.getFileDate(
+                    fromFile = true,
+                    fileType = FileType.ACCEPTED
+                )
+                val rejDate = newQuery.getFileDate(
+                    fromFile = true,
+                    fileType = FileType.REJECTED
+                )
+                if (newQuery.lastExpansionDate != null && rejDate != null)
+                    newQuery.noNewAccepted = newQuery.lastExpansionDate!! < rejDate
                 newQuery
             }
         }

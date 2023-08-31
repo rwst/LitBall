@@ -32,6 +32,10 @@ object RootStore {
     fun buttonExit() {
     }
 
+    fun refreshList() {
+        setState { copy(items = QueryList.list.toList()) }
+    }
+
     private fun onDoExpandStarted(id: Int) {
         setState {
             scope.launch(Dispatchers.IO) {
