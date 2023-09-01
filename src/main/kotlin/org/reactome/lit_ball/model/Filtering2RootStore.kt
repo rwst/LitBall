@@ -52,10 +52,6 @@ object Filtering2RootStore : Store {
         setState { copy(editingItemId = id) }
     }
 
-    fun onItemDeleteClicked(id: Int) {
-        setState { copy(items = PaperList.toListWithItemRemoved(id)) }
-    }
-
     fun onItemRadioButtonClicked(id: Int, btn: Int) {
         PaperList.setTag(id, btn)
         refreshList()

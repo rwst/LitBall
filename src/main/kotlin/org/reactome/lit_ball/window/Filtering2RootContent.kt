@@ -43,7 +43,6 @@ fun Filtering2RootContent(
         items = state.items,
         onItemClicked = model::onItemClicked,
         railItems = railItems,
-        onItemDeleteClicked = model::onItemDeleteClicked,
         onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onExit,
         rootSwitch = rootSwitch,

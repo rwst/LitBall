@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -46,7 +45,6 @@ internal fun Filtering2MainContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     railItems: List<RailItem>,
-    onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onExit: () -> Unit,
     rootSwitch: MutableState<RootType>,
@@ -63,7 +61,6 @@ internal fun Filtering2MainContent(
         Filtering2ListContent(
             items = items,
             onItemClicked = onItemClicked,
-            onItemDeleteClicked = onItemDeleteClicked,
             onItemRadioButtonClicked = onItemRadioButtonClicked,
             isClassifierSet = isClassifierSet,
             onClassifierButtonClicked = onClassifierButtonClicked,
@@ -71,12 +68,10 @@ internal fun Filtering2MainContent(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Filtering2ListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
-    onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
@@ -155,7 +150,6 @@ fun Filtering2ListContent(
                     CardWithTextIconAndRadiobutton(
                         item = item,
                         onClicked = { onItemClicked(item.id) },
-                        onDeleteClicked = { onItemDeleteClicked(item.id) },
                         onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
                     )
                     Divider()
@@ -175,7 +169,6 @@ fun Filtering2ListContent(
 fun CardWithTextIconAndRadiobutton(
     item: Paper,
     onClicked: () -> Unit,
-    onDeleteClicked: () -> Unit,
     onOptionSelected: (btn: Int) -> Unit,
 ) {
     val cardTitle = item.details.title
@@ -192,14 +185,6 @@ fun CardWithTextIconAndRadiobutton(
             modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onDeleteClicked) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Item",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
             IconButton(
                 onClick = {
                     Filtering2RootStore.scope.launch(Dispatchers.IO) {
