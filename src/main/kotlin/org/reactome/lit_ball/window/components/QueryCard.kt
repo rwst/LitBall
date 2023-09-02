@@ -34,17 +34,19 @@ fun QueryCard(
 ) {
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
-            IconButton(
-                onClick = { (onSettingsClicked)(item.id) },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Query Settings",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(48.dp),
-                )
+            Tooltip("Query-specific settings") {
+                IconButton(
+                    onClick = { (onSettingsClicked)(item.id) },
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Query Settings",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(48.dp),
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column {
@@ -93,17 +95,19 @@ fun QueryCard(
             ) {
                 Text(item.nextActionText())
             }
-            ElevatedButton(
-                onClick = onAnnotateClicked,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                contentPadding = PaddingValues(10.dp),
-            ) {
-                Text(
-                    text = "Annotate\naccepted",
-                    fontSize = 14.sp
-                )
+            Tooltip("View/Set flags on papers, export") {
+                ElevatedButton(
+                    onClick = onAnnotateClicked,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
+                    contentPadding = PaddingValues(10.dp),
+                ) {
+                    Text(
+                        text = "Annotate\naccepted",
+                        fontSize = 14.sp
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(MARGIN_SCROLLBAR))
