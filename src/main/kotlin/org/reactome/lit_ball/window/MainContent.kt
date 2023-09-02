@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
+import org.reactome.lit_ball.window.components.QueryCard
+import org.reactome.lit_ball.window.components.Rail
+import org.reactome.lit_ball.window.components.RailItem
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 

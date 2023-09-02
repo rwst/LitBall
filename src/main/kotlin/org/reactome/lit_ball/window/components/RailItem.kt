@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.window
+package org.reactome.lit_ball.window.components
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

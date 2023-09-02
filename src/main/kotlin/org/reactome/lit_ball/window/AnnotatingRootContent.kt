@@ -17,6 +17,7 @@ import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.ItemClickedDialog
 import org.reactome.lit_ball.dialog.ProgressIndicator
 import org.reactome.lit_ball.model.AnnotatingRootStore
+import org.reactome.lit_ball.window.components.RailItem
 
 @Composable
 fun AnnotatingRootContent(

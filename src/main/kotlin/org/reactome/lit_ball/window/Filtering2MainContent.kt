@@ -3,12 +3,13 @@
 package org.reactome.lit_ball.window
 
 import RootType
-import androidx.compose.foundation.*
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Web
@@ -17,14 +18,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +35,9 @@ import org.reactome.lit_ball.common.Tag
 import org.reactome.lit_ball.dialog.RadioButtonOptions
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.util.openInBrowser
+import org.reactome.lit_ball.window.components.Rail
+import org.reactome.lit_ball.window.components.RailItem
+import org.reactome.lit_ball.window.components.Tooltip
 import java.net.URI
 
 @Suppress("FunctionName")
@@ -165,7 +167,6 @@ fun Filtering2ListContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CardWithTextIconAndRadiobutton(
     item: Paper,
@@ -186,26 +187,7 @@ fun CardWithTextIconAndRadiobutton(
             modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TooltipArea(
-                tooltip = {
-                    // composable tooltip content
-                    Surface(
-                        modifier = Modifier.shadow(4.dp),
-                        color = Color(255, 255, 210),
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Text(
-                            text = "Open Google Scholar\nin Browser",
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
-                },
-                delayMillis = 600, // in milliseconds
-                tooltipPlacement = TooltipPlacement.CursorPoint(
-                    alignment = Alignment.BottomEnd,
-                    offset = DpOffset(4.dp, 4.dp)// tooltip offset
-                )
-            ) {
+            Tooltip(text = "Open Google Scholar\nin Browser") {
                 IconButton(
                     onClick = {
                         Filtering2RootStore.scope.launch(Dispatchers.IO) {

@@ -21,6 +21,7 @@ import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.SettingsDialog
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.once
+import org.reactome.lit_ball.window.components.RailItem
 
 @Composable
 fun RootContent(

@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package org.reactome.lit_ball.window.components
 
 import RootType
 import androidx.compose.foundation.layout.padding

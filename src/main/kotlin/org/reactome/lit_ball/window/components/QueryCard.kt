@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package org.reactome.lit_ball.window.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.util.formatDateToyyyyMMMddFormat
+import org.reactome.lit_ball.window.MARGIN_SCROLLBAR
 
 @Composable
 fun QueryCard(
