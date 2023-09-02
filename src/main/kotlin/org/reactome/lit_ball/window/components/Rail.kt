@@ -22,25 +22,27 @@ fun Rail(
 
     NavigationRail {
         railItems.forEach { item ->
-            NavigationRailItem(
-                onClick = {
-                    item.onClicked.invoke()
-                    item.extraAction?.invoke()
-                },
-                icon = {
-                    Icon(
-                        item.icon,
-                        null,
-                    )
-                },
-                label = {
-                    Text(
-                        item.text,
-                        modifier = Modifier.padding(vertical = 6.dp)
-                    )
-                },
-                selected = selectedItem == item.actionIndex
-            )
+            Tooltip(item.tooltipText) {
+                NavigationRailItem(
+                    onClick = {
+                        item.onClicked.invoke()
+                        item.extraAction?.invoke()
+                    },
+                    icon = {
+                        Icon(
+                            item.icon,
+                            null,
+                        )
+                    },
+                    label = {
+                        Text(
+                            item.text,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        )
+                    },
+                    selected = selectedItem == item.actionIndex
+                )
+            }
         }
         if (rootSwitch.value == RootType.MAIN_ROOT) {
             ExtendedFloatingActionButton(

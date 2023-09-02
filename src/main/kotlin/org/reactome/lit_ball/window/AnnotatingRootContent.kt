@@ -12,6 +12,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import org.reactome.lit_ball.common.FileType
 import org.reactome.lit_ball.dialog.ConfirmationDialog
 import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.ItemClickedDialog
@@ -33,10 +34,10 @@ fun AnnotatingRootContent(
     model.rootSwitch = rootSwitch
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Save", Icons.Filled.Save, 0) { model.setDoSave(true) },
-        RailItem("Export", Icons.Filled.Publish, 1) { model.setDoExport(true) },
-        RailItem("Main", Icons.Filled.ExitToApp, 2, onClicked = model::onDoAnnotateStopped),
-        RailItem("Exit", Icons.Filled.ExitToApp, 3, extraAction = onExit, onClicked = model::buttonExit)
+        RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Filled.Save, 0) { model.setDoSave(true) },
+        RailItem("Export", "Write ${FileType.EXPORTED.fileName}", Icons.Filled.Publish, 1) { model.setDoExport(true) },
+        RailItem("Main", "Save and go back\nto main screen", Icons.Filled.ExitToApp, 2, onClicked = model::onDoAnnotateStopped),
+        RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, extraAction = onExit, onClicked = model::buttonExit)
     )
 
     AnnotatingMainContent(
