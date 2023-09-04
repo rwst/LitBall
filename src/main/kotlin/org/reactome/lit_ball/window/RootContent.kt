@@ -41,14 +41,10 @@ fun RootContent(
     )
 
     MainContent(
-        qItems = state.items,
-        onItemClicked = { id -> model.setEditingItemId(id) },
-        onNewItemClicked = { model.setNewItem(true) },
+        model,
         railItems = railItems,
-        onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
-        onItemGoClicked = { status, id -> model.nextAction(status, id) },
         rootSwitch = rootSwitch,
-    ) { id -> model.onAnnotateStarted(id) }
+    )
 
     once {
         scope.launch(Dispatchers.IO) {

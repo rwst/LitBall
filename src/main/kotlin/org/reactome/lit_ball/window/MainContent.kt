@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.window.components.QueryCard
 import org.reactome.lit_ball.window.components.Rail
 import org.reactome.lit_ball.window.components.RailItem
@@ -31,28 +32,23 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(
-    qItems: List<LitBallQuery>,
-    onItemClicked: (id: Int) -> Unit,
-    onNewItemClicked: () -> Unit,
+    model: RootStore,
     railItems: List<RailItem>,
-    onItemSettingsClicked: (id: Int?) -> Unit,
-    onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
     rootSwitch: MutableState<RootType>,
-    onItemAnnotateClicked: (id: Int) -> Unit
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
         Rail(
             railItems = railItems,
-            onNewButtonClicked = onNewItemClicked,
+            onNewButtonClicked = { model.setNewItem(true) },
             rootSwitch = rootSwitch,
         )
         Box(Modifier.weight(1F)) {
             ListContent(
-                items = qItems,
-                onItemClicked = onItemClicked,
-                onItemSettingsClicked,
-                onItemGoClicked,
-                onItemAnnotateClicked,
+                items = model.state.items,
+                onItemClicked = { id -> model.setEditingItemId(id) },
+                onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
+                onItemGoClicked = { status, id -> model.nextAction(status, id) },
+                onItemAnnotateClicked = { id -> model.onAnnotateStarted(id) },
             )
         }
     }
