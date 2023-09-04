@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,7 +31,8 @@ fun Tooltip(text: String, content: @Composable () -> Unit) {
             ) {
                 Text(
                     text = text,
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(4.dp),
+                    fontSize = 10.sp,
                 )
             }
         },
