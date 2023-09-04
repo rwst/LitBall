@@ -1,1 +1,6 @@
 Features:
+ - support Google Scholar AG
+ - what if expansion yields 0 DOIs?
+ - no net error handling
+ - smaller tooltip font
+ - sort

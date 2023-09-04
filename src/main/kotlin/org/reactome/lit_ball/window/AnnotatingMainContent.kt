@@ -189,7 +189,7 @@ fun CardWithFlagBoxes(
             {
                 IconButton(
                     onClick = {
-                        AnnotatingRootStore.scope.launch(Dispatchers.IO) {
+                        AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
                             if (cardTitle != null) {
                                 openInBrowser(URI("https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${cardTitle.replace(" ","+")}&btnG="))
                             }

@@ -190,7 +190,7 @@ fun CardWithTextIconAndRadiobutton(
             Tooltip(text = "Open Google Scholar\nin Browser") {
                 IconButton(
                     onClick = {
-                        Filtering2RootStore.scope.launch(Dispatchers.IO) {
+                        Filtering2RootStore.scope?.launch(Dispatchers.IO) {
                             if (cardTitle != null) {
                                 openInBrowser(URI("https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${cardTitle.replace(" ","+")}&btnG="))
                             }

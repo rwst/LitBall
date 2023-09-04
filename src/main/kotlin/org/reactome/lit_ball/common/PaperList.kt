@@ -7,7 +7,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.model.Store
+import org.reactome.lit_ball.model.PaperListScreenStore
 import org.reactome.lit_ball.service.NLPService
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.YDFService
@@ -23,7 +23,7 @@ object PaperList {
     private var path: String? = null
     var fileName: String = ""
     var query: LitBallQuery? = null
-    var model: Store? = null
+    var model: PaperListScreenStore? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     val flagList: List<String>
         get() {
@@ -295,7 +295,7 @@ object PaperList {
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
         val modelFile = File(classifierPath)
         if (query == null || classifierName.isBlank() || !modelFile.canRead()) {
-            Filtering2RootStore.setClassifierExceptionAlert(true)
+            model?.setClassifierExceptionAlert(true)
             return
         }
         val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
@@ -314,7 +314,7 @@ object PaperList {
             null
         }
         if (processJob == null) {
-            Filtering2RootStore.setYdfNotFoundAlert(true)
+            model?.setYdfNotFoundAlert(true)
             return
         }
         processJob.join()

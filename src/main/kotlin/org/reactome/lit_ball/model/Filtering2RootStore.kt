@@ -12,12 +12,17 @@ import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
-import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 
-object Filtering2RootStore : Store {
+object Filtering2RootStore: ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
 
-    lateinit var scope: CoroutineScope
+    var scope: CoroutineScope? = null
+    set(value) {
+        if (value != null) {
+            state.paperListStore.scope = value
+        }
+        field = value
+    }
     lateinit var rootSwitch: MutableState<RootType>
 
     fun switchRoot() {
@@ -38,27 +43,19 @@ object Filtering2RootStore : Store {
         setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank() ?: false) }
     }
 
+    override fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore) {
+        setState { copy(paperListStore = paperListScreenStore) }
+    }
+
     fun buttonExit() {
         runBlocking {
             PaperList.save()
         }
     }
 
-    fun onClassifierConfirmed() {
-        scope.launch(Dispatchers.IO) { PaperList.applyClassifier() }
-    }
-
-    fun onItemClicked(id: Int) {
-        setState { copy(editingItemId = id) }
-    }
-
     fun onItemRadioButtonClicked(id: Int, btn: Int) {
         PaperList.setTag(id, btn)
         refreshList()
-    }
-
-    fun onEditorCloseClicked() {
-        setState { copy(editingItemId = null) }
     }
 
     fun onDoAnnotateStopped() {
@@ -68,13 +65,10 @@ object Filtering2RootStore : Store {
         switchRoot()
     }
 
-    fun setClassifierAlert(isAlertActive: Boolean) {
-        setState { copy(classifierAlert = isAlertActive) }
-    }
 
     fun doFinish(doit: Boolean) {
         if (doit) {
-            scope.launch(Dispatchers.IO) {
+            scope?.launch(Dispatchers.IO) {
                 PaperList.finish()
             }
         }
@@ -82,66 +76,22 @@ object Filtering2RootStore : Store {
 
     fun setDoSave(doSave: Boolean) {
         if (doSave) {
-            scope.launch(Dispatchers.IO) {
+            scope?.launch(Dispatchers.IO) {
                 PaperList.save()
             }
         }
     }
-
-    fun setClassifierExceptionAlert(classifierExceptionAlert: Boolean) {
-        setState { copy(classifierExceptionAlert = classifierExceptionAlert) }
-    }
-
-    fun setYdfNotFoundAlert(ydfNotFoundAlert: Boolean) {
-        setState { copy(ydfNotFoundAlert = ydfNotFoundAlert) }
-    }
-
-    private object Signal {
-        var signal = false
-        fun set() {
-            signal = true
-        }
-
-        fun clear() {
-            signal = false
-        }
-    }
-
-    fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
-        if (Signal.signal) {
-            setState { copy(progressIndication = null) }
-            Signal.clear()
-            return false
-        }
-        if (value >= 0) {
-            setState {
-                copy(progressIndication = ProgressIndicatorParameter(title, value, text) {
-                    Signal.set()
-                    setState { copy(progressIndication = null) }
-                }
-                )
-            }
-        } else {
-            setState { copy(progressIndication = null) }
-            Signal.clear()
-        }
-        return true
-    }
 }
 
-data class Filtering2RootState(
+data class Filtering2RootState (
     val items: List<Paper> = PaperList.toList(),
     val settings: Settings = Settings,
     val activeRailItem: String = "",
-    val editingItemId: Int? = null,
     val editingSettings: Boolean = false,
     val infoList: Boolean = false,
     val newList: Boolean = false,
     val openList: Boolean = false,
     val doImport: Boolean = false,
-    val classifierAlert: Boolean = false,
     val isClassifierSet: Boolean = false,
-    val classifierExceptionAlert: Boolean = false,
-    val ydfNotFoundAlert: Boolean = false,
-    val progressIndication: ProgressIndicatorParameter? = null,
+    val paperListStore: PaperListScreenStore = PaperListScreenStore(Filtering2RootStore),
 )

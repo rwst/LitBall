@@ -105,7 +105,7 @@ object RootStore {
     private fun onDoFilter2Started(id: Int) {
         scope.launch(Dispatchers.IO) {
             state.items[id].filter2()
-            PaperList.model = Filtering2RootStore
+            PaperList.model = Filtering2RootStore.state.paperListStore
             rootSwitch.value = RootType.FILTER2_ROOT
             setState { copy(doFilter2 = id) }
         }
@@ -114,7 +114,7 @@ object RootStore {
     fun onAnnotateStarted(id: Int) {
         scope.launch(Dispatchers.IO) {
             state.items[id].annotate()
-            PaperList.model = AnnotatingRootStore
+            PaperList.model = AnnotatingRootStore.state.paperListStore
             rootSwitch.value = RootType.ANNOTATE_ROOT
             setState { copy(doAnnotate = id) }
         }
