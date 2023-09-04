@@ -11,6 +11,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.apache.log4j.BasicConfigurator
+import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.AnnotatingRootContent
 import org.reactome.lit_ball.window.Filtering2RootContent
 import org.reactome.lit_ball.window.RootContent
@@ -31,6 +32,7 @@ fun main() {
                 ?.buffered()
                 ?.use { BitmapPainter(loadImageBitmap(it)) }
         }
+        SystemFunction.exitApplication = ::exitApplication
         Window(
             onCloseRequest = ::exitApplication,
             title = "LitBall",
@@ -43,7 +45,6 @@ fun main() {
             MaterialTheme {
                 when (rootSwitch.value) {
                     RootType.MAIN_ROOT -> RootContent(
-                        onExit = ::exitApplication,
                         rootSwitch,
                     )
                     RootType.FILTER2_ROOT -> Filtering2RootContent(
@@ -51,7 +52,6 @@ fun main() {
                         rootSwitch,
                     )
                     RootType.ANNOTATE_ROOT -> AnnotatingRootContent(
-                        onExit = ::exitApplication,
                         rootSwitch,
                     )
                 }

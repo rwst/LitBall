@@ -1,6 +1,10 @@
 package org.reactome.lit_ball.model
 
 import RootType
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +15,9 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
+import org.reactome.lit_ball.util.SystemFunction
+import org.reactome.lit_ball.window.components.RailItem
+import org.reactome.lit_ball.window.components.SortingControlItem
 
 object RootStore {
     var state: RootState by mutableStateOf(initialState())
@@ -25,11 +32,21 @@ object RootStore {
         state = state.update()
     }
 
-    fun buttonInfo() {
+    val railItems: List<RailItem> = listOf(
+        RailItem("Info", "About LitBall", Icons.Filled.Info, 0, onClicked = { buttonInfo() }),
+        RailItem("Settings", "General Settings", Icons.Filled.Settings, 1) { setEditingSettings(true) },
+        RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, onClicked = { buttonExit() })
+    )
+
+    val sortingControls: List<SortingControlItem> = listOf(
+        SortingControlItem()
+    )
+    private fun buttonInfo() {
         setInformationalDialog(About.text)
     }
 
-    fun buttonExit() {
+    private fun buttonExit() {
+        SystemFunction.exitApplication()
     }
 
     fun refreshList() {
@@ -165,7 +182,6 @@ object RootStore {
         setState { copy(doInformationalDialog = text) }
     }
 }
-
 
 data class RootState(
     val items: List<LitBallQuery> = QueryList.list,

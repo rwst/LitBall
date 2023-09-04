@@ -25,7 +25,7 @@ import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.window.components.QueryCard
 import org.reactome.lit_ball.window.components.Rail
-import org.reactome.lit_ball.window.components.RailItem
+import org.reactome.lit_ball.window.components.SortingControls
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 
@@ -33,16 +33,16 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 @Composable
 internal fun MainContent(
     model: RootStore,
-    railItems: List<RailItem>,
     rootSwitch: MutableState<RootType>,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
         Rail(
-            railItems = railItems,
+            railItems = model.railItems,
             onNewButtonClicked = { model.setNewItem(true) },
             rootSwitch = rootSwitch,
         )
-        Box(Modifier.weight(1F)) {
+        Column {
+            SortingControls(model.sortingControls)
             ListContent(
                 items = model.state.items,
                 onItemClicked = { id -> model.setEditingItemId(id) },

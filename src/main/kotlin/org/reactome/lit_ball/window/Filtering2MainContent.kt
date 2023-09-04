@@ -34,38 +34,36 @@ import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Tag
 import org.reactome.lit_ball.dialog.RadioButtonOptions
 import org.reactome.lit_ball.model.Filtering2RootStore
+import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
 import org.reactome.lit_ball.window.components.Rail
-import org.reactome.lit_ball.window.components.RailItem
+import org.reactome.lit_ball.window.components.SortingControls
 import org.reactome.lit_ball.window.components.Tooltip
 import java.net.URI
 
 @Suppress("FunctionName")
 @Composable
 internal fun Filtering2MainContent(
-    items: List<Paper>,
-    onItemClicked: (id: Int) -> Unit,
-    railItems: List<RailItem>,
-    onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
-    onExit: () -> Unit,
+    model: Filtering2RootStore,
     rootSwitch: MutableState<RootType>,
-    isClassifierSet: Boolean,
-    onClassifierButtonClicked: () -> Unit,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
         Rail(
-            railItems = railItems,
-            onExit,
+            railItems = model.railItems,
+            SystemFunction.exitApplication,
             rootSwitch = rootSwitch,
         )
 
-        Filtering2ListContent(
-            items = items,
-            onItemClicked = onItemClicked,
-            onItemRadioButtonClicked = onItemRadioButtonClicked,
-            isClassifierSet = isClassifierSet,
-            onClassifierButtonClicked = onClassifierButtonClicked,
-        )
+        Column {
+            SortingControls(model.sortingControls)
+            Filtering2ListContent(
+                items = model.state.items,
+                onItemClicked = { model.state.paperListStore.onItemClicked(it) },
+                onItemRadioButtonClicked = model::onItemRadioButtonClicked,
+                isClassifierSet = model.state.isClassifierSet,
+                onClassifierButtonClicked = { model.state.paperListStore.setClassifierAlert(true) },
+            )
+        }
     }
 }
 

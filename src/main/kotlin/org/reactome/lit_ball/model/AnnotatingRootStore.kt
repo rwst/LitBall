@@ -1,6 +1,10 @@
 package org.reactome.lit_ball.model
 
 import RootType
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Publish
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,9 +13,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.reactome.lit_ball.common.FileType
 import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.util.SystemFunction
+import org.reactome.lit_ball.window.components.RailItem
+import org.reactome.lit_ball.window.components.SortingControlItem
 
 
 object AnnotatingRootStore: ModelHandle {
@@ -36,6 +44,15 @@ object AnnotatingRootStore: ModelHandle {
         state = state.update()
     }
 
+    val railItems: List<RailItem> = listOf(
+        RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Filled.Save, 0) { doSave() },
+        RailItem("Export", "Write ${FileType.EXPORTED.fileName}", Icons.Filled.Publish, 1) { doExport() },
+        RailItem("Main", "Save and go back\nto main screen", Icons.Filled.ExitToApp, 2, onClicked = { onDoAnnotateStopped() }),
+        RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, extraAction = SystemFunction.exitApplication, onClicked = { buttonExit() })
+    )
+    val sortingControls: List<SortingControlItem> = listOf(
+        SortingControlItem()
+    )
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
@@ -48,7 +65,7 @@ object AnnotatingRootStore: ModelHandle {
         setState { copy(paperListStore = paperListScreenStore) }
     }
 
-    fun buttonExit() {
+    private fun buttonExit() {
         runBlocking {
             PaperList.save()
         }
@@ -57,25 +74,21 @@ object AnnotatingRootStore: ModelHandle {
         PaperList.setFlag(id, flagNo, value)
     }
 
-    fun onDoAnnotateStopped() {
+    private fun onDoAnnotateStopped() {
         runBlocking {
             PaperList.saveAnnotated()
         }
         switchRoot()
     }
-    fun setDoExport(doExport: Boolean) {
-        if (doExport) {
-            scope?.launch(Dispatchers.IO) {
-                PaperList.exportAnnotated()
-            }
+    private fun doExport() {
+        scope?.launch(Dispatchers.IO) {
+            PaperList.exportAnnotated()
         }
     }
 
-    fun setDoSave(doSave: Boolean) {
-        if (doSave) {
-            scope?.launch(Dispatchers.IO) {
-                PaperList.saveAnnotated()
-            }
+    private fun doSave() {
+        scope?.launch(Dispatchers.IO) {
+            PaperList.saveAnnotated()
         }
     }
 }
