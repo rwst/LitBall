@@ -11,14 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import org.reactome.lit_ball.common.FileType
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.window.components.RailItem
 
 @Composable
 fun Filtering2RootContent(
-    modifier: Modifier = Modifier,
     onExit: () -> Unit,
     rootSwitch: MutableState<RootType>,
 ) {
@@ -37,7 +35,6 @@ fun Filtering2RootContent(
     )
 
     Filtering2MainContent(
-        modifier = modifier,
         items = state.items,
         onItemClicked = { state.paperListStore.onItemClicked(it) },
         railItems = railItems,
@@ -45,8 +42,7 @@ fun Filtering2RootContent(
         onExit,
         rootSwitch = rootSwitch,
         isClassifierSet = state.isClassifierSet,
-        onClassifierButtonClicked = { state.paperListStore.setClassifierAlert(true) },
-    )
+    ) { state.paperListStore.setClassifierAlert(true) }
 
     PaperListScreenEvents(state.paperListStore)
 }

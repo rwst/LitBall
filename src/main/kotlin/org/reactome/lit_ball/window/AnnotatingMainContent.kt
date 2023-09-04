@@ -42,7 +42,6 @@ import java.net.URI
 @Suppress("FunctionName")
 @Composable
 internal fun AnnotatingMainContent(
-    modifier: Modifier = Modifier,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     railItems: List<RailItem>,
@@ -52,7 +51,7 @@ internal fun AnnotatingMainContent(
     onClassifierButtonClicked: () -> Unit,
     onFlagSet: (Int, Int, Boolean) -> Unit
 ) {
-    Row(modifier) {
+    Row(modifier = Modifier.fillMaxSize()) {
         Rail(
             railItems = railItems,
             onExit,

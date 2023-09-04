@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
@@ -25,7 +24,6 @@ import org.reactome.lit_ball.window.components.RailItem
 
 @Composable
 fun RootContent(
-    modifier: Modifier = Modifier,
     onExit: () -> Unit,
     rootSwitch: MutableState<RootType>,
 ) {
@@ -43,16 +41,14 @@ fun RootContent(
     )
 
     MainContent(
-        modifier = modifier,
         qItems = state.items,
         onItemClicked = { id -> model.setEditingItemId(id) },
-        railItems = railItems,
         onNewItemClicked = { model.setNewItem(true) },
+        railItems = railItems,
         onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
         onItemGoClicked = { status, id -> model.nextAction(status, id) },
         rootSwitch = rootSwitch,
-        onItemAnnotateClicked = { id -> model.onAnnotateStarted(id) },
-    )
+    ) { id -> model.onAnnotateStarted(id) }
 
     once {
         scope.launch(Dispatchers.IO) {

@@ -31,7 +31,6 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(
-    modifier: Modifier = Modifier,
     qItems: List<LitBallQuery>,
     onItemClicked: (id: Int) -> Unit,
     onNewItemClicked: () -> Unit,
@@ -41,7 +40,7 @@ internal fun MainContent(
     rootSwitch: MutableState<RootType>,
     onItemAnnotateClicked: (id: Int) -> Unit
 ) {
-    Row(modifier) {
+    Row(modifier = Modifier.fillMaxSize()) {
         Rail(
             railItems = railItems,
             onNewButtonClicked = onNewItemClicked,

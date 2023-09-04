@@ -1,9 +1,7 @@
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.DpSize
@@ -45,17 +43,14 @@ fun main() {
             MaterialTheme {
                 when (rootSwitch.value) {
                     RootType.MAIN_ROOT -> RootContent(
-                        modifier = Modifier.fillMaxSize(),
                         onExit = ::exitApplication,
                         rootSwitch,
                     )
                     RootType.FILTER2_ROOT -> Filtering2RootContent(
-                        modifier = Modifier.fillMaxSize(),
                         onExit = ::exitApplication,
                         rootSwitch,
                     )
                     RootType.ANNOTATE_ROOT -> AnnotatingRootContent(
-                        modifier = Modifier.fillMaxSize(),
                         onExit = ::exitApplication,
                         rootSwitch,
                     )

@@ -11,14 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import org.reactome.lit_ball.common.FileType
 import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.window.components.RailItem
 
 @Composable
 fun AnnotatingRootContent(
-    modifier: Modifier = Modifier,
     onExit: () -> Unit,
     rootSwitch: MutableState<RootType>,
 ) {
@@ -37,7 +35,6 @@ fun AnnotatingRootContent(
     )
 
     AnnotatingMainContent(
-        modifier = modifier,
         items = state.items,
         onItemClicked = { state.paperListStore.onItemClicked(it) },
         railItems = railItems,

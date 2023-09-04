@@ -43,7 +43,6 @@ import java.net.URI
 @Suppress("FunctionName")
 @Composable
 internal fun Filtering2MainContent(
-    modifier: Modifier = Modifier,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     railItems: List<RailItem>,
@@ -53,7 +52,7 @@ internal fun Filtering2MainContent(
     isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
 ) {
-    Row(modifier) {
+    Row(modifier = Modifier.fillMaxSize()) {
         Rail(
             railItems = railItems,
             onExit,
