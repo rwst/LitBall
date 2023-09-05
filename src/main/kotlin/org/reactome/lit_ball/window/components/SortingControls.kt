@@ -3,7 +3,6 @@
 package org.reactome.lit_ball.window.components
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -15,7 +14,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SortingControls(controls: List<SortingControlItem>) {
-    Row (modifier = Modifier.fillMaxWidth()) {
+    Row {
         controls.forEach { item ->
             Tooltip(item.tooltipText) {
                 IconButton(

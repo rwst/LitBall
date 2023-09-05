@@ -7,6 +7,7 @@ import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
@@ -46,6 +47,8 @@ internal fun AnnotatingMainContent(
     model: AnnotatingRootStore,
     rootSwitch: MutableState<RootType>
 ) {
+    val lazyListState = rememberLazyListState()
+
     Row(modifier = Modifier.fillMaxSize()) {
         Rail(
             railItems = model.railItems,
@@ -54,14 +57,24 @@ internal fun AnnotatingMainContent(
         )
 
         Column {
-            SortingControls(model.sortingControls)
+            Row (modifier = Modifier.fillMaxWidth().height(42.dp)) {
+                SortingControls(model.sortingControls)
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(
+                    onClick = {},
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + model.state.items.size.toString())
+                }
+            }
             AnnotatingListContent(
                 items = model.state.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 isClassifierSet = model.state.isClassifierSet,
                 onClassifierButtonClicked = { model.state.paperListStore.setClassifierAlert(true) },
-                onFlagSet = model::onFlagSet
-            )
+                onFlagSet = model::onFlagSet,
+                lazyListState = lazyListState,
+                )
         }
     }
 }
@@ -72,10 +85,10 @@ fun AnnotatingListContent(
     onItemClicked: (id: Int) -> Unit,
     isClassifierSet: Boolean,
     onClassifierButtonClicked: () -> Unit,
-    onFlagSet: (Int, Int, Boolean) -> Unit
+    onFlagSet: (Int, Int, Boolean) -> Unit,
+    lazyListState: LazyListState
 ) {
     val focusRequester = remember { FocusRequester() }
-    val lazyListState = rememberLazyListState()
 
     val onKeyDownSuspend: suspend (KeyEvent) -> Boolean = {
         when (it.type) {
@@ -122,13 +135,6 @@ fun AnnotatingListContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(
-                    onClick = {},
-                    modifier = Modifier.padding(0.dp)
-                ) {
-                    Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
-                }
-                Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
                 if (isClassifierSet)
                     Button(
                         modifier = Modifier.padding(horizontal = 24.dp),
