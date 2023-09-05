@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
+import org.reactome.lit_ball.window.components.SortingType
 
 
 object AnnotatingRootStore: ModelHandle {
@@ -51,7 +53,8 @@ object AnnotatingRootStore: ModelHandle {
         RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, extraAction = SystemFunction.exitApplication, onClicked = { buttonExit() })
     )
     val sortingControls: List<SortingControlItem> = listOf(
-        SortingControlItem()
+        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { RootStore.doSort(SortingType.ALPHA_ASCENDING) },
+        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { RootStore.doSort(SortingType.ALPHA_DESCENDING) },
     )
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
@@ -90,6 +93,9 @@ object AnnotatingRootStore: ModelHandle {
         scope?.launch(Dispatchers.IO) {
             PaperList.saveAnnotated()
         }
+    }
+    fun doSort(sortingType: SortingType) {
+
     }
 }
 

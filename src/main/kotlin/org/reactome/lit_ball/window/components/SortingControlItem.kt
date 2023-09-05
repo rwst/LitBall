@@ -2,10 +2,9 @@ package org.reactome.lit_ball.window.components
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class SortingType { QUERY_ALPHA,  }
+enum class SortingType { ALPHA_ASCENDING, ALPHA_DESCENDING, NUMER_ASCENDING, NUMER_DESCENDING,  }
 data class SortingControlItem (
     val tooltipText: String = "",
-//    val icon: ImageVector,
-//    val actionIndex: Int,
-//    val onClicked: () -> Unit,
+    val icon: ImageVector,
+    val onClicked: () -> Unit,
 )

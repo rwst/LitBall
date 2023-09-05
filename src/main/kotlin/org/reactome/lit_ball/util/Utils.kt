@@ -20,16 +20,3 @@ fun formatDateToyyyyMMMddFormat(date: Date?): String {
     val format = SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH)
     return format.format(date)
 }
-
-object Once {
-    private val executedActions = mutableSetOf<() -> Unit>()
-
-    fun invoke(action: () -> Unit) {
-        if (action !in executedActions) {
-            action()
-            executedActions.add(action)
-        }
-    }
-}
-
-fun once(action: () -> Unit): Unit = Once.invoke(action)

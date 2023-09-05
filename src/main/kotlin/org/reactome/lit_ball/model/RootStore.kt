@@ -2,9 +2,7 @@ package org.reactome.lit_ball.model
 
 import RootType
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +16,7 @@ import org.reactome.lit_ball.util.CantHappenException
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
+import org.reactome.lit_ball.window.components.SortingType
 
 object RootStore {
     var state: RootState by mutableStateOf(initialState())
@@ -39,8 +38,19 @@ object RootStore {
     )
 
     val sortingControls: List<SortingControlItem> = listOf(
-        SortingControlItem()
+        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_ASCENDING) },
+        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_DESCENDING) },
+        SortingControlItem("Sort by last expansion\ndate, ascending", Icons.Filled.Sort) { doSort(SortingType.NUMER_ASCENDING) },
+        SortingControlItem("Sort by last expansion\ndate, descending", Icons.Filled.Sort) { doSort(SortingType.NUMER_DESCENDING) },
     )
+
+    fun init() {
+        if (Settings.initialized) return
+        scope.launch(Dispatchers.IO) {
+            Settings.load()
+            QueryList.fill()
+        }
+    }
     private fun buttonInfo() {
         setInformationalDialog(About.text)
     }
@@ -180,6 +190,13 @@ object RootStore {
 
     fun setInformationalDialog(text: String?) {
         setState { copy(doInformationalDialog = text) }
+    }
+
+    fun doSort(sortingType: SortingType) {
+        scope.launch(Dispatchers.IO) {
+            QueryList.sort(sortingType)
+            refreshList()
+        }
     }
 }
 

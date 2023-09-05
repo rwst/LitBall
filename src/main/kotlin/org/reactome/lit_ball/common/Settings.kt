@@ -11,7 +11,7 @@ import java.nio.file.Paths
 @Serializable
 object Settings {
     var map: MutableMap<String, String> = mutableMapOf()
-    private var initialized = false
+    var initialized = false
     private const val PATH = "settings.json"
     private val json = ConfiguredJson.get()
     fun load() {

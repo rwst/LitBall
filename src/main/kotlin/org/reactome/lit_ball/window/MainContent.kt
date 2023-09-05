@@ -64,6 +64,7 @@ private fun ListContent(
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
+    // TODO: allow setting lazyListState from outside of GUI code
 
     Box(
         modifier = Modifier.fillMaxSize()

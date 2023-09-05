@@ -7,15 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.QueryList
-import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.dialog.*
-import org.reactome.lit_ball.dialog.InformationalDialog
-import org.reactome.lit_ball.dialog.SettingsDialog
 import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.once
 
 @Composable
 fun RootContent(
@@ -33,12 +26,7 @@ fun RootContent(
         rootSwitch = rootSwitch,
     )
 
-    once {
-        scope.launch(Dispatchers.IO) {
-            Settings.load()
-            QueryList.fill()
-        }
-    }
+    RootStore.init()
 
     if (state.newItem) {
         NewItemDialog(

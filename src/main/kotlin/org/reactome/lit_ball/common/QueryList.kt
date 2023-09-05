@@ -3,6 +3,7 @@ package org.reactome.lit_ball.common
 import kotlinx.serialization.Serializable
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.handleException
+import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -67,6 +68,15 @@ object QueryList {
             )
         )
         RootStore.setItems(list)
+    }
+
+    fun sort(type: SortingType) {
+        list = when (type) {
+            SortingType.ALPHA_ASCENDING -> list.sortedBy { it.name }
+            SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.name }
+            SortingType.NUMER_ASCENDING -> list.sortedBy { it.lastExpansionDate }
+            SortingType.NUMER_DESCENDING -> list.sortedByDescending { it.lastExpansionDate }
+        }
     }
 }
 
