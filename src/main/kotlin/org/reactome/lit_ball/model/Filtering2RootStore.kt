@@ -14,10 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.reactome.lit_ball.common.FileType
-import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.PaperList
-import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
@@ -27,12 +24,12 @@ object Filtering2RootStore: ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
 
     var scope: CoroutineScope? = null
-    set(value) {
-        if (value != null) {
-            state.paperListStore.scope = value
+        set(value) {
+            if (value != null) {
+                state.paperListStore.scope = value
+            }
+            field = value
         }
-        field = value
-    }
     lateinit var rootSwitch: MutableState<RootType>
 
     fun switchRoot() {
@@ -48,13 +45,31 @@ object Filtering2RootStore: ModelHandle {
     val railItems: List<RailItem> = listOf(
         RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Filled.Save, 0) { doSave() },
         RailItem("Finish", "Finish filtering,\nwriting accepted/rejected", Icons.Filled.Publish, 1) { doFinish() },
-        RailItem("Main", "Save and go back\nto main screen", Icons.Filled.ExitToApp, 2, onClicked = { onDoAnnotateStopped() }),
-        RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, extraAction = SystemFunction.exitApplication, onClicked = { buttonExit() } )
+        RailItem(
+            "Main",
+            "Save and go back\nto main screen",
+            Icons.Filled.ExitToApp,
+            2,
+            onClicked = { onDoAnnotateStopped() }),
+        RailItem(
+            "Exit",
+            "Exit application",
+            Icons.Filled.ExitToApp,
+            3,
+            extraAction = SystemFunction.exitApplication,
+            onClicked = { buttonExit() })
     )
     val sortingControls: List<SortingControlItem> = listOf(
-        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { RootStore.doSort(SortingType.ALPHA_ASCENDING) },
-        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { RootStore.doSort(SortingType.ALPHA_DESCENDING) },
+        SortingControlItem(
+            "Alphabetical sort ascending",
+            Icons.Filled.SortByAlpha
+        ) { doSort(SortingType.ALPHA_ASCENDING) },
+        SortingControlItem(
+            "Alphabetical sort descending",
+            Icons.Filled.SortByAlpha
+        ) { doSort(SortingType.ALPHA_DESCENDING) },
     )
+
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
@@ -97,11 +112,14 @@ object Filtering2RootStore: ModelHandle {
             PaperList.save()
         }
     }
-    fun doSort(sortingType: SortingType) {
 
+    fun doSort(sortingType: SortingType) {
+        scope?.launch(Dispatchers.IO) {
+            PaperList.sort(sortingType)
+            refreshList()
+        }
     }
 }
-
 data class Filtering2RootState (
     val items: List<Paper> = PaperList.toList(),
     val settings: Settings = Settings,

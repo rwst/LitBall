@@ -14,6 +14,7 @@ import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
+import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
 import java.io.IOException
 
@@ -247,6 +248,16 @@ object PaperList {
                 it.flags.remove(flag)
             it
         }
+    }
+
+    fun sort(type: SortingType) {
+        list = when (type) {
+            SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
+            SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
+            else ->
+                throw Exception("can't happen")
+        }
+        updateShadowMap()
     }
 
     fun stats(): String {

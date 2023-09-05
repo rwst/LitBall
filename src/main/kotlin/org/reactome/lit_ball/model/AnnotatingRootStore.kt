@@ -14,10 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.reactome.lit_ball.common.FileType
-import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.PaperList
-import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
@@ -53,8 +50,8 @@ object AnnotatingRootStore: ModelHandle {
         RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, extraAction = SystemFunction.exitApplication, onClicked = { buttonExit() })
     )
     val sortingControls: List<SortingControlItem> = listOf(
-        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { RootStore.doSort(SortingType.ALPHA_ASCENDING) },
-        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { RootStore.doSort(SortingType.ALPHA_DESCENDING) },
+        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_ASCENDING) },
+        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_DESCENDING) },
     )
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
@@ -95,7 +92,10 @@ object AnnotatingRootStore: ModelHandle {
         }
     }
     fun doSort(sortingType: SortingType) {
-
+        scope?.launch(Dispatchers.IO) {
+            PaperList.sort(sortingType)
+            refreshList()
+        }
     }
 }
 
