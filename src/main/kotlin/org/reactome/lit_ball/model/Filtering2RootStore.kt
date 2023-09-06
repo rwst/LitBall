@@ -10,10 +10,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
@@ -22,6 +20,7 @@ import org.reactome.lit_ball.window.components.SortingType
 
 object Filtering2RootStore: ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
+    private var scrollChannel: Channel<Int>? = null
 
     var scope: CoroutineScope? = null
         set(value) {
@@ -113,12 +112,15 @@ object Filtering2RootStore: ModelHandle {
         }
     }
 
-    fun doSort(sortingType: SortingType) {
+    private fun doSort(sortingType: SortingType) {
         scope?.launch(Dispatchers.IO) {
             PaperList.sort(sortingType)
             refreshList()
+            delay(100) // TODO: this is a hack
+            scrollChannel?.send(0)
         }
     }
+    fun setupListScroller(theChannel: Channel<Int>) { scrollChannel = theChannel }
 }
 data class Filtering2RootState (
     val items: List<Paper> = PaperList.toList(),

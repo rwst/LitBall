@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Web
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -36,10 +37,13 @@ import org.reactome.lit_ball.dialog.FlagBoxes
 import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
+import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.Rail
 import org.reactome.lit_ball.window.components.SortingControls
 import org.reactome.lit_ball.window.components.Tooltip
 import java.net.URI
+
+private const val TAG = "AnnotatingMainContent"
 
 @Suppress("FunctionName")
 @Composable
@@ -130,6 +134,7 @@ fun AnnotatingListContent(
             .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
+        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, AnnotatingRootStore::setupListScroller)
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),

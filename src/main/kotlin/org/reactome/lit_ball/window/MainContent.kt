@@ -14,6 +14,7 @@ import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -23,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.model.RootStore
+import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.QueryCard
 import org.reactome.lit_ball.window.components.Rail
 import org.reactome.lit_ball.window.components.SortingControls
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
-
+private const val TAG = "MainContent"
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(
@@ -64,13 +66,13 @@ private fun ListContent(
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
-    // TODO: allow setting lazyListState from outside of GUI code
 
     Box(
         modifier = Modifier.fillMaxSize()
             .focusRequester(focusRequester)
             .clickable { focusRequester.requestFocus() }
     ) {
+        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, RootStore::setupListScroller)
         LazyColumn(
             Modifier.fillMaxSize().padding(end = 12.dp),
             lazyListState

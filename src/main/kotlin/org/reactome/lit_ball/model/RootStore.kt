@@ -9,6 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
@@ -20,6 +22,7 @@ import org.reactome.lit_ball.window.components.SortingType
 
 object RootStore {
     var state: RootState by mutableStateOf(initialState())
+    private var scrollChannel: Channel<Int>? = null
 
     lateinit var scope: CoroutineScope
     lateinit var rootSwitch: MutableState<RootType>
@@ -192,12 +195,16 @@ object RootStore {
         setState { copy(doInformationalDialog = text) }
     }
 
-    fun doSort(sortingType: SortingType) {
+    private fun doSort(sortingType: SortingType) {
         scope.launch(Dispatchers.IO) {
             QueryList.sort(sortingType)
             refreshList()
+            delay(100) // TODO: this is a hack
+            scrollChannel?.send(0)
         }
     }
+
+    fun setupListScroller(theChannel: Channel<Int>) { scrollChannel = theChannel }
 }
 
 data class RootState(
