@@ -15,10 +15,17 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(20))
+    }
+}
+
 kotlin {
     jvmToolchain(20)
     sourceSets {
         val main: KotlinSourceSet by getting {
+            resources.srcDirs("resources")
             dependencies {
                 // ...
             }
@@ -49,12 +56,6 @@ buildConfig {
     packageName("org.reactome.lit-ball")  // forces the package. Defaults to '${project.group}'
     buildConfigField("String", "APP_NAME", "\"LitBall\"")
     buildConfigField("String", "APP_VERSION", provider { "\"2310\"" })
-}
-
-configurations.all {
-    attributes {
-        attribute(Attribute.of("ui", String::class.java), "awt")
-    }
 }
 
 compose.desktop {
