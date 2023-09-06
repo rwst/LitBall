@@ -38,6 +38,7 @@ object QueryList {
             }
         }
         sort(SortingType.valueOf(Settings.map["query-sort-type"]?: SortingType.ALPHA_ASCENDING.toString()))
+        updateIds()
         RootStore.setItems(list)
     }
 
@@ -80,6 +81,10 @@ object QueryList {
         }
         Settings.map["query-sort-type"] = type.toString()
         Settings.save()
+    }
+
+    private fun updateIds() {
+        list.forEachIndexed { index, it -> it.id = index }
     }
 }
 

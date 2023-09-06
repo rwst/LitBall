@@ -38,7 +38,7 @@ fun getDOIs(dir: File, fileName: String): MutableSet<String> {
 }
 
 data class LitBallQuery(
-    val id: Int,
+    var id: Int,
     val name: String = "",
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
     var setting: QuerySetting? = null,
