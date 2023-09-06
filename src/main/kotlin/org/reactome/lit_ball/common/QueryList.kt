@@ -38,7 +38,6 @@ object QueryList {
             }
         }
         sort(SortingType.valueOf(Settings.map["query-sort-type"]?: SortingType.ALPHA_ASCENDING.toString()))
-        updateIds()
         RootStore.setItems(list)
     }
 
@@ -79,6 +78,7 @@ object QueryList {
             SortingType.NUMER_ASCENDING -> list.sortedBy { it.lastExpansionDate }
             SortingType.NUMER_DESCENDING -> list.sortedByDescending { it.lastExpansionDate }
         }
+        updateIds()
         Settings.map["query-sort-type"] = type.toString()
         Settings.save()
     }
