@@ -5,6 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.handleException
+import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
 import java.nio.file.Paths
 
@@ -39,6 +40,7 @@ object Settings {
         map["directory-prefix"] = "Query-"
         map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
         map["path-to-classifiers"] = Paths.get("").toAbsolutePath().toString() + "/classifier"
+        map["query-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
     }
 
     fun save() {
