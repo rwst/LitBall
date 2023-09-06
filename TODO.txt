@@ -2,4 +2,5 @@ Features:
  - support Google Scholar AG
  - what if expansion yields 0 DOIs?
  - no net error handling
- - sort
+ - wildcards in keywords
+ - less chatty on terminal, dedicated logfile?
