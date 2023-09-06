@@ -41,6 +41,7 @@ object Settings {
         map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
         map["path-to-classifiers"] = Paths.get("").toAbsolutePath().toString() + "/classifier"
         map["query-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
+        map["paper-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
     }
 
     fun save() {

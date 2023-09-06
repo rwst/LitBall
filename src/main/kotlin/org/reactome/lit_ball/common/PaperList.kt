@@ -152,6 +152,11 @@ object PaperList {
         }
         list = papers
         runBlocking {
+            sort(
+                SortingType.valueOf(
+                    Settings.map["paper-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()
+                )
+            )
             updateShadowMap()
             delay(200)
             model?.refreshList()
@@ -255,8 +260,10 @@ object PaperList {
             SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
             SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
             else ->
-                throw Exception("can't happen")
+                throw Exception("can't happen: $type")
         }
+        Settings.map["paper-sort-type"] = type.toString()
+        Settings.save()
         updateShadowMap()
     }
 
