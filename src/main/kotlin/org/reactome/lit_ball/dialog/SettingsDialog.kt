@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.Settings
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun SettingsDialog(
     rootScope: CoroutineScope,

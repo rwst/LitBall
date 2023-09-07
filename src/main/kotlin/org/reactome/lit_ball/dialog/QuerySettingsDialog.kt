@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun QuerySettingsDialog(
     item: LitBallQuery,

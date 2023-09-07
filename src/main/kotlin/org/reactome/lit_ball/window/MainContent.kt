@@ -31,6 +31,7 @@ import org.reactome.lit_ball.window.components.SortingControls
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 private const val TAG = "MainContent"
+
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(

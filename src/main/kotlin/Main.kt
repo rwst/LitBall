@@ -48,7 +48,6 @@ fun main() {
                         rootSwitch,
                     )
                     RootType.FILTER2_ROOT -> Filtering2RootContent(
-                        onExit = ::exitApplication,
                         rootSwitch,
                     )
                     RootType.ANNOTATE_ROOT -> AnnotatingRootContent(

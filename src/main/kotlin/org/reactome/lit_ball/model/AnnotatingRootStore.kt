@@ -12,14 +12,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.reactome.lit_ball.common.*
+import org.reactome.lit_ball.common.FileType
+import org.reactome.lit_ball.common.Paper
+import org.reactome.lit_ball.common.PaperList
+import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
 
 
-object AnnotatingRootStore: ModelHandle {
+object AnnotatingRootStore : ModelHandle {
     var state: AnnotatingRootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
 
@@ -45,13 +48,31 @@ object AnnotatingRootStore: ModelHandle {
     val railItems: List<RailItem> = listOf(
         RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Filled.Save, 0) { doSave() },
         RailItem("Export", "Write ${FileType.EXPORTED.fileName}", Icons.Filled.Publish, 1) { doExport() },
-        RailItem("Main", "Save and go back\nto main screen", Icons.Filled.ExitToApp, 2, onClicked = { onDoAnnotateStopped() }),
-        RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, extraAction = SystemFunction.exitApplication, onClicked = { buttonExit() })
+        RailItem(
+            "Main",
+            "Save and go back\nto main screen",
+            Icons.Filled.ExitToApp,
+            2,
+            onClicked = { onDoAnnotateStopped() }),
+        RailItem(
+            "Exit",
+            "Exit application",
+            Icons.Filled.ExitToApp,
+            3,
+            extraAction = SystemFunction.exitApplication,
+            onClicked = { buttonExit() })
     )
     val sortingControls: List<SortingControlItem> = listOf(
-        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_ASCENDING) },
-        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_DESCENDING) },
+        SortingControlItem(
+            "Alphabetical sort ascending",
+            Icons.Filled.SortByAlpha
+        ) { doSort(SortingType.ALPHA_ASCENDING) },
+        SortingControlItem(
+            "Alphabetical sort descending",
+            Icons.Filled.SortByAlpha
+        ) { doSort(SortingType.ALPHA_DESCENDING) },
     )
+
     override fun refreshList() {
         setState { copy(items = PaperList.toList()) }
     }
@@ -69,6 +90,7 @@ object AnnotatingRootStore: ModelHandle {
             PaperList.save()
         }
     }
+
     fun onFlagSet(id: Int, flagNo: Int, value: Boolean) {
         PaperList.setFlag(id, flagNo, value)
     }
@@ -79,6 +101,7 @@ object AnnotatingRootStore: ModelHandle {
         }
         switchRoot()
     }
+
     private fun doExport() {
         scope?.launch(Dispatchers.IO) {
             PaperList.exportAnnotated()
@@ -90,6 +113,7 @@ object AnnotatingRootStore: ModelHandle {
             PaperList.saveAnnotated()
         }
     }
+
     private fun doSort(sortingType: SortingType) {
         scope?.launch(Dispatchers.IO) {
             PaperList.sort(sortingType)
@@ -98,7 +122,10 @@ object AnnotatingRootStore: ModelHandle {
             scrollChannel?.send(0)
         }
     }
-    fun setupListScroller(theChannel: Channel<Int>) { scrollChannel = theChannel }
+
+    fun setupListScroller(theChannel: Channel<Int>) {
+        scrollChannel = theChannel
+    }
 }
 
 data class AnnotatingRootState(

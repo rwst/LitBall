@@ -19,7 +19,7 @@ import org.reactome.lit_ball.common.PaperList
 @Composable
 internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit) {
     val scrollState = rememberScrollState()
-    Surface (
+    Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Transparent
     ) {
@@ -29,8 +29,8 @@ internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit) {
             contentAlignment = Alignment.Center,
         ) {
             Box(modifier = Modifier.size(500.dp).background(color = Color.White)) {
-                Column (modifier = Modifier.fillMaxWidth()) {
-                    Row (modifier = Modifier.height(440.dp)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(modifier = Modifier.height(440.dp)) {
                         Column(
                             modifier = Modifier
                                 .padding(16.dp)

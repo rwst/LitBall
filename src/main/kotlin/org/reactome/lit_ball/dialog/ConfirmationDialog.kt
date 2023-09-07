@@ -3,12 +3,10 @@
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ConfirmationDialog(
     title: String,
@@ -40,7 +38,6 @@ internal fun ConfirmationDialog(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun InformationalDialog(
     title: String,

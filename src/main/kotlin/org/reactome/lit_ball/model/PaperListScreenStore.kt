@@ -14,6 +14,7 @@ interface ModelHandle {
     fun refreshClassifierButton()
     fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore)
 }
+
 class PaperListScreenStore(private val handle: ModelHandle) {
     var state: PaperListScreenState by mutableStateOf(initialState())
     lateinit var scope: CoroutineScope
@@ -27,24 +28,31 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun refreshList() {
         handle.refreshList()
     }
+
     fun refreshClassifierButton() {
         handle.refreshClassifierButton()
     }
+
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
+
     fun onClassifierConfirmed() {
         scope.launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
+
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
     }
+
     fun setClassifierAlert(isAlertActive: Boolean) {
         setState { copy(classifierAlert = isAlertActive) }
     }
+
     fun setClassifierExceptionAlert(classifierExceptionAlert: Boolean) {
         setState { copy(classifierExceptionAlert = classifierExceptionAlert) }
     }
+
     fun setYdfNotFoundAlert(ydfNotFoundAlert: Boolean) {
         setState { copy(ydfNotFoundAlert = ydfNotFoundAlert) }
     }

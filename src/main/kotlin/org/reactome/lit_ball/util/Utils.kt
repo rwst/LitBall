@@ -7,18 +7,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-inline fun <reified T> Any?.tryCast(block: T.() -> Unit) {
-    if (this is T) {
-        block()
-    }
-}
-
-inline fun <T : Any> MutableList<T>.replaceFirst(transformer: (T) -> T, block: (T) -> Boolean): MutableList<T> {
-    val i = indexOfFirst { block(it) }
-    this[i] = transformer(this[i])
-    return this
-}
-
 fun formatDateToyyyyMMMddFormat(date: Date?): String {
     if (date == null) return "-.-"
     val format = SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH)
@@ -28,11 +16,11 @@ fun formatDateToyyyyMMMddFormat(date: Date?): String {
 var scrollerTag: String = ""
 
 fun setupLazyListScroller(
-        tag: String,
-        scope: CoroutineScope,
-        state: LazyListState,
-        setupAction: (Channel<Int>) -> Unit,
-    ) {
+    tag: String,
+    scope: CoroutineScope,
+    state: LazyListState,
+    setupAction: (Channel<Int>) -> Unit,
+) {
     if (tag == scrollerTag) return
     scrollerTag = tag
     val scrollChannel = Channel<Int>()

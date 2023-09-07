@@ -61,7 +61,7 @@ internal fun AnnotatingMainContent(
         )
 
         Column {
-            Row (modifier = Modifier.fillMaxWidth().height(42.dp)) {
+            Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
                 SortingControls(model.sortingControls)
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(
@@ -78,7 +78,7 @@ internal fun AnnotatingMainContent(
                 onClassifierButtonClicked = { model.state.paperListStore.setClassifierAlert(true) },
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,
-                )
+            )
         }
     }
 }
@@ -199,7 +199,16 @@ fun CardWithFlagBoxes(
                     onClick = {
                         AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
                             if (cardTitle != null) {
-                                openInBrowser(URI("https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${cardTitle.replace(" ","+")}&btnG="))
+                                openInBrowser(
+                                    URI(
+                                        "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
+                                            cardTitle.replace(
+                                                " ",
+                                                "+"
+                                            )
+                                        }&btnG="
+                                    )
+                                )
                             }
                         }
                     }

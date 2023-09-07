@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewItemDialog(
     rootScope: CoroutineScope,

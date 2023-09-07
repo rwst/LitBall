@@ -41,10 +41,22 @@ object RootStore {
     )
 
     val sortingControls: List<SortingControlItem> = listOf(
-        SortingControlItem("Alphabetical sort ascending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_ASCENDING) },
-        SortingControlItem("Alphabetical sort descending", Icons.Filled.SortByAlpha) { doSort(SortingType.ALPHA_DESCENDING) },
-        SortingControlItem("Sort by last expansion\ndate, ascending", Icons.Filled.Sort) { doSort(SortingType.NUMER_ASCENDING) },
-        SortingControlItem("Sort by last expansion\ndate, descending", Icons.Filled.Sort) { doSort(SortingType.NUMER_DESCENDING) },
+        SortingControlItem(
+            "Alphabetical sort ascending",
+            Icons.Filled.SortByAlpha
+        ) { doSort(SortingType.ALPHA_ASCENDING) },
+        SortingControlItem(
+            "Alphabetical sort descending",
+            Icons.Filled.SortByAlpha
+        ) { doSort(SortingType.ALPHA_DESCENDING) },
+        SortingControlItem(
+            "Sort by last expansion\ndate, ascending",
+            Icons.Filled.Sort
+        ) { doSort(SortingType.NUMER_ASCENDING) },
+        SortingControlItem(
+            "Sort by last expansion\ndate, descending",
+            Icons.Filled.Sort
+        ) { doSort(SortingType.NUMER_DESCENDING) },
     )
 
     fun init() {
@@ -54,6 +66,7 @@ object RootStore {
             QueryList.fill()
         }
     }
+
     private fun buttonInfo() {
         setInformationalDialog(About.text)
     }
@@ -204,7 +217,9 @@ object RootStore {
         }
     }
 
-    fun setupListScroller(theChannel: Channel<Int>) { scrollChannel = theChannel }
+    fun setupListScroller(theChannel: Channel<Int>) {
+        scrollChannel = theChannel
+    }
 }
 
 data class RootState(

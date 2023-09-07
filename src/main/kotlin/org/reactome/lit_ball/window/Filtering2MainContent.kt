@@ -62,7 +62,7 @@ internal fun Filtering2MainContent(
         )
 
         Column {
-            Row (modifier = Modifier.fillMaxWidth().height(42.dp)) {
+            Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
                 SortingControls(model.sortingControls)
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(
@@ -200,7 +200,16 @@ fun CardWithTextIconAndRadiobutton(
                     onClick = {
                         Filtering2RootStore.scope?.launch(Dispatchers.IO) {
                             if (cardTitle != null) {
-                                openInBrowser(URI("https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${cardTitle.replace(" ","+")}&btnG="))
+                                openInBrowser(
+                                    URI(
+                                        "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
+                                            cardTitle.replace(
+                                                " ",
+                                                "+"
+                                            )
+                                        }&btnG="
+                                    )
+                                )
                             }
                         }
                     }

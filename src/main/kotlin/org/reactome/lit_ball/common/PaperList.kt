@@ -6,8 +6,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.Filtering2RootStore
-import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.model.PaperListScreenStore
+import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.NLPService
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.YDFService
@@ -41,12 +41,6 @@ object PaperList {
     }
 
     fun toList(): List<Paper> {
-        return list.toList()
-    }
-
-    fun toListWithItemRemoved(id: Int): List<Paper> {
-        list = list.filterNot { it.id == id }.toMutableList()
-        updateShadowMap()
         return list.toList()
     }
 
@@ -215,7 +209,7 @@ object PaperList {
         list.forEach {
             val doi = it.details.externalIds?.get("DOI")?.uppercase()
             val title = it.details.title ?: ""
-            val sanTitle = title.replace(",","%2C")
+            val sanTitle = title.replace(",", "%2C")
             val outStr = java.lang.StringBuilder()
                 .append("\"$title\",")
                 .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
@@ -265,35 +259,6 @@ object PaperList {
         Settings.map["paper-sort-type"] = type.toString()
         Settings.save()
         updateShadowMap()
-    }
-
-    fun stats(): String {
-        if (list.isEmpty()) return ""
-        var nTLDR = 0
-        var nAbstract = 0
-        var nTA = 0
-        var nPubTypes = 0
-        list.forEach {
-            var tmp = 0
-            it.details.tldr?.get("text")?.let {
-                nTLDR += 1
-                tmp += 1
-            }
-            it.details.abstract?.let {
-                nAbstract += 1
-                tmp += 1
-            }
-            it.details.publicationTypes.let { nPubTypes += 1 }
-            if (tmp == 2) nTA += 1
-        }
-        return """
-            File: $path
-            Size: ${list.size}
-            #TLDR: ${nTLDR}/${list.size} (${1000 * nTLDR / list.size / 10}%)}
-            #Abstracts: ${nAbstract}/${list.size} (${1000 * nAbstract / list.size / 10}%)}
-            #both: ${nTA}/${list.size} (${1000 * nTA / list.size / 10}%)}
-            #PubType: ${nPubTypes}/${list.size} (${1000 * nPubTypes / list.size / 10}%)}
-        """.trimIndent()
     }
 
     fun pretty(id: Int): String {

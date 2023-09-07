@@ -12,13 +12,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.reactome.lit_ball.common.*
+import org.reactome.lit_ball.common.FileType
+import org.reactome.lit_ball.common.Paper
+import org.reactome.lit_ball.common.PaperList
+import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
 
-object Filtering2RootStore: ModelHandle {
+object Filtering2RootStore : ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
 
@@ -120,9 +123,13 @@ object Filtering2RootStore: ModelHandle {
             scrollChannel?.send(0)
         }
     }
-    fun setupListScroller(theChannel: Channel<Int>) { scrollChannel = theChannel }
+
+    fun setupListScroller(theChannel: Channel<Int>) {
+        scrollChannel = theChannel
+    }
 }
-data class Filtering2RootState (
+
+data class Filtering2RootState(
     val items: List<Paper> = PaperList.toList(),
     val settings: Settings = Settings,
     val activeRailItem: String = "",

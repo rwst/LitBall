@@ -265,6 +265,7 @@ data class LitBallQuery(
             }
         }
     }
+
     fun readNoNewAccepted(): Boolean {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
@@ -272,13 +273,13 @@ data class LitBallQuery(
                 return File("${queryDir.absolutePath}/${FileType.NONEWACCEPTED.fileName}").readText().trim() == "true"
             } catch (e: FileNotFoundException) {
                 return false
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 handleException(e)
             }
         }
         return false
     }
+
     fun saveSettings() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {

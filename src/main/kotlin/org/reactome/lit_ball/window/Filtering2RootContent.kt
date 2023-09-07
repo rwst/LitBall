@@ -11,7 +11,6 @@ import org.reactome.lit_ball.model.Filtering2RootStore
 
 @Composable
 fun Filtering2RootContent(
-    onExit: () -> Unit,
     rootSwitch: MutableState<RootType>,
 ) {
     val model = remember { Filtering2RootStore }
