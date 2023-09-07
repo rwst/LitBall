@@ -1,6 +1,6 @@
 Features:
  - support Google Scholar AG
- - what if expansion yields 0 DOIs?
  - no net error handling
  - wildcards in keywords
  - less chatty on terminal, dedicated logfile?
+ - cache citations of accepted; ask for refresh when expanding long after last or when no-new-accepted

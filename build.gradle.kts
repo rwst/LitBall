@@ -15,12 +15,6 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(20))
-    }
-}
-
 kotlin {
     jvmToolchain(20)
     sourceSets {
@@ -55,13 +49,19 @@ dependencies {
 buildConfig {
     packageName("org.reactome.lit-ball")  // forces the package. Defaults to '${project.group}'
     buildConfigField("String", "APP_NAME", "\"LitBall\"")
-    buildConfigField("String", "APP_VERSION", provider { "\"2310\"" })
+    buildConfigField("String", "APP_VERSION", provider { "\"2311\"" })
+}
+
+configurations.all {
+    attributes {
+        attribute(Attribute.of("ui", String::class.java), "awt")
+    }
 }
 
 compose.desktop {
     application {
         mainClass = "MainKt"
-        version = "2310"
+        version = "2311"
         group = "org.reactome"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
