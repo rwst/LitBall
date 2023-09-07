@@ -23,14 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.*
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.dialog.FlagBoxes
@@ -41,6 +41,7 @@ import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.Rail
 import org.reactome.lit_ball.window.components.SortingControls
 import org.reactome.lit_ball.window.components.Tooltip
+import org.reactome.lit_ball.window.components.handleKeyPressed
 import java.net.URI
 
 private const val TAG = "AnnotatingMainContent"
@@ -94,39 +95,7 @@ fun AnnotatingListContent(
 ) {
     val focusRequester = remember { FocusRequester() }
 
-    val onKeyDownSuspend: suspend (KeyEvent) -> Boolean = {
-        when (it.type) {
-            KeyEventType.KeyUp -> false
-
-            else -> {
-                val topItem = lazyListState.firstVisibleItemIndex
-                val topOffset = lazyListState.firstVisibleItemScrollOffset
-                when (it.key) {
-                    Key.DirectionUp -> {
-                        if (topOffset > 0)
-                            lazyListState.scrollToItem(topItem)
-                        else if (topItem > 0)
-                            lazyListState.scrollToItem(topItem - 1)
-                        if (topOffset > 0)
-                            lazyListState.scrollToItem(topItem)
-                        else if (topItem > 0)
-                            lazyListState.scrollToItem(topItem - 1)
-                        true
-                    }
-
-                    Key.DirectionDown -> {
-                        lazyListState.scrollToItem(topItem + 1)
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-        }
-    }
-    val onKeyDown: (KeyEvent) -> Boolean = {
-        runBlocking { onKeyDownSuspend(it) }
-    }
+    val onKeyDown: (KeyEvent) -> Boolean = handleKeyPressed(lazyListState)
 
     Box(
         modifier = Modifier.fillMaxSize()
