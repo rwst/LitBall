@@ -1,5 +1,7 @@
 package org.reactome.lit_ball.common
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
@@ -14,7 +16,10 @@ import org.reactome.lit_ball.util.handleException
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.attribute.FileTime
 import java.util.*
+import kotlin.io.path.Path
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
 
@@ -91,10 +96,20 @@ data class LitBallQuery(
         }
         if (!result) return
         Logger.i(tag, "Received ${doiSet.size} DOIs")
+        val queryDir = getQueryDir(name)
+        if (doiSet.size == 0) {
+            val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
+            val now = FileTime.fromMillis(System.currentTimeMillis())
+            withContext(Dispatchers.IO) {
+                Files.setLastModifiedTime(Path(path), now)
+            }
+            lastExpansionDate = Date()
+            RootStore.onDoExpandStopped()
+            return
+        }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
         RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
-        val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
