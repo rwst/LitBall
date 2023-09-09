@@ -72,13 +72,18 @@ internal fun Filtering2MainContent(
                 ) {
                     Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + model.state.items.size.toString())
                 }
+                if (model.state.isClassifierSet)
+                    Button(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        onClick = { model.state.paperListStore.setClassifierAlert(true) },
+                    ) {
+                        Text("Apply Classifier")
+                    }
             }
             Filtering2ListContent(
                 items = model.state.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onItemRadioButtonClicked = model::onItemRadioButtonClicked,
-                isClassifierSet = model.state.isClassifierSet,
-                onClassifierButtonClicked = { model.state.paperListStore.setClassifierAlert(true) },
                 lazyListState = lazyListState,
             )
         }
@@ -90,8 +95,6 @@ fun Filtering2ListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
-    isClassifierSet: Boolean,
-    onClassifierButtonClicked: () -> Unit,
     lazyListState: LazyListState
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -106,18 +109,6 @@ fun Filtering2ListContent(
     ) {
         setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, Filtering2RootStore::setupListScroller)
         Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (isClassifierSet)
-                    Button(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        onClick = onClassifierButtonClicked,
-                    ) {
-                        Text("Apply Classifier")
-                    }
-            }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
                 lazyListState
