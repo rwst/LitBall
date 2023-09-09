@@ -60,10 +60,9 @@ object QueryList {
             handleException(e)
             return
         }
-        val maxId = if (list.isNotEmpty()) list.maxOf { it.id } else 0
         list = list.plus(
             LitBallQuery(
-                id = maxId + 1,
+                id = list.size,
                 name = name,
                 acceptedSet = dois.toMutableSet()
             )
