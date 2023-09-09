@@ -167,6 +167,13 @@ data class LitBallQuery(
         RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
+            if (paperDetailsList.isEmpty()) {
+                File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}").delete()
+                File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
+                status = QueryStatus.FILTERED2
+                RootStore.onDoFilter1Stopped()
+                return
+            }
             try {
                 val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
                 file.writeText(
