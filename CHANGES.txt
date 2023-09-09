@@ -1,3 +1,8 @@
+v2312:
+ - fix off-by-one error
+ - fix classifier button showing up in annotate screen
+ - handle 0 accepted in filter1()
+
 v2311:
  - make lists sortable
  - handle 0 result from expansion
