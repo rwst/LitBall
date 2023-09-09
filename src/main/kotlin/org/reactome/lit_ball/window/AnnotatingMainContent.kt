@@ -75,8 +75,6 @@ internal fun AnnotatingMainContent(
             AnnotatingListContent(
                 items = model.state.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
-                isClassifierSet = model.state.isClassifierSet,
-                onClassifierButtonClicked = { model.state.paperListStore.setClassifierAlert(true) },
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,
             )
@@ -88,8 +86,6 @@ internal fun AnnotatingMainContent(
 fun AnnotatingListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
-    isClassifierSet: Boolean,
-    onClassifierButtonClicked: () -> Unit,
     onFlagSet: (Int, Int, Boolean) -> Unit,
     lazyListState: LazyListState
 ) {
@@ -109,13 +105,13 @@ fun AnnotatingListContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (isClassifierSet)
-                    Button(
-                        modifier = Modifier.padding(horizontal = 24.dp),
-                        onClick = onClassifierButtonClicked,
-                    ) {
-                        Text("Apply Classifier")
-                    }
+//                if (isClassifierSet)
+//                    Button(
+//                        modifier = Modifier.padding(horizontal = 24.dp),
+//                        onClick = onClassifierButtonClicked,
+//                    ) {
+//                        Text("Apply Classifier")
+//                    }
             }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
