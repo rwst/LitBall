@@ -78,6 +78,10 @@ object RootStore {
     fun refreshList() {
         setState { copy(items = QueryList.list.toList()) }
     }
+    fun refreshQueryPathDisplay() {
+        val stringBuilder = StringBuilder(Settings.map["path-to-queries"])
+        setState { copy(queryPath = stringBuilder.toString()) }
+    }
 
     private fun onDoExpandStarted(id: Int) {
         setState {
@@ -124,8 +128,10 @@ object RootStore {
     }
 
     fun setEditingSettings(boolean: Boolean) {
-        if (!boolean)
+        if (!boolean) {
             QueryList.fill()
+            refreshQueryPathDisplay()
+        }
         setState { copy(editingSettings = boolean, items = QueryList.list.toList()) }
     }
 
@@ -224,6 +230,7 @@ object RootStore {
 
 data class RootState(
     val items: List<LitBallQuery> = QueryList.list,
+    val queryPath: String? = null,
     val activeRailItem: String = "",
     val newItem: Boolean = false,
     val editingItemId: Int? = null,

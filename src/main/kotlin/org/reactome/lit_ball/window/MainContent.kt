@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -32,7 +34,6 @@ import org.reactome.lit_ball.window.components.SortingControls
 val MARGIN_SCROLLBAR: Dp = 0.dp
 private const val TAG = "MainContent"
 
-@Suppress("FunctionName")
 @Composable
 internal fun MainContent(
     model: RootStore,
@@ -45,7 +46,16 @@ internal fun MainContent(
             rootSwitch = rootSwitch,
         )
         Column {
-            SortingControls(model.sortingControls)
+            Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
+                SortingControls(model.sortingControls)
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(
+                    onClick = {},
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    model.state.queryPath?.let { Text(it) }
+                }
+            }
             ListContent(
                 items = model.state.items,
                 onItemClicked = { id -> model.setEditingItemId(id) },
