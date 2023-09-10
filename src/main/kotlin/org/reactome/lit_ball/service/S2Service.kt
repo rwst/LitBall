@@ -22,7 +22,7 @@ object S2Service {
         private var logging = HttpLoggingInterceptor()
 
         fun getInstance(): Retrofit {
-            logging.level = Level.BODY
+            logging.level = Level.BASIC
             val httpClient = OkHttpClient.Builder()
             httpClient.addInterceptor(logging)
             return Retrofit.Builder().baseUrl(BASE_URL)

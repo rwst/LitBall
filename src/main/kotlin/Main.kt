@@ -10,7 +10,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import org.apache.log4j.BasicConfigurator
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.AnnotatingRootContent
 import org.reactome.lit_ball.window.Filtering2RootContent
@@ -21,7 +20,6 @@ import kotlin.io.path.inputStream
 
 enum class RootType { MAIN_ROOT, FILTER2_ROOT, ANNOTATE_ROOT }
 fun main() {
-    BasicConfigurator.configure()
     application {
         val rootSwitch = remember { mutableStateOf(RootType.MAIN_ROOT) }
         val appIcon = remember {
