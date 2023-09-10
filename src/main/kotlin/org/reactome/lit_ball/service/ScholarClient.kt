@@ -6,6 +6,7 @@ import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 interface ScholarClient
 
@@ -70,6 +71,10 @@ object S2Client : ScholarClient {
                     // API says too fast, so delay and repeat
                     else -> throw e
                 }
+            } catch (e: UnknownHostException) {
+                Logger.i(TAG, "ERROR ${e.message}")
+                RootStore.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
+                return Pair(null, false)
             }
         }
     }
