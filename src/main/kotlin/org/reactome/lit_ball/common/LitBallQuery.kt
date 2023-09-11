@@ -171,6 +171,8 @@ data class LitBallQuery(
                 File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}").delete()
                 File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
                 status = QueryStatus.FILTERED2
+                noNewAccepted = true
+                writeNoNewAccepted()
                 RootStore.onDoFilter1Stopped()
                 return
             }
