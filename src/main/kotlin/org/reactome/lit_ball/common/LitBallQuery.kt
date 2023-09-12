@@ -104,6 +104,9 @@ data class LitBallQuery(
                 Files.setLastModifiedTime(Path(path), now)
             }
             lastExpansionDate = Date()
+            status = QueryStatus.FILTERED2
+            noNewAccepted = true
+            writeNoNewAccepted()
             RootStore.onDoExpandStopped()
             return
         }
