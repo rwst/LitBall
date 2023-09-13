@@ -128,12 +128,15 @@ data class LitBallQuery(
     }
 
     suspend fun filter1() {
-        val mandatoryKeyWordRegexes = setting?.mandatoryKeyWords?.filter { it.isNotEmpty() }
-            ?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
-            ?: emptyList()
-        val forbiddenKeyWordRegexes = setting?.forbiddenKeyWords?.filter { it.isNotEmpty() }
-            ?.map { "\\b${Regex.escape(it)}\\b".toRegex(RegexOption.IGNORE_CASE) }
-            ?: emptyList()
+        fun makeRegexListFrom (aSet: MutableSet<String>?) = aSet
+            ?.filter { it.isNotEmpty() }
+            ?.map { it.split(".")
+                .joinToString(separator = ".", prefix = "\\b", postfix = "\\b")
+                { it1 -> Regex.escape(it1) }}
+            ?.map { it.toRegex(RegexOption.IGNORE_CASE) } ?: emptyList()
+
+        val mandatoryKeyWordRegexes = makeRegexListFrom(setting?.mandatoryKeyWords)
+        val forbiddenKeyWordRegexes = makeRegexListFrom(setting?.forbiddenKeyWords)
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()

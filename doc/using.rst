@@ -16,7 +16,9 @@ Keywords
 ^^^^^^^^
 The fact that the list of keywords has the comma as separator means there cannot be commas inside your keywords. Keywords don't need to be words, however.
 Any string without commas is suitable, and the filter is looking for them inside word boundaries and regardless of case, not as general substring. So, giving the keyword "E" will
-not trigger on the title "ABCDE" but will with "The letter e,".
+not trigger on the title "ABCDE" but will with a title like "The letter e,".
+
+The dot "." stands for any character and is at the moment the only wildcard implemented, so if you need to match a comma, use the dot.
 
 Note that positive ("mandatory") keywords are applied to title, TLDR, and abstract (if known), while negative keywords lead to rejection only if they are found
 in the title.
