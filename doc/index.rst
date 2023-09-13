@@ -19,6 +19,7 @@ Contents
 .. toctree::
 
    quick
+   using
    ui
    concepts
    literature
