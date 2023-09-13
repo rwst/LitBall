@@ -16,9 +16,11 @@ import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
 import org.reactome.lit_ball.util.SystemFunction
+import org.reactome.lit_ball.util.openInBrowser
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
+import java.net.URI
 
 object RootStore {
     var state: RootState by mutableStateOf(initialState())
@@ -36,7 +38,8 @@ object RootStore {
 
     val railItems: List<RailItem> = listOf(
         RailItem("Info", "About LitBall", Icons.Filled.Info, 0, onClicked = { buttonInfo() }),
-        RailItem("Settings", "General Settings", Icons.Filled.Settings, 1) { setEditingSettings(true) },
+        RailItem("Doc", "Open documentation in browser", Icons.Default.Web, 1, onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
+        RailItem("Settings", "General Settings", Icons.Filled.Settings, 2) { setEditingSettings(true) },
         RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, onClicked = { buttonExit() })
     )
 
