@@ -3,6 +3,7 @@ v2313:
  - simplify, reduce logging
  - handle no net
  - show dir path on top of query list
+ - rail button: open docs
  - improve layout
 
 v2312:
