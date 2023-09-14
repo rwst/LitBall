@@ -1,6 +1,7 @@
+ - find and do benchmark
+
 Features:
- - support Google Scholar AG
- - no net error handling
- - wildcards in keywords
- - less chatty on terminal, dedicated logfile?
+ - support OpenAlex
  - cache citations of accepted; ask for refresh when expanding long after last or when no-new-accepted
+ - button "refresh from disk"
+ - boolean functions for keywords

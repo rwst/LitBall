@@ -1,3 +1,10 @@
+v2313:
+ - shortcutting the snowballing cycle as soon as no new DOIs remain
+ - simplify, reduce logging
+ - handle no net
+ - show dir path on top of query list
+ - improve layout
+
 v2312:
  - fix off-by-one error
  - fix classifier button showing up in annotate screen
