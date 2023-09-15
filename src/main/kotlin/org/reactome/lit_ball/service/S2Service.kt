@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
+import org.reactome.`lit-ball`.BuildConfig
 import org.reactome.lit_ball.util.Logger
 import retrofit2.HttpException
 import retrofit2.Response
@@ -19,12 +20,21 @@ object S2Service {
     object RetrofitHelper {
 
         private const val BASE_URL = "https://api.semanticscholar.org/"
+        private const val USER_AGENT = "LitBall ${BuildConfig.APP_VERSION} (https://github.com/rwst/LitBall)"
         private var logging = HttpLoggingInterceptor()
 
         fun getInstance(): Retrofit {
             logging.level = Level.BASIC
             val httpClient = OkHttpClient.Builder()
             httpClient.addInterceptor(logging)
+                .addNetworkInterceptor {
+                    val request = it.request()
+                        .newBuilder()
+                        .removeHeader("User-Agent")
+                        .addHeader("User-Agent", USER_AGENT)
+                        .build()
+                    it.proceed(request)
+                  }
             return Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient.build())
