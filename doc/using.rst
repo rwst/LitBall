@@ -8,7 +8,13 @@ Choice of topic
 ^^^^^^^^^^^^^^^
 While LitBall is aimed to enable exhaustive literature searches on any academic topic, there are at the moment two practical limits:
 
- - LitBall right now uses Semantic Scholar (S2) to access an academic graph (AG). S2's graph is complete in the biomedical and computer science (CS) fields but not, for example, in astrophysics or mathematics. We will implement access to other AGs, but there will be drawbacks. The Google Scholar AG is accessible only inofficially through SerpAPI, and you will need to register there; also, LitBall won't get abstracts or TLDRs from there---we consider this a big problem for LitBall. It seems we're probably better off to use CrossRef, but then, API usage also requires registration, and there are public abstracts only for a small percentage of papers. The situation is similar with OpenAlex which has a big AG but provides no abstracts.
+ - LitBall right now uses Semantic Scholar (S2) to access an academic graph (AG). S2's graph is complete in the biomedical and computer science (CS) fields but not, for example, in astrophysics or mathematics. We will implement access to other AGs, but:
+
+   - Google Scholar AG (accessible only inofficially through SerpAPI) has an AG that seems very complete, but they do not serve abstracts or TLDRs, and there is no search by DOI, nor do we get DOIs of search results
+
+   - CrossRef and OpenAlex (which gets their data from CrossRef) have public abstracts only for a small percentage of papers, and no TLDR. Moreover, their coverage of preprint archives seems incomplete, as well as the connections of their entries (missing references)
+
+   - we are willing to support commercial AGs if someone provides a test account. Talk to us!
 
  - LitBall handles small topics easily, we use it all the time for biocuration. The more general your keywords become, the more papers will pass automatic filtering. As soon as you are presented, during supervised filtering, with more than a few hundred choices, you either need to consider negative ("forbidden") keywords, or you will need unsustainable time to sort things out. Regarding the help of machine learning (ML), we have excellent results using random forests (RF) on simple one-hot vectors for classification, and LitBall offers the choice to apply pre-trained RF models to title/abstract/TLDR of your list of articles. We may implement training of such models within LitBall, or ship models trained by others.
 
@@ -26,7 +32,7 @@ in the title.
 Why DOIs?
 ^^^^^^^^^
 DOIs are the only identifiers that exist for nearly all academic articles. You might think this applies to PMIDs as well, but many biomedical publications don't
-have a PMID, and biomedical literature is not everything. Possible would be to use the internal S2 identifier, but this would be useless for other AGs (see above).
+have a PMID, and biomedical literature is not everything.
 
 How to get the DOI?
 ^^^^^^^^^^^^^^^^^^^
