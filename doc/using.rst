@@ -10,7 +10,7 @@ While LitBall is aimed to enable exhaustive literature searches on any academic 
 
  - LitBall right now uses Semantic Scholar (S2) to access an academic graph (AG). S2's graph is complete in the biomedical and computer science (CS) fields but not, for example, in astrophysics or mathematics. We will implement access to other AGs, but:
 
-   - Google Scholar AG (accessible only inofficially through SerpAPI) has an AG that seems very complete, but they do not serve abstracts or TLDRs, and there is no search by DOI, nor do we get DOIs of search results
+   - Google Scholar (accessible only inofficially through SerpAPI) has an AG that seems very complete, but they do not serve abstracts or TLDRs, and there is no search by DOI, nor do we get DOIs of search results
 
    - CrossRef and OpenAlex (which gets their data from CrossRef) have public abstracts only for a small percentage of papers, and no TLDR. Moreover, their coverage of preprint archives seems incomplete, as well as the connections of their entries (missing references)
 
