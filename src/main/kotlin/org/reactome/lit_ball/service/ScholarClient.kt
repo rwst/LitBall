@@ -104,12 +104,12 @@ object S2Client : ScholarClient {
 
     suspend fun getRefs(
         doiSet: List<String>,
-        action: (S2Service.PaperRefs) -> Unit
+        action: (String, S2Service.PaperRefs) -> Unit
     ): Boolean {
         val size = doiSet.size
         val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
-        doiSet.forEachIndexed { index, it ->
-            val pair = getDataOrHandleExceptions(it, index, size, indicatorTitle) {
+        doiSet.forEachIndexed { index, doi ->
+            val pair = getDataOrHandleExceptions(doi, index, size, indicatorTitle) {
                 S2Service.getPaperRefs(
                     it,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
@@ -117,7 +117,7 @@ object S2Client : ScholarClient {
             }
             if (!pair.second) return false
             delay(strategy.delay(true))
-            pair.first?.also(action)
+            pair.first?.also { (action)(doi, it) }
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }

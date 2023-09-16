@@ -89,14 +89,16 @@ data class LitBallQuery(
 
     suspend fun expand() {
         val tag = "EXPAND"
-        val doiSet = mutableSetOf<String>()
-        val result = S2Client.getRefs(acceptedSet.toList()) {
-            doiSet.addAll(it.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
-            doiSet.addAll(it.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+        val queryDir = getQueryDir(name)
+        ExpandQueryCache.init(File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}"))
+        val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
+        val result = S2Client.getRefs(missingAccepted.toList()) { doi, refs ->
+            doiSet.addAll(refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+            doiSet.addAll(refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+            ExpandQueryCache.add(doi, refs)
         }
         if (!result) return
         Logger.i(tag, "Received ${doiSet.size} DOIs")
-        val queryDir = getQueryDir(name)
         if (doiSet.size == 0) {
             val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
             val now = FileTime.fromMillis(System.currentTimeMillis())

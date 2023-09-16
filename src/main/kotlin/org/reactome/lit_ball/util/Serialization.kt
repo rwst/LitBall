@@ -14,3 +14,13 @@ object ConfiguredJson {
 
     fun get() = json
 }
+
+object ConfiguredUglyJson {
+    private var json = Json {
+        prettyPrint = false
+        isLenient = true
+        encodeDefaults = true
+    }
+
+    fun get() = json
+}

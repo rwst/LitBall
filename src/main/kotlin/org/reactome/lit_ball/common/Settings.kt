@@ -44,6 +44,7 @@ object Settings {
         map["path-to-classifiers"] = Paths.get("").toAbsolutePath().toString() + "/classifier"
         map["query-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
         map["paper-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
+        map["cache-max-age-days"] = "30"
     }
 
     fun save() {
