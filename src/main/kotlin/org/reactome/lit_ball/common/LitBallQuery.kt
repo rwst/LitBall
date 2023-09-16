@@ -99,7 +99,8 @@ data class LitBallQuery(
         }
         if (!result) return
         Logger.i(tag, "Received ${doiSet.size} DOIs")
-        if (doiSet.size == 0) {
+        if (missingAccepted.isEmpty()) {
+            RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
             val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
             val now = FileTime.fromMillis(System.currentTimeMillis())
             withContext(Dispatchers.IO) {
