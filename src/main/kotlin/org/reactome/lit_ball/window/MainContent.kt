@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.model.RootStore
+import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.QueryCard
 import org.reactome.lit_ball.window.components.Rail
@@ -89,7 +90,11 @@ private fun ListContent(
             lazyListState
         ) {
             items(
-                key = { it.hashCode() },
+                key = {
+                    try { it.hashCode() }
+                    catch (e: ConcurrentModificationException) {
+                        Logger.error(e)
+                    } },
                 items = items,
             ) { item ->
                 QueryCard(

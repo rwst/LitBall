@@ -110,7 +110,7 @@ data class LitBallQuery(
             status = QueryStatus.FILTERED2
             noNewAccepted = true
             writeNoNewAccepted()
-            RootStore.onDoExpandStopped()
+            RootStore.refreshList()
             return
         }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
@@ -126,7 +126,7 @@ data class LitBallQuery(
                 handleException(e)
                 QueryStatus.FILTERED2
             }
-            RootStore.onDoExpandStopped()
+            RootStore.refreshList()
         }
     }
 
@@ -182,7 +182,7 @@ data class LitBallQuery(
                 status = QueryStatus.FILTERED2
                 noNewAccepted = true
                 writeNoNewAccepted()
-                RootStore.onDoFilter1Stopped()
+                RootStore.refreshList()
                 return
             }
             try {
@@ -206,7 +206,7 @@ data class LitBallQuery(
         }
         File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
         status = QueryStatus.FILTERED1
-        RootStore.onDoFilter1Stopped()
+        RootStore.refreshList()
     }
 
     @OptIn(ExperimentalSerializationApi::class)

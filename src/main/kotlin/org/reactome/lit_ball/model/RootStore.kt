@@ -87,20 +87,14 @@ object RootStore {
     }
 
     private fun onDoExpandStarted(id: Int) {
-        setState {
-            scope.launch(Dispatchers.IO) {
-                QueryList.itemFromId(id)?.expand()
-            }
-            copy(doExpand = id)
+        scope.launch(Dispatchers.IO) {
+            QueryList.itemFromId(id)?.expand()
         }
     }
 
     private fun onDoFilter1Started(id: Int) {
-        setState {
-            scope.launch(Dispatchers.IO) {
-                QueryList.itemFromId(id)?.filter1()
-            }
-            copy(doFilter1 = id)
+        scope.launch(Dispatchers.IO) {
+            QueryList.itemFromId(id)?.filter1()
         }
     }
 
@@ -144,14 +138,6 @@ object RootStore {
 
     fun setNewItem(boolean: Boolean) {
         setState { copy(newItem = boolean) }
-    }
-
-    fun onDoExpandStopped() {
-        setState { copy(doExpand = null, items = QueryList.list.toList()) }
-    }
-
-    fun onDoFilter1Stopped() {
-        setState { copy(doFilter1 = null, items = QueryList.list.toList()) }
     }
 
     private fun onDoFilter2Started(id: Int) {
@@ -239,8 +225,6 @@ data class RootState(
     val editingItemId: Int? = null,
     val editingSettings: Boolean = false,
     val editingQuerySettings: LitBallQuery? = null, // TODO: refactor this to Int?
-    val doExpand: Int? = null,
-    val doFilter1: Int? = null,
     val doFilter2: Int? = null,
     val doAnnotate: Int? = null,
     val progressIndication: ProgressIndicatorParameter? = null,
