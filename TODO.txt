@@ -1,7 +1,7 @@
  - find and do benchmark
 
 Features:
- - support OpenAlex
- - cache citations of accepted; ask for refresh when expanding long after last or when no-new-accepted
  - button "refresh from disk"
  - boolean functions for keywords
+ - somehow use S2 embeddings
+ - increase TIMEOUT strategically

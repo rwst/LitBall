@@ -1,3 +1,9 @@
+v2314:
+ - cache expansion data, only download unknown; note to user when expansion complete
+ - increase HTTP read timeout to 30s
+ - add HTTP User Agent header
+ - fix list access race condition
+
 v2313:
  - shortcutting the snowballing cycle as soon as no new DOIs remain
  - simplify, reduce logging
