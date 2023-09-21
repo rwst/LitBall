@@ -205,15 +205,19 @@ object PaperList {
     fun exportAnnotated() {
         val pathPrefix = path?.substringBeforeLast("/")
         val exportedPath = "$pathPrefix/${FileType.EXPORTED.fileName}"
-        File(exportedPath).writeText("Title,Review,DOI,Scholar\n")
+        File(exportedPath).writeText("Title,Review,PMID,PMC,DOI,Scholar\n")
         list.forEach {
             val doi = it.details.externalIds?.get("DOI")?.uppercase()
+            val pmid = it.details.externalIds?.get("PubMed")
+            val pmc = it.details.externalIds?.get("PubMedCentral")
             val title = it.details.title ?: ""
             val sanTitle = title.replace(",", "%2C")
             val outStr = java.lang.StringBuilder()
                 .append("\"$title\",")
                 .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
-                .append("https://doi.org/$doi,")
+                .append(if (pmid != null) "https://pubmed.ncbi.nlm.nih.gov/$pmid/," else ",")
+                .append(if (pmc != null) "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC$pmc/," else ",")
+                .append(if (doi != null) "https://doi.org/$doi," else ",")
                 .append(
                     if (title.isEmpty()) "" else
                         "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${sanTitle.replace(" ", "+")}&btnG="
