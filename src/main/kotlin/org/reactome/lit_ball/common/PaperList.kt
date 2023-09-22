@@ -202,12 +202,23 @@ object PaperList {
         RootStore.refreshList()
     }
 
+    private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,Scholar\n"
     fun exportAnnotated() {
         val pathPrefix = path?.substringBeforeLast("/")
         val exportedPath = "$pathPrefix/${FileType.EXPORTED.fileName}"
-        File(exportedPath).writeText("Title,Review,PMID,PMC,DOI,Scholar\n")
+        File(exportedPath).writeText(CSV_HEADER)
+        val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT.fileName}"
+        val fileMap = mutableMapOf<String, File>()
+        query?.setting?.annotationClasses?.forEach {
+            val file = File(exportedCatPath.replace("$", it))
+            file.writeText(CSV_HEADER)
+            fileMap[it] = file
+        }
+        val revFile = File(exportedCatPath.replace("$", "Reviews"))
+        revFile.writeText(CSV_HEADER)
         list.forEach {
             val doi = it.details.externalIds?.get("DOI")?.uppercase()
+            val date = it.details.publicationDate ?: ""
             val pmid = it.details.externalIds?.get("PubMed")
             val pmc = it.details.externalIds?.get("PubMedCentral")
             val title = it.details.title ?: ""
@@ -215,6 +226,7 @@ object PaperList {
             val outStr = java.lang.StringBuilder()
                 .append("\"$title\",")
                 .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
+                .append("$date,")
                 .append(if (pmid != null) "https://pubmed.ncbi.nlm.nih.gov/$pmid/," else ",")
                 .append(if (pmc != null) "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC$pmc/," else ",")
                 .append(if (doi != null) "https://doi.org/$doi," else ",")
@@ -225,6 +237,11 @@ object PaperList {
                 .append("\n")
                 .toString()
             File(exportedPath).appendText(outStr)
+            it.flags.forEach { flag ->
+                fileMap[flag]?.appendText(outStr)
+            }
+            if (it.details.publicationTypes?.contains("Review") == true)
+                revFile.appendText(outStr)
         }
     }
 
@@ -270,6 +287,7 @@ object PaperList {
         val p = list[index]
         return """
             T: ${p.details.title}
+            DATE: ${p.details.publicationDate}
             A: ${p.details.abstract}
             TLDR: ${p.details.tldr?.get("text")}
             DOI: ${p.details.externalIds?.get("DOI")}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}

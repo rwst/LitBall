@@ -27,7 +27,7 @@ object S2Client : ScholarClient {
                 papers = try {
                     S2Service.getBulkPaperDetailsWithAbstract(
                         it,
-                        "paperId,externalIds,title,abstract,publicationTypes,tldr"
+                        "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                     )
                 } catch (e: Exception) {
                     handleException(e)
@@ -89,7 +89,7 @@ object S2Client : ScholarClient {
             val pair = getDataOrHandleExceptions(it, index, size, indicatorTitle) {
                 S2Service.getSinglePaperDetailsWithAbstract(
                     it,
-                    "paperId,externalIds,title,abstract,publicationTypes,tldr"
+                    "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
             }
             if (!pair.second) return false

@@ -53,6 +53,7 @@ object S2Service {
         val abstract: String? = "",
         var publicationTypes: List<String>? = emptyList(),
         var tldr: Map<String, String>? = emptyMap(),
+        var publicationDate: String? = "",
     )
 
     @Serializable
@@ -62,6 +63,7 @@ object S2Service {
         val title: String? = "",
         var publicationTypes: List<String>? = emptyList(),
         var tldr: Map<String, String>? = emptyMap(),
+        var publicationDate: String? = "",
     )
 
     @Serializable
