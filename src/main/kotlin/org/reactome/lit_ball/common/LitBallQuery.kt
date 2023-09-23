@@ -1,6 +1,7 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
@@ -87,7 +88,10 @@ data class LitBallQuery(
             Date()
     }
 
+    private val mutex = Mutex()
+
     suspend fun expand() {
+        if (!mutex.tryLock()) return
         val tag = "EXPAND"
         val queryDir = getQueryDir(name)
         ExpandQueryCache.init(File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}"))
@@ -97,7 +101,10 @@ data class LitBallQuery(
             doiSet.addAll(refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
             ExpandQueryCache.add(doi, refs)
         }
-        if (!result) return
+        if (!result) {
+            mutex.unlock()
+            return
+        }
         Logger.i(tag, "Received ${doiSet.size} DOIs")
         if (missingAccepted.isEmpty()) {
             RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
@@ -111,6 +118,7 @@ data class LitBallQuery(
             noNewAccepted = true
             writeNoNewAccepted()
             RootStore.refreshList()
+            mutex.unlock()
             return
         }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
@@ -128,6 +136,7 @@ data class LitBallQuery(
             }
             RootStore.refreshList()
         }
+        mutex.unlock()
     }
 
     suspend fun filter1() {
@@ -138,6 +147,7 @@ data class LitBallQuery(
                 { it1 -> Regex.escape(it1) }}
             ?.map { it.toRegex(RegexOption.IGNORE_CASE) } ?: emptyList()
 
+        if (!mutex.tryLock()) return
         val mandatoryKeyWordRegexes = makeRegexListFrom(setting?.mandatoryKeyWords)
         val forbiddenKeyWordRegexes = makeRegexListFrom(setting?.forbiddenKeyWords)
         val tag = "FILTER"
@@ -161,13 +171,17 @@ data class LitBallQuery(
                     })
                     paperDetailsList.add(it)
             }
-            if (!result) return
+            if (!result) {
+                mutex.unlock()
+                return
+            }
             Logger.i(tag, "Retained ${paperDetailsList.size} records")
             val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
             rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
             rejectedSet.addAll(rejectedDOIs)
         } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
+            mutex.unlock()
             return
         }
         uppercaseDois(paperDetailsList)
@@ -183,6 +197,7 @@ data class LitBallQuery(
                 noNewAccepted = true
                 writeNoNewAccepted()
                 RootStore.refreshList()
+                mutex.unlock()
                 return
             }
             try {
@@ -194,6 +209,7 @@ data class LitBallQuery(
                 mergeIntoArchive(paperDetailsList)
             } catch (e: Exception) {
                 handleException(e)
+                mutex.unlock()
                 return
             }
             val text = rejectedDOIs.joinToString("\n") + "\n"
@@ -201,12 +217,14 @@ data class LitBallQuery(
                 File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
             } catch (e: Exception) {
                 handleException(e)
+                mutex.unlock()
                 return
             }
         }
         File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
         status = QueryStatus.FILTERED1
         RootStore.refreshList()
+        mutex.unlock()
     }
 
     @OptIn(ExperimentalSerializationApi::class)
