@@ -1,3 +1,11 @@
+v2315:
+ - load and display publication date in paper details
+ - export: include PMID, PMC, publication date
+ - export for annotated categories
+ - refresh from disk by clicking on query path
+ - prevent multiple parallel scholar sessions
+ - fix tooltip delay
+
 v2314:
  - cache expansion data, only download unknown; note to user when expansion complete
  - increase HTTP read timeout to 30s
