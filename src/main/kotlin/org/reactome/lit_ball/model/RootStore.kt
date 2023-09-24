@@ -163,6 +163,12 @@ object RootStore {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
+    fun onQueryPathClicked() {
+        scope.launch (Dispatchers.IO) {
+            QueryList.fill()
+        }
+    }
+
     fun setItems(items: List<LitBallQuery>) {
         setState { copy(items = items) }
     }
