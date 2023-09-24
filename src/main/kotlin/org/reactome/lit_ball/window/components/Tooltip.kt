@@ -36,7 +36,7 @@ fun Tooltip(text: String, content: @Composable () -> Unit) {
                 )
             }
         },
-        delayMillis = 400, // in milliseconds
+        delayMillis = 100, // in milliseconds
         tooltipPlacement = TooltipPlacement.CursorPoint(
             alignment = Alignment.BottomEnd,
             offset = DpOffset(4.dp, 4.dp) // tooltip offset
