@@ -2,10 +2,7 @@ package org.reactome.lit_ball.model
 
 import RootType
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Publish
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.SortByAlpha
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +68,14 @@ object AnnotatingRootStore : ModelHandle {
             "Alphabetical sort descending",
             Icons.Filled.SortByAlpha
         ) { doSort(SortingType.ALPHA_DESCENDING) },
+        SortingControlItem(
+            "Publication date sort ascending",
+            Icons.Filled.Sort
+        ) { doSort(SortingType.DATE_ASCENDING) },
+        SortingControlItem(
+            "Publication date sort descending",
+            Icons.Filled.Sort
+        ) { doSort(SortingType.DATE_DESCENDING) },
     )
 
     override fun refreshList() {

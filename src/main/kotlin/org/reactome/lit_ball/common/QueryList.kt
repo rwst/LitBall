@@ -76,6 +76,8 @@ object QueryList {
             SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.name }
             SortingType.NUMER_ASCENDING -> list.sortedBy { it.lastExpansionDate }
             SortingType.NUMER_DESCENDING -> list.sortedByDescending { it.lastExpansionDate }
+            else ->
+                throw Exception("can't happen: $type")
         }
         updateIds()
         Settings.map["query-sort-type"] = type.toString()

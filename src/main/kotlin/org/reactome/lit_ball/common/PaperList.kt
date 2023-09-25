@@ -274,6 +274,8 @@ object PaperList {
         list = when (type) {
             SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
             SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
+            SortingType.DATE_ASCENDING -> list.sortedBy { it.details.publicationDate }
+            SortingType.DATE_DESCENDING -> list.sortedByDescending { it.details.publicationDate }
             else ->
                 throw Exception("can't happen: $type")
         }
