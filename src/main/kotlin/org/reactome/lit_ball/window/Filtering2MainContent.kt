@@ -142,6 +142,7 @@ fun CardWithTextIconAndRadiobutton(
     onOptionSelected: (btn: Int) -> Unit,
 ) {
     val cardTitle = item.details.title
+    val cardYear = item.details.publicationDate?.substringBefore("-")?: ""
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
     val radioButtonOptions = Tag.entries.map { it.name }
     Card(
@@ -155,34 +156,39 @@ fun CardWithTextIconAndRadiobutton(
             modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Tooltip(text = "Open Google Scholar\nin Browser") {
-                IconButton(
-                    onClick = {
-                        Filtering2RootStore.scope?.launch(Dispatchers.IO) {
-                            if (cardTitle != null) {
-                                openInBrowser(
-                                    URI(
-                                        "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
-                                            cardTitle.replace(
-                                                " ",
-                                                "+"
-                                            )
-                                        }&btnG="
+            Column {
+                Text(text = cardYear, modifier = Modifier.padding(start = 8.dp), fontSize = 12.sp)
+                Tooltip(text = "Open Google Scholar\nin Browser") {
+                    IconButton(
+                        onClick = {
+                            Filtering2RootStore.scope?.launch(Dispatchers.IO) {
+                                if (cardTitle != null) {
+                                    openInBrowser(
+                                        URI(
+                                            "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
+                                                cardTitle.replace(
+                                                    " ",
+                                                    "+"
+                                                )
+                                            }&btnG="
+                                        )
                                     )
-                                )
+                                }
                             }
-                        }
+                        },
+                        modifier = Modifier.padding(0.dp)
+                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+                            .height(30.dp).width(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Web,
+                            contentDescription = "Open in Browser",
+                            tint = Color.Blue,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Web,
-                        contentDescription = "Open in Browser",
-                        tint = Color.Blue,
-                        modifier = Modifier.size(18.dp)
-                    )
                 }
             }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = cardTitle ?: "",
                 fontSize = 12.sp,
