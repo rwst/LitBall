@@ -1,3 +1,6 @@
+v2317:
+ - use dev.dirs:directories library to find system-specific config directories
+
 v2316:
  - add year to paper card
  - sort papers by publication date
