@@ -9,18 +9,26 @@ import org.reactome.lit_ball.util.handleException
 import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
 import java.nio.file.Paths
+import dev.dirs.ProjectDirectories
 
 @Serializable
 object Settings {
     var map: MutableMap<String, String> = mutableMapOf()
     var initialized = false
-    private val PATH = System.getProperty("user.dir") + "/lit-ball.settings.json"
+    private val myProjDirs: ProjectDirectories = ProjectDirectories.from("org", "reactome", "LitBall")
+    private val configDir: String = myProjDirs.configDir
+    private val PATH = "$configDir/settings.json"
     private val json = ConfiguredJson.get()
     fun load() {
         if (initialized)
             return
         else
             initialized = true
+        val configDirectory = File(configDir)
+        if (!configDirectory.exists()) {
+            if (!configDirectory.mkdir())
+                throw IllegalArgumentException("Directory could not be created: $configDir")
+        }
         val file = File(PATH)
         if (file.canRead()) {
             val text = file.readText()

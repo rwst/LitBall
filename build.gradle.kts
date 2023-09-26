@@ -39,6 +39,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("io.github.oshai:kotlin-logging-jvm:5.0.0")
     implementation("org.slf4j:slf4j-simple:2.0.5")
+    implementation("dev.dirs:directories:26")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
