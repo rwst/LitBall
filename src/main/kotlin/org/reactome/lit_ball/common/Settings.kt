@@ -14,7 +14,7 @@ import java.nio.file.Paths
 object Settings {
     var map: MutableMap<String, String> = mutableMapOf()
     var initialized = false
-    private const val PATH = "settings.json"
+    private val PATH = System.getProperty("user.dir") + "/lit-ball.settings.json"
     private val json = ConfiguredJson.get()
     fun load() {
         if (initialized)
