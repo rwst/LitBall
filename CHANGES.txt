@@ -1,3 +1,8 @@
+v2316:
+ - add year to paper card
+ - sort papers by publication date
+ - use System("user.dir") for settings
+
 v2315:
  - load and display publication date in paper details
  - export: include PMID, PMC, publication date

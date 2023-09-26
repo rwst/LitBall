@@ -5,4 +5,3 @@ Features:
  - somehow use S2 embeddings
  - increase TIMEOUT strategically
  - adding/changing keywords before Finish will change paper list in filter2(), ask yes/no
- - paper list: display paper date, sort option
