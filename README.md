@@ -23,6 +23,8 @@ You should now see a new query card. However, it needs configuration before you 
 - Give at least one mandatory keyword that needs to be present in a paper for it not to be rejected
 - Click Confirm
 
+<img src="https://github.com/rwst/LitBall/assets/1146709/94efeb80-c068-403f-9be6-07b71fcd07d6" width="500" height="300">
+
 The query card should now show the "Start Expansion" button. Click it. LitBall should directly download all forward and backward-linked papers of your core papers.
 
 You should now see the "Automatic filtering" button. Click it. Abstracts and TLDRs of all new DOIs should be downloaded directly.
