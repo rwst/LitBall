@@ -10,6 +10,7 @@ import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
 import java.nio.file.Paths
 import dev.dirs.ProjectDirectories
+import dev.dirs.UserDirectories
 
 @Serializable
 object Settings {
@@ -17,6 +18,7 @@ object Settings {
     var initialized = false
     private val myProjDirs: ProjectDirectories = ProjectDirectories.from("org", "reactome", "LitBall")
     private val configDir: String = myProjDirs.configDir
+    private val homeDir: String = UserDirectories.get().homeDir
     private val PATH = "$configDir/settings.json"
     private val json = ConfiguredJson.get()
     fun load() {
@@ -46,7 +48,7 @@ object Settings {
 
     private fun reset() {
         map.clear()
-        map["path-to-queries"] = Paths.get("").toAbsolutePath().toString()
+        map["path-to-queries"] = homeDir
         map["directory-prefix"] = "Query-"
         map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
         map["path-to-classifiers"] = Paths.get("").toAbsolutePath().toString() + "/classifier"
