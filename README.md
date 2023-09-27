@@ -3,7 +3,7 @@ LitBall is a JVM desktop app for systematic literature collection. LitBall appli
 
 Please see https://litball.readthedocs.io/ for the documentation.
 
-LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://github.com/rwst/LitBall/releases/, there are binaries for Linux/Windows/Mac. Please give us feedback, especially on Win/Mac, as we only test on Linux.
+LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://github.com/rwst/LitBall/releases/, there are binaries for Linux/Windows/Mac, made with the help of [Conveyor](https://conveyor.hydraulic.dev/latest/). Please give us feedback, especially on Win/Mac, as we only test on Linux.
 
 ## Quick Install
 Download link: https://github.com/rwst/LitBall/releases/ 
