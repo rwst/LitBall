@@ -1,3 +1,6 @@
+v2318:
+ - use platform-specific home dir as path-to-queries
+
 v2317:
  - use dev.dirs:directories library to find system-specific config directories
 
