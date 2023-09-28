@@ -287,9 +287,11 @@ object PaperList {
     fun pretty(id: Int): String {
         val index = shadowMap[id] ?: return "CAN'T HAPPEN: not in shadowMap"
         val p = list[index]
+        val pmId = p.details.externalIds?.get("PubMed")
+        val textPMID = if (pmId != null) "PMID: $pmId" else ""
         return """
             T: ${p.details.title}
-            DATE: ${p.details.publicationDate}
+            DATE: ${p.details.publicationDate} $textPMID
             A: ${p.details.abstract}
             TLDR: ${p.details.tldr?.get("text")}
             DOI: ${p.details.externalIds?.get("DOI")}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
