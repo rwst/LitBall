@@ -143,7 +143,8 @@ fun CardWithTextIconAndRadiobutton(
 ) {
     val cardTitle = item.details.title
     val cardPMID: String? = item.details.externalIds?.get("PubMed")
-    val cardYear = item.details.publicationDate?.substringBefore("-")?: ""
+    val year = item.details.publicationDate?.substringBefore("-")?: ""
+    val cardYear = if (year == "null") "" else year
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
     val radioButtonOptions = Tag.entries.map { it.name }
     Card(
