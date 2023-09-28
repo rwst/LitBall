@@ -146,6 +146,7 @@ fun CardWithFlagBoxes(
     onFlagSet: (Int, Boolean) -> Unit,
 ) {
     val cardTitle = item.details.title
+    val cardPMID: String? = item.details.externalIds?.get("PubMed")
     val cardYear = item.details.publicationDate?.substringBefore("-")?: ""
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
     Card(
@@ -161,12 +162,17 @@ fun CardWithFlagBoxes(
         ) {
             Column {
                 Text(text = cardYear, modifier = Modifier.padding(start = 8.dp), fontSize = 12.sp)
-                Tooltip(text = "Open Google Scholar\nin Browser")
+                Tooltip(text = "Open PubMed / Google Scholar\nin Browser")
                 {
                     IconButton(
                         onClick = {
                             AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
-                                if (cardTitle != null) {
+                                if (cardPMID != null) {
+                                    openInBrowser(
+                                        URI("https://pubmed.ncbi.nlm.nih.gov/$cardPMID/")
+                                    )
+                                }
+                                else if (cardTitle != null) {
                                     openInBrowser(
                                         URI(
                                             "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
