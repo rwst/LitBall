@@ -1,3 +1,4 @@
+- advanced settings
 
 Features:
  - boolean functions for keywords

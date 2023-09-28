@@ -1,3 +1,9 @@
+v2319:
+ - scholar link goes to PubMed if PMID exists
+ - show PMID in paper details
+ - doc: AI classifier
+ - fix "null" shown as paper year
+
 v2318:
  - use platform-specific home dir as path-to-queries
 
