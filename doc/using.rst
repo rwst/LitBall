@@ -16,7 +16,7 @@ While LitBall is aimed to enable exhaustive literature searches on any academic 
 
    - we are willing to support commercial AGs if someone provides a test account. Talk to us!
 
- - LitBall handles small topics easily, we use it all the time for biocuration. The more general your keywords become, the more papers will pass automatic filtering. As soon as you are presented, during supervised filtering, with more than a few hundred choices, you either need to consider negative ("forbidden") keywords, or you will need unsustainable time to sort things out. Regarding the help of machine learning (ML), we have excellent results using random forests (RF) on simple one-hot vectors for classification, and LitBall offers the choice to apply pre-trained RF models to title/abstract/TLDR of your list of articles. We may implement training of such models within LitBall, or ship models trained by others.
+ - LitBall handles small topics easily, we use it all the time for biocuration. The more general your keywords become, the more papers will pass automatic filtering. As soon as you are presented, during supervised filtering, with more than a few hundred choices, you either need to consider negative ("forbidden") keywords, or you will need unsustainable time to sort things out.
 
 Keywords
 ^^^^^^^^
@@ -53,3 +53,14 @@ Can I edit data?
 ----------------
 Yes, you can! LitBall on start up loads every data from the files in the respective query directories. These are all simple text files like lists of DOIs, or JSON.
 If you want to include a paper in the accepted list, just add the DOI using a text editor and restart LitBall.
+
+AI classifier
+-------------
+Regarding the help of machine learning (ML), we have excellent results using random forests (RF) on simple one-hot vectors for classification[1], and LitBall offers the choice to apply pre-trained RF models to title/abstract/TLDR of your list of articles. We may implement training of such models within LitBall, or ship models trained by others.
+
+The only classifier shipped with LitBall at the moment is "virus-EXP", trained for experimental papers in virology. Also, you need to be on Linux, have somewhere installed Yggdrasil's YDF package, and changed your LitBall general settings to point to it. In that case, you will be presented on the Supervised Filtering page with a blue button "Apply classifier".
+
+Hitting that button lets the classifier make the choice which paper to accept. It is your choice to review the AI's decisions and finally click the Finish button.
+
+Ref.:
+1. Ralf Stephan. (2023). Automatizing biocurators' intuition: filtering scientific papers by analyzing titles and short summaries. https://doi.org/10.5281/zenodo.8199859
