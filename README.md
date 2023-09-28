@@ -3,7 +3,7 @@ LitBall is a JVM desktop app for systematic literature collection. LitBall appli
 
 Please see https://litball.readthedocs.io/ for the documentation.
 
-LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://github.com/rwst/LitBall/releases/, there are binaries for Linux/Windows/Mac. Please give us feedback, especially on Win/Mac, as we only test on Linux.
+LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://github.com/rwst/LitBall/releases/, there are binaries for Linux/Windows/Mac, made with the help of [Conveyor](https://conveyor.hydraulic.dev/latest/). Please give us feedback, especially on Win/Mac, as we only test on Linux.
 
 ## Quick Install
 Download link: https://github.com/rwst/LitBall/releases/ 
@@ -22,6 +22,8 @@ You should now see a new query card. However, it needs configuration before you 
 - Click Complete Settings
 - Give at least one mandatory keyword that needs to be present in a paper for it not to be rejected
 - Click Confirm
+
+<img src="https://github.com/rwst/LitBall/assets/1146709/94efeb80-c068-403f-9be6-07b71fcd07d6" width="500" height="300">
 
 The query card should now show the "Start Expansion" button. Click it. LitBall should directly download all forward and backward-linked papers of your core papers.
 
