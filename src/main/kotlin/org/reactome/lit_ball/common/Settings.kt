@@ -15,6 +15,7 @@ import dev.dirs.UserDirectories
 @Serializable
 object Settings {
     var map: MutableMap<String, String> = mutableMapOf()
+    val advancedSet = setOf("directory-prefix")
     var initialized = false
     private val myProjDirs: ProjectDirectories = ProjectDirectories.from("org", "reactome", "LitBall")
     private val configDir: String = myProjDirs.configDir
