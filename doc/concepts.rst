@@ -11,6 +11,9 @@ Check out the :doc:`literature` section for an exhaustive list of reviews about 
 
 LitBall uses both backward and forward snowballing in the expansion steps. All references and citations are taken into account.
 
+.. image:: images/cycle.png
+   :width: 500
+
 Filters
 -------
 The size and content of the resulting list of papers depend on the filters that LitBall applies during snowballing. Filters may yield sets of articles that cleanly pass. Still, they may also define a result parameter range for papers that need manual evaluation. In these cases, LitBall presents the list of candidates to the user to decide whether to keep or discard a paper. Automatic and manually discarded articles no longer participate in the subsequent snowballing steps.

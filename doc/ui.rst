@@ -3,6 +3,9 @@ UI Description
 
 Main Screen
 -----------
+.. image:: images/mainscreen.png
+   :width: 600
+
 Permanently available components, all specific to the main screen:
 
  - Rail on the left side, containing:
@@ -35,6 +38,8 @@ This button asks you for
 
 Query cards
 ^^^^^^^^^^^
+.. image:: images/card.png
+   :width: 800
 
 Once you complete the set up of a query (see :doc:`quick`), query cards are visible in the List space of the main screen. They contain (from left):
 
@@ -49,14 +54,20 @@ Once you complete the set up of a query (see :doc:`quick`), query cards are visi
 
 Query Settings
 ^^^^^^^^^^^^^^
+.. image:: images/qsettings.png
+   :width: 600
+
 In the query-specific settings dialog, the following can be set:
  - Mandatory keywords. In the automatic filtering step, words from title/abstract/TLDR of articles are matched against these keywords. You must set at least one keyword before expansion
  - (optional) Forbidden keywords. If the article title contains one of these, the paper gets rejected during automatic filtering
  - (optional) Classifier model name. If set, the Apply Classifier button becomes available during Supervised filtering
- - (optional) Annotation classes. Comma-separated names of classes that can be set for each paper in the annotation screen
+ - (optional) Annotation classes. Comma-separated names of classes that can be set for each paper in the annotation screen, affecting the export of data
 
 Supervised Filtering Screen
 ---------------------------
+.. image:: images/filtering2.png
+   :width: 600
+
 This screen shows
  - a Rail containing
 
@@ -66,10 +77,13 @@ This screen shows
    - Exit button
 
  - Top bar, with Sorting controls
- - List space showing titles of all papers that need decision whether to accept them; use the radio buttons to the right. Clicking on the title opens a dialog showing details. On the left of the title, the web page symbol opens in your browser the Google Scholar search results for this title.
+ - List space showing titles of all papers that need decision whether to accept them; use the radio buttons to the right. Clicking on the title opens a dialog showing details. On the left of the title, the web page symbol opens in your browser the PubMed or Google Scholar search results for this title.
 
 Annotating Screen
 -----------------
+.. image:: images/annotating.png
+   :width: 600
+
 This screen shows
  - a Rail containing
 
