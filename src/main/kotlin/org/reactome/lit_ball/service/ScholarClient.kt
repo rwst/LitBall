@@ -12,7 +12,7 @@ interface ScholarClient
 
 object S2Client : ScholarClient {
     private const val DETAILS_CHUNK_SIZE = 30
-    private const val SINGLE_QUERY_DELAY = 500L
+    private const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 5000L
     private const val TAG = "S2Client"
     private val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
