@@ -1,3 +1,8 @@
+v2320
+ - advanced settings
+ - reduce delay between HTML queries
+ - doc: images
+
 v2319:
  - scholar link goes to PubMed if PMID exists
  - show PMID in paper details

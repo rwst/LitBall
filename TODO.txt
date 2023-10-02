@@ -1,6 +1,10 @@
-- advanced settings
+ - mumble benchmark
+
+Doc:
+ - can I change keywords during the query process?
 
 Features:
+ - file selectors in settings dialog
  - boolean functions for keywords
  - alternatively use Open Citations
  - somehow use S2 embeddings
