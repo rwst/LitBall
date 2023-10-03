@@ -12,6 +12,7 @@ import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Service
 import org.reactome.lit_ball.util.ConfiguredJson
+import org.reactome.lit_ball.util.KeywordMatcher
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import java.io.File
@@ -140,21 +141,15 @@ data class LitBallQuery(
     }
 
     suspend fun filter1() {
-        fun makeRegexListFrom (aSet: MutableSet<String>?) = aSet
-            ?.filter { it.isNotEmpty() }
-            ?.map { it.split(".")
-                .joinToString(separator = ".", prefix = "\\b", postfix = "\\b")
-                { it1 -> Regex.escape(it1) }}
-            ?.map { it.toRegex(RegexOption.IGNORE_CASE) } ?: emptyList()
-
         if (!mutex.tryLock()) return
-        val mandatoryKeyWordRegexes = makeRegexListFrom(setting?.mandatoryKeyWords)
-        val forbiddenKeyWordRegexes = makeRegexListFrom(setting?.forbiddenKeyWords)
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
         val rejectedDOIs: Set<String>
+        if (setting == null)
+            throw Exception("Can't happen")
         if (queryDir.isDirectory && queryDir.canRead()) {
+            val matcher = KeywordMatcher(setting!!)
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
             val result = S2Client.getPaperDetailsWithAbstract(doiSet) {
                 val textsOfPaper: Set<String> = setOf(
@@ -162,13 +157,7 @@ data class LitBallQuery(
                     it.tldr?.get("text") ?: "",
                     it.abstract ?: ""
                 )
-                if (mandatoryKeyWordRegexes.any { regex1 ->
-                        textsOfPaper.any { text ->
-                            regex1.containsMatchIn(text)
-                        }
-                    } && forbiddenKeyWordRegexes.none { regex2 ->
-                        regex2.containsMatchIn(it.title ?: "")
-                    })
+                if (matcher.match(textsOfPaper.joinToString(" "), it.title?: ""))
                     paperDetailsList.add(it)
             }
             if (!result) {
