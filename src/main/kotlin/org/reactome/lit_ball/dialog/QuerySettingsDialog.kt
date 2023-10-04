@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
+import org.reactome.lit_ball.util.splitToSet
 
 @Composable
 fun QuerySettingsDialog(
@@ -36,19 +37,10 @@ fun QuerySettingsDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    item.setting!!.mandatoryKeyWords = field1Value.value.split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .toMutableSet()
-                    item.setting!!.forbiddenKeyWords = field2Value.value.split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .toMutableSet()
+                    item.setting!!.mandatoryKeyWords = field1Value.value.splitToSet(",")
+                    item.setting!!.forbiddenKeyWords = field2Value.value.splitToSet(",")
                     item.setting!!.classifier = field3Value.value.trim()
-                    item.setting!!.annotationClasses = field4Value.value.split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .toMutableSet()
+                    item.setting!!.annotationClasses = field4Value.value.splitToSet(",")
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }
@@ -101,3 +93,4 @@ fun QuerySettingsDialog(
         },
     )
 }
+

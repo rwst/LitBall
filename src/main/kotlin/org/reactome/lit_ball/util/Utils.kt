@@ -32,3 +32,9 @@ fun setupLazyListScroller(
     }
     setupAction(scrollChannel)
 }
+
+fun String.splitToSet(delim: String): MutableSet<String> =
+    this.split(delim)
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .toMutableSet()
