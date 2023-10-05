@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
-import org.reactome.`lit-ball`.BuildConfig
+import org.reactome.lit_ball.BuildConfig
 import org.reactome.lit_ball.util.Logger
 import retrofit2.HttpException
 import retrofit2.Response

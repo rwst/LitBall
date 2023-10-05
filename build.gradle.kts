@@ -17,11 +17,23 @@ repositories {
 
 kotlin {
     jvmToolchain(20)
+//    project.sourceSets.create("main")
+    project.sourceSets.create("commonTest")
     sourceSets {
         val main: KotlinSourceSet by getting {
+            kotlin.srcDirs("src/main/kotlin")
             resources.srcDirs("resources")
             dependencies {
                 // ...
+            }
+        }
+        val commonTest: KotlinSourceSet by getting {
+            kotlin.srcDirs("src/commonTest/kotlin")
+            kotlin.srcDirs("src/main/kotlin")
+            dependencies {
+                implementation ("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
+                implementation ("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
+                implementation ("org.jetbrains.kotlin:kotlin-test:1.9.0")
             }
         }
     }}
@@ -40,6 +52,7 @@ dependencies {
     implementation ("io.github.oshai:kotlin-logging-jvm:5.0.0")
     implementation("org.slf4j:slf4j-simple:2.0.5")
     implementation("dev.dirs:directories:26")
+    implementation("org.testng:testng:7.7.0")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
@@ -47,8 +60,28 @@ dependencies {
     windowsAmd64(compose.desktop.windows_x64)
 }
 
+tasks {
+    named<Test>("test") {
+        useTestNG()
+        testLogging.showExceptions = true
+        sourceSets {
+            test {
+                kotlin.srcDirs("src/commonTest/kotlin")
+                dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
+                    implementation("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
+                    implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+                }
+            }
+            main {
+                kotlin.srcDirs("src/main/kotlin")
+            }
+        }
+    }
+}
+
 buildConfig {
-    packageName("org.reactome.lit-ball")  // forces the package. Defaults to '${project.group}'
+    packageName("org.reactome.lit_ball")  // forces the package. Defaults to '${project.group}'
     buildConfigField("String", "APP_NAME", "\"LitBall\"")
     buildConfigField("String", "APP_VERSION", provider { "\"2320\"" })
 }
@@ -71,4 +104,3 @@ compose.desktop {
         }
     }
 }
-

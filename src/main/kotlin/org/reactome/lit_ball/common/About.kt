@@ -1,6 +1,6 @@
 package org.reactome.lit_ball.common
 
-import org.reactome.`lit-ball`.BuildConfig
+import org.reactome.lit_ball.BuildConfig
 
 object About {
     val version: String = BuildConfig.APP_VERSION
