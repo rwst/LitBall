@@ -17,7 +17,6 @@ repositories {
 
 kotlin {
     jvmToolchain(20)
-//    project.sourceSets.create("main")
     project.sourceSets.create("commonTest")
     sourceSets {
         val main: KotlinSourceSet by getting {
