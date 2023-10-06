@@ -10,11 +10,13 @@ import java.io.File
 data class QuerySetting(
     var mandatoryKeyWords: MutableSet<String> = mutableSetOf(),
     var forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
+    var pubDateFilterFrom: String = "",
+    var pubDateFilterTo: String = "",
     var classifier: String = "virus-EXP",
     var annotationClasses: MutableSet<String> = mutableSetOf(),
 ) {
     override fun toString(): String {
-        return "QuerySetting(posKeyWords=$mandatoryKeyWords, negKeyWords=$forbiddenKeyWords, classifier=$classifier), annotationClasses=$annotationClasses"
+        return "QuerySetting(posKeyWords=$mandatoryKeyWords, negKeyWords=$forbiddenKeyWords, pubDateFilterFrom/To=$pubDateFilterFrom/$pubDateFilterTo, classifier=$classifier), annotationClasses=$annotationClasses"
     }
 
     companion object {
