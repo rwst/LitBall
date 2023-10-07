@@ -10,6 +10,7 @@ object ConfiguredJson {
         prettyPrint = true
         isLenient = true
         encodeDefaults = true
+        ignoreUnknownKeys = true
     }
 
     fun get() = json
