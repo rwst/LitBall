@@ -4,6 +4,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,3 +41,7 @@ fun String.splitToSet(delim: String): MutableSet<String> =
         .map { it.trim() }
         .filter { it.isNotEmpty() }
         .toMutableSet()
+
+fun LocalDate.toEpochMilliseconds(): Long {
+    return atStartOfDayIn((TimeZone.currentSystemDefault())).toEpochMilliseconds()
+}

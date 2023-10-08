@@ -43,6 +43,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.5.0")
     implementation("com.squareup.okio:okio:3.3.0")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
@@ -53,6 +54,8 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.5")
     implementation("dev.dirs:directories:26")
     implementation("org.testng:testng:7.7.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-batik:4.0.1")
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.4.3")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
