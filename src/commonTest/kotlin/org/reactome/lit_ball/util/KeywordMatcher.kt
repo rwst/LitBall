@@ -57,6 +57,41 @@ class KeywordMatcherTest {
                 "",
                 true
             ),
+            TestData(
+                "(*valgus or bunion*) and (prevalence or incidence or epidemiology)",
+                "",
+                "Prevalence estimation and familial tendency of common forefoot deformities in Turkey: A survey of 2662 adults. Hallux valgus, hammertoe and bunionette images were provided as references and every adult participant without any known forefoot problems or past forefoot surgery history was asked to rate his/her foot and to respond the questions about family history and shoe wearing habits. Responses were statistically analyzed.",
+                "",
+                true,
+            ),
+            TestData(
+                "(*valgus or bunion*) and (prevalence or incidence or epidemiology)",
+                "",
+                "Hallux valgus in a random population in Spain and its impact on quality of life and functionality. The aim of this study was to determine the prevalence of Hallux valgus (HV) and the association between the presence thereof and quality of life, dependence for basic and instrumental activities of daily living and foot function. Prevalence study was carried out in a random population sample (n = 1837) ",
+                "",
+                true,
+            ),
+            TestData(
+                "(*valgus or bunion*) and (prevalence or incidence or epidemiology)",
+                "",
+                "Hallux valgus, the lateral deviation of the great toe, can result in poor balance, impaired mobility and is an independent risk factor for falls. This research aims to compare the prevalence of hallux valgus in subpopulations of medieval Cambridge",
+                "",
+                true,
+            ),
+            TestData(
+                "(*valgus or bunion*) and (prevalence or incidence or epidemiology)",
+                "",
+                "Hallux valgus in a random population in Spain and its impact on quality of life and functionality The presence of Hallux valgus was associated with reduced quality of life, dependence for basic and instrumental activities of daily living and foot function, and increases foot pain, disability and functional limitation. \n",
+                "",
+                false,
+                ),
+            TestData(
+                "(*valgus or bunion*) and (prevalence or incidence or epidemiology)",
+                "",
+                "Prevalence estimation and familial tendency of common forefoot deformities in Turkey: A survey of 2662 adults This study concludes that forefoot deformities are common with high familial tendency and this may enable the anticipation of forthcoming deformities in order to take early action in prevention, in nearly the half of the population. \n",
+                "",
+                false
+                )
         )
     }
     @Test

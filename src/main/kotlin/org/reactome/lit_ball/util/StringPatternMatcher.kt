@@ -62,7 +62,9 @@ class StringPatternMatcher(setting: QuerySetting) {
         parser1 = PatternParser.createFrom(setting.mandatoryKeyWords)
         parser2 = PatternParser.createFrom(setting.forbiddenKeyWords)
     }
-    fun match(text1: String, text2: String) = parser1.match(text1) && !parser2.match(text2)
+    fun match(text1: String, text2: String): Boolean {
+        return parser1.match(text1) && !parser2.match(text2)
+    }
     companion object {
         private val logicOpRegexes: List<Regex>
         init {
