@@ -17,19 +17,13 @@ class StringPatternMatcher(setting: QuerySetting) {
 
         companion object {
             fun createFrom(aSet: Set<String>?): PatternParser {
-                System.err.println(aSet)
                 if (aSet.isNullOrEmpty())
                     return KeywordListParser(emptyList(), "")
                 if (aSet.first().startsWith("(") && logicOpRegexes.any { it.containsMatchIn(aSet.first()) }) {
-                    System.err.println("branch1")
                     val wordList = aSet
                         .first()
                         .split ("(", ")", *logicDelims.toTypedArray())
                         .filterNot { it.isEmpty() }
-                    //val wordList = words
-                    //    .filter { word -> logicOpRegexes.none { it.containsMatchIn(word) } }
-                    //System.err.println(words)
-                    System.err.println(wordList)
                     var expr = aSet.first()
                     wordList.forEachIndexed { index, s -> expr = expr.replaceFirst(s, "word$index") }
                     return LogicalExpressionParser(wordList
@@ -38,7 +32,6 @@ class StringPatternMatcher(setting: QuerySetting) {
                         expr
                     )
                 }
-                System.err.println("branch2")
                 return KeywordListParser(
                     makeRegexListFrom(aSet),
                     ""
@@ -57,8 +50,6 @@ class StringPatternMatcher(setting: QuerySetting) {
             }
             var theExpr: String = expr
             logicOpRegexes.forEachIndexed { idx, rgx -> theExpr = theExpr.replace(rgx, logicOpSymbols[idx]) }
-            System.err.println(theExpr)
-            System.err.println(vars)
             return ExpressionEvaluator.evaluateAsBoolean(theExpr, vars)
                 ?: throw Exception("Could not evaluate logical expression")
         }
