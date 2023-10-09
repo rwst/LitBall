@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
+import org.reactome.lit_ball.util.StringPatternMatcher
 import org.reactome.lit_ball.util.splitToSet
 
 @Composable
@@ -37,8 +38,8 @@ fun QuerySettingsDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    item.setting!!.mandatoryKeyWords = field1Value.value.splitToSet(",")
-                    item.setting!!.forbiddenKeyWords = field2Value.value.splitToSet(",")
+                    item.setting!!.mandatoryKeyWords = StringPatternMatcher.patternSettingFrom(field1Value.value)
+                    item.setting!!.forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(field2Value.value)
                     item.setting!!.classifier = field3Value.value.trim()
                     item.setting!!.annotationClasses = field4Value.value.splitToSet(",")
                     rootScope.launch(Dispatchers.IO) {

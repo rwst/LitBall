@@ -16,6 +16,27 @@ class KeywordMatcherTest {
     companion object {
         val testData = listOf(
             TestData(
+                "(ST3GAL2 OR Alpha 2,3-ST 2 OR Beta-galactoside alpha-2,3-sialyltransferase 2 OR Gal-NAc6S OR Monosialoganglioside sialyltransferase OR ST3Gal II OR ST3GalII OR ST3GalA.2 OR Sialyltransferase 4B OR SIAT4-B)",
+                "",
+                "Human congenital disorders of ganglioside biosynthesis result in paraplegia, epilepsy, and intellectual disability. To better understand sialoglycan functions in the nervous system, we studied brain anatomy, histology, biochemistry, and behavior in mice with engineered mutations in St3gal2 and St3gal3",
+                "Sialylation regulates brain structure and function",
+                true
+            ),
+            TestData(
+                "(B3GALT4 OR Beta-1,3-galactosyltransferase 4 OR GALT4 OR Beta-1,3-GalTase 4 OR Beta3Gal-T4 OR Beta3GalT4 OR GalT4 OR b3Gal-T4 OR Gal-T2 OR Ganglioside galactosyltransferase)",
+                "",
+                "The galactosyltransferase family. Galactose is transferred via several linkages to acceptor structures by galactosyltransferase enzymes, which are involved in the formation of several classes of glycoconjugates and in lactose biosynthesis in prokaryotes and eukaryotes.",
+                "",
+                false
+            ),
+            TestData(
+                "(B3GALT4 OR Beta-1,3-galactosyltransferase 4 OR GALT4 OR Beta-1,3-GalTase 4 OR Beta3Gal-T4 OR Beta3GalT4 OR GalT4 OR b3Gal-T4 OR Gal-T2 OR Ganglioside galactosyltransferase)",
+                "",
+                "The ganglioside galactosyltransferase family.",
+                "",
+                true
+            ),
+            TestData(
                 "ST3GAL2, Alpha 2.3-ST 2, Beta-galactoside alpha-2.3-sialyltransferase 2, Gal-NAc6S, Monosialoganglioside sialyltransferase, ST3Gal II, ST3GalII, ST3GalA.2, Sialyltransferase 4B, SIAT4-B",
                 "",
                 "Human congenital disorders of ganglioside biosynthesis result in paraplegia, epilepsy, and intellectual disability. To better understand sialoglycan functions in the nervous system, we studied brain anatomy, histology, biochemistry, and behavior in mice with engineered mutations in St3gal2 and St3gal3",
@@ -41,8 +62,12 @@ class KeywordMatcherTest {
     @Test
     fun shouldFindMatches() {
         testData.forEach {
-            val setting = QuerySetting(it.posKeywords.splitToSet(","), it.negKeywords.splitToSet(","))
-            val matcher = KeywordMatcher(setting)
+            val setting = QuerySetting(StringPatternMatcher.patternSettingFrom(it.posKeywords),
+                StringPatternMatcher.patternSettingFrom(it.negKeywords)
+            )
+            val matcher = StringPatternMatcher(setting)
+            if (matcher.match(it.text1, it.text2) != it.result)
+                System.err.println("FAIL: ${it.text1}\n${it.posKeywords}")
             assertEquals(matcher.match(it.text1, it.text2), it.result)
         }
     }

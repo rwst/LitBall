@@ -12,7 +12,7 @@ import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Service
 import org.reactome.lit_ball.util.ConfiguredJson
-import org.reactome.lit_ball.util.KeywordMatcher
+import org.reactome.lit_ball.util.StringPatternMatcher
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import java.io.File
@@ -149,7 +149,7 @@ data class LitBallQuery(
         if (setting == null)
             throw Exception("Can't happen")
         if (queryDir.isDirectory && queryDir.canRead()) {
-            val matcher = KeywordMatcher(setting!!)
+            val matcher = StringPatternMatcher(setting!!)
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
             val result = S2Client.getPaperDetailsWithAbstract(doiSet) {
                 val textsOfPaper: Set<String> = setOf(

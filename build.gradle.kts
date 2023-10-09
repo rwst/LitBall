@@ -56,6 +56,7 @@ dependencies {
     implementation("org.testng:testng:7.7.0")
     implementation("org.jetbrains.lets-plot:lets-plot-batik:4.0.1")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.4.3")
+    implementation("org.apache.commons:commons-jexl3:3.2.1")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
