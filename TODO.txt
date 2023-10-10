@@ -1,12 +1,31 @@
+ - dismissing "Complete Settings" without keywords will advance status
+ - transform DOI URLs in settings
+ - check logical expression immediately
+ - new queries are not sorted into list
+ - show changes in about()
  - mumble benchmark
+   Wahono search string: (software OR applicati* OR systems ) AND (fault* OR
+                         defect* OR quality OR error-prone) AND (predict*
+                         OR prone* OR probability OR assess* OR detect* OR
+                         estimat* OR classificat*)
+   Hallux valgus: "(hallux valgus or bunion) and (prevalence or incidence or epidemiology)"
+ - keyboard focus on list can be lost
+ - detailed tooltips in dialogs
 
 Doc:
+ - matching
  - can I change keywords during the query process?
+ - reasons why not all papers found:
+   - start set not representative or not highly cited
+   - missing keywords
+   - local Chinese papers are underrepresented in S2
 
 Features:
+ - allow || && ! in expressions
  - file selectors in settings dialog
- - boolean functions for keywords
  - alternatively use Open Citations
  - somehow use S2 embeddings
  - increase TIMEOUT strategically
  - adding/changing keywords before Finish will change paper list in filter2(), ask yes/no
+ - make pubdate stats a SwingPanel
+ - "Accept all" button

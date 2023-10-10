@@ -63,4 +63,4 @@ The only classifier shipped with LitBall at the moment is "virus-EXP", trained f
 Hitting that button lets the classifier make the choice which paper to accept. It is your choice to review the AI's decisions and finally click the Finish button.
 
 Ref.:
-1. Ralf Stephan. (2023). Automatizing biocurators' intuition: filtering scientific papers by analyzing titles and short summaries. https://doi.org/10.5281/zenodo.8199859
+1. Ralf Stephan. (2023). Automatizing biocurators' intuition: filtering scientific papers by analyzing titles and short summaries. https://doi.org/10.5281/zenodo.8388963
