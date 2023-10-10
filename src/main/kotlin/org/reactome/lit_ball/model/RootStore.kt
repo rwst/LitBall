@@ -1,8 +1,6 @@
 package org.reactome.lit_ball.model
 
 import RootType
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +15,7 @@ import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
+import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
@@ -37,28 +36,28 @@ object RootStore {
     }
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Info", "About LitBall", Icons.Filled.Info, 0, onClicked = { buttonInfo() }),
-        RailItem("Doc", "Open documentation in browser", Icons.Default.Web, 1, onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
-        RailItem("Settings", "General Settings", Icons.Filled.Settings, 2) { setEditingSettings(true) },
-        RailItem("Exit", "Exit application", Icons.Filled.ExitToApp, 3, onClicked = { buttonExit() })
+        RailItem("Info", "About LitBall", Icons.Info, 0, onClicked = { buttonInfo() }),
+        RailItem("Doc", "Open documentation in browser", Icons.Article, 1, onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
+        RailItem("Settings", "General Settings", Icons.Settings, 2) { setEditingSettings(true) },
+        RailItem("Exit", "Exit application", Icons.Logout, 3, onClicked = { buttonExit() })
     )
 
     val sortingControls: List<SortingControlItem> = listOf(
         SortingControlItem(
             "Alphabetical sort ascending",
-            Icons.Filled.SortByAlpha
+            Icons.SortAZ
         ) { doSort(SortingType.ALPHA_ASCENDING) },
         SortingControlItem(
             "Alphabetical sort descending",
-            Icons.Filled.SortByAlpha
+            Icons.SortZA
         ) { doSort(SortingType.ALPHA_DESCENDING) },
         SortingControlItem(
             "Sort by last expansion\ndate, ascending",
-            Icons.Filled.Sort
+            Icons.Sort12
         ) { doSort(SortingType.NUMER_ASCENDING) },
         SortingControlItem(
             "Sort by last expansion\ndate, descending",
-            Icons.Filled.Sort
+            Icons.Sort21
         ) { doSort(SortingType.NUMER_DESCENDING) },
     )
 

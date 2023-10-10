@@ -41,10 +41,8 @@ kotlin {
 dependencies {
     implementation("org.jetbrains.compose.material3:material3-desktop:1.5.0")
     implementation(compose.desktop.currentOs)
-    implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-    implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.5.0")
     implementation("com.squareup.okio:okio:3.3.0")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")

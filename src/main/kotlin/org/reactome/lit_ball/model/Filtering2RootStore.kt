@@ -1,8 +1,6 @@
 package org.reactome.lit_ball.model
 
 import RootType
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +12,7 @@ import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.SystemFunction
+import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
@@ -42,18 +41,18 @@ object Filtering2RootStore : ModelHandle {
     }
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Filled.Save, 0) { doSave() },
-        RailItem("Finish", "Finish filtering,\nwriting accepted/rejected", Icons.Filled.Publish, 1) { doFinish() },
+        RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Save, 0) { doSave() },
+        RailItem("Finish", "Finish filtering,\nwriting accepted/rejected", Icons.Done, 1) { doFinish() },
         RailItem(
             "Main",
             "Save and go back\nto main screen",
-            Icons.Filled.ExitToApp,
+            Icons.ArrowBack,
             2,
             onClicked = { onDoAnnotateStopped() }),
         RailItem(
             "Exit",
             "Exit application",
-            Icons.Filled.ExitToApp,
+            Icons.Logout,
             3,
             extraAction = SystemFunction.exitApplication,
             onClicked = { buttonExit() })
@@ -61,19 +60,19 @@ object Filtering2RootStore : ModelHandle {
     val sortingControls: List<SortingControlItem> = listOf(
         SortingControlItem(
             "Alphabetical sort ascending",
-            Icons.Filled.SortByAlpha
+            Icons.SortAZ
         ) { doSort(SortingType.ALPHA_ASCENDING) },
         SortingControlItem(
             "Alphabetical sort descending",
-            Icons.Filled.SortByAlpha
+            Icons.SortZA
         ) { doSort(SortingType.ALPHA_DESCENDING) },
         SortingControlItem(
             "Publication date sort ascending",
-            Icons.Filled.Sort
+            Icons.Sort12
         ) { doSort(SortingType.DATE_ASCENDING) },
         SortingControlItem(
             "Publication date sort descending",
-            Icons.Filled.Sort
+            Icons.Sort21
         ) { doSort(SortingType.DATE_DESCENDING) },
     )
 

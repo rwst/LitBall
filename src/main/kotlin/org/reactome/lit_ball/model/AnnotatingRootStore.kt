@@ -1,8 +1,6 @@
 package org.reactome.lit_ball.model
 
 import RootType
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +14,7 @@ import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.toEpochMilliseconds
+import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
@@ -45,19 +44,19 @@ object AnnotatingRootStore : ModelHandle {
     }
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Stats", "Publication date statistics", Icons.Filled.Science, 0) { setStat(true) },
-        RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Filled.Save, 1) { doSave() },
-        RailItem("Export", "Write ${FileType.EXPORTED.fileName}", Icons.Filled.Publish, 2) { doExport() },
+        RailItem("Stats", "Publication date statistics", Icons.BarChart, 0) { setStat(true) },
+        RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Save, 1) { doSave() },
+        RailItem("Export", "Write ${FileType.EXPORTED.fileName}", Icons.ExportNotes, 2) { doExport() },
         RailItem(
             "Main",
             "Save and go back\nto main screen",
-            Icons.Filled.ExitToApp,
+            Icons.ArrowBack,
             2,
             onClicked = { onDoAnnotateStopped() }),
         RailItem(
             "Exit",
             "Exit application",
-            Icons.Filled.ExitToApp,
+            Icons.Logout,
             3,
             extraAction = SystemFunction.exitApplication,
             onClicked = { buttonExit() })
@@ -65,19 +64,19 @@ object AnnotatingRootStore : ModelHandle {
     val sortingControls: List<SortingControlItem> = listOf(
         SortingControlItem(
             "Alphabetical sort ascending",
-            Icons.Filled.SortByAlpha
+            Icons.SortAZ
         ) { doSort(SortingType.ALPHA_ASCENDING) },
         SortingControlItem(
             "Alphabetical sort descending",
-            Icons.Filled.SortByAlpha
+            Icons.SortZA
         ) { doSort(SortingType.ALPHA_DESCENDING) },
         SortingControlItem(
             "Publication date sort ascending",
-            Icons.Filled.Sort
+            Icons.Sort12
         ) { doSort(SortingType.DATE_ASCENDING) },
         SortingControlItem(
             "Publication date sort descending",
-            Icons.Filled.Sort
+            Icons.Sort21
         ) { doSort(SortingType.DATE_DESCENDING) },
     )
 

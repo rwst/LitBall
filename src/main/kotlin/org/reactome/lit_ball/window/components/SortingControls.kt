@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -23,7 +24,7 @@ fun SortingControls(controls: List<SortingControlItem>) {
                         .align(Alignment.CenterVertically),
                 ) {
                     Icon(
-                        imageVector = item.icon,
+                        painterResource(item.iconPainterResource),
                         contentDescription = null,
                         tint = Color.Blue,
                         modifier = Modifier.size(24.dp),

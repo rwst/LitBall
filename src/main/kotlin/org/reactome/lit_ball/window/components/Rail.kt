@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -30,7 +31,7 @@ fun Rail(
                     },
                     icon = {
                         Icon(
-                            item.icon,
+                            painterResource(item.iconPainterResource),
                             null,
                         )
                     },
