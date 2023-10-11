@@ -87,7 +87,7 @@ tasks {
 buildConfig {
     packageName("org.reactome.lit_ball")  // forces the package. Defaults to '${project.group}'
     buildConfigField("String", "APP_NAME", "\"LitBall\"")
-    buildConfigField("String", "APP_VERSION", provider { "\"2320\"" })
+    buildConfigField("String", "APP_VERSION", provider { "\"2321\"" })
 }
 
 configurations.all {
@@ -99,7 +99,7 @@ configurations.all {
 compose.desktop {
     application {
         mainClass = "MainKt"
-        version = "2320"
+        version = "2321"
         group = "org.reactome"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
