@@ -18,16 +18,34 @@ While LitBall is aimed to enable exhaustive literature searches on any academic 
 
  - LitBall handles small topics easily, we use it all the time for biocuration. The more general your keywords become, the more papers will pass automatic filtering. As soon as you are presented, during supervised filtering, with more than a few hundred choices, you either need to consider negative ("forbidden") keywords, or you will need unsustainable time to sort things out.
 
-Keywords
-^^^^^^^^
+Keyphrase lists / Expressions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+There are two ways search patterns can be specified:
+
+ - as a simple comma-separated list of key phrases::
+
+    CERK, hCERK, Ceramide kinase, Acylsphingosine kinase, lipid kinase 4
+
+ - as a parenthesis-grouped logical expression containing the logical operators OR, AND, NOT, and key phrases::
+
+   (hallux *valgus or bunion*) and (prevalence* or incidence* or epidemiology)
+
+Note that positive ("mandatory") keywords are applied to title, TLDR, and abstract (if known), while negative keywords lead to rejection only if they are found
+in the title.
+
+Keyphrase lists
+"""""""""""""""
 The fact that the list of keywords has the comma as separator means there cannot be commas inside your keywords. Keywords don't need to be words, however.
 Any string without commas is suitable, and the filter is looking for them inside word boundaries and regardless of case, not as general substring. So, giving the keyword "E" will
 not trigger on the title "ABCDE" but will with a title like "The letter e,".
 
 The dot "." stands for any character and is at the moment the only wildcard implemented, so if you need to match a comma, use the dot.
 
-Note that positive ("mandatory") keywords are applied to title, TLDR, and abstract (if known), while negative keywords lead to rejection only if they are found
-in the title.
+Keyphrase expressions
+"""""""""""""""""""""
+The same keyphrases that are separated by commas in the mentioned lists can be linked with logical expressions that are grouped with parentheses. LitBall recognizes these if they start with a parenthesis and contain at least one logical operator. Also, keyphrases in logical expressions can contain asterisks which stand for any number of alphanumeric characters.
+
+Keyphrases, again, are matched on word boundaries and are case-insensitive.
 
 Why DOIs?
 ^^^^^^^^^
