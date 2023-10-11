@@ -3,11 +3,17 @@
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +36,8 @@ fun QuerySettingsDialog(
     val field3Value = rememberSaveable { mutableStateOf(item.setting?.classifier ?: "") }
     val field4Value =
         rememberSaveable { mutableStateOf(item.setting?.annotationClasses?.joinToString(separator = ", ") ?: "") }
+    val keyword1WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
+    val keyword2WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
 
     AlertDialog(
         onDismissRequest = {
@@ -38,6 +46,17 @@ fun QuerySettingsDialog(
         confirmButton = {
             TextButton(
                 onClick = {
+                    keyword1WarningValue.value = null
+                    if (!StringPatternMatcher.validateSetting(field1Value.value)) {
+                        keyword1WarningValue.value = "Invalid expression"
+                        return@TextButton
+                    }
+                    keyword2WarningValue.value = null
+                    if (!StringPatternMatcher.validateSetting(field2Value.value)) {
+                        keyword2WarningValue.value = "Invalid expression"
+                        return@TextButton
+                    }
+
                     item.setting!!.mandatoryKeyWords = StringPatternMatcher.patternSettingFrom(field1Value.value)
                     item.setting!!.forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(field2Value.value)
                     item.setting!!.classifier = field3Value.value.trim()
@@ -67,18 +86,44 @@ fun QuerySettingsDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
-                TextField(
-                    value = field1Value.value,
-                    onValueChange = { field1Value.value = it },
-                    label = { Text("Mandatory keywords") },
-                    placeholder = { Text("text1, text2, ...") }
-                )
-                TextField(
-                    value = field2Value.value,
-                    onValueChange = { field2Value.value = it },
-                    label = { Text("Forbidden keywords") },
-                    placeholder = { Text("text1, text2, ...") }
-                )
+                Row {
+                    TextField(
+                        value = field1Value.value,
+                        onValueChange = {
+                            field1Value.value = it
+                            keyword1WarningValue.value = null
+                                        },
+                        label = { Text("Mandatory keywords / expression") },
+                        placeholder = { Text("") }
+                    )
+                    keyword1WarningValue.value?.also {
+                        Text(it,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 24.dp)
+                        )
+                    }
+                }
+                Row {
+                    TextField(
+                        value = field2Value.value,
+                        onValueChange = {
+                            field2Value.value = it
+                            keyword2WarningValue.value = null
+                                        },
+                        label = { Text("Forbidden keywords / expression") },
+                        placeholder = { Text("") }
+                    )
+                    keyword2WarningValue.value?.also {
+                        Text(it,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 24.dp)
+                        )
+                    }
+                }
                 TextField(
                     value = field3Value.value,
                     onValueChange = { field3Value.value = it },

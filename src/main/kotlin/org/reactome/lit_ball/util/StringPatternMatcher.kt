@@ -82,6 +82,16 @@ class StringPatternMatcher(setting: QuerySetting) {
                 return mutableSetOf(value)
             return value.splitToSet(",")
         }
+        fun validateSetting(value: String): Boolean {
+            if (value.startsWith("(") && logicOpRegexes.any { it.containsMatchIn(value) }) {
+                val parser = PatternParser.createFrom(mutableSetOf(value))
+                try {
+                    parser.match("")
+                }
+                catch (e: Exception) { return false }
+            }
+            return true
+        }
     }
 }
 
