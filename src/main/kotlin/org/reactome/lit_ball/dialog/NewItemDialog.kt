@@ -65,7 +65,7 @@ fun NewItemDialog(
                 )
                 TextField(
                     value = fieldValue.value,
-                    onValueChange = { fieldValue.value = it.uppercase() },
+                    onValueChange = { fieldValue.value = it.uppercase().removePrefix("HTTPS://DOI.ORG/") },
                     label = { Text("Core DOIs (one per line)") },
                     placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
                 )
