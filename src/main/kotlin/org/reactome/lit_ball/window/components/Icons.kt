@@ -1,4 +1,4 @@
-@file:Suppress("FunctionName")
+@file:Suppress("ConstPropertyName")
 
 package org.reactome.lit_ball.window.components
 
