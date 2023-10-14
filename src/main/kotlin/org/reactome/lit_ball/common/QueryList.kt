@@ -67,6 +67,7 @@ object QueryList {
                 acceptedSet = dois.toMutableSet()
             )
         )
+        sort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         RootStore.refreshList()
     }
 
