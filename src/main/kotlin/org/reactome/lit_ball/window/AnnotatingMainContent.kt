@@ -170,10 +170,12 @@ fun CardWithFlagBoxes(
                                     )
                                 }
                                 else if (cardTitle != null) {
+                                    val spaceRegex = Regex("[\\p{javaWhitespace}\u00A0\u2007\u202F]+")
+                                    val title = spaceRegex.replace(cardTitle, " ")
                                     openInBrowser(
                                         URI(
                                             "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
-                                                cardTitle.replace(
+                                                title.replace(
                                                     " ",
                                                     "+"
                                                 )
