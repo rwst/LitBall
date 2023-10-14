@@ -170,10 +170,6 @@ object RootStore {
         }
     }
 
-    fun setItems(items: List<LitBallQuery>) {
-        setState { copy(items = items) }
-    }
-
     private object Signal {
         var signal = false
         fun set() {

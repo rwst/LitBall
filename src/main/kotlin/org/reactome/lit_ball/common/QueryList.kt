@@ -38,7 +38,7 @@ object QueryList {
             }
         }
         sort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
-        RootStore.setItems(list)
+        RootStore.refreshList()
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
@@ -67,7 +67,7 @@ object QueryList {
                 acceptedSet = dois.toMutableSet()
             )
         )
-        RootStore.setItems(list)
+        RootStore.refreshList()
     }
 
     fun sort(type: SortingType) {
