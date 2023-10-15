@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import org.jetbrains.letsPlot.Figure
 import org.jetbrains.letsPlot.geom.geomHistogram
@@ -29,13 +30,22 @@ fun createFigure(model: AnnotatingRootStore): Figure {
 }
 
 @Composable
-fun BarChartDialog (model: AnnotatingRootStore) {
+fun BarChartDialog (
+    model: AnnotatingRootStore,
+    focusRequester: FocusRequester,
+    ) {
     androidx.compose.material.AlertDialog (
-        onDismissRequest = { model.setStat(false) },
+        onDismissRequest = {
+            model.setStat(false)
+            focusRequester.requestFocus()
+                           },
         confirmButton = {},
         dismissButton = {
             TextButton(
-                onClick = { model.setStat(false) }
+                onClick = {
+                    model.setStat(false)
+                    focusRequester.requestFocus()
+                }
             ) {
                 Text("Dismiss")
             }

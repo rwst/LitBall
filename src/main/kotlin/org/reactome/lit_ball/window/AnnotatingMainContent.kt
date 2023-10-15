@@ -12,10 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -46,7 +43,8 @@ private const val TAG = "AnnotatingMainContent"
 @Composable
 internal fun AnnotatingMainContent(
     model: AnnotatingRootStore,
-    rootSwitch: MutableState<RootType>
+    rootSwitch: MutableState<RootType>,
+    focusRequester: FocusRequester,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -73,6 +71,7 @@ internal fun AnnotatingMainContent(
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,
+                focusRequester = focusRequester,
             )
         }
     }
@@ -83,10 +82,9 @@ fun AnnotatingListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onFlagSet: (Int, Int, Boolean) -> Unit,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
+    focusRequester: FocusRequester,
 ) {
-    val focusRequester = remember { FocusRequester() }
-
     val onKeyDown: (KeyEvent) -> Boolean = handleKeyPressed(lazyListState)
 
     Box(
@@ -97,18 +95,6 @@ fun AnnotatingListContent(
     ) {
         setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, AnnotatingRootStore::setupListScroller)
         Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-//                if (isClassifierSet)
-//                    Button(
-//                        modifier = Modifier.padding(horizontal = 24.dp),
-//                        onClick = onClassifierButtonClicked,
-//                    ) {
-//                        Text("Apply Classifier")
-//                    }
-            }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
                 lazyListState

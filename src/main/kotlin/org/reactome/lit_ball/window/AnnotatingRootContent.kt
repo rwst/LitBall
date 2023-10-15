@@ -3,10 +3,8 @@
 package org.reactome.lit_ball.window
 
 import RootType
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.ui.focus.FocusRequester
 import org.reactome.lit_ball.dialog.BarChartDialog
 import org.reactome.lit_ball.model.AnnotatingRootStore
 
@@ -15,20 +13,25 @@ fun AnnotatingRootContent(
     rootSwitch: MutableState<RootType>,
 ) {
     val model = remember { AnnotatingRootStore }
+    val focusRequester = remember { FocusRequester() }
     val state = model.state
     val scope = rememberCoroutineScope()
     AnnotatingRootStore.scope = scope
     AnnotatingRootStore.state = state // TODO: is this circular?
     model.rootSwitch = rootSwitch
 
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     if (state.showStats) {
-        BarChartDialog(model)
+        BarChartDialog(model, focusRequester)
     }
 
     AnnotatingMainContent(
         model = model,
         rootSwitch = rootSwitch,
+        focusRequester = focusRequester,
     )
 
-    PaperListScreenEvents(state.paperListStore)
+    PaperListScreenEvents(state.paperListStore, focusRequester)
 }

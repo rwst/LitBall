@@ -3,6 +3,7 @@
 package org.reactome.lit_ball.window
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.focus.FocusRequester
 import org.reactome.lit_ball.dialog.ConfirmationDialog
 import org.reactome.lit_ball.dialog.InformationalDialog
 import org.reactome.lit_ball.dialog.ItemClickedDialog
@@ -10,12 +11,16 @@ import org.reactome.lit_ball.dialog.ProgressIndicator
 import org.reactome.lit_ball.model.PaperListScreenStore
 
 @Composable
-fun PaperListScreenEvents(model: PaperListScreenStore) {
+fun PaperListScreenEvents(
+    model: PaperListScreenStore,
+    focusRequester: FocusRequester,
+    ) {
     val state = model.state
     state.editingItemId?.also { item ->
         ItemClickedDialog(
             item,
-            model::onEditorCloseClicked
+            model::onEditorCloseClicked,
+            focusRequester,
         )
     }
 

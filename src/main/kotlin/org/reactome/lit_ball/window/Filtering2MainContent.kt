@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +47,7 @@ private const val TAG = "Filtering2MainContent"
 internal fun Filtering2MainContent(
     model: Filtering2RootStore,
     rootSwitch: MutableState<RootType>,
+    focusRequester: FocusRequester,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -81,6 +81,7 @@ internal fun Filtering2MainContent(
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onItemRadioButtonClicked = model::onItemRadioButtonClicked,
                 lazyListState = lazyListState,
+                focusRequester = focusRequester,
             )
         }
     }
@@ -91,10 +92,9 @@ fun Filtering2ListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
+    focusRequester: FocusRequester,
 ) {
-    val focusRequester = remember { FocusRequester() }
-
     val onKeyDown: (KeyEvent) -> Boolean = handleKeyPressed(lazyListState)
 
     Box(
