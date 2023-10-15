@@ -15,6 +15,49 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
+tasks {
+    named<Test>("test") {
+        useTestNG()
+        testLogging.showExceptions = true
+        sourceSets {
+            test {
+                kotlin.srcDirs("src/commonTest/kotlin")
+                dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
+                    implementation("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
+                    implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+                }
+            }
+            main {
+                kotlin.srcDirs("src/main/kotlin")
+            }
+        }
+    }
+    register<Copy>("changes") {
+        from(layout.projectDirectory.file("CHANGES.txt"))
+        rename("CHANGES.txt", "Changes.kt")
+        into(layout.projectDirectory.file("src/main/kotlin/org/reactome/lit_ball/common"))
+        filter { line ->
+            when(line) {
+                "## START" -> """
+                    package org.reactome.lit_ball.common
+
+                    object Changes {
+                        val text = ""${'"'}
+                """.trimIndent()
+                "## END" -> """
+                        ""${'"'}.trimIndent()
+                    }
+                """.trimIndent()
+                else -> line
+            }
+        }
+    }
+    compileKotlin {
+        dependsOn("changes")
+    }
+}
+
 kotlin {
     jvmToolchain(20)
 //    project.sourceSets.create("main")
@@ -24,7 +67,7 @@ kotlin {
             kotlin.srcDirs("src/main/kotlin")
             resources.srcDirs("resources")
             dependencies {
-                // ...
+                //
             }
         }
         val commonTest: KotlinSourceSet by getting {
@@ -64,25 +107,6 @@ dependencies {
     windowsAmd64(compose.desktop.windows_x64)
 }
 
-tasks {
-    named<Test>("test") {
-        useTestNG()
-        testLogging.showExceptions = true
-        sourceSets {
-            test {
-                kotlin.srcDirs("src/commonTest/kotlin")
-                dependencies {
-                    implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
-                    implementation("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
-                    implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
-                }
-            }
-            main {
-                kotlin.srcDirs("src/main/kotlin")
-            }
-        }
-    }
-}
 
 buildConfig {
     packageName("org.reactome.lit_ball")  // forces the package. Defaults to '${project.group}'
