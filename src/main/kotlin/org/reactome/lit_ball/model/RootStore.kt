@@ -36,7 +36,7 @@ object RootStore {
     }
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Info", "About LitBall", Icons.Info, 0, onClicked = { buttonInfo() }),
+        RailItem("Info", "About LitBall", Icons.Info, 0, onClicked = { setAboutDialog(true) }),
         RailItem("Doc", "Open documentation in browser", Icons.Article, 1, onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
         RailItem("Settings", "General Settings", Icons.Settings, 2) { setEditingSettings(true) },
         RailItem("Exit", "Exit application", Icons.Logout, 3, onClicked = { buttonExit() })
@@ -67,10 +67,6 @@ object RootStore {
             Settings.load()
             QueryList.fill()
         }
-    }
-
-    private fun buttonInfo() {
-        setInformationalDialog(About.text)
     }
 
     private fun buttonExit() {
@@ -131,6 +127,10 @@ object RootStore {
             refreshQueryPathDisplay()
         }
         setState { copy(editingSettings = boolean, items = QueryList.list.toList()) }
+    }
+
+    fun setAboutDialog(boolean: Boolean) {
+        setState { copy(aboutDialog = boolean) }
     }
 
     fun setEditingItemId(id: Int) {
@@ -232,4 +232,5 @@ data class RootState(
     val doAnnotate: Int? = null,
     val progressIndication: ProgressIndicatorParameter? = null,
     val doInformationalDialog: String? = null,
+    val aboutDialog: Boolean = false,
 )

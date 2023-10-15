@@ -1,4 +1,7 @@
-## START
+package org.reactome.lit_ball.common
+
+object Changes {
+    val text = """
 v2322
 
 v2321
@@ -71,4 +74,5 @@ v2309:
  - changes to make download of Linux/Mac/Windows binaries possible
 
 v2308: first release
-## END
+    """.trimIndent()
+}

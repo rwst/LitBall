@@ -8,5 +8,6 @@ object About {
         LitBall v. $version
         (c) 2023 Ralf Stephan <gtrwst9@gmail.com>
         Repo: https://github.com/rwst/LitBall
-        """.trimIndent()
+        
+        Changes history:""".trimIndent()
 }

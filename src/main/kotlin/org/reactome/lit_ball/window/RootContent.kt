@@ -53,6 +53,10 @@ fun RootContent(
         ) { model.onQuerySettingsCloseClicked() }
     }
 
+    if (state.aboutDialog) {
+        AboutDialog { model.setAboutDialog(false) }
+    }
+
     state.doInformationalDialog?.also {
         InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
     }
