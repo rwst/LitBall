@@ -3,6 +3,13 @@ package org.reactome.lit_ball.common
 object Changes {
     val text = """
 v2322
+ - show changes in about()
+ - you can now use DOI URLs in settings
+ - check logical expression validity on dialog confirm
+ - fix: URL("Unicode NBSP") error
+ - fix: new queries are not sorted into list
+ - fix: keyboard focus on list can be lost
+ - fix: dismissing "Complete Settings" without keywords will advance status
 
 v2321
  - keyword settings support logical expressions
