@@ -2,6 +2,11 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
+v2323
+ - fix: crash when queries/directory can't be written
+ - fix: don't allow '/' in query name
+ - fix: when pasting URL into DOI field, do decode
+
 v2322
  - show changes in about()
  - you can now use DOI URLs in settings
