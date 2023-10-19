@@ -80,7 +80,9 @@ fun NewItemDialog(
                 Row {
                     TextField(
                         value = nameValue.value,
-                        onValueChange = { nameValue.value = it },
+                        onValueChange = {
+                            nameValue.value = it.substringBefore("/")
+                                        },
                         label = { Text("Query name") },
                     )
                     pathWarningValue.value?.also {
