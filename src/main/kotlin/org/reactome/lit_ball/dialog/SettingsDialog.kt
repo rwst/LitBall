@@ -4,19 +4,25 @@ package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.Settings
+import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.isWritable
 
 @Composable
 internal fun SettingsDialog(
@@ -27,6 +33,7 @@ internal fun SettingsDialog(
     val advancedKeys = Settings.advancedSet
     val textFields = rememberSaveable { keys.map { key -> mutableStateOf(Settings.map[key] ?: "") } }
     val isAdvancedSettingsVisible = remember { mutableStateOf(false) }
+    val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
 
     AlertDialog(
         title = { Text("Edit settings") },
@@ -34,6 +41,12 @@ internal fun SettingsDialog(
         confirmButton = {
             TextButton(
                 onClick = {
+                    pathWarningValue.value = null
+                    val dirFile = File(textFields[0].value)
+                    if (!dirFile.exists() && !Path(dirFile.parent).isWritable()) {
+                        pathWarningValue.value = "Query directory cannot be created. Please change value or permissions"
+                        return@TextButton
+                    }
                     keys.forEachIndexed { index, key ->
                         Settings.map[key] = textFields[index].value
                     }
@@ -57,12 +70,33 @@ internal fun SettingsDialog(
             Column(horizontalAlignment = Alignment.Start) {
                 keys.forEachIndexed { index, key ->
                     if (key !in advancedKeys) {
-                        TextField(
-                            value = textFields[index].value,
-                            onValueChange = { textFields[index].value = it },
-                            label = { Text(key) },
-                            placeholder = { Text(Settings.map[key] ?: "") }
-                        )
+                        if (index == 0) {
+                            Row {
+                                TextField(
+                                    value = textFields[index].value,
+                                    onValueChange = { textFields[index].value = it },
+                                    label = { Text(key) },
+                                    placeholder = { Text(Settings.map[key] ?: "") }
+                                )
+                                pathWarningValue.value?.also {
+                                    Text(
+                                        it,
+                                        color = Color.Red,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterVertically)
+                                            .padding(start = 24.dp)
+                                    )
+                                }
+                            }
+                        }
+                        else {
+                            TextField(
+                                value = textFields[index].value,
+                                onValueChange = { textFields[index].value = it },
+                                label = { Text(key) },
+                                placeholder = { Text(Settings.map[key] ?: "") }
+                            )
+                        }
                     }
                 }
                 Text(
