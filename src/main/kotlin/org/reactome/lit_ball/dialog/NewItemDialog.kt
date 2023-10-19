@@ -12,6 +12,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 
 @Composable
@@ -65,7 +67,7 @@ fun NewItemDialog(
                 )
                 TextField(
                     value = fieldValue.value,
-                    onValueChange = { fieldValue.value = it.uppercase().removePrefix("HTTPS://DOI.ORG/") },
+                    onValueChange = { fieldValue.value = it.transformDOI() },
                     label = { Text("Core DOIs (one per line)") },
                     placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
                 )
@@ -74,4 +76,12 @@ fun NewItemDialog(
             }
         },
     )
+}
+
+private fun String.transformDOI(): String {
+    var s = this.uppercase()
+    if (s.startsWith("HTTP")) {
+       s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString())
+    }
+    return s.removePrefix("HTTPS://DOI.ORG/")
 }
