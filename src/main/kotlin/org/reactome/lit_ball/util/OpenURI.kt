@@ -14,3 +14,26 @@ fun openInBrowser(uri: URI) {
         else -> throw RuntimeException("cannot open $uri")
     }
 }
+
+
+fun openInBrowser(pmid: String?, title: String?) {
+    if (pmid != null) {
+        openInBrowser(
+            URI("https://pubmed.ncbi.nlm.nih.gov/$pmid/")
+        )
+    }
+    else if (title != null) {
+        val spaceRegex = Regex("[\\p{javaWhitespace}\u00A0\u2007\u202F]+")
+        val theTitle = spaceRegex.replace(title, " ")
+        openInBrowser(
+            URI(
+                "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
+                    theTitle.replace(
+                        " ",
+                        "+"
+                    )
+                }&btnG="
+            )
+        )
+    }
+}

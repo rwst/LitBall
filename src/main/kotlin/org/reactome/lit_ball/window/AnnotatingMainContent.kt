@@ -12,7 +12,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -35,7 +37,6 @@ import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
 import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.*
-import java.net.URI
 
 private const val TAG = "AnnotatingMainContent"
 
@@ -150,25 +151,7 @@ fun CardWithFlagBoxes(
                     IconButton(
                         onClick = {
                             AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
-                                if (cardPMID != null) {
-                                    openInBrowser(
-                                        URI("https://pubmed.ncbi.nlm.nih.gov/$cardPMID/")
-                                    )
-                                }
-                                else if (cardTitle != null) {
-                                    val spaceRegex = Regex("[\\p{javaWhitespace}\u00A0\u2007\u202F]+")
-                                    val title = spaceRegex.replace(cardTitle, " ")
-                                    openInBrowser(
-                                        URI(
-                                            "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${
-                                                title.replace(
-                                                    " ",
-                                                    "+"
-                                                )
-                                            }&btnG="
-                                        )
-                                    )
-                                }
+                                openInBrowser(cardPMID, cardTitle)
                             }
                         },
                         modifier = Modifier.padding(0.dp)
