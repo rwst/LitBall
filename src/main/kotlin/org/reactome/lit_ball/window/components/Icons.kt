@@ -8,6 +8,7 @@ object Icons {
     const val BarChart = "drawable/bar_chart.svg"
     const val Done = "drawable/done.svg"
     const val ExportNotes = "drawable/export_notes.svg"
+    const val Help = "drawable/help.svg"
     const val Info = "drawable/info.svg"
     const val Logout = "drawable/logout.svg"
     const val Save = "drawable/save.svg"
