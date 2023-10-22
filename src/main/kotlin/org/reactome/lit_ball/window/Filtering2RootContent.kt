@@ -3,10 +3,7 @@
 package org.reactome.lit_ball.window
 
 import RootType
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import org.reactome.lit_ball.model.Filtering2RootStore
 
@@ -21,6 +18,10 @@ fun Filtering2RootContent(
     Filtering2RootStore.scope = scope
     Filtering2RootStore.state = state
     model.rootSwitch = rootSwitch
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Filtering2MainContent(
         model = model,

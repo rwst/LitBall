@@ -58,7 +58,7 @@ internal fun AnnotatingMainContent(
 
         Column {
             Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
-                SortingControls(model.sortingControls)
+                SortingControls(model.sortingControls, focusRequester)
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(
                     onClick = {},
@@ -91,7 +91,6 @@ fun AnnotatingListContent(
     Box(
         modifier = Modifier.fillMaxSize()
             .focusRequester(focusRequester)
-            .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
         setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, AnnotatingRootStore::setupListScroller)

@@ -59,7 +59,7 @@ internal fun Filtering2MainContent(
 
         Column {
             Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
-                SortingControls(model.sortingControls)
+                SortingControls(model.sortingControls, focusRequester)
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(
                     onClick = {},
@@ -99,7 +99,6 @@ fun Filtering2ListContent(
     Box(
         modifier = Modifier.fillMaxSize()
             .focusRequester(focusRequester)
-            .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
         setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, Filtering2RootStore::setupListScroller)
@@ -115,7 +114,10 @@ fun Filtering2ListContent(
                     CardWithTextIconAndRadiobutton(
                         item = item,
                         onClicked = { onItemClicked(item.id) },
-                        onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
+                        onOptionSelected = {
+                            btn -> onItemRadioButtonClicked(item.id, btn)
+                            focusRequester.requestFocus()
+                                           },
                     )
                     Divider()
                 }
