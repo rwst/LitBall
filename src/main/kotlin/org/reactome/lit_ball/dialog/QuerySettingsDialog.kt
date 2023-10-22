@@ -2,9 +2,7 @@
 
 package org.reactome.lit_ball.dialog
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -13,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +20,8 @@ import org.reactome.lit_ball.common.LitBallQuery
 import org.reactome.lit_ball.common.QuerySetting
 import org.reactome.lit_ball.util.StringPatternMatcher
 import org.reactome.lit_ball.util.splitToSet
+import org.reactome.lit_ball.window.components.Icons
+import org.reactome.lit_ball.window.components.Tooltip
 
 @Composable
 fun QuerySettingsDialog(
@@ -96,6 +97,26 @@ fun QuerySettingsDialog(
                         label = { Text("Mandatory keywords / expression") },
                         placeholder = { Text("") }
                     )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Tooltip(text = """
+                        Enter either
+                        1. keywords/phrases separated by comma, no wildcards, or
+                        2. logical expression of keywords/phrases starting with
+                           open parenthesis and containing operators "or", "and", 
+                           "not", wildcard "*", and matched parentheses.
+                        In both cases keyphrases are matched to words in title,
+                        abstract, and TLDR for a positive match.
+                    """.trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
                     keyword1WarningValue.value?.also {
                         Text(it,
                             color = Color.Red,
@@ -115,6 +136,26 @@ fun QuerySettingsDialog(
                         label = { Text("Forbidden keywords / expression") },
                         placeholder = { Text("") }
                     )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Tooltip(text = """
+                        Optionally enter either
+                        1. keywords/phrases separated by comma, no wildcards, or
+                        2. logical expression of keywords/phrases starting with
+                           open parenthesis and containing operators "or", "and", 
+                           "not", wildcard "*", and matched parentheses.
+                        In both cases keyphrases are matched to words in title,
+                        for a negative match.
+                    """.trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
                     keyword2WarningValue.value?.also {
                         Text(it,
                             color = Color.Red,
@@ -124,17 +165,59 @@ fun QuerySettingsDialog(
                         )
                     }
                 }
-                TextField(
-                    value = field3Value.value,
-                    onValueChange = { field3Value.value = it },
-                    label = { Text("Classifier model name") },
-                )
-                TextField(
-                    value = field4Value.value,
-                    onValueChange = { field4Value.value = it },
-                    label = { Text("Annotation classes") },
-                    placeholder = { Text("text1, text2, ...") }
-                )
+                Row {
+                    TextField(
+                        value = field3Value.value,
+                        onValueChange = { field3Value.value = it },
+                        label = { Text("Classifier model name") },
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Tooltip(text = """
+                        On Linux, if the YDF package is installed, this
+                        is the name of the model that will be used for
+                        automated filtering in the Supervised Filtering
+                        screen.
+                    """.trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
+                }
+                Row {
+                    TextField(
+                        value = field4Value.value,
+                        onValueChange = { field4Value.value = it },
+                        label = { Text("Annotation classes") },
+                        placeholder = { Text("text1, text2, ...") }
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Tooltip(
+                        text = """
+                            If this field contains words separated
+                            by comma, the same words will appear as
+                            clickboxes in the Annotation Screen on every
+                            paper. Tagged papers will, on export, be
+                            sorted in tag-associated CSV files inside
+                            the query directory.
+                    """.trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
+                }
             }
         },
     )
