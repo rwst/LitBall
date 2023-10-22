@@ -111,10 +111,9 @@ fun NewItemDialog(
     )
 }
 
-private fun String.transformDOI(): String {
-    var s = this.uppercase()
-    if (s.startsWith("HTTP")) {
-       s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString())
-    }
-    return s.removePrefix("HTTPS://DOI.ORG/")
+private fun String.transformDOI() = this.uppercase().split("\n").joinToString("\n") {
+    var s = it.trim()
+    if (s.startsWith("HTTP"))
+        s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString())
+    s.removePrefix("HTTPS://DOI.ORG/")
 }
