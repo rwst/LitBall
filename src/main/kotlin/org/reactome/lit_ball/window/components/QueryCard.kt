@@ -37,7 +37,7 @@ fun QueryCard(
 ) {
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
-            Tooltip("Query-specific settings") {
+            Tooltip("Query-specific settings", Modifier.align(Alignment.CenterVertically)) {
                 IconButton(
                     onClick = { (onSettingsClicked)(item.id) },
                     modifier = Modifier
@@ -47,7 +47,7 @@ fun QueryCard(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Query Settings",
                         tint = Color.Gray,
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
                     )
                 }
             }
@@ -98,7 +98,7 @@ fun QueryCard(
             ) {
                 Text(item.nextActionText())
             }
-            Tooltip("View/Set flags on papers, export") {
+            Tooltip("View/Set flags on papers, export", Modifier.align(Alignment.CenterVertically)) {
                 ElevatedButton(
                     onClick = onAnnotateClicked,
                     modifier = Modifier

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun SortingControls(controls: List<SortingControlItem>) {
     Row {
         controls.forEach { item ->
-            Tooltip(item.tooltipText) {
+            Tooltip(item.tooltipText, Modifier.align(Alignment.CenterVertically)) {
                 IconButton(
                     onClick = { item.onClicked() },
                     modifier = Modifier

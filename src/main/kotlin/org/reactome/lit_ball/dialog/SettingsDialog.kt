@@ -78,7 +78,7 @@ internal fun SettingsDialog(
                                 placeholder = { Text(Settings.map[key] ?: "") }
                             )
                             Spacer(modifier = Modifier.width(14.dp))
-                            Tooltip(text = Settings.helpText[key]?: key) {
+                            Tooltip(text = Settings.helpText[key] ?: key, Modifier.align(Alignment.CenterVertically)) {
                                 Icon(
                                     painterResource(org.reactome.lit_ball.window.components.Icons.Help),
                                     contentDescription = "Query Settings",

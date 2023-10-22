@@ -28,10 +28,7 @@ import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.setupLazyListScroller
-import org.reactome.lit_ball.window.components.QueryCard
-import org.reactome.lit_ball.window.components.Rail
-import org.reactome.lit_ball.window.components.SortingControls
-import org.reactome.lit_ball.window.components.Tooltip
+import org.reactome.lit_ball.window.components.*
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 private const val TAG = "MainContent"
@@ -51,7 +48,7 @@ internal fun MainContent(
             Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
                 SortingControls(model.sortingControls)
                 Spacer(modifier = Modifier.width(8.dp))
-                Tooltip("Refresh from disk") {
+                Tooltip("Refresh from disk", Modifier.align(Alignment.CenterVertically)) {
                     TextButton(
                         onClick = model::onQueryPathClicked,
                         modifier = Modifier.padding(0.dp)

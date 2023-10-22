@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Tooltip(text: String, content: @Composable () -> Unit) {
+fun Tooltip(text: String,
+            modifier: Modifier,
+            content: @Composable () -> Unit)
+{
     TooltipArea(
         tooltip = {
             // composable tooltip content
@@ -41,6 +44,7 @@ fun Tooltip(text: String, content: @Composable () -> Unit) {
             alignment = Alignment.BottomEnd,
             offset = DpOffset(4.dp, 4.dp) // tooltip offset
         ),
+        modifier = modifier,
     )
     { content() }
 }
