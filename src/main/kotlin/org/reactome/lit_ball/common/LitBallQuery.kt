@@ -109,17 +109,6 @@ data class LitBallQuery(
         Logger.i(tag, "Received ${doiSet.size} DOIs")
         if (missingAccepted.isEmpty()) {
             RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
-            val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
-            val now = FileTime.fromMillis(System.currentTimeMillis())
-            withContext(Dispatchers.IO) {
-                Files.setLastModifiedTime(Path(path), now)
-            }
-            lastExpansionDate = Date()
-            status = QueryStatus.FILTERED2
-            noNewAccepted = true
-            writeNoNewAccepted()
-            RootStore.refreshList()
-            mutex.unlock()
             return
         }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
@@ -148,6 +137,9 @@ data class LitBallQuery(
         val rejectedDOIs: Set<String>
         if (setting == null)
             throw Exception("Can't happen")
+
+        // Load and match details of DOIs in expanded.txt
+        // Result goes into paperDetailsList
         if (queryDir.isDirectory && queryDir.canRead()) {
             val matcher = StringPatternMatcher(setting!!)
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
@@ -160,6 +152,7 @@ data class LitBallQuery(
                 if (matcher.match(textsOfPaper.joinToString(" "), it.title?: ""))
                     paperDetailsList.add(it)
             }
+            // Bail out on Cancel
             if (!result) {
                 mutex.unlock()
                 return
@@ -177,6 +170,8 @@ data class LitBallQuery(
         sanitize(paperDetailsList)
         Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
         RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
+
+        // Write filtered.txt if new matches exist
         val json = ConfiguredJson.get()
         if (queryDir.isDirectory && queryDir.canWrite()) {
             if (paperDetailsList.isEmpty()) {
@@ -279,7 +274,7 @@ data class LitBallQuery(
         }
     }
 
-    fun writeNoNewAccepted() {
+    suspend fun writeNoNewAccepted() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = noNewAccepted.toString()
@@ -288,6 +283,11 @@ data class LitBallQuery(
             } catch (e: Exception) {
                 handleException(e)
             }
+        }
+        val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
+        val now = FileTime.fromMillis(System.currentTimeMillis())
+        withContext(Dispatchers.IO) {
+            Files.setLastModifiedTime(Path(path), now)
         }
     }
 
