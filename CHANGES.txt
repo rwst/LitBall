@@ -1,4 +1,13 @@
 ## START
+v2324
+ - help tooltips in all settings dialogs
+ - set bold accepted according to max-cache-days
+ - fix: tooltips removed centered layout
+ - fix: only first doi link insertable
+ - fix: focus in annotation screen
+ - fix: accepted was not touched when 0 new in filter1,2
+ - doc: can I edit keywords?
+
 v2323
  - fix: crash when queries/directory can't be written
  - fix: don't allow '/' in query name

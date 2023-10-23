@@ -4,10 +4,8 @@
                          OR prone* OR probability OR assess* OR detect* OR
                          estimat* OR classificat*)
    Hallux valgus: "(hallux valgus or bunion) and (prevalence or incidence or epidemiology)"
- - detailed tooltips in dialogs
 
 Doc:
- - can I change keywords during the query process?
  - reasons why not all papers found:
    - start set not representative or not highly cited
    - missing keywords
@@ -21,8 +19,11 @@ Features:
  - in filter2()  Prodigy
  - in annotate() export to / start / import from Prodigy
  - optional wordnet capability to include synonyms
+ - clicking sort in filtering2 still grabs focus
+ - new query from old (allowing change of keywords but shortcutting some download)
 
 Other ideas:
+ - replace 404 msg with "Paper not found"
  - somehow use S2 embeddings
  - increase TIMEOUT strategically
  - adding/changing keywords before Finish will change paper list in filter2(), ask yes/no
