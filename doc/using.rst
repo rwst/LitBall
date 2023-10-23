@@ -54,23 +54,13 @@ have a PMID, and biomedical literature is not everything.
 
 How to get the DOI?
 ^^^^^^^^^^^^^^^^^^^
-Note LitBall uses the part of the DOI starting with "10.". If you have a link of the form "http://doi.org/10.xyz" just delete everything before "10.xyz".
+DOIs can be found:
 
  - on the journal's article page, most papers also show the DOI
 
  - on the PMID page the DOI is almost always shown
 
  - on the S2 page (but not on Google Scholar) the DOI is almost always shown
-
-Bulk S2 API access
-------------------
-To access the S2 API in bulk instead of single article queries, an API key is needed. As I'm not affiliated, S2 has ignored my request for a key. If someone
-provides me with a test key I'm willing to implement bulk access.
-
-Can I edit data?
-----------------
-Yes, you can! LitBall on start up loads every data from the files in the respective query directories. These are all simple text files like lists of DOIs, or JSON.
-If you want to include a paper in the accepted list, just add the DOI using a text editor and restart LitBall.
 
 AI classifier
 -------------
@@ -79,6 +69,19 @@ Regarding the help of machine learning (ML), we have excellent results using ran
 The only classifier shipped with LitBall at the moment is "virus-EXP", trained for experimental papers in virology. Also, you need to be on Linux, have somewhere installed Yggdrasil's YDF package, and changed your LitBall general settings to point to it. In that case, you will be presented on the Supervised Filtering page with a blue button "Apply classifier".
 
 Hitting that button lets the classifier make the choice which paper to accept. It is your choice to review the AI's decisions and finally click the Finish button.
+
+Can I edit keywords in the middle of a query?
+---------------------------------------------
+Yes! It will not affect previous rounds, however. If this is not satisfactory, we suggest creating a new query and, before expanding, copy the file "accepted.txt" from the first query to the new one. We may implement a way to do this inside LitBall if there is interest.
+
+
+Can I edit data?
+----------------
+Yes, you can! LitBall on start up loads every data from the files in the respective query directories. These are all simple text files like lists of DOIs, or JSON.
+If you want to include a paper in the accepted list, just add the DOI using a text editor and restart LitBall.
+
+
+
 
 Ref.:
 1. Ralf Stephan. (2023). Automatizing biocurators' intuition: filtering scientific papers by analyzing titles and short summaries. https://doi.org/10.5281/zenodo.8388963
