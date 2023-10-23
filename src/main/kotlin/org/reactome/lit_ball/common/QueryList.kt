@@ -8,6 +8,7 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 
+const val DAY_IN_MS = 1000L * 60 * 60 * 24
 @Serializable
 object QueryList {
     var list: List<LitBallQuery> = listOf()
@@ -34,6 +35,13 @@ object QueryList {
                     fileType = FileType.ACCEPTED
                 )
                 newQuery.noNewAccepted = newQuery.readNoNewAccepted()
+                if (newQuery.noNewAccepted) {
+                    val now = System.currentTimeMillis()
+                    val cacheMillis = DAY_IN_MS * (Settings.map["cache-max-age-days"]?: "30").toInt()
+                    if (now - (newQuery.lastExpansionDate?.time ?: 0) > cacheMillis) {
+                        newQuery.noNewAccepted = false
+                    }
+                }
                 newQuery
             }
         }
