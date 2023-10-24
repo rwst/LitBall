@@ -97,9 +97,15 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         ExpandQueryCache.init(File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}"))
         val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
+        var nulls = 0
+        val size = missingAccepted.size
         val result = S2Client.getRefs(missingAccepted.toList()) { doi, refs ->
-            doiSet.addAll(refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
-            doiSet.addAll(refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+            val rlist = refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList()
+            val clist = refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList()
+            if (rlist.isEmpty() && clist.isEmpty())
+                nulls += 1
+            doiSet.addAll(rlist)
+            doiSet.addAll(clist)
             ExpandQueryCache.add(doi, refs)
         }
         if (!result) {
@@ -109,11 +115,20 @@ data class LitBallQuery(
         Logger.i(tag, "Received ${doiSet.size} DOIs")
         if (missingAccepted.isEmpty()) {
             RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
+            mutex.unlock()
             return
         }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
-        RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
+        if (nulls == size)
+            RootStore.setInformationalDialog("""
+                None of the $size DOIs was found on Semantic
+                Scholar. Please check:
+                1. are you searching outside the biomed or compsci fields?
+                2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
+            """.trimIndent())
+        else
+            RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
