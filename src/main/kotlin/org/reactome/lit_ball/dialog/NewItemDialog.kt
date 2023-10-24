@@ -42,7 +42,7 @@ fun NewItemDialog(
             TextButton(
                 onClick = {
                     val dois = fieldValue.value.split("\n")
-                        .map { it.trim() }
+                        .map { it.trim().transformDOI() }
                         .toSet()
                     val name = nameValue.value.trim()
                     pathWarningValue.value = null
@@ -98,7 +98,6 @@ fun NewItemDialog(
                 TextField(
                     value = fieldValue.value,
                     onValueChange = {
-                        fieldValue.value = it.transformDOI()
                         pathWarningValue.value = null
                                     },
                     label = { Text("Core DOIs (one per line)") },
@@ -111,9 +110,9 @@ fun NewItemDialog(
     )
 }
 
-private fun String.transformDOI() = this.uppercase().split("\n").joinToString("\n") {
-    var s = it.trim()
+private fun String.transformDOI(): String {
+    var s = this.uppercase()
     if (s.startsWith("HTTP"))
         s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString())
-    s.removePrefix("HTTPS://DOI.ORG/")
+    return s.replaceBefore("10.", "")
 }
