@@ -99,6 +99,11 @@ object Filtering2RootStore : ModelHandle {
         refreshList()
     }
 
+    fun acceptAll() {
+        PaperList.setAllTags(1)
+        refreshList()
+    }
+
     private fun onDoAnnotateStopped() {
         runBlocking {
             PaperList.save()

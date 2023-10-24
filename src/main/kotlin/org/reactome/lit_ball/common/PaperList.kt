@@ -250,6 +250,12 @@ object PaperList {
         setTag(id, newTag)
     }
 
+    fun setAllTags(btn: Int) {
+        val newTag = Tag.entries[btn]
+        val ids = list.map { it.id }
+        ids.forEach { setTag(it, newTag) }
+    }
+
     private fun setTag(id: Int, tag: Tag) {
         updateItem(id) {
             if (it.tag == tag)
