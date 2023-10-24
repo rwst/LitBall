@@ -1,3 +1,4 @@
+ - help tooltips in new query dialog
  - mumble benchmark
    Wahono search string: (software OR applicati* OR systems ) AND (fault* OR
                          defect* OR quality OR error-prone) AND (predict*
@@ -12,9 +13,14 @@ Doc:
    - local Chinese papers are underrepresented in S2
 
 Features:
- - "Accept all" button
+ - move dialog tooltips to the left
  - file selectors in settings dialog
  - alternatively use Open Citations
+ - three types of queries:
+   1. snowballing with supervision on each round,
+   2. snowballing without supervision, needs a stop criterion
+   3. simple logical expression matching (does S2 support phrases or only words?)
+
  - recipes: export to / start / import from annotation tool --- both in filter2
  - in filter2()  Prodigy
  - in annotate() export to / start / import from Prodigy

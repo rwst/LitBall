@@ -2,6 +2,11 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
+v2325
+ - DOI: simply remove all before "10."
+ - warning if no DOI returns any ref
+ - "Accept all" button on filter2 screen
+
 v2324
  - help tooltips in all settings dialogs
  - set bold accepted according to max-cache-days
