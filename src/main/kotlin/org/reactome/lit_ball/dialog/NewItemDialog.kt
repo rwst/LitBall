@@ -98,6 +98,7 @@ fun NewItemDialog(
                 TextField(
                     value = fieldValue.value,
                     onValueChange = {
+                        fieldValue.value = it.transformDOI()
                         pathWarningValue.value = null
                                     },
                     label = { Text("Core DOIs (one per line)") },
