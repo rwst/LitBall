@@ -2,9 +2,7 @@
 
 package org.reactome.lit_ball.dialog
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -13,12 +11,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.window.components.Icons
+import org.reactome.lit_ball.window.components.Tooltip
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -78,6 +79,20 @@ fun NewItemDialog(
         text = {
             Column(horizontalAlignment = Alignment.Start) {
                 Row {
+                    Tooltip(text = """
+                        Enter name of query. The string is cut off
+                        at the first '/' (slash) character.
+                    """.trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
                     TextField(
                         value = nameValue.value,
                         onValueChange = {
@@ -95,15 +110,32 @@ fun NewItemDialog(
                         )
                     }
                 }
-                TextField(
-                    value = fieldValue.value,
-                    onValueChange = {
-                        fieldValue.value = it.transformDOI()
-                        pathWarningValue.value = null
-                                    },
-                    label = { Text("Core DOIs (one per line)") },
-                    placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
-                )
+                Row {
+                    Tooltip(text = """
+                        Input one DOI per line. It is not necessary to manually trim
+                        the DOI strings. LitBall will automatically chop off everything
+                        before the “10…” part, so simply copypasting a DOI link will be
+                        handled.""".trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
+                    TextField(
+                        value = fieldValue.value,
+                        onValueChange = {
+                            fieldValue.value = it.transformDOI()
+                            pathWarningValue.value = null
+                        },
+                        label = { Text("Core DOIs (one per line)") },
+                        placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
+                    )
+                }
                 if (!checkValue.value)
                     Text("Please fill both text fields.")
             }
