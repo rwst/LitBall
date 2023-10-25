@@ -62,6 +62,8 @@ DOIs can be found:
 
  - on the S2 page (but not on Google Scholar) the DOI is almost always shown
 
+It is not necessary to manually trim the DOI strings when creating a new query. LitBall will automatically chop off everything before the "10..." part, so simply copypasting a DOI link will be handled.
+
 AI classifier
 -------------
 Regarding the help of machine learning (ML), we have excellent results using random forests (RF) on simple one-hot vectors for classification[1], and LitBall offers the choice to apply pre-trained RF models to title/abstract/TLDR of your list of articles. We may implement training of such models within LitBall, or ship models trained by others.
@@ -79,8 +81,6 @@ Can I edit data?
 ----------------
 Yes, you can! LitBall on start up loads every data from the files in the respective query directories. These are all simple text files like lists of DOIs, or JSON.
 If you want to include a paper in the accepted list, just add the DOI using a text editor and restart LitBall.
-
-
 
 
 Ref.:
