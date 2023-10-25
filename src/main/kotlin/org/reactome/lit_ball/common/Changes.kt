@@ -2,6 +2,9 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
+v2326
+ - hotfix: new query dialog regression
+
 v2325
  - DOI: simply remove all before "10."
  - warning if no DOI returns any ref

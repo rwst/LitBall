@@ -1,4 +1,7 @@
 ## START
+v2326
+ - hotfix: new query dialog regression
+
 v2325
  - DOI: simply remove all before "10."
  - warning if no DOI returns any ref
