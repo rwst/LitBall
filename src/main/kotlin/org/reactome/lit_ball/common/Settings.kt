@@ -86,7 +86,7 @@ object Settings {
             Directory where YDF models are stored that get used
             as text classifiers. The query-specific model is set
             in the query settings.
-        """,
+        """.trimIndent(),
         "query-sort-type" to """
             Current sorting type for the query list. Change this
             also by clicking on the resp. sort buttons.
