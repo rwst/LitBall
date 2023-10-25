@@ -71,13 +71,6 @@ internal fun SettingsDialog(
                 keys.forEachIndexed { index, key ->
                     if (key !in advancedKeys) {
                         Row {
-                            TextField(
-                                value = textFields[index].value,
-                                onValueChange = { textFields[index].value = it },
-                                label = { Text(key) },
-                                placeholder = { Text(Settings.map[key] ?: "") }
-                            )
-                            Spacer(modifier = Modifier.width(14.dp))
                             Tooltip(text = Settings.helpText[key] ?: key, Modifier.align(Alignment.CenterVertically)) {
                                 Icon(
                                     painterResource(org.reactome.lit_ball.window.components.Icons.Help),
@@ -87,6 +80,13 @@ internal fun SettingsDialog(
                                         .align(Alignment.CenterVertically),
                                 )
                             }
+                            Spacer(modifier = Modifier.width(14.dp))
+                            TextField(
+                                value = textFields[index].value,
+                                onValueChange = { textFields[index].value = it },
+                                label = { Text(key) },
+                                placeholder = { Text(Settings.map[key] ?: "") }
+                            )
                             Spacer(modifier = Modifier.width(14.dp))
                             if (index == 0) {
                                 pathWarningValue.value?.also {

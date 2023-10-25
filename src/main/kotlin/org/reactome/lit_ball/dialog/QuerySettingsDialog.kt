@@ -88,16 +88,6 @@ fun QuerySettingsDialog(
         text = {
             Column(horizontalAlignment = Alignment.Start) {
                 Row {
-                    TextField(
-                        value = field1Value.value,
-                        onValueChange = {
-                            field1Value.value = it
-                            keyword1WarningValue.value = null
-                                        },
-                        label = { Text("Mandatory keywords / expression") },
-                        placeholder = { Text("") }
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
                     Tooltip(text = """
                         Enter either
                         1. keywords/phrases separated by comma, no wildcards, or
@@ -117,6 +107,16 @@ fun QuerySettingsDialog(
                         )
                     }
                     Spacer(modifier = Modifier.width(14.dp))
+                    TextField(
+                        value = field1Value.value,
+                        onValueChange = {
+                            field1Value.value = it
+                            keyword1WarningValue.value = null
+                                        },
+                        label = { Text("Mandatory keywords / expression") },
+                        placeholder = { Text("") }
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
                     keyword1WarningValue.value?.also {
                         Text(it,
                             color = Color.Red,
@@ -127,16 +127,6 @@ fun QuerySettingsDialog(
                     }
                 }
                 Row {
-                    TextField(
-                        value = field2Value.value,
-                        onValueChange = {
-                            field2Value.value = it
-                            keyword2WarningValue.value = null
-                                        },
-                        label = { Text("Forbidden keywords / expression") },
-                        placeholder = { Text("") }
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
                     Tooltip(text = """
                         Optionally enter either
                         1. keywords/phrases separated by comma, no wildcards, or
@@ -156,6 +146,16 @@ fun QuerySettingsDialog(
                         )
                     }
                     Spacer(modifier = Modifier.width(14.dp))
+                    TextField(
+                        value = field2Value.value,
+                        onValueChange = {
+                            field2Value.value = it
+                            keyword2WarningValue.value = null
+                                        },
+                        label = { Text("Forbidden keywords / expression") },
+                        placeholder = { Text("") }
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
                     keyword2WarningValue.value?.also {
                         Text(it,
                             color = Color.Red,
@@ -166,12 +166,6 @@ fun QuerySettingsDialog(
                     }
                 }
                 Row {
-                    TextField(
-                        value = field3Value.value,
-                        onValueChange = { field3Value.value = it },
-                        label = { Text("Classifier model name") },
-                    )
-                    Spacer(modifier = Modifier.width(14.dp))
                     Tooltip(text = """
                         On Linux, if the YDF package is installed, this
                         is the name of the model that will be used for
@@ -188,15 +182,14 @@ fun QuerySettingsDialog(
                         )
                     }
                     Spacer(modifier = Modifier.width(14.dp))
-                }
-                Row {
                     TextField(
-                        value = field4Value.value,
-                        onValueChange = { field4Value.value = it },
-                        label = { Text("Annotation classes") },
-                        placeholder = { Text("text1, text2, ...") }
+                        value = field3Value.value,
+                        onValueChange = { field3Value.value = it },
+                        label = { Text("Classifier model name") },
                     )
                     Spacer(modifier = Modifier.width(14.dp))
+                }
+                Row {
                     Tooltip(
                         text = """
                             If this field contains words separated
@@ -216,6 +209,13 @@ fun QuerySettingsDialog(
                                 .align(Alignment.CenterVertically),
                         )
                     }
+                    Spacer(modifier = Modifier.width(14.dp))
+                    TextField(
+                        value = field4Value.value,
+                        onValueChange = { field4Value.value = it },
+                        label = { Text("Annotation classes") },
+                        placeholder = { Text("text1, text2, ...") }
+                    )
                     Spacer(modifier = Modifier.width(14.dp))
                 }
             }
