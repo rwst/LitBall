@@ -55,7 +55,7 @@ fun QueryCard(
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column {
-                Tooltip("Query Type ${item.type.ordinal+1}", Modifier) {
+                Tooltip("Query Type\n${item.type.pretty}", Modifier) {
                     SuggestionChip(
                         onClick = {},
                         label = {

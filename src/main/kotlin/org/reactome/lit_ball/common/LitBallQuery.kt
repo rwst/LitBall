@@ -29,7 +29,7 @@ enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
 enum class Qtype(val pretty: String) {
     EXPRESSION_SEARCH("Expression Search"),
     SNOWBALLING("Snowballing"),
-    SUPERVISED_SNOWBALLING("Supervised Snowballing"),
+    SUPERVISED_SNOWBALLING("Snowballing with Interleaved Supervision"),
 }
 
 fun getQueryDir(name: String): File {
