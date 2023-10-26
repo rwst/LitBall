@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.AnnotatingRootStore
@@ -24,6 +25,12 @@ import java.util.*
 import kotlin.io.path.Path
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
+@Serializable
+enum class Qtype(val pretty: String) {
+    EXPRESSION_SEARCH("Expression Search"),
+    SNOWBALLING("Snowballing"),
+    SUPERVISED_SNOWBALLING("Supervised Snowballing"),
+}
 
 fun getQueryDir(name: String): File {
     val queryPath = Settings.map["path-to-queries"] ?: ""
@@ -47,6 +54,7 @@ fun getDOIs(dir: File, fileName: String): MutableSet<String> {
 data class LitBallQuery(
     var id: Int,
     val name: String = "",
+    var type: Qtype = Qtype.SUPERVISED_SNOWBALLING,
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
     var setting: QuerySetting? = null,
     var acceptedSet: MutableSet<String> = mutableSetOf(),

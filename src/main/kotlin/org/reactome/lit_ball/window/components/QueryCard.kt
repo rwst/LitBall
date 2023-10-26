@@ -9,10 +9,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +32,11 @@ fun QueryCard(
     onGoClicked: (status: QueryStatus, id: Int) -> Unit,
     onAnnotateClicked: () -> Unit,
 ) {
+    val chipColors = listOf(
+        Color.hsv(186F, 1F, 1F),
+        Color.hsv(163f, 1f, 1f),
+        Color.hsv(0f, 0f, .9f),
+    )
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
             Tooltip("Query-specific settings", Modifier.align(Alignment.CenterVertically)) {
@@ -53,19 +55,22 @@ fun QueryCard(
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column {
-                SuggestionChip(
-                    onClick = {},
-                    label = {
-                        Text(
-                            text = AnnotatedString(item.name),
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    modifier = Modifier
-                        .align(Alignment.Start),
-                )
+                Tooltip("Query Type ${item.type.ordinal+1}", Modifier) {
+                    SuggestionChip(
+                        onClick = {},
+                        label = {
+                            Text(
+                                text = AnnotatedString(item.name),
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        modifier = Modifier
+                            .align(Alignment.Start),
+                        colors = SuggestionChipDefaults.suggestionChipColors(containerColor = chipColors[item.type.ordinal]),
+                    )
+                }
                 Text(
                     text = "Accepted: ${item.nrAccepted()}",
                     fontSize = 14.sp,

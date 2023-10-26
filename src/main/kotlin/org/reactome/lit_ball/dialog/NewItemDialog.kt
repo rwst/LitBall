@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.reactome.lit_ball.common.Qtype
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.window.components.Icons
@@ -32,6 +33,7 @@ fun NewItemDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {
+    val typeValue = rememberSaveable { mutableStateOf(2) }
     val fieldValue = rememberSaveable { mutableStateOf("") }
     val nameValue = rememberSaveable { mutableStateOf("") }
     val checkValue = rememberSaveable { mutableStateOf(true) }
@@ -55,7 +57,7 @@ fun NewItemDialog(
                     checkValue.value = dois.isNotEmpty() && name.isNotEmpty()
                     if (checkValue.value) {
                         rootScope.launch(Dispatchers.IO) {
-                            QueryList.addNewItem(name, dois)
+                            QueryList.addNewItem(typeValue.value, name, dois)
                         }
                         (onCloseClicked)()
                     }
@@ -78,6 +80,36 @@ fun NewItemDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
+                Row {
+                    Tooltip(text = """
+                        Available query types are:
+                        1. Simple expression search: your positive and negative
+                           keyphrases/expressions are sent to Semantic Scholar
+                           for a search over the whole graph. Starting DOIs are
+                           ignored.
+                        2. Snowballing with automated keyphrase/expression
+                           filtering. No supervised filtering (all matches are
+                           accepted).
+                        3. (default) Snowballing with automated and supervised
+                           filtering.
+                    """.trimIndent(),
+                        Modifier.align(Alignment.CenterVertically)) {
+                        Icon(
+                            painterResource(Icons.Help),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(20.dp)
+                                .align(Alignment.CenterVertically),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
+                    RadioButtonOptions(
+                        Qtype.entries.map { it.pretty },
+                        typeValue.value,
+                        onOptionSelected = { btn -> typeValue.value = btn}
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     Tooltip(text = """
                         Enter name of query. The string is cut off

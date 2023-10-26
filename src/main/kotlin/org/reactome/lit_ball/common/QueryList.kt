@@ -42,6 +42,7 @@ object QueryList {
                         newQuery.noNewAccepted = false
                     }
                 }
+                newQuery.type = newQuery.setting?.type ?: Qtype.SUPERVISED_SNOWBALLING
                 newQuery
             }
         }
@@ -50,7 +51,7 @@ object QueryList {
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
-    fun addNewItem(name: String, dois: Set<String>) {
+    fun addNewItem(type: Int, name: String, dois: Set<String>) {
         val queryDir = getQueryDir(name)
         if (queryDir.exists()) {
             handleException(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
@@ -71,6 +72,7 @@ object QueryList {
         list = list.plus(
             LitBallQuery(
                 id = list.size,
+                type = Qtype.entries[type],
                 name = name,
                 acceptedSet = dois.toMutableSet()
             )

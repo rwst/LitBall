@@ -62,6 +62,7 @@ fun QuerySettingsDialog(
                     item.setting!!.forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(field2Value.value)
                     item.setting!!.classifier = field3Value.value.trim()
                     item.setting!!.annotationClasses = field4Value.value.splitToSet(",")
+                    item.setting!!.type = item.type
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }
