@@ -56,6 +56,7 @@ object Settings {
         map["query-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
         map["paper-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
         map["cache-max-age-days"] = "30"
+        map["S2-API-key"] = ""
     }
 
     fun save() {
@@ -101,5 +102,10 @@ object Settings {
             started afresh using the existing accepted papers as
             core for snowballing.
         """.trimIndent(),
+        "S2-API-key" to """
+            Request an API key from Semantic Scholar for faster
+            access through bulk queries. Also enables queries of
+            type 1 (bulk expression search).
+        """.trimIndent()
     )
 }
