@@ -37,6 +37,7 @@ fun NewItemDialog(
     val fieldValue = rememberSaveable { mutableStateOf("") }
     val nameValue = rememberSaveable { mutableStateOf("") }
     val checkValue = rememberSaveable { mutableStateOf(true) }
+    val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
     val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
 
     AlertDialog(
@@ -106,8 +107,25 @@ fun NewItemDialog(
                     RadioButtonOptions(
                         Qtype.entries.map { it.pretty },
                         typeValue.value,
-                        onOptionSelected = { btn -> typeValue.value = btn}
+                        onOptionSelected = { btn ->
+                            if (btn == 0 && Settings.map["S2-API-key"].isNullOrEmpty()) {
+                                typeWarningValue.value = "S2 API key needed"
+                            }
+                            else {
+                                typeWarningValue.value = null
+                            }
+                            typeValue.value = btn
+                        }
                     )
+                    typeWarningValue.value?.also {
+                        Text(
+                            it,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 24.dp)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
