@@ -38,3 +38,5 @@ Congratulations! You went through one cycle of snowballing. Do this until no mor
 # Thanks
 
 We are using some free commercial icons from [Icons8](https://icons8.com)
+
+[1] Kinney, Rodney Michael et al. “The Semantic Scholar Open Data Platform.” ArXiv abs/2301.10140 (2023) https://www.semanticscholar.org/

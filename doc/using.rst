@@ -8,7 +8,7 @@ Choice of topic
 ^^^^^^^^^^^^^^^
 While LitBall is aimed to enable exhaustive literature searches on any academic topic, there are at the moment two practical limits:
 
- - LitBall right now uses Semantic Scholar (S2) to access an academic graph (AG). S2's graph is complete in the biomedical and computer science (CS) fields but not, for example, in astrophysics or mathematics. We will implement access to other AGs, but:
+ - LitBall right now uses Semantic Scholar (S2)[2] to access an academic graph (AG). S2's graph is complete in the biomedical and computer science (CS) fields but not, for example, in astrophysics or mathematics. We will implement access to other AGs, but:
 
    - Google Scholar (accessible only inofficially through SerpAPI) has an AG that seems very complete, but they do not serve abstracts or TLDRs, and there is no search by DOI, nor do we get DOIs of search results
 
@@ -85,3 +85,4 @@ If you want to include a paper in the accepted list, just add the DOI using a te
 
 Ref.:
 1. Ralf Stephan. (2023). Automatizing biocurators' intuition: filtering scientific papers by analyzing titles and short summaries. https://doi.org/10.5281/zenodo.8388963
+2. [1] Kinney, Rodney Michael et al. “The Semantic Scholar Open Data Platform.” ArXiv abs/2301.10140 (2023) https://www.semanticscholar.org/
