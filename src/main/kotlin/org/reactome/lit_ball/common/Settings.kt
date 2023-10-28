@@ -33,17 +33,19 @@ object Settings {
                 throw IllegalArgumentException("Directory could not be created: $configDir")
         }
         val file = File(PATH)
+        var newMap: Map<String, String> = emptyMap()
+        reset()
         if (file.canRead()) {
             val text = file.readText()
             try {
-                map = json.decodeFromString(text)
+                newMap = json.decodeFromString(text)
             } catch (e: Exception) {
                 handleException(e)
             }
         } else {
-            reset()
             save()
         }
+        map += newMap
         RootStore.refreshQueryPathDisplay()
     }
 
