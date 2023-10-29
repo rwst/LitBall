@@ -13,19 +13,19 @@ interface ScholarClient
 object S2Client : ScholarClient {
     private const val DETAILS_CHUNK_SIZE = 30
     private const val SINGLE_QUERY_DELAY = 100L
-    private const val BULK_QUERY_DELAY = 5000L
+    private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
     private val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
 
-    suspend fun getBulkPaperDetailsWithAbstract(
+    suspend fun getBulkPaperDetails(
         doiSet: List<String>,
-        action: (S2Service.PaperDetailsWithAbstract) -> Unit
+        action: (S2Service.PaperDetails) -> Unit
     ): Boolean {
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach {
-            var papers: List<S2Service.PaperDetailsWithAbstract?>?
+            var papers: List<S2Service.PaperDetails?>?
             do {
                 papers = try {
-                    S2Service.getBulkPaperDetailsWithAbstract(
+                    S2Service.getBulkPaperDetails(
                         it,
                         "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                     )
@@ -79,15 +79,16 @@ object S2Client : ScholarClient {
         }
     }
 
-    suspend fun getPaperDetailsWithAbstract(
+    // Full protocol for non-bulk download of paper details for a list of DOIs
+    suspend fun getPaperDetails(
         doiSet: List<String>,
-        action: (S2Service.PaperDetailsWithAbstract) -> Unit
+        action: (S2Service.PaperDetails) -> Unit
     ): Boolean {
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         doiSet.forEachIndexed { index, it ->
             val pair = getDataOrHandleExceptions(it, index, size, indicatorTitle) {
-                S2Service.getSinglePaperDetailsWithAbstract(
+                S2Service.getSinglePaperDetails(
                     it,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
@@ -102,6 +103,7 @@ object S2Client : ScholarClient {
         return true
     }
 
+    // Full protocol for non-bulk download of paper refs for a list of DOIs
     suspend fun getRefs(
         doiSet: List<String>,
         action: (String, S2Service.PaperRefs) -> Unit

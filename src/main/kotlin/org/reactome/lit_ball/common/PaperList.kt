@@ -132,7 +132,7 @@ object PaperList {
             var maxId = if (papers.isNotEmpty()) papers.maxOf { it.id } else 0
             val acceptedWithDetails = papers.map { it.details.externalIds?.get("DOI")?.uppercase() ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
-            S2Client.getPaperDetailsWithAbstract(acceptedWithoutDetails) {
+            S2Client.getPaperDetails(acceptedWithoutDetails) {
                 maxId += 1
                 val oldDoi = it.externalIds?.get("DOI")
                 val doi = oldDoi?.uppercase()

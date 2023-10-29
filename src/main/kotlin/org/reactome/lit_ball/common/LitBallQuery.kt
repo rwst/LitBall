@@ -156,7 +156,7 @@ data class LitBallQuery(
         if (!mutex.tryLock()) return
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
-        val paperDetailsList = mutableListOf<S2Service.PaperDetailsWithAbstract>()
+        val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
         val rejectedDOIs: Set<String>
         if (setting == null)
             throw Exception("Can't happen")
@@ -166,7 +166,7 @@ data class LitBallQuery(
         if (queryDir.isDirectory && queryDir.canRead()) {
             val matcher = StringPatternMatcher(setting!!)
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
-            val result = S2Client.getPaperDetailsWithAbstract(doiSet) {
+            val result = S2Client.getPaperDetails(doiSet) {
                 val textsOfPaper: Set<String> = setOf(
                     it.title ?: "",
                     it.tldr?.get("text") ?: "",
@@ -235,7 +235,7 @@ data class LitBallQuery(
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private fun mergeIntoArchive(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+    private fun mergeIntoArchive(list: MutableList<S2Service.PaperDetails>) {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
             val file: File
@@ -251,7 +251,7 @@ data class LitBallQuery(
             } else {
                 mutableSetOf()
             }
-            val details: MutableSet<S2Service.PaperDetailsWithAbstract> = papers.map { it.details }.toMutableSet()
+            val details: MutableSet<S2Service.PaperDetails> = papers.map { it.details }.toMutableSet()
             details.addAll(list)
             file.writeText(
                 json.encodeToString(
@@ -353,7 +353,7 @@ private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String
     }
 }
 
-private fun sanitize(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+private fun sanitize(list: MutableList<S2Service.PaperDetails>) {
     list.forEachIndexed { index, paper ->
         val newPaper = paper.copy()
         var isChanged = false
@@ -370,7 +370,7 @@ private fun sanitize(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
     }
 }
 
-fun uppercaseDois(list: MutableList<S2Service.PaperDetailsWithAbstract>) {
+fun uppercaseDois(list: MutableList<S2Service.PaperDetails>) {
     list.forEach {
         val doi = it.externalIds?.get("DOI")
         if (it.externalIds != null && doi != null) {

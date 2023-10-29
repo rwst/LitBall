@@ -15,7 +15,7 @@ enum class Tag {
 @Serializable
 class Paper(
     var id: Int = -1,
-    val details: S2Service.PaperDetailsWithAbstract = S2Service.PaperDetailsWithAbstract(),
+    val details: S2Service.PaperDetails = S2Service.PaperDetails(),
     var tag: Tag = Tag.Rejected,
     var flags: MutableSet<String> = mutableSetOf()
 ) {

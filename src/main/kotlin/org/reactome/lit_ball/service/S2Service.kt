@@ -46,7 +46,7 @@ object S2Service {
 
     // Max supported fields: "paperId, externalIds, title, abstract, publicationTypes, tldr"
     @Serializable
-    data class PaperDetailsWithAbstract(
+    data class PaperDetails(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
         val title: String? = "",
@@ -88,26 +88,26 @@ object S2Service {
         suspend fun get(
             @Path("paper_id") paperId: String,
             @Query("fields") fields: String,
-        ): Response<PaperDetailsWithAbstract>
+        ): Response<PaperDetails>
     }
 
     interface BulkPaperApiBase {
         //suspend fun postRequest(map: Map<String, List<String>>, fields: String): Response<Any>?
     }
 
-    interface BulkPaperWithAbstractApi : BulkPaperApiBase {
+    interface BulkPaperDetailsApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
             @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
             @Query("fields") fields: String,
-        ): Response<List<PaperDetailsWithAbstract>>
+        ): Response<List<PaperDetails>>
     }
 
-    suspend fun getBulkPaperDetailsWithAbstract(
+    suspend fun getBulkPaperDetails(
         ids: List<String>,
         fields: String
-    ): List<PaperDetailsWithAbstract>? {
-        val api = RetrofitHelper.getInstance().create(BulkPaperWithAbstractApi::class.java)
+    ): List<PaperDetails>? {
+        val api = RetrofitHelper.getInstance().create(BulkPaperDetailsApi::class.java)
         val map = mapOf("ids" to ids)
         val result = api.postRequest(map, fields)
         if (result.isSuccessful) {
@@ -141,7 +141,7 @@ object S2Service {
         return null
     }
 
-    suspend fun getSinglePaperDetailsWithAbstract(paperId: String, fields: String): PaperDetailsWithAbstract? {
+    suspend fun getSinglePaperDetails(paperId: String, fields: String): PaperDetails? {
         val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
         val result = singlePaperApi.get(paperId, fields)
         if (result.isSuccessful) {
@@ -162,5 +162,4 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         throw HttpException(result)
     }
-
 }
