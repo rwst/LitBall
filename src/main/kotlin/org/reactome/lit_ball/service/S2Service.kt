@@ -1,48 +1,16 @@
 package org.reactome.lit_ball.service
 
 import kotlinx.serialization.Serializable
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.logging.HttpLoggingInterceptor.Level
-import org.reactome.lit_ball.BuildConfig
 import org.reactome.lit_ball.util.Logger
+import org.reactome.lit_ball.util.S2RetrofitHelper
 import retrofit2.HttpException
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.util.concurrent.TimeUnit
 
 object S2Service {
 
     // Copyright 2023 Ralf Stephan
     private const val TAG = "S2Service"
-
-    object RetrofitHelper {
-
-        private const val BASE_URL = "https://api.semanticscholar.org/"
-        private const val USER_AGENT = "LitBall ${BuildConfig.APP_VERSION} (https://github.com/rwst/LitBall)"
-        private var logging = HttpLoggingInterceptor()
-
-        fun getInstance(): Retrofit {
-            logging.level = Level.BASIC
-            val httpClient = OkHttpClient.Builder()
-            httpClient.addInterceptor(logging)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .addNetworkInterceptor {
-                    val request = it.request()
-                        .newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader("User-Agent", USER_AGENT)
-                        .build()
-                    it.proceed(request)
-                  }
-            return Retrofit.Builder().baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build()
-        }
-    }
 
     // Max supported fields: "paperId, externalIds, title, abstract, publicationTypes, tldr"
     @Serializable
@@ -107,7 +75,7 @@ object S2Service {
         ids: List<String>,
         fields: String
     ): List<PaperDetails>? {
-        val api = RetrofitHelper.getInstance().create(BulkPaperDetailsApi::class.java)
+        val api = S2RetrofitHelper.getInstance().create(BulkPaperDetailsApi::class.java)
         val map = mapOf("ids" to ids)
         val result = api.postRequest(map, fields)
         if (result.isSuccessful) {
@@ -130,7 +98,7 @@ object S2Service {
         ids: List<String>,
         fields: String
     ): List<PaperRefs>? {
-        val api = RetrofitHelper.getInstance().create(BulkPaperRefsApi::class.java)
+        val api = S2RetrofitHelper.getInstance().create(BulkPaperRefsApi::class.java)
         val map = mapOf("ids" to ids)
         val result = api.postRequest(map, fields)
         if (result.isSuccessful) {
@@ -142,7 +110,7 @@ object S2Service {
     }
 
     suspend fun getSinglePaperDetails(paperId: String, fields: String): PaperDetails? {
-        val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
+        val singlePaperApi = S2RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
         val result = singlePaperApi.get(paperId, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
@@ -153,7 +121,7 @@ object S2Service {
     }
 
     suspend fun getPaperRefs(paperId: String, fields: String): PaperRefs? {
-        val singleRefApi = RetrofitHelper.getInstance().create(PaperRefsApi::class.java)
+        val singleRefApi = S2RetrofitHelper.getInstance().create(PaperRefsApi::class.java)
         val result = singleRefApi.get(paperId, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
