@@ -25,6 +25,13 @@ object S2Service {
     )
 
     @Serializable
+    data class SearchResult(
+        val total: Int,
+        val token: String,
+        var data: List<PaperDetails> = emptyList(),
+    )
+
+    @Serializable
     data class Citations(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
@@ -75,7 +82,7 @@ object S2Service {
         ids: List<String>,
         fields: String
     ): List<PaperDetails>? {
-        val api = S2RetrofitHelper.getInstance().create(BulkPaperDetailsApi::class.java)
+        val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperDetailsApi::class.java)
         val map = mapOf("ids" to ids)
         val result = api.postRequest(map, fields)
         if (result.isSuccessful) {
@@ -98,9 +105,32 @@ object S2Service {
         ids: List<String>,
         fields: String
     ): List<PaperRefs>? {
-        val api = S2RetrofitHelper.getInstance().create(BulkPaperRefsApi::class.java)
+        val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperRefsApi::class.java)
         val map = mapOf("ids" to ids)
         val result = api.postRequest(map, fields)
+        if (result.isSuccessful) {
+            Logger.i(TAG, result.body().toString())
+            return result.body()
+        }
+        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
+        return null
+    }
+
+    interface BulkPaperSearchApi : BulkPaperApiBase {
+        @POST("/graph/v1/paper/search/bulk")
+        suspend fun postRequest(
+            @Query("query") query: String,
+            @Query("token") token: String,
+            @Query("fields") fields: String,
+        ): Response<SearchResult>
+    }
+    suspend fun getBulkPaperSearch(
+        query: String,
+        token: String,
+        fields: String
+    ): SearchResult? {
+        val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperSearchApi::class.java)
+        val result = api.postRequest(query, token, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()

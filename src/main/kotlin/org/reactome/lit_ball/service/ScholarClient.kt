@@ -3,6 +3,7 @@ package org.reactome.lit_ball.service
 import kotlinx.coroutines.delay
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
+import org.reactome.lit_ball.util.S2SearchExpression
 import org.reactome.lit_ball.util.handleException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -16,6 +17,80 @@ object S2Client : ScholarClient {
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
     private val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
+
+    private suspend fun <T> getDataOrHandleExceptions(
+        index: Int,
+        size: Int,
+        indicatorTitle: String,
+        getData: suspend () -> T
+    ): Pair<T?, Boolean> {
+        while (true) {
+            try {
+                val data = getData()
+                return Pair(data, true)
+            } catch (e: SocketTimeoutException) {
+                Logger.i(TAG, "TIMEOUT")
+                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
+                    return Pair(null, false)
+            } catch (e: HttpException) {
+                Logger.i(TAG, "ERROR ${e.code()}")
+                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
+                    return Pair(null, false)
+                when (e.code()) {
+                    400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
+                    429, 504 -> delay(strategy.delay(false))
+                    // API says too fast, so delay and repeat
+                    else -> throw e
+                }
+            } catch (e: UnknownHostException) {
+                Logger.i(TAG, "ERROR ${e.message}")
+                RootStore.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
+                return Pair(null, false)
+            }
+        }
+    }
+
+    // Full protocol for bulk download of paper details for a search
+    suspend fun getBulkPaperSearch(
+        query: String,
+        action: (S2Service.PaperDetails) -> Unit
+    ): Boolean {
+        val s2expr = S2SearchExpression.from(query)
+        val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
+        var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
+            S2Service.getBulkPaperSearch(
+                s2expr,
+                "",
+                "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
+            )
+        }
+        if (!pair.second) return false
+        if (pair.first == null) return true
+        var (total, token, data) = pair.first!!
+        data.forEach { action(it) }
+        delay(strategy.delay(true))
+        var numDone = data.size
+        if (total > numDone) {
+            pair = getDataOrHandleExceptions(numDone, total, indicatorTitle) {
+                S2Service.getBulkPaperSearch(
+                    s2expr,
+                    token,
+                    "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
+                )
+            }
+            if (!pair.second) return false
+            if (pair.first == null) return true
+            val (_, token1, data1) = pair.first!!
+            token = token1
+            data1.forEach { action(it) }
+            delay(strategy.delay(true))
+            numDone += data.size
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f * numDone) / total, "$numDone/$total"))
+                return false
+            RootStore.setProgressIndication()
+        }
+        return true
+    }
 
     suspend fun getBulkPaperDetails(
         doiSet: List<String>,
@@ -46,39 +121,6 @@ object S2Client : ScholarClient {
         return true
     }
 
-    private suspend fun <T> getDataOrHandleExceptions(
-        doi: String,
-        index: Int,
-        size: Int,
-        indicatorTitle: String,
-        getData: suspend (doi: String) -> T
-    ): Pair<T?, Boolean> {
-        while (true) {
-            try {
-                val data = getData("DOI:$doi")
-                return Pair(data, true)
-            } catch (e: SocketTimeoutException) {
-                Logger.i(TAG, "TIMEOUT")
-                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
-                    return Pair(null, false)
-            } catch (e: HttpException) {
-                Logger.i(TAG, "ERROR ${e.code()}")
-                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
-                    return Pair(null, false)
-                when (e.code()) {
-                    400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
-                    429, 504 -> delay(strategy.delay(false))
-                    // API says too fast, so delay and repeat
-                    else -> throw e
-                }
-            } catch (e: UnknownHostException) {
-                Logger.i(TAG, "ERROR ${e.message}")
-                RootStore.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
-                return Pair(null, false)
-            }
-        }
-    }
-
     // Full protocol for non-bulk download of paper details for a list of DOIs
     suspend fun getPaperDetails(
         doiSet: List<String>,
@@ -87,7 +129,7 @@ object S2Client : ScholarClient {
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         doiSet.forEachIndexed { index, it ->
-            val pair = getDataOrHandleExceptions(it, index, size, indicatorTitle) {
+            val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getSinglePaperDetails(
                     it,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
@@ -111,9 +153,9 @@ object S2Client : ScholarClient {
         val size = doiSet.size
         val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
         doiSet.forEachIndexed { index, doi ->
-            val pair = getDataOrHandleExceptions(doi, index, size, indicatorTitle) {
+            val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getPaperRefs(
-                    it,
+                    doi,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
                 )
             }
