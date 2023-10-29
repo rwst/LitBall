@@ -67,7 +67,7 @@ object S2Client : ScholarClient {
                     return Pair(null, false)
                 when (e.code()) {
                     400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
-                    429 -> delay(strategy.delay(false))
+                    429, 504 -> delay(strategy.delay(false))
                     // API says too fast, so delay and repeat
                     else -> throw e
                 }
