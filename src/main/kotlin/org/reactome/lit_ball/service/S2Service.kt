@@ -57,16 +57,6 @@ object S2Service {
     )
 
     @Serializable
-    data class PaperDetails(
-        val paperId: String? = "",
-        var externalIds: Map<String, String>? = emptyMap(),
-        val title: String? = "",
-        var publicationTypes: List<String>? = emptyList(),
-        var tldr: Map<String, String>? = emptyMap(),
-        var publicationDate: String? = "",
-    )
-
-    @Serializable
     data class Citations(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
@@ -128,29 +118,6 @@ object S2Service {
         return null
     }
 
-    interface BulkPaperApi : BulkPaperApiBase {
-        @POST("/graph/v1/paper/batch")
-        suspend fun postRequest(
-            @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
-            @Query("fields") fields: String,
-        ): Response<List<PaperDetails>>
-    }
-
-    suspend fun getBulkPaperDetails(
-        ids: List<String>,
-        fields: String
-    ): List<PaperDetails>? {
-        val api = RetrofitHelper.getInstance().create(BulkPaperApi::class.java)
-        val map = mapOf("ids" to ids)
-        val result = api.postRequest(map, fields)
-        if (result.isSuccessful) {
-            Logger.i(TAG, result.body().toString())
-            return result.body()
-        }
-        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
-    }
-
     interface BulkPaperRefsApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
@@ -196,14 +163,4 @@ object S2Service {
         throw HttpException(result)
     }
 
-    suspend fun getPaperDetails(paperId: String, fields: String): PaperDetailsWithAbstract? {
-        val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
-        val result = singlePaperApi.get(paperId, fields)
-        if (result.isSuccessful) {
-            Logger.i(TAG, result.body().toString())
-            return result.body()
-        }
-        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
-    }
 }
