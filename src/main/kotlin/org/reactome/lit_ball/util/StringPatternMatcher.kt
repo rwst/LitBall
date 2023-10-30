@@ -13,12 +13,14 @@ val logicDelims = logicOps.map { " $it " } + logicOps.map { " ${it.uppercase(Loc
 
 class StringPatternMatcher(setting: QuerySetting) {
     abstract class PatternParser (val regexes: List<Regex>, val expr: String) {
+        abstract val wordList: List<String>
+        abstract val theExpr: String
         abstract fun match(text: String): Boolean
 
         companion object {
             fun createFrom(aSet: Set<String>?): PatternParser {
                 if (aSet.isNullOrEmpty())
-                    return KeywordListParser(emptyList(), "")
+                    return KeywordListParser(emptyList(),  emptyList(), "")
                 if (aSet.first().startsWith("(") && logicOpRegexes.any { it.containsMatchIn(aSet.first()) }) {
                     val wordList = aSet
                         .first()
@@ -26,23 +28,29 @@ class StringPatternMatcher(setting: QuerySetting) {
                         .filterNot { it.isEmpty() }
                     var expr = aSet.first()
                     wordList.forEachIndexed { index, s -> expr = expr.replaceFirst(s, "word$index") }
-                    return LogicalExpressionParser(wordList
+                    return LogicalExpressionParser(wordList,
+                        wordList
                         .map { "\\b" + it.replace("*", "\\p{Alnum}*") + "\\b" }
                         .map { it.toRegex(RegexOption.IGNORE_CASE) },
                         expr
                     )
                 }
                 return KeywordListParser(
+                    aSet.toList(),
                     makeRegexListFrom(aSet),
                     ""
                 )
             }
         }
     }
-    class KeywordListParser(regexes: List<Regex>, expr: String) : PatternParser(regexes, expr) {
+    class KeywordListParser(words: List<String>, regexes: List<Regex>, expr: String) : PatternParser(regexes, expr) {
+        override val wordList: List<String> = words
+        override val theExpr: String = expr
         override fun match(text: String) = regexes.any { it.containsMatchIn(text) }
     }
-    class LogicalExpressionParser(regexes: List<Regex>, expr: String) : PatternParser(regexes, expr) {
+    class LogicalExpressionParser(words: List<String>, regexes: List<Regex>, expr: String) : PatternParser(regexes, expr) {
+        override val wordList: List<String> = words
+        override val theExpr: String = expr
         override fun match(text: String): Boolean {
             val vars: MutableMap<String, Boolean> = mutableMapOf()
             regexes.forEachIndexed { index, regex ->
@@ -55,8 +63,8 @@ class StringPatternMatcher(setting: QuerySetting) {
         }
     }
 
-    private val parser1: PatternParser
-    private val parser2: PatternParser
+    val parser1: PatternParser
+    val parser2: PatternParser
 
     init {
         parser1 = PatternParser.createFrom(setting.mandatoryKeyWords)
