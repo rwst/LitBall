@@ -1,6 +1,7 @@
 package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.delay
+import org.reactome.lit_ball.common.QuerySetting
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.S2SearchExpression
@@ -52,10 +53,10 @@ object S2Client : ScholarClient {
 
     // Full protocol for bulk download of paper details for a search
     suspend fun getBulkPaperSearch(
-        query: String,
+        setting: QuerySetting,
         action: (S2Service.PaperDetails) -> Unit
     ): Boolean {
-        val s2expr = S2SearchExpression.from(query)
+        val s2expr = S2SearchExpression.from(setting)
         val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
             S2Service.getBulkPaperSearch(

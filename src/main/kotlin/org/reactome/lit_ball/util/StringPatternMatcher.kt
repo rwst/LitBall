@@ -25,6 +25,7 @@ class StringPatternMatcher(setting: QuerySetting) {
                     val wordList = aSet
                         .first()
                         .split ("(", ")", *logicDelims.toTypedArray())
+                        .map { it.trim() }
                         .filterNot { it.isEmpty() }
                     var expr = aSet.first()
                     wordList.forEachIndexed { index, s -> expr = expr.replaceFirst(s, "word$index") }
@@ -56,9 +57,9 @@ class StringPatternMatcher(setting: QuerySetting) {
             regexes.forEachIndexed { index, regex ->
                 vars["word$index"] = regex.containsMatchIn(text)
             }
-            var theExpr: String = expr
-            logicOpRegexes.forEachIndexed { idx, rgx -> theExpr = theExpr.replace(rgx, logicOpSymbols[idx]) }
-            return ExpressionEvaluator.evaluateAsBoolean(theExpr, vars)
+            var resExpr: String = expr
+            logicOpRegexes.forEachIndexed { idx, rgx -> resExpr = resExpr.replace(rgx, logicOpSymbols[idx]) }
+            return ExpressionEvaluator.evaluateAsBoolean(resExpr, vars)
                 ?: throw Exception("Could not evaluate logical expression")
         }
     }
