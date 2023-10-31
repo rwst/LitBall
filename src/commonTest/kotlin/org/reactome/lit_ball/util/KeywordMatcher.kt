@@ -97,8 +97,9 @@ class KeywordMatcherTest {
     @Test
     fun shouldFindMatches() {
         testData.forEach {
-            val setting = QuerySetting(StringPatternMatcher.patternSettingFrom(it.posKeywords),
-                StringPatternMatcher.patternSettingFrom(it.negKeywords)
+            val setting = QuerySetting(
+                mandatoryKeyWords = StringPatternMatcher.patternSettingFrom(it.posKeywords),
+                forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(it.negKeywords)
             )
             val matcher = StringPatternMatcher(setting)
             if (matcher.match(it.text1, it.text2) != it.result)
