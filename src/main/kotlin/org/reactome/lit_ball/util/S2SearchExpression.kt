@@ -3,13 +3,14 @@ package org.reactome.lit_ball.util
 import org.reactome.lit_ball.common.QuerySetting
 
 object S2SearchExpression {
+    val logicOpSymbols = listOf(" + ", " | ", " -")
     fun from(setting: QuerySetting): String {
         val matcher = StringPatternMatcher(setting)
         return matcher.getS2SearchExpression()
     }
 }
 
-val notRegex = "!\\s*".toRegex()
+val notRegex = "-\\s*".toRegex()
 val spaceRegex = "\\s+".toRegex()
 
 fun StringPatternMatcher.getS2SearchExpression(): String {
@@ -21,10 +22,11 @@ fun StringPatternMatcher.getS2SearchExpression(): String {
         }
     }
     var expr = this.parser1.theExpr
-    expr = expr.replace("||", " | ")
-        .replace("&&", " + ")
-        .replace(notRegex, " !")
-        .replace(spaceRegex, " ")
+    StringPatternMatcher.logicOpRegexes.forEachIndexed { idx, rgx ->
+        expr = expr.replace(rgx, S2SearchExpression.logicOpSymbols[idx])
+    }
+    expr = expr.replace(spaceRegex, " ")
+    expr = expr.replace(notRegex, "-")
     this.parser1.wordList.forEachIndexed { index, s ->
         var str = s
         if (s.contains(' '))

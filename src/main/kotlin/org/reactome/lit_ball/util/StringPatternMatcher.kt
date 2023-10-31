@@ -75,7 +75,7 @@ class StringPatternMatcher(setting: QuerySetting) {
         return parser1.match(text1) && !parser2.match(text2)
     }
     companion object {
-        private val logicOpRegexes: List<Regex>
+        val logicOpRegexes: List<Regex>
         init {
             logicOpRegexes = makeRegexListFrom(logicOps.toSet())
         }
