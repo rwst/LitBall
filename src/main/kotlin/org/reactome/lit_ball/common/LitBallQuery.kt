@@ -103,6 +103,11 @@ data class LitBallQuery(
         if (!mutex.tryLock()) return
         val tag = "EXPAND"
         val queryDir = getQueryDir(name)
+        if (type == Qtype.EXPRESSION_SEARCH) {
+            expressionSearch()
+            mutex.unlock()
+            return
+        }
         ExpandQueryCache.init(File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}"))
         val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
         var nulls = 0
@@ -260,6 +265,44 @@ data class LitBallQuery(
         }
     }
 
+    private suspend fun expressionSearch() {
+        val tag = "EXPRSEARCH"
+        val queryDir = getQueryDir(name)
+        val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
+        if (setting == null)
+            throw Exception("Can't happen")
+
+        val matcher = StringPatternMatcher(setting!!)
+        val result = S2Client.getBulkPaperSearch(setting!!) {
+            if (!matcher.parser2.match(it.title?: ""))
+                paperDetailsList.add(it)
+        }
+        // Bail out on Cancel
+        if (!result) return
+        Logger.i(tag, "Retained ${paperDetailsList.size} records")
+        uppercaseDois(paperDetailsList)
+        sanitize(paperDetailsList)
+        RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
+
+        acceptedSet = paperDetailsList
+            .mapNotNull { it.externalIds?.get("DOI") }
+            .filterNot { it.isEmpty() }
+            .toMutableSet()
+        if (queryDir.isDirectory && queryDir.canWrite()) {
+            try {
+                val file = File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}")
+                file.writeText(acceptedSet.joinToString("\n"))
+                mergeIntoArchive(paperDetailsList)
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+        }
+        noNewAccepted = true
+        writeNoNewAccepted()
+        status = QueryStatus.FILTERED2
+        RootStore.refreshList()
+    }
     suspend fun filter2() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
