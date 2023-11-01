@@ -117,8 +117,13 @@ object S2Service {
     }
 
     interface BulkPaperSearchApi : BulkPaperApiBase {
-        @POST("/graph/v1/paper/search/bulk")
-        suspend fun postRequest(
+        @GET("/graph/v1/paper/search/bulk")
+        suspend fun getRequest(
+            @Query("query") query: String,
+            @Query("fields") fields: String,
+        ): Response<SearchResult>
+        @GET("/graph/v1/paper/search/bulk")
+        suspend fun getRequestWithToken(
             @Query("query") query: String,
             @Query("token") token: String,
             @Query("fields") fields: String,
@@ -126,11 +131,14 @@ object S2Service {
     }
     suspend fun getBulkPaperSearch(
         query: String,
-        token: String,
-        fields: String
+        fields: String,
+        token: String? = null,
     ): SearchResult? {
         val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperSearchApi::class.java)
-        val result = api.postRequest(query, token, fields)
+        val result = if (token != null)
+            api.getRequestWithToken(query, token, fields)
+        else
+            api.getRequest(query, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()

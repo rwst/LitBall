@@ -60,9 +60,8 @@ object S2Client : ScholarClient {
         val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
             S2Service.getBulkPaperSearch(
-                s2expr,
-                "",
-                "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
+                query = s2expr,
+                fields = "paperId,externalIds,title,abstract,publicationTypes,publicationDate"
             )
         }
         if (!pair.second) return false
@@ -74,9 +73,9 @@ object S2Client : ScholarClient {
         if (total > numDone) {
             pair = getDataOrHandleExceptions(numDone, total, indicatorTitle) {
                 S2Service.getBulkPaperSearch(
-                    s2expr,
+                    query = s2expr,
+                    fields = "paperId,externalIds,title,abstract,publicationTypes,publicationDate",
                     token,
-                    "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
             }
             if (!pair.second) return false
