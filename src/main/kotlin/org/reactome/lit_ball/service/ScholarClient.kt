@@ -2,10 +2,10 @@ package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.delay
 import org.reactome.lit_ball.common.QuerySetting
+import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.S2SearchExpression
-import org.reactome.lit_ball.util.handleException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -17,7 +17,7 @@ object S2Client : ScholarClient {
     private const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
-    private val strategy = DelayStrategy(SINGLE_QUERY_DELAY)
+    private lateinit var strategy: DelayStrategy
 
     private suspend fun <T> getDataOrHandleExceptions(
         index: Int,
@@ -56,6 +56,7 @@ object S2Client : ScholarClient {
         setting: QuerySetting,
         action: (S2Service.PaperDetails) -> Unit
     ): Boolean {
+        strategy = DelayStrategy(BULK_QUERY_DELAY)
         val s2expr = S2SearchExpression.from(setting)
         val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
@@ -92,40 +93,49 @@ object S2Client : ScholarClient {
         return true
     }
 
-    suspend fun getBulkPaperDetails(
-        doiSet: List<String>,
-        action: (S2Service.PaperDetails) -> Unit
-    ): Boolean {
-        doiSet.chunked(DETAILS_CHUNK_SIZE).forEach {
-            var papers: List<S2Service.PaperDetails?>?
-            do {
-                papers = try {
-                    S2Service.getBulkPaperDetails(
-                        it,
-                        "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
-                    )
-                } catch (e: Exception) {
-                    handleException(e)
-                    return false
-                } catch (e: SocketTimeoutException) {
-                    Logger.i(TAG, "TIMEOUT")
-                    null
-                }
-                if (papers != null) {
-                    if (papers.isNotEmpty()) break
-                }
-                delay(BULK_QUERY_DELAY)
-            } while (papers.isNullOrEmpty())
-            papers?.filterNotNull()?.forEach(action)
-        }
-        return true
-    }
-
-    // Full protocol for non-bulk download of paper details for a list of DOIs
     suspend fun getPaperDetails(
         doiSet: List<String>,
         action: (S2Service.PaperDetails) -> Unit
     ): Boolean {
+        return if (Settings.map["S2-API-key"].isNullOrEmpty())
+            getSinglePaperDetails(doiSet, action)
+        else
+            getBulkPaperDetails(doiSet, action)
+    }
+
+    // Full protocol for bulk download of paper details for a list of DOIs
+    private suspend fun getBulkPaperDetails(
+        doiSet: List<String>,
+        action: (S2Service.PaperDetails) -> Unit
+    ): Boolean {
+        strategy = DelayStrategy(BULK_QUERY_DELAY)
+        val size = doiSet.size
+        val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
+        var index = 0
+        doiSet.chunked(DETAILS_CHUNK_SIZE).forEach {
+            val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
+                S2Service.getBulkPaperDetails(
+                    it,
+                    "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
+                )
+            }
+            if (!pair.second) return false
+            delay(strategy.delay(true))
+            pair.first?.forEach(action)
+            index += it.size
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
+                return false
+        }
+        RootStore.setProgressIndication()
+        return true
+    }
+
+    // Full protocol for non-bulk download of paper details for a list of DOIs
+    private suspend fun getSinglePaperDetails(
+        doiSet: List<String>,
+        action: (S2Service.PaperDetails) -> Unit
+    ): Boolean {
+        strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         doiSet.forEachIndexed { index, it ->
@@ -150,6 +160,7 @@ object S2Client : ScholarClient {
         doiSet: List<String>,
         action: (String, S2Service.PaperRefs) -> Unit
     ): Boolean {
+        strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
         doiSet.forEachIndexed { index, doi ->
