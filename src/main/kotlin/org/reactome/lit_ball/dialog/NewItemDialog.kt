@@ -37,6 +37,7 @@ fun NewItemDialog(
     val fieldValue = rememberSaveable { mutableStateOf("") }
     val nameValue = rememberSaveable { mutableStateOf("") }
     val checkValue = rememberSaveable { mutableStateOf(true) }
+    val nameCheckValue = rememberSaveable { mutableStateOf(true) }
     val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
     val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
 
@@ -56,7 +57,8 @@ fun NewItemDialog(
                         return@TextButton
                     }
                     checkValue.value = dois.isNotEmpty() && name.isNotEmpty()
-                    if (checkValue.value) {
+                    nameCheckValue.value = name !in QueryList.list.map { it.name }
+                    if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
                             QueryList.addNewItem(typeValue.value, name, dois)
                         }
@@ -188,6 +190,8 @@ fun NewItemDialog(
                 }
                 if (!checkValue.value)
                     Text("Please fill both text fields.")
+                if (!nameCheckValue.value)
+                    Text("Query name already exists in directory.")
             }
         },
     )
