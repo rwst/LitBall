@@ -74,7 +74,7 @@ object QueryList {
                 id = list.size,
                 type = Qtype.entries[type],
                 name = name,
-                acceptedSet = dois.toMutableSet()
+                acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
             )
         )
         sort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
