@@ -162,31 +162,35 @@ fun NewItemDialog(
                         )
                     }
                 }
-                Row {
-                    Tooltip(text = """
-                        Input one DOI per line. It is not necessary to manually trim
-                        the DOI strings. LitBall will automatically chop off everything
-                        before the “10…” part, so simply copypasting a DOI link will be
-                        handled.""".trimIndent(),
-                        Modifier.align(Alignment.CenterVertically)) {
-                        Icon(
-                            painterResource(Icons.Help),
-                            contentDescription = "Query Settings",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(20.dp)
-                                .align(Alignment.CenterVertically),
+                if (typeValue.value > 0) {
+                    Row {
+                        Tooltip(
+                            text = """
+                            Input one DOI per line. It is not necessary to manually trim
+                            the DOI strings. LitBall will automatically chop off everything
+                            before the “10…” part, so simply copypasting a DOI link will be
+                            handled.""".trimIndent(),
+                            Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                painterResource(Icons.Help),
+                                contentDescription = "Query Settings",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(20.dp)
+                                    .align(Alignment.CenterVertically),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        TextField(
+                            value = fieldValue.value,
+                            onValueChange = {
+                                fieldValue.value = it.transformDOI()
+                                pathWarningValue.value = null
+                            },
+                            label = { Text("Core DOIs (one per line)") },
+                            placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
                         )
                     }
-                    Spacer(modifier = Modifier.width(14.dp))
-                    TextField(
-                        value = fieldValue.value,
-                        onValueChange = {
-                            fieldValue.value = it.transformDOI()
-                            pathWarningValue.value = null
-                        },
-                        label = { Text("Core DOIs (one per line)") },
-                        placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
-                    )
                 }
                 if (!checkValue.value)
                     Text("Please fill both text fields.")
