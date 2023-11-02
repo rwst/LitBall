@@ -18,6 +18,14 @@ While LitBall is aimed to enable exhaustive literature searches on any academic 
 
  - LitBall handles small topics easily, we use it all the time for biocuration. The more general your keywords become, the more papers will pass automatic filtering. As soon as you are presented, during supervised filtering, with more than a few hundred choices, you either need to consider negative ("forbidden") keywords, or you will need unsustainable time to sort things out.
 
+Choice of query type
+^^^^^^^^^^^^^^^^^^^^
+There are at the moment two types of queries available:
+
+ - Interleaved Snowballing: input a keyphrase list or logical expression containing key phrases. These are used to filter papers from backward/forward snowballing rounds, together with manual supervised filtering steps. This is the default.
+
+ - Expression Search: input a keyphrase list or logical expression containing key phrases to download all matching article details from Semantic Scholar. *This requires an S2 API key*. Paper details count as "accepted" and can be viewed / annotated / exported.
+
 Keyphrase lists / Expressions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 There are two ways search patterns can be specified:
@@ -82,6 +90,9 @@ Can I edit data?
 Yes, you can! LitBall on start up loads every data from the files in the respective query directories. These are all simple text files like lists of DOIs, or JSON.
 If you want to include a paper in the accepted list, just add the DOI using a text editor and restart LitBall.
 
+Can data download be accelerated?
+---------------------------------
+Yes! Semantic Scholar offers bulk access for users with API key, and LitBall uses an API key if it is specified in the general settings. Also expression-type queries require an API key. Request an API key at https://www.semanticscholar.org/product/api#api-key
 
 Ref.:
 1. Ralf Stephan. (2023). Automatizing biocurators' intuition: filtering scientific papers by analyzing titles and short summaries. https://doi.org/10.5281/zenodo.8388963
