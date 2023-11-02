@@ -48,6 +48,7 @@ fun NewItemDialog(
                 onClick = {
                     val dois = fieldValue.value.split("\n")
                         .map { it.trim().transformDOI() }
+                        .filter { it.isNotBlank() }
                         .toSet()
                     val name = nameValue.value.trim()
                     pathWarningValue.value = null
@@ -56,7 +57,7 @@ fun NewItemDialog(
                         pathWarningValue.value = "Query directory is not writable"
                         return@TextButton
                     }
-                    checkValue.value = dois.isNotEmpty() && name.isNotEmpty()
+                    checkValue.value = name.isNotEmpty() && (typeValue.value == 0 || dois.isNotEmpty())
                     nameCheckValue.value = name !in QueryList.list.map { it.name }
                     if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
@@ -193,7 +194,7 @@ fun NewItemDialog(
                     }
                 }
                 if (!checkValue.value)
-                    Text("Please fill both text fields.")
+                    Text("Please fill in the text fields.")
                 if (!nameCheckValue.value)
                     Text("Query name already exists in directory.")
             }
