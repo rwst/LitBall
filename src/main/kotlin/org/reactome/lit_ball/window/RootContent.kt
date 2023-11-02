@@ -60,4 +60,13 @@ fun RootContent(
     state.doInformationalDialog?.also {
         InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
     }
+
+    if (state.doConfirmationDialog.first != null) {
+        ConfirmationDialog(
+            title = "NOTE",
+            text = state.doConfirmationDialog.second,
+            onCloseClicked = model::closeConfirmationDialog,
+            onConfirmClicked = state.doConfirmationDialog.first!!
+        )
+    }
 }

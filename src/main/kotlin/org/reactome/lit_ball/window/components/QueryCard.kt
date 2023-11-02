@@ -8,6 +8,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ fun QueryCard(
     onSettingsClicked: (Int?) -> Unit,
     onGoClicked: (status: QueryStatus, id: Int) -> Unit,
     onAnnotateClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
 ) {
     val chipColors = listOf(
         Color.hsv(186F, 1F, 1F),
@@ -114,6 +116,21 @@ fun QueryCard(
                     Text(
                         text = "Annotate\naccepted",
                         fontSize = 14.sp
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(14.dp))
+            Tooltip("Delete query on disk", Modifier.align(Alignment.CenterVertically)) {
+                IconButton(
+                    onClick = onDeleteClicked,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Remove Query",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
                     )
                 }
             }

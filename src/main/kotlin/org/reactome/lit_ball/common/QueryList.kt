@@ -2,6 +2,7 @@ package org.reactome.lit_ball.common
 
 import kotlinx.serialization.Serializable
 import org.reactome.lit_ball.model.RootStore
+import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
@@ -79,6 +80,19 @@ object QueryList {
         )
         sort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         RootStore.refreshList()
+    }
+    fun removeDir(id: Int?) {
+        val name = itemFromId(id)?.name
+        val queryDir = name?.let { getQueryDir(it) }
+        if (queryDir != null) {
+            if (queryDir.exists()) {
+                try {
+                    queryDir.deleteRecursively()
+                } catch (e: Exception) {
+                    Logger.error(e)
+                }
+            }
+        }
     }
 
     fun sort(type: SortingType) {

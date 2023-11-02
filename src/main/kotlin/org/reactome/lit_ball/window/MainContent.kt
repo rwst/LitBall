@@ -63,6 +63,7 @@ internal fun MainContent(
                 onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
                 onItemGoClicked = { status, id -> model.nextAction(status, id) },
                 onItemAnnotateClicked = { id -> model.onAnnotateStarted(id) },
+                onDeleteClicked = { id -> model.onDeleteQueryClicked(id) }
             )
         }
     }
@@ -74,7 +75,8 @@ private fun ListContent(
     onItemClicked: (id: Int) -> Unit,
     onItemSettingsClicked: (id: Int?) -> Unit,
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
-    onItemAnnotateClicked: (id: Int) -> Unit
+    onItemAnnotateClicked: (id: Int) -> Unit,
+    onDeleteClicked: (id: Int) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -103,6 +105,7 @@ private fun ListContent(
                     onItemSettingsClicked,
                     onGoClicked = onItemGoClicked,
                     onAnnotateClicked = { onItemAnnotateClicked(item.id) },
+                    onDeleteClicked = { onDeleteClicked(item.id) },
                 )
                 Divider()
             }

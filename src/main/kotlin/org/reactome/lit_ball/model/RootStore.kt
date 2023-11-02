@@ -163,6 +163,22 @@ object RootStore {
         AnnotatingRootStore.refreshList()
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
+    fun onDeleteQueryClicked(id: Int?) {
+        val name = QueryList.itemFromId(id)?.name
+        setState { copy(doConfirmationDialog = Pair(
+            {
+                scope.launch(Dispatchers.IO) {
+                    QueryList.removeDir(id)
+                    QueryList.fill()
+                }
+            },
+            "You really want to delete Query $name?"))
+        }
+    }
+
+    fun closeConfirmationDialog() {
+        setState { copy(doConfirmationDialog = Pair(null, "")) }
+    }
 
     fun onQueryPathClicked() {
         scope.launch (Dispatchers.IO) {
@@ -233,4 +249,5 @@ data class RootState(
     val progressIndication: ProgressIndicatorParameter? = null,
     val doInformationalDialog: String? = null,
     val aboutDialog: Boolean = false,
+    val doConfirmationDialog: Pair<(() -> Unit)?, String> = Pair(null, "")
 )
