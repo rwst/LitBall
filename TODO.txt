@@ -1,29 +1,28 @@
- - help tooltips in new query dialog
  - mumble benchmark
    Wahono search string: (software OR applicati* OR systems ) AND (fault* OR
                          defect* OR quality OR error-prone) AND (predict*
                          OR prone* OR probability OR assess* OR detect* OR
                          estimat* OR classificat*)
-   Hallux valgus: "(hallux valgus or bunion) and (prevalence or incidence or epidemiology)"
 
 Doc:
+ - expr search
  - reasons why not all papers found:
    - start set not representative or not highly cited
    - missing keywords
    - local Chinese papers are underrepresented in S2
 
 Features:
- - move dialog tooltips to the left
  - file selectors in settings dialog
- - alternatively use Open Citations
  - three types of queries:
    1. snowballing with supervision on each round,
    2. snowballing without supervision, needs a stop criterion
-   3. simple logical expression matching (does S2 support phrases or only words?)
-
+   3. simple logical expression matching
  - recipes: export to / start / import from annotation tool --- both in filter2
  - in filter2()  Prodigy
  - in annotate() export to / start / import from Prodigy
+ - manually add DOIs to accepted
+ - HTTP buffer
+ - settings mutex
  - optional wordnet capability to include synonyms
  - clicking sort in filtering2 still grabs focus
  - new query from old (allowing change of keywords but shortcutting some download)

@@ -2,6 +2,18 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
+v2327
+ - bulk access via S2API keys
+ - new query type: bulk expression search (requires S2API key)
+ - automatic bulk data download if S2API key present
+ - trash button in query card
+ - fix: query (name) already exists (new query dialog)
+ - fix: no DOIS on create: Accepted: 1
+ - fix: new query dialog checkvalue
+
+v2326.1
+ - hotfix: HTTP 504 from S2
+
 v2326
  - hotfix: new query dialog regression
 
