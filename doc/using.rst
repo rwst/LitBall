@@ -20,9 +20,11 @@ While LitBall is aimed to enable exhaustive literature searches on any academic 
 
 Choice of query type
 ^^^^^^^^^^^^^^^^^^^^
-There are at the moment two types of queries available:
+There are at the moment three types of queries available:
 
- - Interleaved Snowballing: input a keyphrase list or logical expression containing key phrases. These are used to filter papers from backward/forward snowballing rounds, together with manual supervised filtering steps. This is the default.
+ - Interleaved Snowballing: input a keyphrase list or logical expression containing key phrases, and core DOIs. These are used to filter papers from backward/forward snowballing rounds, together with manual supervised filtering steps. This is the default.
+
+ - Automatic Snowballing: input a keyphrase list or logical expression containing key phrases, and core DOIs. Same as above except there is no supervised filtering---all results that passed keyword filtering are automatically accepted.
 
  - Expression Search: input a keyphrase list or logical expression containing key phrases to download all matching article details from Semantic Scholar. *This requires an S2 API key*. Paper details count as "accepted" and can be viewed / annotated / exported.
 
