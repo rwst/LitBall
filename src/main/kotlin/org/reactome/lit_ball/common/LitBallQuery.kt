@@ -74,6 +74,13 @@ data class LitBallQuery(
     }
 
     fun nextActionText(): String {
+        if (type == Qtype.EXPRESSION_SEARCH)
+            return arrayOf(
+                "Complete the Setting",
+                "Search",
+                "Search",
+                "Search",
+            )[status.ordinal]
         return arrayOf(
             "Complete the Setting",
             "Start expansion",
