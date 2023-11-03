@@ -24,7 +24,8 @@ import java.nio.file.attribute.FileTime
 import java.util.*
 import kotlin.io.path.Path
 
-enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1 }
+enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1, EXPLODED }
+const val EXPLODED_LIMIT = 20000
 @Serializable
 enum class Qtype(val pretty: String) {
     EXPRESSION_SEARCH("Expression Search"),
@@ -73,20 +74,28 @@ data class LitBallQuery(
         return "Query(id=$id, name=$name, status=$status, setting=$setting, nrAccepted=${nrAccepted()}, nrRejected=${nrRejected()}, lastExpansionDate=$lastExpansionDate)"
     }
 
-    fun nextActionText(): String {
-        if (type == Qtype.EXPRESSION_SEARCH)
-            return arrayOf(
+    fun nextActionText(): String = when(type) {
+        Qtype.EXPRESSION_SEARCH ->
+            arrayOf(
                 "Complete the Setting",
                 "Search",
                 "Search",
                 "Search",
             )[status.ordinal]
-        return arrayOf(
-            "Complete the Setting",
-            "Start expansion",
-            "Automatic filtering",
-            "Supervised filtering"
-        )[status.ordinal]
+        Qtype.SNOWBALLING ->
+            arrayOf(
+                "Complete the Setting",
+                "Start expansion",
+                "Start expansion",
+                "Start expansion",
+            )[status.ordinal]
+        Qtype.SUPERVISED_SNOWBALLING ->
+            arrayOf(
+                "Complete the Setting",
+                "Start expansion",
+                "Automatic filtering",
+                "Supervised filtering"
+            )[status.ordinal]
     }
 
     fun getFileDate(fromFile: Boolean = false, fileType: FileType): Date? {
@@ -108,13 +117,17 @@ data class LitBallQuery(
 
     suspend fun expand() {
         if (!mutex.tryLock()) return
+        when (type) {
+            Qtype.EXPRESSION_SEARCH -> expressionSearch()
+            Qtype.SNOWBALLING -> autoSnowBall()
+            Qtype.SUPERVISED_SNOWBALLING -> snowBall()
+        }
+        mutex.unlock()
+        return
+    }
+    private suspend fun snowBall(auto: Boolean = false) {
         val tag = "EXPAND"
         val queryDir = getQueryDir(name)
-        if (type == Qtype.EXPRESSION_SEARCH) {
-            expressionSearch()
-            mutex.unlock()
-            return
-        }
         ExpandQueryCache.init(File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}"))
         val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
         var nulls = 0
@@ -128,27 +141,33 @@ data class LitBallQuery(
             doiSet.addAll(clist)
             ExpandQueryCache.add(doi, refs)
         }
-        if (!result) {
-            mutex.unlock()
-            return
-        }
+        if (!result) return
         Logger.i(tag, "Received ${doiSet.size} DOIs")
         if (missingAccepted.isEmpty()) {
-            RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
-            mutex.unlock()
+            if (!auto)
+                RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
+            status = QueryStatus.FILTERED2
             return
         }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
+        if (auto && newDoiSet.size > EXPLODED_LIMIT) {
+            status = QueryStatus.EXPLODED
+            return
+        }
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
-        if (nulls == size)
-            RootStore.setInformationalDialog("""
-                None of the $size DOIs was found on Semantic
-                Scholar. Please check:
-                1. are you searching outside the biomed or compsci fields?
-                2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
-            """.trimIndent())
-        else
-            RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
+        if (!auto) {
+            if (nulls == size)
+                RootStore.setInformationalDialog(
+                    """
+                    None of the $size DOIs was found on Semantic
+                    Scholar. Please check:
+                    1. are you searching outside the biomed or compsci fields?
+                    2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
+                """.trimIndent()
+                )
+            else
+                RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
+        }
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
@@ -161,10 +180,9 @@ data class LitBallQuery(
             }
             RootStore.refreshList()
         }
-        mutex.unlock()
     }
 
-    suspend fun filter1() {
+    suspend fun filter1(auto: Boolean = false) {
         if (!mutex.tryLock()) return
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
@@ -204,7 +222,8 @@ data class LitBallQuery(
         uppercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
         Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
-        RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
+        if (!auto)
+            RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
 
         // Write filtered.txt if new matches exist
         val json = ConfiguredJson.get()
@@ -328,6 +347,43 @@ data class LitBallQuery(
         }
     }
 
+    private suspend fun acceptAll() {
+        val queryDir = getQueryDir(name)
+        if (queryDir.isDirectory && queryDir.canRead()) {
+            val file: File
+            try {
+                file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
+            } catch (e: Exception) {
+                handleException(e)
+                return
+            }
+            PaperList.setFromQuery(this, file)
+            PaperList.setAllTags(1)
+            PaperList.finish(true)
+            syncBuffers()
+        } else {
+            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
+            return
+        }
+    }
+    private suspend fun autoSnowBall() {
+        while (true) {
+            snowBall(true)
+            if (status == QueryStatus.FILTERED2 || status == QueryStatus.EXPLODED) break
+            mutex.unlock()
+            filter1(true)
+            mutex.tryLock()
+            if (status == QueryStatus.FILTERED2) break
+            acceptAll()
+        }
+        if (status == QueryStatus.EXPLODED) {
+            RootStore.setInformationalDialog("""
+                Number of new DOIs exceeds EXPLODED_LIMIT of $EXPLODED_LIMIT.
+                Please try again with more specific keywords / expression.
+                """.trimIndent())
+            status = QueryStatus.FILTERED2
+        }
+    }
     suspend fun annotate() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {

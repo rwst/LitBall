@@ -171,7 +171,7 @@ object PaperList {
         save()
     }
 
-    suspend fun finish() {
+    suspend fun finish(auto: Boolean = false) {
         val pathPrefix = path?.substringBeforeLast("/")
         fun writeToPath(tag: Tag, fileType: FileType) {
             val path = "$pathPrefix/${fileType.fileName}"
@@ -189,17 +189,18 @@ object PaperList {
             return
         }
         path?.let { File(it).delete() }
-        println("$path deleted")
-        RootStore.setFiltered2()
-        Filtering2RootStore.switchRoot()
-        val noAcc = list.count { it.tag == Tag.Accepted }
-        RootStore.setInformationalDialog("$noAcc papers added to accepted")
-        query?.let {
-            it.noNewAccepted = (noAcc == 0)
-            it.writeNoNewAccepted()
+        if (!auto) {
+            RootStore.setFiltered2()
+            Filtering2RootStore.switchRoot()
+            val noAcc = list.count { it.tag == Tag.Accepted }
+            RootStore.setInformationalDialog("$noAcc papers added to accepted")
+            query?.let {
+                it.noNewAccepted = (noAcc == 0)
+                it.writeNoNewAccepted()
+            }
+            query = null
+            RootStore.refreshList()
         }
-        query = null
-        RootStore.refreshList()
     }
 
     private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,Scholar\n"

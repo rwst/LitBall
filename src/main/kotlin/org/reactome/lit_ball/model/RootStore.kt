@@ -106,6 +106,7 @@ object RootStore {
             QueryStatus.FILTERED2 -> onDoExpandStarted(id)
             QueryStatus.EXPANDED -> onDoFilter1Started(id)
             QueryStatus.FILTERED1 -> onDoFilter2Started(id)
+            QueryStatus.EXPLODED -> return
         }
     }
 
