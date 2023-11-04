@@ -59,6 +59,7 @@ object S2Client : ScholarClient {
         setting: QuerySetting,
         action: (S2Service.PaperDetails) -> Unit
     ): Boolean {
+        val tag = "BULKSEARCH"
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val s2expr = S2SearchExpression.from(setting)
         val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
@@ -72,9 +73,11 @@ object S2Client : ScholarClient {
         if (pair.first == null) return true
         var (total, token, data) = pair.first!!
         data.forEach { action(it) }
+        Logger.i(tag, "Received: $total total, ${data.size} data, token: $token")
+        println("Received: $total total, ${data.size} data, token: $token")
         delay(strategy.delay(true))
         var numDone = data.size
-        if (total > numDone) {
+        while (total > numDone) {
             pair = getDataOrHandleExceptions(numDone, total, indicatorTitle) {
                 S2Service.getBulkPaperSearch(
                     query = s2expr,
@@ -87,8 +90,10 @@ object S2Client : ScholarClient {
             val (_, token1, data1) = pair.first!!
             token = token1
             data1.forEach { action(it) }
+            numDone += data1.size
+            Logger.i(tag, "Received: $numDone data, token: $token")
+            println("Received: $numDone/$total data, token: $token")
             delay(strategy.delay(true))
-            numDone += data.size
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * numDone) / total, "$numDone/$total"))
                 return false
             RootStore.setProgressIndication()
