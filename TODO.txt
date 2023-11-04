@@ -5,7 +5,6 @@
                          estimat* OR classificat*)
 
 Doc:
- - expr search
  - reasons why not all papers found:
    - start set not representative or not highly cited
    - missing keywords
@@ -13,10 +12,6 @@ Doc:
 
 Features:
  - file selectors in settings dialog
- - three types of queries:
-   1. snowballing with supervision on each round,
-   2. snowballing without supervision, needs a stop criterion
-   3. simple logical expression matching
  - recipes: export to / start / import from annotation tool --- both in filter2
  - in filter2()  Prodigy
  - in annotate() export to / start / import from Prodigy
@@ -26,6 +21,7 @@ Features:
  - optional wordnet capability to include synonyms
  - clicking sort in filtering2 still grabs focus
  - new query from old (allowing change of keywords but shortcutting some download)
+ - don't discard non-DOI expr search results / use archived directly?
 
 Other ideas:
  - replace 404 msg with "Paper not found"

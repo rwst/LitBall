@@ -1,4 +1,12 @@
 ## START
+v2328
+ - NOTE that queries of type 1 may not work as expected due to an issue at S2
+ - implement query type 2
+ - remove unused features from type 1 query cards
+ - try to handle SSLException
+ - fix: query type 1 stopped at 2000
+ - fix: query type 1 shows no progress indicator
+
 v2327
  - bulk access via S2API keys
  - new query type: bulk expression search (requires S2API key)
