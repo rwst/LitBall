@@ -96,8 +96,8 @@ object S2Client : ScholarClient {
             delay(strategy.delay(true))
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * numDone) / total, "$numDone/$total"))
                 return false
-            RootStore.setProgressIndication()
         }
+        RootStore.setProgressIndication()
         return true
     }
 
