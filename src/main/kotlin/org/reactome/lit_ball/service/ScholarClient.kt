@@ -9,6 +9,7 @@ import org.reactome.lit_ball.util.S2SearchExpression
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.net.ssl.SSLException
 
 interface ScholarClient
 
@@ -46,6 +47,8 @@ object S2Client : ScholarClient {
             } catch (e: UnknownHostException) {
                 Logger.i(TAG, "ERROR ${e.message}")
                 RootStore.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
+                return Pair(null, false)
+            } catch (e: SSLException) { // Proxy glitch? Retry
                 return Pair(null, false)
             }
         }
