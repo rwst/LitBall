@@ -18,6 +18,14 @@ class ExpressionTransformer {
             TestData(
                 "(*valgus or bunion*) and   not (prevalence or incidence or epidemiology)",
                 "(*valgus | bunion*) + -(prevalence | incidence | epidemiology)"
+            ),
+            TestData(
+                "(software OR applicati* OR systems ) AND (fault* OR defect* OR quality OR error-prone) AND (predict* OR prone* OR probability OR assess* OR detect* OR estimat* OR classificat*)",
+                "(software | applicati* | systems ) + (fault* | defect* | quality | error-prone) + (predict* | prone* | probability | assess* | detect* | estimat* | classificat*)"
+            ),
+            TestData(
+                "(software OR application OR systems ) AND (fault OR defect OR quality OR error-prone) AND (predict OR prediction OR prone OR probability OR assess OR assession OR detect OR detection OR estimate OR estimation OR classification OR classify)",
+                "(software | application | systems ) + (fault | defect | quality | error-prone) + (predict | prediction | prone | probability | assess | assession | detect | detection | estimate | estimation | classification | classify)"
             )
         )
     }
