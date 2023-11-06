@@ -129,7 +129,7 @@ object S2Client : ScholarClient {
             }
             if (!pair.second) return false
             delay(strategy.delay(true))
-            pair.first?.forEach(action)
+            pair.first?.filterNotNull()?.forEach(action)
             index += it.size
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
