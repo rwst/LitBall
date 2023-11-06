@@ -22,11 +22,13 @@ Choice of query type
 ^^^^^^^^^^^^^^^^^^^^
 There are at the moment three types of queries available:
 
- - Interleaved Snowballing: input a keyphrase list or logical expression containing key phrases, and core DOIs. These are used to filter papers from backward/forward snowballing rounds, together with manual supervised filtering steps. This is the default.
+ - **Expression Search**: input a keyphrase list or logical expression containing key phrases to download all matching article details from Semantic Scholar. *This requires an S2 API key*. All matches count as "accepted" and can be viewed / annotated / exported.
 
- - Automatic Snowballing: input a keyphrase list or logical expression containing key phrases, and core DOIs. Same as above except there is no supervised filtering---all results that passed keyword filtering are automatically accepted.
+ - **Automatic Snowballing**: input a keyphrase list or logical expression containing key phrases, and core DOIs. These are used to filter papers from backward/forward snowballing rounds---all results that passed keyword filtering count as "accepted" and can be viewed / annotated / exported.
 
- - Expression Search: input a keyphrase list or logical expression containing key phrases to download all matching article details from Semantic Scholar. *This requires an S2 API key*. Paper details count as "accepted" and can be viewed / annotated / exported.
+ - **Interleaved Snowballing**: input a keyphrase list or logical expression containing key phrases, and core DOIs. These are used to filter papers from backward/forward snowballing rounds, together with manual supervised filtering steps. This is the default.
+
+While, with the same keyphrases / expression, the number of papers you ultimately accept with any method is the same, the number of papers you need to eyeball decreases drastically from the first to the third method. On the other hand, depending on the field you are searching, the set of accepted papers might not be connected, and the snowballing methods will miss the outliers. Eyeballing cost may be zero if you use a perfectly trained ML classifier, so Expression Search my make sense in this case.
 
 Keyphrase lists / Expressions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
