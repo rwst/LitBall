@@ -47,8 +47,7 @@ object QueryList {
                 newQuery
             }
         }
-        sort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
-        RootStore.refreshList()
+        RootStore.doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
@@ -78,8 +77,7 @@ object QueryList {
                 acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
             )
         )
-        sort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
-        RootStore.refreshList()
+        RootStore.doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
     }
     fun removeDir(id: Int?) {
         val name = itemFromId(id)?.name

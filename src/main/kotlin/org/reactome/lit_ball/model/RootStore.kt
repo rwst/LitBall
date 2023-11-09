@@ -223,7 +223,7 @@ object RootStore {
         setState { copy(doInformationalDialog = text) }
     }
 
-    private fun doSort(sortingType: SortingType) {
+    fun doSort(sortingType: SortingType) {
         scope.launch(Dispatchers.IO) {
             QueryList.sort(sortingType)
             refreshList()
