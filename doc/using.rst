@@ -68,9 +68,9 @@ How to get the DOI?
 ^^^^^^^^^^^^^^^^^^^
 DOIs can be found:
 
- - on the journal's article page, most papers also show the DOI
+ - on the journal's article page, most pages also show the DOI
 
- - on the PMID page the DOI is almost always shown
+ - on the PubMed page the DOI is almost always shown
 
  - on the S2 page (but not on Google Scholar) the DOI is almost always shown
 
