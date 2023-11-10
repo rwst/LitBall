@@ -223,12 +223,26 @@ object RootStore {
         setState { copy(doInformationalDialog = text) }
     }
 
-    fun doSort(sortingType: SortingType) {
+    fun doSort(sortingType: SortingType, scrollTo: Int? = null) {
         scope.launch(Dispatchers.IO) {
-            QueryList.sort(sortingType)
-            refreshList()
-            delay(100) // TODO: this is a hack
-            scrollChannel?.send(0)
+            if (scrollTo == null) {
+                QueryList.sort(sortingType)
+                refreshList()
+                delay(100) // TODO: this is a hack
+                scrollChannel?.send(0)
+            }
+            else {
+                val name = QueryList.list[scrollTo].name
+                QueryList.sort(sortingType)
+                refreshList()
+                delay(100) // TODO: this is a hack
+                val index = QueryList.list.indexOfFirst { it.name == name }
+                println(Pair(name, index))
+                if (index >= 0)
+                    scrollChannel?.send(index)
+                else
+                    scrollChannel?.send(0)
+            }
         }
     }
 
@@ -250,5 +264,5 @@ data class RootState(
     val progressIndication: ProgressIndicatorParameter? = null,
     val doInformationalDialog: String? = null,
     val aboutDialog: Boolean = false,
-    val doConfirmationDialog: Pair<(() -> Unit)?, String> = Pair(null, "")
+    val doConfirmationDialog: Pair<(() -> Unit)?, String> = Pair(null, ""),
 )

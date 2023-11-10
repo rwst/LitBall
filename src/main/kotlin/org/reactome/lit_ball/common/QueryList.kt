@@ -77,7 +77,10 @@ object QueryList {
                 acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
             )
         )
-        RootStore.doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
+        RootStore.doSort(
+            SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()),
+            list.size - 1,
+            )
     }
     fun removeDir(id: Int?) {
         val name = itemFromId(id)?.name
