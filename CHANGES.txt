@@ -1,6 +1,13 @@
 ## START
-v2328
+v2329
  - NOTE that queries of type 1 may not work as expected due to an issue at S2
+ - input PMIDs
+ - doc: query types
+ - FIX: NPE in PaperList.readFromFile()
+ - fix: query list not refreshed after new query
+ - fix: after new query center list on it
+
+v2328
  - implement query type 2
  - remove unused features from type 1 query cards
  - try to handle SSLException

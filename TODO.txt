@@ -1,8 +1,4 @@
  - mumble benchmark
-   Wahono search string: (software OR applicati* OR systems ) AND (fault* OR
-                         defect* OR quality OR error-prone) AND (predict*
-                         OR prone* OR probability OR assess* OR detect* OR
-                         estimat* OR classificat*)
 
 Doc:
  - reasons why not all papers found:
@@ -11,6 +7,7 @@ Doc:
    - local Chinese papers are underrepresented in S2
 
 Features:
+ - search bar in annotate()
  - file selectors in settings dialog
  - recipes: export to / start / import from annotation tool --- both in filter2
  - in filter2()  Prodigy
