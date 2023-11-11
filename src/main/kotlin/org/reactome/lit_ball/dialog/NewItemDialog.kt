@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.common.Qtype
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.service.getDOIsforPMIDs
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.Tooltip
 import java.io.File
@@ -40,28 +42,39 @@ fun NewItemDialog(
     val nameCheckValue = rememberSaveable { mutableStateOf(true) }
     val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
     val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
+    val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
 
     AlertDialog(
         onDismissRequest = { (onCloseClicked)() },
         confirmButton = {
             TextButton(
                 onClick = {
-                    val dois = fieldValue.value.split("\n")
+                    val refs = fieldValue.value.split("\n")
                         .map { it.trim().transformDOI() }
                         .filter { it.isNotBlank() }
-                        .toSet()
                     val name = nameValue.value.trim()
                     pathWarningValue.value = null
+                    doiWarningValue.value = null
+
                     val queryPath = Settings.map["path-to-queries"] ?: ""
                     if (File(queryPath).exists() && !Path(queryPath).isWritable()) {
                         pathWarningValue.value = "Query directory is not writable"
+                        return@TextButton
+                    }
+                    var dois: List<String>
+                    runBlocking {
+                        dois = fillDOIs(refs)
+                    }
+                    fieldValue.value = dois.joinToString("\n")
+                    if (dois.any { !it.startsWith("10.") }) {
+                        doiWarningValue.value = "Could not covert all entries to DOI. Please replace or remove."
                         return@TextButton
                     }
                     checkValue.value = name.isNotEmpty() && (typeValue.value == 0 || dois.isNotEmpty())
                     nameCheckValue.value = name !in QueryList.list.map { it.name }
                     if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
-                            QueryList.addNewItem(typeValue.value, name, dois)
+                            QueryList.addNewItem(typeValue.value, name, dois.toSet())
                         }
                         (onCloseClicked)()
                     }
@@ -167,10 +180,10 @@ fun NewItemDialog(
                     Row {
                         Tooltip(
                             text = """
-                            Input one DOI per line. It is not necessary to manually trim
+                            Input one DOI/PMID per line. It is not necessary to manually trim
                             the DOI strings. LitBall will automatically chop off everything
-                            before the “10…” part, so simply copypasting a DOI link will be
-                            handled.""".trimIndent(),
+                            before the “10.” part, so simply copypasting a DOI link will be
+                            handled. PMID links will be stripped to just the number""".trimIndent(),
                             Modifier.align(Alignment.CenterVertically)
                         ) {
                             Icon(
@@ -185,12 +198,21 @@ fun NewItemDialog(
                         TextField(
                             value = fieldValue.value,
                             onValueChange = {
-                                fieldValue.value = it.transformDOI()
+                                fieldValue.value = it.split('\n').joinToString("\n") { s -> s.trim().transformDOI() }
                                 pathWarningValue.value = null
                             },
-                            label = { Text("Core DOIs (one per line)") },
-                            placeholder = { Text("10.XYZ/ABC\n10.XYZ/ABC") }
+                            label = { Text("Core DOIs/PMIDs (one per line)") },
+                            placeholder = { Text("10.XYZ/ABC\n12345678") }
                         )
+                        doiWarningValue.value?.also {
+                            Text(
+                                it,
+                                color = Color.Red,
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .padding(start = 24.dp)
+                            )
+                        }
                     }
                 }
                 if (!checkValue.value)
@@ -202,9 +224,25 @@ fun NewItemDialog(
     )
 }
 
+val pmidRegex = "^pmid:*\\h*".toRegex(RegexOption.IGNORE_CASE)
+val slashSuffix = "/$".toRegex()
 private fun String.transformDOI(): String {
     var s = this.uppercase()
     if (s.startsWith("HTTP"))
         s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString())
-    return s.replaceBefore("10.", "")
+    s = s.replaceBefore("10.", "")
+    s = s.replace(pmidRegex, "").replace("HTTPS://PUBMED.NCBI.NLM.NIH.GOV/", "")
+    s = s.replace(slashSuffix, "")
+    return s
+}
+
+private suspend fun fillDOIs(refs: List<String>): List<String> {
+    val map = refs.associateWith { it }.toMutableMap()
+    val pmids = refs.filter { it.all { ch -> ch.isDigit() } }
+    val dois = getDOIsforPMIDs(pmids)
+    pmids.forEachIndexed { index, key ->
+        val v = dois[index]
+        v?.let { map[key] = it }
+    }
+    return refs.mapNotNull { map[it] }
 }

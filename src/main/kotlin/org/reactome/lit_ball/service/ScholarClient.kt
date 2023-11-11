@@ -15,15 +15,15 @@ interface ScholarClient
 
 object S2Client : ScholarClient {
     private const val DETAILS_CHUNK_SIZE = 30
-    private const val SINGLE_QUERY_DELAY = 100L
+    const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
-    private lateinit var strategy: DelayStrategy
+    lateinit var strategy: DelayStrategy
 
-    private suspend fun <T> getDataOrHandleExceptions(
+    suspend fun <T> getDataOrHandleExceptions(
         index: Int,
         size: Int,
-        indicatorTitle: String,
+        indicatorTitle: String? = null,
         getData: suspend () -> T
     ): Pair<T?, Boolean> {
         while (true) {
@@ -32,11 +32,13 @@ object S2Client : ScholarClient {
                 return Pair(data, true)
             } catch (e: SocketTimeoutException) {
                 Logger.i(TAG, "TIMEOUT")
-                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
+                if (indicatorTitle != null
+                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
                     return Pair(null, false)
             } catch (e: HttpException) {
                 Logger.i(TAG, "ERROR ${e.code()}")
-                if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
+                if (indicatorTitle != null
+                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
                     return Pair(null, false)
                 when (e.code()) {
                     400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
@@ -129,7 +131,7 @@ object S2Client : ScholarClient {
             }
             if (!pair.second) return false
             delay(strategy.delay(true))
-            pair.first?.filterNotNull()?.forEach(action)
+            pair.first?.filterNotNull()?.forEach(action) // DO NOT remove filterNotNull()
             index += it.size
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
