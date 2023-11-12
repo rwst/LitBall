@@ -100,6 +100,7 @@ dependencies {
     implementation("org.jetbrains.lets-plot:platf-awt:4.0.1")
     implementation("org.jetbrains.lets-plot:lets-plot-compose:1.0.0")
     implementation("org.apache.commons:commons-jexl3:3.2.1")
+    implementation("org.apache.jena:jena-arq:4.10.0")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
