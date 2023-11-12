@@ -91,7 +91,16 @@ class KeywordMatcherTest {
                 "Prevalence estimation and familial tendency of common forefoot deformities in Turkey: A survey of 2662 adults This study concludes that forefoot deformities are common with high familial tendency and this may enable the anticipation of forthcoming deformities in order to take early action in prevention, in nearly the half of the population. \n",
                 "",
                 false
-                )
+                ),
+            TestData(
+                "(Pain measurement OR Questionnaire OR instrument* OR form OR assessment* OR score OR measurement* OR scale OR tool*) AND (Back pain OR low back pain OR lumbago OR neck pain OR backache OR spinal pain OR neck ache OR neck pain) AND (Athlete* OR sport OR sportsman OR sportsmen OR sportswom*)",
+                "",
+                "Purpose: The purpose of this cross-sectional study was to compare the prevalence of low back pain (LBP) among female elite football and handball players to a matched non-professional active control group.\n" +
+                        "\n" +
+                        "Methods: The participants were requested to answer a questionnaire based on standardized Nordic questionnaires for musculoskeletal symptoms to assess the prevalence. Conclusion: There were no difference in LBP among female elite football and handball players compared with the control group. However, female elite athletes in football and handball reported a high prevalence of LBP compared to previous studies.",
+                "",
+                true
+            )
         )
     }
     @Test
