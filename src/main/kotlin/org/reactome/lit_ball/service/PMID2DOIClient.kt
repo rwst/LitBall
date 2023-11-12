@@ -2,7 +2,7 @@ package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.delay
 
-val clients = listOf(S2PMID2DOIClient())
+val clients = listOf(S2PMID2DOIClient(), WDQSPMID2DOIClient())
 
 // Iterates through clients to get DOIs for PMIDs
 suspend fun getDOIsforPMIDs(pmidList: List<String>): List<String?> {
@@ -46,6 +46,30 @@ class S2PMID2DOIClient : PMID2DOIClient() {
                 list[index] = it.externalIds?.get("DOI")
             }
         }
+        return list
+    }
+}
+
+class WDQSPMID2DOIClient : PMID2DOIClient() {
+    override suspend fun getSinglePaperDOIfromPMIDs(pmidList: List<String>): List<String?> {
+        val queryString = """
+            PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+            SELECT DISTINCT ?pmid ?doi
+            WHERE
+                {
+                  VALUES ?pmid ${pmidList.joinToString("\" \"", "{ \"", "\" }")}
+                  ?item wdt:P698 ?pmid.
+                  ?item wdt:P356 ?doi.
+                }
+        """.trimIndent()
+        val indexMap: Map<String, Int> = pmidList.mapIndexed { index, s -> s to index }.toMap()
+        val list = MutableList<String?>(pmidList.size) { null }
+        try {
+            WDQSService.query(queryString).forEach { sol ->
+                indexMap[sol["pmid"]]?.let { list[it] = sol["doi"] }
+            }
+        }
+        catch (e: Exception) { throw e }
         return list
     }
 }
