@@ -1,9 +1,11 @@
  - mumble benchmark
 
 Doc:
+ - pmid
  - reasons why not all papers found:
    - start set not representative or not highly cited
    - missing keywords
+   - keywords too specific (stemness)
    - local Chinese papers are underrepresented in S2
 
 Features:
@@ -12,15 +14,15 @@ Features:
  - recipes: export to / start / import from annotation tool --- both in filter2
  - in filter2()  Prodigy
  - in annotate() export to / start / import from Prodigy
- - manually add DOIs to accepted
  - HTTP buffer
- - settings mutex
- - optional wordnet capability to include synonyms
  - clicking sort in filtering2 still grabs focus
  - new query from old (allowing change of keywords but shortcutting some download)
+ - settings mutex
  - don't discard non-DOI expr search results / use archived directly?
+ - manually add DOIs to accepted
 
 Other ideas:
+ - NLP again, Stanford lemmatizer + https://projects.csail.mit.edu/jwi/ + synonyms/hyponyms (or + dmeoli/WS4J) (or via Wikidata)
  - replace 404 msg with "Paper not found"
  - somehow use S2 embeddings
  - increase TIMEOUT strategically
