@@ -62,7 +62,7 @@ Keyphrases, again, are matched on word boundaries and are case-insensitive.
 Why DOIs?
 ^^^^^^^^^
 DOIs are the only identifiers that exist for nearly all academic articles. You might think this applies to PMIDs as well, but many biomedical publications don't
-have a PMID, and biomedical literature is not everything.
+have a PMID, and biomedical literature is not everything. However, if you input any number, LitBall will interpret it as PMID and try to find the respective DOI.
 
 How to get the DOI?
 ^^^^^^^^^^^^^^^^^^^
