@@ -50,7 +50,7 @@ fun BarChartDialog (
                 Text("Dismiss")
             }
         },
-        title = { Text("Publications / Year")},
+        title = { Text("Publications / Time Period")},
         text = {
             PlotPanel(
                 figure = createFigure(model),
