@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,21 +40,40 @@ fun QueryCard(
     )
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
-            Tooltip("Query-specific settings", Modifier.align(Alignment.CenterVertically)) {
-                IconButton(
-                    onClick = { (onSettingsClicked)(item.id) },
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Query Settings",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
-                    )
+            Column (modifier = Modifier.align(Alignment.CenterVertically)) {
+                Tooltip("Query-specific settings", Modifier.align(Alignment.CenterHorizontally)) {
+                    IconButton(
+                        onClick = { (onSettingsClicked)(item.id) },
+                        modifier = Modifier
+                            .size(height = 30.dp, width = 30.dp)
+                            .align(Alignment.CenterHorizontally),
+                    ) {
+                        Icon(
+                            painter = painterResource(Icons.Settings),
+                            contentDescription = "Query Settings",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(48.dp).align(Alignment.CenterHorizontally),
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.fillMaxHeight())
+                Tooltip("Delete query on disk", Modifier.align(Alignment.CenterHorizontally)) {
+                    IconButton(
+                        onClick = onDeleteClicked,
+                        modifier = Modifier
+                            .size(height = 30.dp, width = 30.dp)
+                            .align(Alignment.CenterHorizontally),
+                    ) {
+                        Icon(
+                            painter = painterResource(Icons.Delete),
+                            contentDescription = "Remove Query",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(48.dp).align(Alignment.CenterHorizontally),
+                        )
+                    }
                 }
             }
-            Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(24.dp))
             Column {
                 Tooltip("Query Type\n${item.type.pretty}", Modifier) {
                     SuggestionChip(
@@ -119,21 +136,6 @@ fun QueryCard(
                     Text(
                         text = "Annotate\naccepted",
                         fontSize = 14.sp
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(14.dp))
-            Tooltip("Delete query on disk", Modifier.align(Alignment.CenterVertically)) {
-                IconButton(
-                    onClick = onDeleteClicked,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Remove Query",
-                        tint = Color.Gray,
-                        modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
                     )
                 }
             }

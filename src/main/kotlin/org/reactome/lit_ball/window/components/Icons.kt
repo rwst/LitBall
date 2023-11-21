@@ -6,6 +6,7 @@ object Icons {
     const val ArrowBack = "drawable/arrow_back.svg"
     const val Article = "drawable/article.svg"
     const val BarChart = "drawable/bar_chart.svg"
+    const val Delete = "drawable/delete.svg"
     const val Done = "drawable/done.svg"
     const val ExportNotes = "drawable/export_notes.svg"
     const val Help = "drawable/help.svg"
