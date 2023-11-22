@@ -99,7 +99,12 @@ object PaperList {
         tmp.removeAt(index)
         list = tmp.toList()
         updateShadowMap()
-        save()
+        try {
+            writeToPath(Tag.Accepted, FileType.ACCEPTED)
+        } catch (e: Exception) {
+            handleException(e)
+        }
+        query?.syncBuffers()
     }
 
     fun new(files: List<File>): PaperList {
@@ -180,16 +185,17 @@ object PaperList {
         save()
     }
 
-    suspend fun finish(auto: Boolean = false) {
+    private fun writeToPath(tag: Tag, fileType: FileType) {
         val pathPrefix = path?.substringBeforeLast("/")
-        fun writeToPath(tag: Tag, fileType: FileType) {
-            val path = "$pathPrefix/${fileType.fileName}"
-            list.filter { it.tag == tag }.forEach { item ->
-                item.details.externalIds?.get("DOI")?.uppercase()?.let { uppercaseDOI ->
-                    File(path).appendText("$uppercaseDOI\n")
-                }
+        val path = "$pathPrefix/${fileType.fileName}"
+        val outList = list.filter { it.tag == tag }
+            .mapNotNull { item ->
+                item.details.externalIds?.get("DOI")?.uppercase()
             }
-        }
+        File(path).writeText(outList.joinToString(separator = "\n", postfix = "\n"))
+    }
+
+    suspend fun finish(auto: Boolean = false) {
         try {
             writeToPath(Tag.Accepted, FileType.ACCEPTED)
             writeToPath(Tag.Rejected, FileType.REJECTED)
