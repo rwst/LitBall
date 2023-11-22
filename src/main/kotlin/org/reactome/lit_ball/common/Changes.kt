@@ -2,8 +2,13 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
-v2329
+v2330
  - NOTE that queries of type 1 may not work as expected due to an issue at S2
+ - in annotate: delete paper
+ - Wikidata as PMID2DOI bkp server
+ - doc: PMIDs
+
+v2329
  - input PMIDs
  - doc: query types
  - FIX: NPE in PaperList.readFromFile()

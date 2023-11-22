@@ -1,7 +1,7 @@
+ - analyze and make sure DOIs are written uppercase, file-specific modules?
  - mumble benchmark
 
 Doc:
- - pmid
  - reasons why not all papers found:
    - start set not representative or not highly cited
    - missing keywords
@@ -17,6 +17,7 @@ Features:
  - HTTP buffer
  - clicking sort in filtering2 still grabs focus
  - new query from old (allowing change of keywords but shortcutting some download)
+ - refactor: rename model functions so they reflect the event not the intent
  - settings mutex
  - don't discard non-DOI expr search results / use archived directly?
  - manually add DOIs to accepted
