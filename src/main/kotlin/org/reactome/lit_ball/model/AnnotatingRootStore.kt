@@ -102,6 +102,11 @@ object AnnotatingRootStore : ModelHandle {
         PaperList.setFlag(id, flagNo, value)
     }
 
+    fun deleteClicked(id: Int) {
+        PaperList.delete(id)
+        refreshList()
+    }
+
     private fun onDoAnnotateStopped() {
         runBlocking {
             PaperList.saveAnnotated()

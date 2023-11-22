@@ -93,6 +93,15 @@ object PaperList {
         }
     }
 
+    fun delete(id: Int) {
+        val index = shadowMap[id] ?: return
+        val tmp = list.toMutableList()
+        tmp.removeAt(index)
+        list = tmp.toList()
+        updateShadowMap()
+        save()
+    }
+
     fun new(files: List<File>): PaperList {
         if (files.size > 1) throw Exception("multiple files selected in New")
         val file = files[0]

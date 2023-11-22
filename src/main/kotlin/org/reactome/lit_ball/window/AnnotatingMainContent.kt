@@ -127,6 +127,7 @@ fun CardWithFlagBoxes(
     onClicked: () -> Unit,
     onFlagSet: (Int, Boolean) -> Unit,
 ) {
+    val model = AnnotatingRootStore
     val cardTitle = item.details.title
     val cardPMID: String? = item.details.externalIds?.get("PubMed")
     val year = item.details.publicationDate?.substringBefore("-")?: ""
@@ -183,6 +184,22 @@ fun CardWithFlagBoxes(
                 item.flags,
                 onFlagSet,
             )
+            Spacer(modifier = Modifier.width(16.dp))
+            Tooltip("Remove paper from accepted", Modifier.align(Alignment.CenterVertically)) {
+                IconButton(
+                    onClick = { model.deleteClicked(item.id) },
+                    modifier = Modifier
+                        .size(height = 30.dp, width = 30.dp)
+                        .align(Alignment.CenterVertically),
+                ) {
+                    Icon(
+                        painter = painterResource(Icons.Delete),
+                        contentDescription = "Remove Query",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
+                    )
+                }
+            }
             Spacer(modifier = Modifier.width(16.dp))
         }
     }
