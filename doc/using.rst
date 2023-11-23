@@ -55,7 +55,7 @@ The dot "." stands for any character and is at the moment the only wildcard impl
 
 Keyphrase expressions
 """""""""""""""""""""
-The same keyphrases that are separated by commas in the mentioned lists can be linked with logical expressions that are grouped with parentheses. LitBall recognizes these if they start with a parenthesis and contain at least one logical operator. Also, keyphrases in logical expressions can contain asterisks which stand for any number of alphanumeric characters.
+The same keyphrases that are separated by commas in the mentioned lists can be linked with logical expressions that are grouped with parentheses. LitBall recognizes these if they contain at least one logical operator. Also, keyphrases in logical expressions can contain asterisks which stand for any number of alphanumeric characters.
 
 Keyphrases, again, are matched on word boundaries and are case-insensitive.
 
