@@ -21,7 +21,7 @@ class StringPatternMatcher(setting: QuerySetting) {
             fun createFrom(aSet: Set<String>?): PatternParser {
                 if (aSet.isNullOrEmpty())
                     return KeywordListParser(emptyList(),  emptyList(), "")
-                if (aSet.first().startsWith("(") && logicOpRegexes.any { it.containsMatchIn(aSet.first()) }) {
+                if (logicOpRegexes.any { it.containsMatchIn(aSet.first()) }) {
                     val wordList = aSet
                         .first()
                         .split ("(", ")", *logicDelims.toTypedArray())
@@ -87,12 +87,12 @@ class StringPatternMatcher(setting: QuerySetting) {
                     .map { it.toRegex(RegexOption.IGNORE_CASE) }
 
         fun patternSettingFrom(value: String): MutableSet<String> {
-            if (value.startsWith("(") && logicOpRegexes.any { it.containsMatchIn(value) })
+            if (logicOpRegexes.any { it.containsMatchIn(value) })
                 return mutableSetOf(value)
             return value.splitToSet(",")
         }
         fun validateSetting(value: String): Boolean {
-            if (value.startsWith("(") && logicOpRegexes.any { it.containsMatchIn(value) }) {
+            if (logicOpRegexes.any { it.containsMatchIn(value) }) {
                 val parser = PatternParser.createFrom(mutableSetOf(value))
                 try {
                     parser.match("")

@@ -100,7 +100,21 @@ class KeywordMatcherTest {
                         "Methods: The participants were requested to answer a questionnaire based on standardized Nordic questionnaires for musculoskeletal symptoms to assess the prevalence. Conclusion: There were no difference in LBP among female elite football and handball players compared with the control group. However, female elite athletes in football and handball reported a high prevalence of LBP compared to previous studies.",
                 "",
                 true
-            )
+            ),
+            TestData(
+                "((*valgus or bunion*) and (prevalence or incidence or epidemiology))",
+                "",
+                "Hallux valgus in a random population in Spain and its impact on quality of life and functionality. The aim of this study was to determine the prevalence of Hallux valgus (HV) and the association between the presence thereof and quality of life, dependence for basic and instrumental activities of daily living and foot function. Prevalence study was carried out in a random population sample (n = 1837) ",
+                "",
+                true,
+            ),
+            TestData(
+                "B3GALT4 OR Beta-1,3-galactosyltransferase 4 OR GALT4 OR Beta-1,3-GalTase 4 OR Beta3Gal-T4 OR Beta3GalT4 OR GalT4 OR b3Gal-T4 OR Gal-T2 OR Ganglioside galactosyltransferase",
+                "",
+                "The ganglioside galactosyltransferase family.",
+                "",
+                true
+            ),
         )
     }
     @Test
