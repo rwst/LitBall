@@ -250,7 +250,7 @@ data class LitBallQuery(
                 mutex.unlock()
                 return
             }
-            val text = rejectedDOIs.joinToString("\n") + "\n"
+            val text = rejectedDOIs.joinToString("\n").uppercase() + "\n"
             try {
                 File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
             } catch (e: Exception) {
