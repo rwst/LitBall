@@ -96,11 +96,13 @@ object PaperList {
     fun delete(id: Int) {
         val index = shadowMap[id] ?: return
         val tmp = list.toMutableList()
+        val doi = tmp[index].details.externalIds?.get("DOI")?.uppercase()
+        query?.acceptedSet?.removeIf { acc -> doi?.let { it == acc }?: false }
         tmp.removeAt(index)
         list = tmp.toList()
         updateShadowMap()
         try {
-            writeToPath(Tag.Accepted, FileType.ACCEPTED)
+            query?.let { writeToPath(Tag.Accepted, FileType.ACCEPTED, it.acceptedSet) }
         } catch (e: Exception) {
             handleException(e)
         }
@@ -185,20 +187,21 @@ object PaperList {
         save()
     }
 
-    private fun writeToPath(tag: Tag, fileType: FileType) {
+    private fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
         val pathPrefix = path?.substringBeforeLast("/")
         val path = "$pathPrefix/${fileType.fileName}"
-        val outList = list.filter { it.tag == tag }
+        val thisList = list.filter { it.tag == tag }
             .mapNotNull { item ->
                 item.details.externalIds?.get("DOI")?.uppercase()
             }
-        File(path).writeText(outList.joinToString(separator = "\n", postfix = "\n"))
+        theSet += thisList
+        File(path).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
     }
 
     suspend fun finish(auto: Boolean = false) {
         try {
-            writeToPath(Tag.Accepted, FileType.ACCEPTED)
-            writeToPath(Tag.Rejected, FileType.REJECTED)
+            query?.let { writeToPath(Tag.Accepted, FileType.ACCEPTED, it.acceptedSet) }
+            query?.let { writeToPath(Tag.Rejected, FileType.REJECTED, it.rejectedSet) }
         } catch (e: Exception) {
             handleException(e)
             return
