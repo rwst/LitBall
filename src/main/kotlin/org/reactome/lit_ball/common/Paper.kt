@@ -18,7 +18,7 @@ class Paper(
     val details: S2Service.PaperDetails = S2Service.PaperDetails(),
     var tag: Tag = Tag.Rejected,
     var flags: MutableSet<String> = mutableSetOf(),
-    var doi: String?,
+    var doi: String? = null,
 ) {
 
     override fun toString(): String {
