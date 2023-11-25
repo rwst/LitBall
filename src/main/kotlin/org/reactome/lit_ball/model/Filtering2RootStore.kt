@@ -81,7 +81,7 @@ object Filtering2RootStore : ModelHandle {
     }
 
     override fun refreshClassifierButton() {
-        setState { copy(isClassifierSet = PaperList.query?.setting?.classifier?.isNotBlank() ?: false) }
+        setState { copy(isClassifierSet = PaperList.query.setting?.classifier?.isNotBlank() ?: false) }
     }
 
     override fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore) {
