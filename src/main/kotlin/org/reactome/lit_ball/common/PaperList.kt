@@ -23,12 +23,12 @@ object PaperList {
     var list: List<Paper> = listOf()
     private var path: String? = null
     var fileName: String = ""
-    var query: LitBallQuery? = null
+    lateinit var query: LitBallQuery
     var model: PaperListScreenStore? = null
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     val flagList: List<String>
         get() {
-            return query?.setting?.annotationClasses?.toList() ?: emptyList()
+            return query.setting?.annotationClasses?.toList() ?: emptyList()
         }
 
     suspend fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
@@ -97,16 +97,16 @@ object PaperList {
         val index = shadowMap[id] ?: return
         val tmp = list.toMutableList()
         val doi = tmp[index].doi
-        query?.acceptedSet?.removeIf { acc -> doi?.let { it == acc }?: false }
+        query.acceptedSet.removeIf { acc -> doi?.let { it == acc }?: false }
         tmp.removeAt(index)
         list = tmp.toList()
         updateShadowMap()
         try {
-            query?.let { writeToPath(Tag.Accepted, FileType.ACCEPTED, it.acceptedSet) }
+            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
         } catch (e: Exception) {
             handleException(e)
         }
-        query?.syncBuffers()
+        query.syncBuffers()
     }
 
     fun new(files: List<File>): PaperList {
@@ -199,8 +199,8 @@ object PaperList {
 
     suspend fun finish(auto: Boolean = false) {
         try {
-            query?.let { writeToPath(Tag.Accepted, FileType.ACCEPTED, it.acceptedSet) }
-            query?.let { writeToPath(Tag.Rejected, FileType.REJECTED, it.rejectedSet) }
+            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+            writeToPath(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         } catch (e: Exception) {
             handleException(e)
             return
@@ -211,11 +211,10 @@ object PaperList {
             Filtering2RootStore.switchRoot()
             val noAcc = list.count { it.tag == Tag.Accepted }
             RootStore.setInformationalDialog("$noAcc papers added to accepted")
-            query?.let {
+            query.let {
                 it.noNewAccepted = (noAcc == 0)
                 it.writeNoNewAccepted()
             }
-            query = null
             RootStore.refreshList()
         }
     }
@@ -227,7 +226,7 @@ object PaperList {
         File(exportedPath).writeText(CSV_HEADER)
         val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT.fileName}"
         val fileMap = mutableMapOf<String, File>()
-        query?.setting?.annotationClasses?.forEach {
+        query.setting?.annotationClasses?.forEach {
             val file = File(exportedCatPath.replace("$", it))
             file.writeText(CSV_HEADER)
             fileMap[it] = file
@@ -324,15 +323,15 @@ object PaperList {
 
     private const val THRESHOLD = 54
     suspend fun applyClassifier() {
-        val classifierName = query?.setting?.classifier ?: ""
+        val classifierName = query.setting?.classifier ?: ""
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
         val modelFile = File(classifierPath)
-        if (query == null || classifierName.isBlank() || !modelFile.canRead()) {
+        if (classifierName.isBlank() || !modelFile.canRead()) {
             model?.setClassifierExceptionAlert(true)
             return
         }
-        val datasetPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
-        val resultPath = getQueryDir(query!!.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
+        val datasetPath = getQueryDir(query.name).absolutePath + "/" + FileType.CLASSIFIER_INPUT.fileName
+        val resultPath = getQueryDir(query.name).absolutePath + "/" + FileType.CLASSIFIER_OUTPUT.fileName
         writeCsvTo(datasetPath)
         YDFService.path = Settings.map["path-to-YDF"] ?: ""
         val processJob = try {
