@@ -96,7 +96,7 @@ object PaperList {
     fun delete(id: Int) {
         val index = shadowMap[id] ?: return
         val tmp = list.toMutableList()
-        val doi = tmp[index].details.externalIds?.get("DOI")?.uppercase()
+        val doi = tmp[index].doi
         query?.acceptedSet?.removeIf { acc -> doi?.let { it == acc }?: false }
         tmp.removeAt(index)
         list = tmp.toList()
@@ -143,10 +143,11 @@ object PaperList {
         } else {
             mutableListOf()
         }
+        papers.forEach { it.doi = it.details.externalIds?.get("DOI")?.uppercase() }
         accepted?.let {
-            papers = papers.filter { it.details.externalIds?.get("DOI") in accepted }.toMutableList()
+            papers = papers.filter { it.doi in accepted }.toMutableList()
             var maxId = if (papers.isNotEmpty()) papers.maxOf { it.id } else 0
-            val acceptedWithDetails = papers.map { it.details.externalIds?.get("DOI")?.uppercase() ?: "" }.toSet()
+            val acceptedWithDetails = papers.map { it.doi ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
             S2Client.getPaperDetails(acceptedWithoutDetails) {
                 maxId += 1
@@ -157,7 +158,7 @@ object PaperList {
                     newExtIds["DOI"] = doi
                     it.externalIds = newExtIds
                 }
-                papers.add(Paper(id = maxId, details = it))
+                papers.add(Paper(id = maxId, details = it, doi = doi))
             }
         }
         list = papers
@@ -191,9 +192,7 @@ object PaperList {
         val pathPrefix = path?.substringBeforeLast("/")
         val path = "$pathPrefix/${fileType.fileName}"
         val thisList = list.filter { it.tag == tag }
-            .mapNotNull { item ->
-                item.details.externalIds?.get("DOI")?.uppercase()
-            }
+            .mapNotNull { item -> item.doi }
         theSet += thisList
         File(path).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
     }
@@ -236,7 +235,7 @@ object PaperList {
         val revFile = File(exportedCatPath.replace("$", "Reviews"))
         revFile.writeText(CSV_HEADER)
         list.forEach {
-            val doi = it.details.externalIds?.get("DOI")?.uppercase()
+            val doi = it.doi
             val date = it.details.publicationDate ?: ""
             val pmid = it.details.externalIds?.get("PubMed")
             val pmc = it.details.externalIds?.get("PubMedCentral")
@@ -280,7 +279,7 @@ object PaperList {
             if (it.tag == tag)
                 it
             else
-                Paper(it.id, it.details, tag, it.flags)
+                Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.uppercase())
         }
     }
 
@@ -319,7 +318,7 @@ object PaperList {
             DATE: ${p.details.publicationDate} $textPMID
             A: ${p.details.abstract}
             TLDR: ${p.details.tldr?.get("text")}
-            DOI: ${p.details.externalIds?.get("DOI")}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
+            DOI: ${p.doi}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
         """.trimIndent()
     }
 
@@ -355,7 +354,7 @@ object PaperList {
         val classificationsMap = processCsvFile(resultPath)
 
         list.forEach { paper ->
-            val doi = paper.details.externalIds?.get("DOI")?.uppercase() ?: return@forEach
+            val doi = paper.doi ?: return@forEach
             val tag = if ((classificationsMap[doi] ?: 0) > THRESHOLD)
                 Tag.Accepted
             else
@@ -372,7 +371,7 @@ object PaperList {
         list.forEach {
             val text = (it.details.title ?: "") + " " + (it.details.tldr?.get("text") ?: "")
             stringBuilder.append("\"" + NLPService.preprocess(text) + "\",")
-            stringBuilder.append("\"${it.details.externalIds?.get("DOI")?.uppercase() ?: ""}\"\n")
+            stringBuilder.append("\"${it.doi ?: ""}\"\n")
         }
         File(path).writeText(stringBuilder.toString())
     }
