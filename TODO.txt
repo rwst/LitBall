@@ -1,4 +1,3 @@
- - analyze and make sure DOIs are written uppercase, file-specific modules?
  - mumble benchmark
 
 Doc:
@@ -16,8 +15,10 @@ Features:
  - in annotate() export to / start / import from Prodigy
  - HTTP buffer
  - clicking sort in filtering2 still grabs focus
+ - going Main from annotate resets list pos
  - new query from old (allowing change of keywords but shortcutting some download)
  - refactor: rename model functions so they reflect the event not the intent
+ - "duplicate" sorting controls code in A/F rootstore
  - settings mutex
  - don't discard non-DOI expr search results / use archived directly?
  - manually add DOIs to accepted
