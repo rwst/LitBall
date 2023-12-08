@@ -59,6 +59,7 @@ object Settings {
         map["paper-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
         map["cache-max-age-days"] = "30"
         map["S2-API-key"] = ""
+        map["PYTHONPATH"] = System.getenv("PYTHONPATH") ?: ""
     }
 
     fun save() {
@@ -108,6 +109,9 @@ object Settings {
             Request an API key from Semantic Scholar for faster
             access through bulk queries. Also enables queries of
             type 1 (bulk expression search).
-        """.trimIndent()
+        """.trimIndent(),
+        "PYTHONPATH" to """
+            Path to your Python where Spacy / Prodigy is installed.
+        """.trimIndent(),
     )
 }
