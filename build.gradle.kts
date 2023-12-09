@@ -53,8 +53,32 @@ tasks {
             }
         }
     }
+    register("defaultScripts") {
+        doLast {
+            val scriptDir = layout.projectDirectory.dir("resources/scripts").asFile
+            val scriptMap = emptyMap<String, String>().toMutableMap()
+            scriptDir.walk().forEach {
+                if (it.isFile) {
+                    scriptMap[it.name] = it.readText()
+                }
+            }
+            val srcFile = layout.projectDirectory.file("src/main/kotlin/org/reactome/lit_ball/util/DefaultScriptsData.kt").asFile
+            srcFile.writeText("""
+                package org.reactome.lit_ball.util
+
+                    object DefaultScriptsData {
+                        val scriptMap = mapOf<String, String>(
+                    """.trimIndent())
+            scriptMap.toSortedMap().forEach { k, v -> srcFile.appendText("\"$k\" to \"\"\"${v}\"\"\",\n") }
+
+            srcFile.appendText("""
+                ) }
+            """.trimIndent())
+        }
+    }
     compileKotlin {
         dependsOn("changes")
+        dependsOn("defaultScripts")
     }
 }
 

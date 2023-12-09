@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
+import org.reactome.lit_ball.util.DefaultScripts
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
 import org.reactome.lit_ball.window.components.Icons
@@ -64,6 +65,7 @@ object RootStore {
     fun init() {
         if (Settings.initialized) return
         scope.launch(Dispatchers.IO) {
+            DefaultScripts.install()
             Settings.load()
             QueryList.fill()
         }
