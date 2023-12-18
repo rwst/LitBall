@@ -8,8 +8,9 @@ enum class FileType(val fileName: String) {
     ARCHIVED("archived.txt"),
     CLASSIFIER_INPUT("cl-input.csv"),
     CLASSIFIER_OUTPUT("cl-output.csv"),
-    EXPORTED("exported.csv"),
-    EXPORTED_CAT("exported-$.csv"),
+    EXPORTED_CSV("exported.csv"),
+    EXPORTED_CAT_CSV("exported-$.csv"),
+    EXPORTED_JSONL("exported.jsonl"),
     CACHE_EXPANDED("expanded.cached.txt"),
     NONEWACCEPTED("no-new-accepted.txt"),
     SETTINGS("settings.json");

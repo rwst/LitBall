@@ -3,7 +3,11 @@ package org.reactome.lit_ball.common
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.PaperListScreenStore
@@ -12,6 +16,7 @@ import org.reactome.lit_ball.service.NLPService
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
+import org.reactome.lit_ball.util.ConfiguredUglyJson
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
 import org.reactome.lit_ball.window.components.SortingType
@@ -222,9 +227,9 @@ object PaperList {
     private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,Scholar\n"
     fun exportAnnotated() {
         val pathPrefix = path?.substringBeforeLast("/")
-        val exportedPath = "$pathPrefix/${FileType.EXPORTED.fileName}"
+        val exportedPath = "$pathPrefix/${FileType.EXPORTED_CSV.fileName}"
         File(exportedPath).writeText(CSV_HEADER)
-        val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT.fileName}"
+        val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT_CSV.fileName}"
         val fileMap = mutableMapOf<String, File>()
         query.setting?.annotationClasses?.forEach {
             val file = File(exportedCatPath.replace("$", it))
@@ -259,6 +264,28 @@ object PaperList {
             }
             if (it.details.publicationTypes?.contains("Review") == true)
                 revFile.appendText(outStr)
+        }
+    }
+
+    fun exportText() {
+        val pathPrefix = path?.substringBeforeLast("/")
+        val exportedPath = "$pathPrefix/${FileType.EXPORTED_JSONL.fileName}"
+        File(exportedPath).writeText("")
+        val json = ConfiguredUglyJson.get()
+        list.forEach { thePaper ->
+            val doi = thePaper.doi
+            doi?.let { theDoi ->
+                val meta = mapOf("DOI" to JsonPrimitive(theDoi))
+                val outMap = emptyMap<String, JsonElement>().toMutableMap()
+
+                outMap["meta"] = JsonObject(meta)
+                val tldr = thePaper.details.tldr?.get("text") ?: ""
+                val text = thePaper.details.abstract ?: tldr
+                if (text.isNotEmpty()) {
+                    outMap["text"] = JsonPrimitive(text)
+                    File(exportedPath).appendText(json.encodeToString(outMap) + "\n")
+                }
+            }
         }
     }
 
