@@ -10,7 +10,7 @@ import org.reactome.lit_ball.util.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-const val CONSOLE_MAX_LIFE = 1000000L
+private const val CONSOLE_MAX_LIFE = 1000000L
 
 object YDFService {
     private const val TAG = "YDFService"
