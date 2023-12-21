@@ -1,1 +1,0 @@
-prodigy textcat.manual_litball abstracts_sentences resources/startset_abstracts.jsonl --label "Background, Aim, Methods-Lab, Methods-Clinic, Methods-Computational, Methods-Review Methods-Other, Result, Conclusion, Limitation, Future Work, Importance" -F resources/scripts/textcat_manual_litball.py
