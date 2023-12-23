@@ -66,6 +66,15 @@ internal fun AnnotatingMainContent(
                 ) {
                     Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + model.state.items.size.toString())
                 }
+                Spacer(modifier = Modifier.width(8.dp))
+                Tooltip("Save and go back\nto main screen", Modifier.align(Alignment.CenterVertically)) {
+                    TextButton(
+                        onClick = { model.onDoAnnotateStopped() },
+                        modifier = Modifier.padding(0.dp)
+                    ) {
+                        Text("Query: ${PaperList.query.name}")
+                    }
+                }
             }
             AnnotatingListContent(
                 items = model.state.items,

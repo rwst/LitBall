@@ -67,6 +67,15 @@ internal fun Filtering2MainContent(
                 ) {
                     Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + model.state.items.size.toString())
                 }
+                Spacer(modifier = Modifier.width(8.dp))
+                Tooltip("Save and go back\nto main screen", Modifier.align(Alignment.CenterVertically)) {
+                    TextButton(
+                        onClick = { model.onDoAnnotateStopped() },
+                        modifier = Modifier.padding(0.dp)
+                    ) {
+                        Text("Query: ${PaperList.query.name}")
+                    }
+                }
                 if (model.state.isClassifierSet)
                     Button(
                         modifier = Modifier.padding(horizontal = 24.dp),

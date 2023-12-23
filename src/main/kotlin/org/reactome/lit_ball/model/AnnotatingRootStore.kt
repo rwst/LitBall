@@ -108,7 +108,7 @@ object AnnotatingRootStore : ModelHandle {
         refreshList()
     }
 
-    private fun onDoAnnotateStopped() {
+    fun onDoAnnotateStopped() {
         runBlocking {
             PaperList.saveAnnotated()
         }

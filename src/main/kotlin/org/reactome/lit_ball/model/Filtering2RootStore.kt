@@ -104,7 +104,7 @@ object Filtering2RootStore : ModelHandle {
         refreshList()
     }
 
-    private fun onDoAnnotateStopped() {
+    fun onDoAnnotateStopped() {
         runBlocking {
             PaperList.save()
         }
