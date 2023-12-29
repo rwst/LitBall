@@ -112,6 +112,7 @@ object AnnotatingRootStore : ModelHandle {
         runBlocking {
             PaperList.saveAnnotated()
         }
+        state.paperListStore.setFilterDialog(false)
         switchRoot()
     }
 

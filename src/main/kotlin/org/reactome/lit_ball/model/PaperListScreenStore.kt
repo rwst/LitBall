@@ -56,6 +56,9 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun setYdfNotFoundAlert(ydfNotFoundAlert: Boolean) {
         setState { copy(ydfNotFoundAlert = ydfNotFoundAlert) }
     }
+    fun setFilterDialog(value: Boolean) {
+        setState { copy(filterDialog = value) }
+    }
 }
 
 data class PaperListScreenState(
@@ -64,4 +67,5 @@ data class PaperListScreenState(
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
     val progressIndication: ProgressIndicatorParameter? = null,
+    val filterDialog: Boolean = false,
 )

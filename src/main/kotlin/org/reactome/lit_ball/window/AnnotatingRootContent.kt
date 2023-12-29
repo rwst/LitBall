@@ -5,6 +5,7 @@ package org.reactome.lit_ball.window
 import RootType
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
+import org.reactome.lit_ball.dialog.AnnotatingFilterDialog
 import org.reactome.lit_ball.dialog.BarChartDialog
 import org.reactome.lit_ball.model.AnnotatingRootStore
 
@@ -25,6 +26,10 @@ fun AnnotatingRootContent(
     }
     if (state.showStats) {
         BarChartDialog(model, focusRequester)
+    }
+
+    if (state.paperListStore.state.filterDialog) {
+        AnnotatingFilterDialog(state.paperListStore)
     }
 
     AnnotatingMainContent(

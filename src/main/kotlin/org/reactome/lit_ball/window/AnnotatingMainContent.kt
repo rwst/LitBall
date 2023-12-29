@@ -59,6 +59,7 @@ internal fun AnnotatingMainContent(
         Column {
             Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
                 SortingControls(model.sortingControls, focusRequester)
+                FilterControls(model.state.paperListStore, focusRequester)
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(
                     onClick = {},

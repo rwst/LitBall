@@ -108,6 +108,7 @@ object Filtering2RootStore : ModelHandle {
         runBlocking {
             PaperList.save()
         }
+        state.paperListStore.setFilterDialog(false)
         switchRoot()
     }
 

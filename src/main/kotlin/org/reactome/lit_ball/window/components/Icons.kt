@@ -11,6 +11,8 @@ object Icons {
     const val ExportNotes = "drawable/export_notes.svg"
     const val Help = "drawable/help.svg"
     const val Info = "drawable/info.svg"
+    const val FilterList = "drawable/filter_list.svg"
+    const val FilterListOff = "drawable/filter_list_off.svg"
     const val Logout = "drawable/logout.svg"
     const val Save = "drawable/save.svg"
     const val Settings = "drawable/settings.svg"

@@ -5,6 +5,7 @@ package org.reactome.lit_ball.window
 import RootType
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
+import org.reactome.lit_ball.dialog.Filtering2FilterDialog
 import org.reactome.lit_ball.model.Filtering2RootStore
 
 @Composable
@@ -21,6 +22,10 @@ fun Filtering2RootContent(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    if (state.paperListStore.state.filterDialog) {
+        Filtering2FilterDialog(state.paperListStore)
     }
 
     Filtering2MainContent(
