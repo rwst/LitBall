@@ -3,7 +3,6 @@ package org.reactome.lit_ball.common
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -388,6 +387,10 @@ object PaperList {
             setTag(paper.id, tag)
         }
         Filtering2RootStore.refreshList()
+    }
+
+    fun applyFilter(filterString: String) {
+
     }
 
     private fun writeCsvTo(path: String) {

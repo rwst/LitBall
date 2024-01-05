@@ -21,13 +21,7 @@ object Filtering2RootStore : ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
 
-    var scope: CoroutineScope? = null
-        set(value) {
-            if (value != null) {
-                state.paperListStore.scope = value
-            }
-            field = value
-        }
+    override var scope: CoroutineScope? = null
     lateinit var rootSwitch: MutableState<RootType>
 
     fun switchRoot() {

@@ -51,7 +51,10 @@ private fun createWindow(
                                 TextField(
                                     value = textField.value,
                                     modifier = Modifier.fillMaxWidth(fraction = 0.85f),
-                                    onValueChange = { textField.value = it },
+                                    onValueChange = {
+                                        textField.value = it
+                                        store.onFilterChanged(textField.value)
+                                                    },
                                     label = null,
                                 )
                             }
@@ -62,7 +65,8 @@ private fun createWindow(
                             ) {
                                 IconButton(
                                     onClick = {
-//                                    focusRequester.requestFocus()
+                                        textField.value = ""
+                                        //focusRequester.requestFocus()
                                     },
                                     modifier = Modifier
                                         .align(Alignment.CenterVertically),

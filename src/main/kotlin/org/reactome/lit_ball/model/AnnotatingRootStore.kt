@@ -24,13 +24,7 @@ object AnnotatingRootStore : ModelHandle {
     var state: AnnotatingRootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
 
-    var scope: CoroutineScope? = null
-        set(value) {
-            if (value != null) {
-                Filtering2RootStore.state.paperListStore.scope = value
-            }
-            field = value
-        }
+    override var scope: CoroutineScope? = null
     lateinit var rootSwitch: MutableState<RootType>
 
     private fun switchRoot() {

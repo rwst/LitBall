@@ -13,11 +13,11 @@ interface ModelHandle {
     fun refreshList()
     fun refreshClassifierButton()
     fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore)
+    var scope: CoroutineScope?
 }
 
 class PaperListScreenStore(private val handle: ModelHandle) {
     var state: PaperListScreenState by mutableStateOf(initialState())
-    lateinit var scope: CoroutineScope
 
     private fun initialState(): PaperListScreenState = PaperListScreenState()
     private inline fun setState(update: PaperListScreenState.() -> PaperListScreenState) {
@@ -38,7 +38,10 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
 
     fun onClassifierConfirmed() {
-        scope.launch(Dispatchers.IO) { PaperList.applyClassifier() }
+        handle.scope?.launch(Dispatchers.IO) { PaperList.applyClassifier() }
+    }
+    fun onFilterChanged(filter: String) {
+        handle.scope?.launch(Dispatchers.IO) { PaperList.applyFilter(filter) }
     }
 
     fun onEditorCloseClicked() {
