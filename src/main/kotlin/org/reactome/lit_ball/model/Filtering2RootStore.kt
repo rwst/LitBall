@@ -7,10 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.reactome.lit_ball.common.FileType
-import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.PaperList
-import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
@@ -94,7 +91,7 @@ object Filtering2RootStore : ModelHandle {
     }
 
     fun acceptAll() {
-        PaperList.setAllTags(1)
+        PaperList.listHandle.setFullAllTags(Tag.Accepted)
         refreshList()
     }
 

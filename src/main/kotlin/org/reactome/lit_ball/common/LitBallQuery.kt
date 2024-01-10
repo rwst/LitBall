@@ -359,7 +359,7 @@ data class LitBallQuery(
                 return
             }
             PaperList.setFromQuery(this, file)
-            PaperList.setAllTags(1)
+            PaperList.listHandle.setFullAllTags(Tag.Accepted)
             PaperList.finish(true)
             syncBuffers()
         } else {

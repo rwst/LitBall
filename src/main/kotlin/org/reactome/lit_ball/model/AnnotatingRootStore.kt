@@ -94,11 +94,13 @@ object AnnotatingRootStore : ModelHandle {
     }
 
     fun onFlagSet(id: Int, flagNo: Int, value: Boolean) {
-        PaperList.setFlag(id, flagNo, value)
+        PaperList.listHandle.setFlag(id, flagNo, value)
     }
 
     fun deleteClicked(id: Int) {
-        PaperList.delete(id)
+        runBlocking {
+            PaperList.delete(id)
+        }
         refreshList()
     }
 

@@ -24,12 +24,11 @@ import java.io.IOException
 
 object PaperList {
     private const val TAG = "PaperList"
-    var list: List<Paper> = listOf()
+    var listHandle = PaperListHandle()
     private var path: String? = null
     var fileName: String = ""
     lateinit var query: LitBallQuery
     var model: PaperListScreenStore? = null
-    private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     val flagList: List<String>
         get() {
             return query.setting?.annotationClasses?.toList() ?: emptyList()
@@ -40,77 +39,10 @@ object PaperList {
         fileName = file.name
         path = file.absolutePath
         readFromFile(file, accepted)
-        sanitize()
-        updateShadowMap()
     }
 
     fun toList(): List<Paper> {
-        return list.toList()
-    }
-
-    private fun updateShadowMap() {
-        shadowMap.clear()
-        list.forEachIndexed { index, paper ->
-            shadowMap[paper.id] = index
-        }
-    }
-
-    private fun updateItem(id: Int, transformer: (Paper) -> Paper): PaperList {
-        val index = shadowMap[id] ?: return this
-        val old = list[index]
-        val new = transformer(list[index])
-        if (old == new)
-            return this
-        list = list.toMutableList().apply {
-            this[index] = new
-        }.toList()
-        return this
-    }
-
-    @Suppress("SENSELESS_COMPARISON")
-    private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
-        val extIds = map?.toMutableMap()
-        extIds?.entries?.forEach {
-            if (it.value == null) {
-                extIds.remove(it.key)
-                onChanged(extIds)
-            }
-        }
-    }
-
-    private fun sanitize() {
-        list.forEachIndexed { index, paper ->
-            val newPaper: Paper = paper
-            var isChanged = false
-            sanitizeMap(paper.details.externalIds) {
-                newPaper.details.externalIds = it
-                isChanged = true
-            }
-            sanitizeMap(paper.details.tldr) {
-                newPaper.details.tldr = it
-                isChanged = true
-            }
-            if (isChanged)
-                list = list.toMutableList().apply {
-                    this[index] = newPaper
-                }.toList()
-        }
-    }
-
-    fun delete(id: Int) {
-        val index = shadowMap[id] ?: return
-        val tmp = list.toMutableList()
-        val doi = tmp[index].doi
-        query.acceptedSet.removeIf { acc -> doi?.let { it == acc }?: false }
-        tmp.removeAt(index)
-        list = tmp.toList()
-        updateShadowMap()
-        try {
-            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
-        } catch (e: Exception) {
-            handleException(e)
-        }
-        query.syncBuffers()
+        return listHandle.getList()
     }
 
     fun new(files: List<File>): PaperList {
@@ -130,8 +62,7 @@ object PaperList {
         Settings.save()
         val f = File(p)
         if (f.exists()) f.delete()
-        list = mutableListOf()
-        updateShadowMap()
+        listHandle = PaperListHandle()
         return this
     }
 
@@ -165,42 +96,49 @@ object PaperList {
                 papers.add(Paper(id = maxId, details = it, doi = doi))
             }
         }
-        list = papers
+        listHandle.setFullList(papers)
         runBlocking {
             sort(
                 SortingType.valueOf(
                     Settings.map["paper-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()
                 )
             )
-            updateShadowMap()
-            delay(200)
+            delay(200) // TODO
             model?.refreshList()
             model?.refreshClassifierButton()
         }
     }
 
+    /**
+     * Save current paper details to current path/file, which is FILTERED1 or ARCHIVED.
+     * Does NOT advance query status.
+     */
     fun save() {
         val json = ConfiguredJson.get()
         if (path == null) return
         val pathStr: String = path as String
-        val text = json.encodeToString(list)
+        val text = json.encodeToString(listHandle.getFullList())
         File(pathStr).writeText(text)
     }
 
     fun saveAnnotated() {
-        list.forEach { it.tag = Tag.Accepted }
         save()
     }
 
     private fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
         val pathPrefix = path?.substringBeforeLast("/")
-        val path = "$pathPrefix/${fileType.fileName}"
-        val thisList = list.filter { it.tag == tag }
+        val pathStr = "$pathPrefix/${fileType.fileName}"
+        val thisList = listHandle.getFullList().filter { it.tag == tag }
             .mapNotNull { item -> item.doi }
         theSet += thisList
-        File(path).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
+        File(pathStr).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
     }
-
+    /**
+     * Finish filtering2 phase by saving accepted/rejected DOIs to their files, adding them to the sets in memory,
+     * deleting the FILTERED1 file.
+     *
+     * @param auto When auto is not set, a note appears with the number of accepted papers.
+     */
     suspend fun finish(auto: Boolean = false) {
         try {
             writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
@@ -213,7 +151,7 @@ object PaperList {
         if (!auto) {
             RootStore.setFiltered2()
             Filtering2RootStore.switchRoot()
-            val noAcc = list.count { it.tag == Tag.Accepted }
+            val noAcc = listHandle.getFullList().count { it.tag == Tag.Accepted }
             RootStore.setInformationalDialog("$noAcc papers added to accepted")
             query.let {
                 it.noNewAccepted = (noAcc == 0)
@@ -221,6 +159,18 @@ object PaperList {
             }
             RootStore.refreshList()
         }
+    }
+
+    fun delete(id: Int) {
+        val p = listHandle.getDisplayedPaper(id) ?: return
+        query.acceptedSet.removeIf { acc -> p.doi?.let { it == acc }?: false }
+        listHandle.delete(p.doi)
+        try {
+            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+        } catch (e: Exception) {
+            handleException(e)
+        }
+        query.syncBuffers()
     }
 
     private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,Scholar\n"
@@ -237,7 +187,7 @@ object PaperList {
         }
         val revFile = File(exportedCatPath.replace("$", "Reviews"))
         revFile.writeText(CSV_HEADER)
-        list.forEach {
+        listHandle.getFullList().forEach {
             val doi = it.doi
             val date = it.details.publicationDate ?: ""
             val pmid = it.details.externalIds?.get("PubMed")
@@ -271,7 +221,7 @@ object PaperList {
         val exportedPath = "$pathPrefix/${FileType.EXPORTED_JSONL.fileName}"
         File(exportedPath).writeText("")
         val json = ConfiguredUglyJson.get()
-        list.forEach { thePaper ->
+        listHandle.getFullList().forEach { thePaper ->
             val doi = thePaper.doi
             doi?.let { theDoi ->
                 val meta = mapOf("DOI" to JsonPrimitive(theDoi))
@@ -290,52 +240,17 @@ object PaperList {
 
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]
-        setTag(id, newTag)
-    }
-
-    fun setAllTags(btn: Int) {
-        val newTag = Tag.entries[btn]
-        val ids = list.map { it.id }
-        ids.forEach { setTag(it, newTag) }
-    }
-
-    private fun setTag(id: Int, tag: Tag) {
-        updateItem(id) {
-            if (it.tag == tag)
-                it
-            else
-                Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.uppercase())
-        }
-    }
-
-    fun setFlag(id: Int, flagNo: Int, value: Boolean) {
-        val flag = flagList[flagNo]
-        updateItem(id) {
-            if (!value)
-                flag.let { it1 -> it.flags.add(it1) }
-            else
-                it.flags.remove(flag)
-            it
-        }
+        listHandle.setTag(id, newTag)
     }
 
     fun sort(type: SortingType) {
-        list = when (type) {
-            SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
-            SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
-            SortingType.DATE_ASCENDING -> list.sortedBy { it.details.publicationDate }
-            SortingType.DATE_DESCENDING -> list.sortedByDescending { it.details.publicationDate }
-            else ->
-                throw Exception("can't happen: $type")
-        }
+        listHandle.sort(type)
         Settings.map["paper-sort-type"] = type.toString()
         Settings.save()
-        updateShadowMap()
     }
 
     fun pretty(id: Int): String {
-        val index = shadowMap[id] ?: return "CAN'T HAPPEN: not in shadowMap"
-        val p = list[index]
+        val p = listHandle.getDisplayedPaper(id) ?: return "CAN'T HAPPEN: shadowMap[id] == null"
         val pmId = p.details.externalIds?.get("PubMed")
         val textPMID = if (pmId != null) "PMID: $pmId" else ""
         return """
@@ -378,13 +293,13 @@ object PaperList {
         processJob.join()
         val classificationsMap = processCsvFile(resultPath)
 
-        list.forEach { paper ->
+        listHandle.getFullList().forEach { paper ->
             val doi = paper.doi ?: return@forEach
             val tag = if ((classificationsMap[doi] ?: 0) > THRESHOLD)
                 Tag.Accepted
             else
                 Tag.Rejected
-            setTag(paper.id, tag)
+            listHandle.setTag(paper.id, tag)
         }
         Filtering2RootStore.refreshList()
     }
@@ -397,7 +312,7 @@ object PaperList {
         NLPService.init()
         val stringBuilder = StringBuilder()
         stringBuilder.append("text,doi\n")
-        list.forEach {
+        listHandle.getFullList().forEach {
             val text = (it.details.title ?: "") + " " + (it.details.tldr?.get("text") ?: "")
             stringBuilder.append("\"" + NLPService.preprocess(text) + "\",")
             stringBuilder.append("\"${it.doi ?: ""}\"\n")
