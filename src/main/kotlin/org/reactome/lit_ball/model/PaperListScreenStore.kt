@@ -41,7 +41,10 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         handle.scope?.launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
     fun onFilterChanged(filter: String) {
-        handle.scope?.launch(Dispatchers.IO) { PaperList.applyFilter(filter) }
+        handle.scope?.launch(Dispatchers.IO) {
+            PaperList.applyFilter(filter)
+            refreshList()
+        }
     }
 
     fun onEditorCloseClicked() {
@@ -61,6 +64,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
     fun setFilterDialog(value: Boolean) {
         setState { copy(filterDialog = value) }
+        if (!value) onFilterChanged("")
     }
 }
 

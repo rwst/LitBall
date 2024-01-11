@@ -12,6 +12,16 @@ class PaperListHandle {
     private var fullShadowMap: MutableMap<Int, Int> = mutableMapOf()
     private var filteredShadowMap: MutableMap<Int, Int>? = null
 
+    fun applyFilter(string: String) {
+        filteredList = if (string.isEmpty()) null
+        else
+            fullList.filter {
+                it.details.title?.contains(string) ?: false
+                        || it.details.tldr?.get("text")?.contains(string) ?: false
+                        || it.details.abstract?.contains(string) ?: false
+            }
+        updateShadowMap()
+    }
     fun getList(): List<Paper> {
         if (filteredList == null)
             return fullList

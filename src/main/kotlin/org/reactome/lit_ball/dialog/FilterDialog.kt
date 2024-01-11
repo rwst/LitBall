@@ -66,6 +66,7 @@ private fun createWindow(
                                 IconButton(
                                     onClick = {
                                         textField.value = ""
+                                        store.onFilterChanged(textField.value)
                                         //focusRequester.requestFocus()
                                     },
                                     modifier = Modifier

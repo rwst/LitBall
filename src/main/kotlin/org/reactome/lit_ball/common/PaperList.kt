@@ -303,7 +303,7 @@ object PaperList {
     }
 
     fun applyFilter(filterString: String) {
-
+        listHandle.applyFilter(filterString)
     }
 
     private fun writeCsvTo(path: String) {
