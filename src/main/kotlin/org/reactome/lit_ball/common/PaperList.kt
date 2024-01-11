@@ -292,15 +292,13 @@ object PaperList {
         }
         processJob.join()
         val classificationsMap = processCsvFile(resultPath)
-
-        listHandle.getFullList().forEach { paper ->
-            val doi = paper.doi ?: return@forEach
-            val tag = if ((classificationsMap[doi] ?: 0) > THRESHOLD)
-                Tag.Accepted
-            else
-                Tag.Rejected
-            listHandle.setTag(paper.id, tag)
-        }
+        val tagMap: Map<String, Tag> = classificationsMap.mapValues { (_, value) ->
+                if (value > THRESHOLD)
+                    Tag.Accepted
+                else
+                    Tag.Rejected
+            }
+        listHandle.setFullTagsFromDoiMap(tagMap)
         Filtering2RootStore.refreshList()
     }
 

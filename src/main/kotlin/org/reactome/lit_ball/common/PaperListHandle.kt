@@ -21,10 +21,6 @@ class PaperListHandle {
     fun getFullList(): List<Paper> {
         return fullList
     }
-
-    private fun setList(list: List<Paper>) {
-
-    }
     @Suppress("SENSELESS_COMPARISON")
     fun setFullList(list: List<Paper>) {
         fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
@@ -65,16 +61,20 @@ class PaperListHandle {
         return filteredShadowMap as MutableMap<Int, Int>
     }
 
-    private fun updateItem(id: Int, transformer: (Paper) -> Paper) {
+    private fun updateItemInBothLists(id: Int, transformer: (Paper) -> Paper) {
         val index = fullShadowMap[id] ?: return
-        val list = getList()
-        val old = list[index]
+        val old = fullList[index]
         val new = transformer(old)
         if (old == new)
             return
-        setList(list.toMutableList().apply {
+        fullList = fullList.toMutableList().apply {
             this[index] = new
-        }.toList() )
+            }.toList()
+        if (filteredList == null) return
+        val findex = filteredShadowMap?.get(id) ?: return
+        filteredList = filteredList!!.toMutableList().apply {
+            this[findex] = new
+        }.toList()
     }
     private fun updateShadowMap() {
         fullShadowMap.clear()
@@ -109,12 +109,23 @@ class PaperListHandle {
      * @param tag
      */
     fun setFullAllTags(tag: Tag) {
-        val ids= fullList.map { it.id }
-        ids.forEach { setTag(it, tag) }
+        val list = fullList.toMutableList()
+        list.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.uppercase()) }
+        fullList = list.toList()
     }
 
+    fun setFullTagsFromDoiMap(tagMap: Map<String, Tag>) {
+        val list = fullList.map {
+            val newTag = tagMap[it.doi]?: Tag.Accepted
+            if (it.tag == newTag)
+                it
+            else
+                Paper(it.id, it.details, newTag, it.flags, it.details.externalIds?.get("DOI")?.uppercase())
+        }
+        fullList = list
+    }
     fun setTag(id: Int, tag: Tag) {
-        updateItem(id) {
+        updateItemInBothLists(id) {
             if (it.tag == tag)
                 it
             else
@@ -124,7 +135,7 @@ class PaperListHandle {
 
     fun setFlag(id: Int, flagNo: Int, value: Boolean) {
         val flag = PaperList.flagList[flagNo]
-        updateItem(id) {
+        updateItemInBothLists(id) {
             if (!value)
                 flag.let { it1 -> it.flags.add(it1) }
             else
@@ -134,15 +145,10 @@ class PaperListHandle {
     }
 
     fun sort(type: SortingType) {
-        val list = getList()
-        setList(when (type) {
-            SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
-            SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
-            SortingType.DATE_ASCENDING -> list.sortedBy { it.details.publicationDate }
-            SortingType.DATE_DESCENDING -> list.sortedByDescending { it.details.publicationDate }
-            else ->
-                throw Exception("can't happen: $type")
-        })
+        fullList = sort(fullList, type)
+        filteredList?.let {
+            filteredList = sort(filteredList!!, type)
+        }
         updateShadowMap()
     }
 
@@ -167,5 +173,16 @@ class PaperListHandle {
         var result = fullList.hashCode()
         result = 31 * result + (filteredList?.hashCode() ?: 0)
         return result
+    }
+}
+
+fun sort(list: List<Paper>, type: SortingType): List<Paper> {
+    return when (type) {
+        SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
+        SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
+        SortingType.DATE_ASCENDING -> list.sortedBy { it.details.publicationDate }
+        SortingType.DATE_DESCENDING -> list.sortedByDescending { it.details.publicationDate }
+        else ->
+            throw Exception("can't happen: $type")
     }
 }
