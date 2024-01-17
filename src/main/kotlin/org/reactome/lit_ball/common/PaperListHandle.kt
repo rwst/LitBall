@@ -80,25 +80,25 @@ class PaperListHandle {
         fullList = fullList.toMutableList().apply {
             this[index] = new
             }.toList()
-        if (filteredList == null) return
-        val findex = filteredShadowMap?.get(id) ?: return
-        filteredList = filteredList!!.toMutableList().apply {
-            this[findex] = new
-        }.toList()
+        filteredList?.let {
+            val findex = filteredShadowMap?.get(id) ?: return
+            filteredList = it.toMutableList().apply {
+                this[findex] = new
+            }.toList()
+        }
     }
     private fun updateShadowMap() {
         fullShadowMap.clear()
         fullList.forEachIndexed { index, paper ->
             fullShadowMap[paper.id] = index
         }
-        if (filteredList != null) {
-            filteredShadowMap = mutableMapOf()
-            filteredList!!.forEachIndexed { index, paper ->
-                filteredShadowMap!![paper.id] = index
+        filteredShadowMap = filteredList?.let {
+            val map: MutableMap<Int, Int> = mutableMapOf()
+            it.forEachIndexed { index, paper ->
+                map[paper.id] = index
             }
+            map
         }
-        else
-            filteredShadowMap = null
     }
     fun delete(doi: String?) {
         if (doi.isNullOrEmpty()) return
@@ -157,7 +157,7 @@ class PaperListHandle {
     fun sort(type: SortingType) {
         fullList = sort(fullList, type)
         filteredList?.let {
-            filteredList = sort(filteredList!!, type)
+            filteredList = sort(it, type)
         }
         updateShadowMap()
     }

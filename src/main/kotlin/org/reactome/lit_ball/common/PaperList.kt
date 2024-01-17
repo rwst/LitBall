@@ -85,15 +85,17 @@ object PaperList {
             val acceptedWithDetails = papers.map { it.doi ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
             S2Client.getPaperDetails(acceptedWithoutDetails) {
-                maxId += 1
-                val oldDoi = it.externalIds?.get("DOI")
-                val doi = oldDoi?.uppercase()
-                if (doi != null && doi != oldDoi) {
-                    val newExtIds = it.externalIds!!.toMutableMap()
-                    newExtIds["DOI"] = doi
-                    it.externalIds = newExtIds
+                val extIds = it.externalIds?.toMutableMap()
+                if (extIds != null) {
+                    val oldDoi = extIds["DOI"]
+                    val doi = oldDoi?.uppercase()
+                    if (doi != null && doi != oldDoi) {
+                        extIds["DOI"] = doi
+                        it.externalIds = extIds
+                    }
+                    papers.add(Paper(id = maxId, details = it, doi = doi))
+                    maxId += 1
                 }
-                papers.add(Paper(id = maxId, details = it, doi = doi))
             }
         }
         listHandle.setFullList(papers)

@@ -479,13 +479,15 @@ private fun sanitize(list: MutableList<S2Service.PaperDetails>) {
 
 fun uppercaseDois(list: MutableList<S2Service.PaperDetails>) {
     list.forEach {
-        val doi = it.externalIds?.get("DOI")
-        if (it.externalIds != null && doi != null) {
-            val upperDoi = doi.uppercase()
-            if (doi != upperDoi) {
-                val map = it.externalIds!!.toMutableMap()
-                map["DOI"] = upperDoi
-                it.externalIds = map
+        val extIds = it.externalIds?.toMutableMap()
+        if (extIds != null) {
+            val doi = extIds["DOI"]
+            if (doi != null) {
+                val upperDoi = doi.uppercase()
+                if (doi != upperDoi) {
+                    extIds["DOI"] = upperDoi
+                    it.externalIds = extIds
+                }
             }
         }
     }
