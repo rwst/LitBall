@@ -175,6 +175,21 @@ object PaperList {
         query.syncBuffers()
     }
 
+    fun deleteFiltered() {
+        val fList = listHandle.getFilteredList()
+        fList?.let {
+            listHandle.deleteAllFiltered()
+            val dois = it.map { p -> p.doi }.toSet()
+            query.acceptedSet.removeIf { acc -> dois.contains(acc) }
+            try {
+                writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+            } catch (e: Exception) {
+                handleException(e)
+            }
+            query.syncBuffers()
+        }
+    }
+
     private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,Scholar\n"
     fun exportAnnotated() {
         val pathPrefix = path?.substringBeforeLast("/")

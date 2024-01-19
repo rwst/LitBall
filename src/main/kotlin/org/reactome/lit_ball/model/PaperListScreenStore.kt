@@ -47,6 +47,12 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         }
     }
 
+    fun onRemoveFiltered() {
+        handle.scope?.launch(Dispatchers.IO) {
+            PaperList.deleteFiltered()
+        }
+    }
+
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
     }

@@ -123,7 +123,7 @@ fun Filtering2FilterDialog(store: PaperListScreenStore) {
         }
         Spacer(modifier = Modifier.width(14.dp))
         Button(
-            onClick = {},
+            onClick = store::onRemoveFiltered,
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text(

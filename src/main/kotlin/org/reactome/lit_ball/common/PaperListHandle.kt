@@ -31,6 +31,9 @@ class PaperListHandle {
     fun getFullList(): List<Paper> {
         return fullList
     }
+    fun getFilteredList(): List<Paper>? {
+        return filteredList
+    }
     @Suppress("SENSELESS_COMPARISON")
     fun setFullList(list: List<Paper>) {
         fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
@@ -111,6 +114,17 @@ class PaperListHandle {
             filteredList = tmp2.toList()
         }
         updateShadowMap()
+    }
+
+    fun deleteAllFiltered() {
+        filteredList?.let { list ->
+            val dois = list.map { it.doi }.toSet()
+            val fList = fullList.toMutableList()
+            fList.removeIf { dois.contains(it.doi) }
+            fullList = fList.toList()
+            filteredList = null
+            updateShadowMap()
+        }
     }
 
     /**
