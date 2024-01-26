@@ -135,6 +135,12 @@ object PaperList {
         theSet += thisList
         File(pathStr).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
     }
+
+    fun acceptFiltered(value: Boolean) {
+        listHandle.setFilteredAllTags(if (value) Tag.Accepted else Tag.Rejected)
+        listHandle.setFullTagsFromFiltered()
+    }
+
     /**
      * Finish filtering2 phase by saving accepted/rejected DOIs to their files, adding them to the sets in memory,
      * deleting the FILTERED1 file.

@@ -138,6 +138,23 @@ class PaperListHandle {
         fullList = list.toList()
     }
 
+    fun setFilteredAllTags(tag: Tag) {
+        filteredList?.let {
+            val list = it.map { p ->
+                if (p.tag == tag)
+                    p
+                else
+                    Paper(p.id, p.details, tag, p.flags, p.details.externalIds?.get("DOI")?.uppercase())
+            }
+            filteredList = list
+        }
+    }
+
+    fun setFullTagsFromFiltered() {
+        val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.doi?: "",it.tag) } ?: emptyMap()
+        setFullTagsFromDoiMap(tagMap)
+    }
+
     fun setFullTagsFromDoiMap(tagMap: Map<String, Tag>) {
         val list = fullList.map {
             val newTag = tagMap[it.doi]?: Tag.Accepted

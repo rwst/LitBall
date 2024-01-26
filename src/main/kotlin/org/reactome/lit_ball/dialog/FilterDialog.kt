@@ -97,7 +97,7 @@ fun AnnotatingFilterDialog(store: PaperListScreenStore) {
     val textField= rememberSaveable { mutableStateOf("") }
     createWindow(store, textField) {
         Button(
-            onClick = {},
+            onClick = store::onRemoveFiltered,
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text(
@@ -113,7 +113,7 @@ fun Filtering2FilterDialog(store: PaperListScreenStore) {
     val textField= rememberSaveable { mutableStateOf("") }
     createWindow(store, textField) {
         Button(
-            onClick = {},
+            onClick = { store.onAcceptFiltered(true) },
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text(
@@ -123,7 +123,7 @@ fun Filtering2FilterDialog(store: PaperListScreenStore) {
         }
         Spacer(modifier = Modifier.width(14.dp))
         Button(
-            onClick = store::onRemoveFiltered,
+            onClick = { store.onAcceptFiltered(false) },
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text(

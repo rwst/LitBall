@@ -53,6 +53,13 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         }
     }
 
+    fun onAcceptFiltered(value: Boolean) {
+        handle.scope?.launch(Dispatchers.IO) {
+            PaperList.acceptFiltered(value)
+        }
+        refreshList()
+    }
+
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
     }
