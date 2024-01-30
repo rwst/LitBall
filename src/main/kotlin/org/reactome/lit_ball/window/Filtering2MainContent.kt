@@ -85,10 +85,16 @@ internal fun Filtering2MainContent(
                         Text("Apply Classifier")
                     }
                 Button(
-                    modifier = Modifier.padding(horizontal = 24.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp),
                     onClick = model::acceptAll,
                 ) {
                     Text("Accept all")
+                }
+                Button(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    onClick = model::rejectAll,
+                ) {
+                    Text("Reject all")
                 }
             }
             Filtering2ListContent(
