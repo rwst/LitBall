@@ -2,10 +2,11 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
-v2331
- - no need for outer parenthesis in logical expressions
- - doc: logical expr
- - fix: duplicate DOIs in acc./rej. files
+v2401
+ - filter button/dialog in paper lists
+ - in paper list, put query name in header
+ - export text for annotation
+ - filtered2: reject all button
 
 v2330
  - in annotate: delete paper

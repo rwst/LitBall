@@ -1,6 +1,10 @@
- - mumble benchmark
+ - make settings in query lateinit and remove !!
+ - query type 1: more filters: pubdate, articletype
+ - query type 4: S2 recommendations https://api.semanticscholar.org/api-docs/recommendations
 
 Doc:
+ - json export
+ - recommend getting API key
  - reasons why not all papers found:
    - start set not representative or not highly cited
    - missing keywords
@@ -8,25 +12,33 @@ Doc:
    - local Chinese papers are underrepresented in S2
 
 Features:
- - search bar in annotate()
- - file selectors in settings dialog
- - recipes: export to / start / import from annotation tool --- both in filter2
- - in filter2()  Prodigy
- - in annotate() export to / start / import from Prodigy
- - HTTP buffer
- - clicking sort in filtering2 still grabs focus
- - going Main from annotate resets list pos
- - new query from old (allowing change of keywords but shortcutting some download)
+ - don't discard non-DOI expr search results / use archived directly?
  - refactor: rename model functions so they reflect the event not the intent
  - "duplicate" sorting controls code in A/F rootstore
+ - clicking sort in filtering2 still grabs focus
+ - clicking delete in annotate still grabs focus
+ - going Main from annotate resets list pos
+ - when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
+ - new query from old (allowing change of keywords but shortcutting some download)
+ - file selectors in settings dialog
+ - HTTP buffer
  - settings mutex
- - don't discard non-DOI expr search results / use archived directly?
  - manually add DOIs to accepted
 
 Other ideas:
- - NLP again, Stanford lemmatizer + https://projects.csail.mit.edu/jwi/ + synonyms/hyponyms (or + dmeoli/WS4J) (or via Wikidata)
  - replace 404 msg with "Paper not found"
- - somehow use S2 embeddings
  - increase TIMEOUT strategically
  - adding/changing keywords before Finish will change paper list in filter2(), ask yes/no
  - allow || && ! in expressions
+ - in PaperList.save() called by annotate() archived.txt gets reduced to only accepted papers. Can we preserve that data?
+
+The abstract typically contains several key sentences that cover different aspects of the research:
+
+ - Background or Introduction Sentence(s): These sentences provide context for the study, including the problem being addressed and its significance. They often include information about the current state of research and why the study was necessary.
+ - Objective or Aim Sentence(s): This part of the abstract states the primary goals or hypotheses of the research. It answers what the authors intended to discover or prove with their research.
+ - Methods Sentence(s): These sentences briefly describe the methodology used in the study, including the type of research (qualitative, quantitative, experimental, etc.), study design, sample size, and key techniques or instruments employed.
+ - Results Sentence(s): Here, the key findings of the study are presented in a concise manner. This may include data, trends, and any statistical significance found. The results are often summarized without detailed statistical analysis, which is reserved for the full paper.
+ - Conclusion Sentence(s): The abstract concludes with sentences that summarize the implications of the findings. This includes how the results contribute to the field, potential applications, and suggestions for future research.
+ - Limitations Sentence(s) (if applicable): Sometimes, authors include a sentence about the limitations of their study to provide a balanced view and acknowledge any factors that may affect the interpretation of the results.
+ - Future Work Sentence(s) (if applicable): This may suggest directions for future research based on the findings of the current study.
+ - Statement of Importance Sentence(s): Occasionally, an abstract may include a sentence that directly addresses the importance or impact of the research to highlight its relevance to the field or society.
