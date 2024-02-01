@@ -11,7 +11,7 @@ data class QuerySetting(
     var type: Qtype = Qtype.SUPERVISED_SNOWBALLING,
     var mandatoryKeyWords: MutableSet<String> = mutableSetOf(),
     var forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
-    var classifier: String = "virus-EXP",
+    var classifier: String = "",
     var annotationClasses: MutableSet<String> = mutableSetOf(),
 ) {
     override fun toString(): String {

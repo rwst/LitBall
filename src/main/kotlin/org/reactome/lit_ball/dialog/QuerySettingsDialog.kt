@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.LitBallQuery
-import org.reactome.lit_ball.common.QuerySetting
 import org.reactome.lit_ball.util.StringPatternMatcher
 import org.reactome.lit_ball.util.splitToSet
 import org.reactome.lit_ball.window.components.Icons
@@ -29,14 +28,13 @@ fun QuerySettingsDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {
-    item.setting = item.setting ?: QuerySetting()
     val field1Value =
-        rememberSaveable { mutableStateOf(item.setting?.mandatoryKeyWords?.joinToString(separator = ", ") ?: "") }
+        rememberSaveable { mutableStateOf(item.setting.mandatoryKeyWords.joinToString(separator = ", ")) }
     val field2Value =
-        rememberSaveable { mutableStateOf(item.setting?.forbiddenKeyWords?.joinToString(separator = ", ") ?: "") }
-    val field3Value = rememberSaveable { mutableStateOf(item.setting?.classifier ?: "") }
+        rememberSaveable { mutableStateOf(item.setting.forbiddenKeyWords.joinToString(separator = ", ")) }
+    val field3Value = rememberSaveable { mutableStateOf(item.setting.classifier) }
     val field4Value =
-        rememberSaveable { mutableStateOf(item.setting?.annotationClasses?.joinToString(separator = ", ") ?: "") }
+        rememberSaveable { mutableStateOf(item.setting.annotationClasses.joinToString(separator = ", ")) }
     val keyword1WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
     val keyword2WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
 
@@ -58,11 +56,11 @@ fun QuerySettingsDialog(
                         return@TextButton
                     }
 
-                    item.setting!!.mandatoryKeyWords = StringPatternMatcher.patternSettingFrom(field1Value.value)
-                    item.setting!!.forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(field2Value.value)
-                    item.setting!!.classifier = field3Value.value.trim()
-                    item.setting!!.annotationClasses = field4Value.value.splitToSet(",")
-                    item.setting!!.type = item.type
+                    item.setting.mandatoryKeyWords = StringPatternMatcher.patternSettingFrom(field1Value.value)
+                    item.setting.forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(field2Value.value)
+                    item.setting.classifier = field3Value.value.trim()
+                    item.setting.annotationClasses = field4Value.value.splitToSet(",")
+                    item.setting.type = item.type
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }

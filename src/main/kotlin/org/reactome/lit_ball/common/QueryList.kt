@@ -25,12 +25,12 @@ object QueryList {
                     id = index,
                     name = it.name.removePrefix(prefix),
                     status = getStatus(it),
-                    setting = getSetting(it),
                     acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }
                         .toMutableSet(),
                     rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }
                         .toMutableSet(),
                 )
+                newQuery.setting = getSetting(it)
                 newQuery.lastExpansionDate = newQuery.getFileDate(
                     fromFile = true,
                     fileType = FileType.ACCEPTED
@@ -43,7 +43,7 @@ object QueryList {
                         newQuery.noNewAccepted = false
                     }
                 }
-                newQuery.type = newQuery.setting?.type ?: Qtype.SUPERVISED_SNOWBALLING
+                newQuery.type = newQuery.setting.type
                 newQuery
             }
         }
@@ -144,10 +144,10 @@ private fun getStatus(dir: File): QueryStatus {
     return QueryStatus.UNINITIALIZED
 }
 
-private fun getSetting(dir: File): QuerySetting? {
+private fun getSetting(dir: File): QuerySetting {
     val filePath = dir.absolutePath + "/" + FileType.SETTINGS.fileName
     val settingsFile = File(filePath)
     if (settingsFile.exists() && settingsFile.isFile && settingsFile.canRead())
         return QuerySetting.fromFile(settingsFile)
-    return null
+    return QuerySetting()
 }

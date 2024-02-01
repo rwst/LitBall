@@ -57,7 +57,7 @@ data class LitBallQuery(
     val name: String = "",
     var type: Qtype = Qtype.SUPERVISED_SNOWBALLING,
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
-    var setting: QuerySetting? = null,
+    var setting: QuerySetting = QuerySetting(),
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
     var lastExpansionDate: Date? = null,
@@ -188,13 +188,11 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
         val rejectedDOIs: Set<String>
-        if (setting == null)
-            throw Exception("Can't happen")
 
         // Load and match details of DOIs in expanded.txt
         // Result goes into paperDetailsList
         if (queryDir.isDirectory && queryDir.canRead()) {
-            val matcher = StringPatternMatcher(setting!!)
+            val matcher = StringPatternMatcher(setting)
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
             val result = S2Client.getPaperDetails(doiSet) {
                 val textsOfPaper: Set<String> = setOf(
@@ -296,11 +294,9 @@ data class LitBallQuery(
         val tag = "EXPRSEARCH"
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
-        if (setting == null)
-            throw Exception("Can't happen")
 
-        val matcher = StringPatternMatcher(setting!!)
-        val result = S2Client.getBulkPaperSearch(setting!!) {
+        val matcher = StringPatternMatcher(setting)
+        val result = S2Client.getBulkPaperSearch(setting) {
             if (!matcher.parser2.match(it.title?: ""))
                 paperDetailsList.add(it)
         }
@@ -439,7 +435,7 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             val json = ConfiguredJson.get()
-            val text = json.encodeToString<QuerySetting>(setting ?: QuerySetting())
+            val text = json.encodeToString<QuerySetting>(setting)
             try {
                 File("${queryDir.absolutePath}/${FileType.SETTINGS.fileName}").writeText(text)
             } catch (e: Exception) {

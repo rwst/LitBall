@@ -31,7 +31,7 @@ object PaperList {
     var model: PaperListScreenStore? = null
     val flagList: List<String>
         get() {
-            return query.setting?.annotationClasses?.toList() ?: emptyList()
+            return query.setting.annotationClasses.toList()
         }
 
     suspend fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
@@ -203,7 +203,7 @@ object PaperList {
         File(exportedPath).writeText(CSV_HEADER)
         val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT_CSV.fileName}"
         val fileMap = mutableMapOf<String, File>()
-        query.setting?.annotationClasses?.forEach {
+        query.setting.annotationClasses.forEach {
             val file = File(exportedCatPath.replace("$", it))
             file.writeText(CSV_HEADER)
             fileMap[it] = file
@@ -287,7 +287,7 @@ object PaperList {
 
     private const val THRESHOLD = 54
     suspend fun applyClassifier() {
-        val classifierName = query.setting?.classifier ?: ""
+        val classifierName = query.setting.classifier
         val classifierPath = Settings.map["path-to-classifiers"] + "/" + classifierName
         val modelFile = File(classifierPath)
         if (classifierName.isBlank() || !modelFile.canRead()) {

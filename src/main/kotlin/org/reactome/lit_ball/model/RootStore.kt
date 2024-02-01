@@ -114,8 +114,7 @@ object RootStore {
 
     fun onQuerySettingsCloseClicked() {
         val query = state.editingQuerySettings ?: throw CantHappenException()
-        if (query.status == QueryStatus.UNINITIALIZED
-            && query.setting?.mandatoryKeyWords?.isNotEmpty() == true
+        if (query.status == QueryStatus.UNINITIALIZED && query.setting.mandatoryKeyWords.isNotEmpty()
         ) {
             query.status = QueryStatus.FILTERED2
             setState { copy(items = QueryList.list.toList()) }
