@@ -67,7 +67,7 @@ fun NewItemDialog(
                     }
                     fieldValue.value = dois.joinToString("\n")
                     if (dois.any { !it.startsWith("10.") }) {
-                        doiWarningValue.value = "Could not covert all entries to DOI. Please replace or remove."
+                        doiWarningValue.value = "Could not convert all entries to DOI. Please replace or remove."
                         return@TextButton
                     }
                     checkValue.value = name.isNotEmpty() && (typeValue.value == 0 || dois.isNotEmpty())
