@@ -31,7 +31,7 @@ import kotlin.io.path.isWritable
 
 
 @Composable
-fun NewItemDialog(
+fun NewQueryDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {

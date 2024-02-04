@@ -29,7 +29,7 @@ fun RootContent(
     RootStore.init()
 
     if (state.newItem) {
-        NewItemDialog(
+        NewQueryDialog(
             scope,
             onCloseClicked = { model.setNewItem(false) },
         )
