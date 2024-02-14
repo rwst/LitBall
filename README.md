@@ -41,4 +41,22 @@ Congratulations! You went through one cycle of snowballing. Do this until no mor
 
 We are using some free commercial icons from [Icons8](https://icons8.com)
 
+# Citing LitBall / BibTeX
+
+Please cite as:
+
+```
+R. Stephan (2024), Interleaved snowballing: Reducing the workload of literature curators. Preprint at arXiv:2402.08339 [cs.DL]
+https://arxiv.org/abs/2402.08339, DOI: 10.48550/arXiv.2402.08339
+
+@misc{stephan2024interleaved,
+      title={Interleaved snowballing: Reducing the workload of literature curators}, 
+      author={Ralf Stephan},
+      year={2024},
+      eprint={2402.08339},
+      archivePrefix={arXiv},
+      primaryClass={cs.DL}
+}
+```
+
 [1] Kinney, Rodney Michael et al. “The Semantic Scholar Open Data Platform.” ArXiv abs/2301.10140 (2023) https://www.semanticscholar.org/
