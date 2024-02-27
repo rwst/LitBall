@@ -51,7 +51,7 @@ object QueryList {
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
-    fun addNewItem(type: Int, name: String, dois: Set<String>) {
+    fun addNewItem(type: Int, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
         val queryDir = getQueryDir(name)
         if (queryDir.exists()) {
             handleException(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
@@ -74,7 +74,8 @@ object QueryList {
                 id = list.size,
                 type = Qtype.entries[type],
                 name = name,
-                acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
+                acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet(),
+                expSearchParams = expSearchParams,
             )
         )
         RootStore.doSort(

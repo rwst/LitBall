@@ -9,6 +9,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.Delegates
 
 fun formatDateToyyyyMMMddFormat(date: Date?): String {
     if (date == null) return "-.-"
@@ -44,4 +45,64 @@ fun String.splitToSet(delim: String): MutableSet<String> =
 
 fun LocalDate.toEpochMilliseconds(): Long {
     return atStartOfDayIn((TimeZone.currentSystemDefault())).toEpochMilliseconds()
+}
+
+class DateMatcher(filteredDate: String?) {
+    private val infinity = 10000
+    private var fromYear by Delegates.notNull<Int>()
+    private var toYear by Delegates.notNull<Int>()
+    private var initialized by Delegates.notNull<Boolean>()
+
+    init {
+        initialized = filteredDate?.let { fDate ->
+            when (fDate.length) {
+                1, 2, 3, 6, 7, 8 -> return@let false
+                4 -> if (fDate.all { it.isDigit() }) {
+                    fromYear = fDate.toInt()
+                    toYear = fromYear
+                } else
+                    return@let false
+
+                5 -> if (fDate[4] == '-'
+                    && fDate.slice(0..3).all { it.isDigit() }
+                ) {
+                    fromYear = fDate.slice(0..3).toInt()
+                    toYear = infinity
+                } else if (fDate[0] == '-'
+                    && fDate.slice(0..3).all { it.isDigit() }
+                ) {
+                    fromYear = infinity
+                    toYear = fDate.slice(1..4).toInt()
+                } else
+                    return@let false
+
+                9 -> if (fDate[4] == '-'
+                    && fDate.slice(0..3).all { it.isDigit() }
+                    && fDate.slice(5..8).all { it.isDigit() }
+                ) {
+                    fromYear = fDate.slice(0..3).toInt()
+                    toYear = fDate.slice(5..8).toInt()
+                } else
+                    return@let false
+
+                else -> return@let false
+            }
+            true
+        } ?: true
+    }
+
+    fun matches(publicationDate: String?): Boolean {
+        if (!initialized) return false
+        publicationDate?.let { pDate ->
+            if (pDate.length < 4 || pDate.any { !it.isDigit() })
+                return false
+            val pYear = pDate.slice(0..3).toInt()
+            if (fromYear == infinity)
+                return pYear <= toYear
+            if (toYear == infinity)
+                return pYear >= fromYear
+            return (pYear in fromYear..toYear)
+        }
+        return true
+    }
 }

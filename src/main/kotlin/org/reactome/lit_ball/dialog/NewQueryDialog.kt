@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.reactome.lit_ball.common.ArticleType
 import org.reactome.lit_ball.common.Qtype
 import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.Settings
@@ -38,6 +40,8 @@ fun NewQueryDialog(
     val typeValue = rememberSaveable { mutableStateOf(2) }
     val fieldValue = rememberSaveable { mutableStateOf("") }
     val nameValue = rememberSaveable { mutableStateOf("") }
+    val pubYearValue = rememberSaveable { mutableStateOf("") }
+    val flagCheckedValue = rememberSaveable { mutableStateOf(BooleanArray(ArticleType.entries.size) { true }) }
     val checkValue = rememberSaveable { mutableStateOf(true) }
     val nameCheckValue = rememberSaveable { mutableStateOf(true) }
     val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
@@ -74,7 +78,7 @@ fun NewQueryDialog(
                     nameCheckValue.value = name !in QueryList.list.map { it.name }
                     if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
-                            QueryList.addNewItem(typeValue.value, name, dois.toSet())
+                            QueryList.addNewItem(typeValue.value, name, dois.toSet(), Pair(pubYearValue.value, flagCheckedValue.value))
                         }
                         (onCloseClicked)()
                     }
@@ -212,6 +216,79 @@ fun NewQueryDialog(
                                     .align(Alignment.CenterVertically)
                                     .padding(start = 24.dp)
                             )
+                        }
+                    }
+                }
+                else {
+                    Row {
+                        Tooltip(
+                            text = """
+                            (Optional) Input a range of years to filter publication dates of articles""".trimIndent(),
+                            Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                painterResource(Icons.Help),
+                                contentDescription = "Query Settings",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(20.dp)
+                                    .align(Alignment.CenterVertically),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(14.dp))
+                        TextField(
+                            value = pubYearValue.value,
+                            onValueChange = {
+                                pubYearValue.value = it
+                            },
+                            label = { Text("Publication Date (optional)") },
+                            placeholder = { Text("1900-") }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Row {
+                        Tooltip(
+                            text = """
+                            (Optional) Check one or more article types""".trimIndent(),
+                            Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                painterResource(Icons.Help),
+                                contentDescription = "Query Settings",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(20.dp)
+                                    .align(Alignment.CenterVertically),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(24.dp))
+                        Row {
+                            Column (
+                                verticalArrangement = Arrangement.spacedBy(0.dp)
+                            ){
+                                ArticleType.entries.forEach { articleType ->
+                                    val (checkedState, onStateChange) = remember { mutableStateOf(flagCheckedValue.value[articleType.ordinal]) }
+                                    Row (
+                                        modifier = Modifier
+                                            .padding(vertical = 0.dp)
+                                            .height(24.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Checkbox(
+                                            checked = checkedState,
+                                            onCheckedChange = {
+                                                if (!checkedState || flagCheckedValue.value.count { it } > 1 ) {
+                                                    onStateChange(!checkedState)
+                                                    flagCheckedValue.value[articleType.ordinal] = !checkedState
+                                                }
+                                            },
+                                            modifier = Modifier
+                                                .padding(horizontal = 0.dp)
+                                        )
+                                        Text(
+                                            text = articleType.s2name,
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

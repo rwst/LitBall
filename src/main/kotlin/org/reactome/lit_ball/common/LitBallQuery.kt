@@ -12,10 +12,7 @@ import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Service
-import org.reactome.lit_ball.util.ConfiguredJson
-import org.reactome.lit_ball.util.StringPatternMatcher
-import org.reactome.lit_ball.util.Logger
-import org.reactome.lit_ball.util.handleException
+import org.reactome.lit_ball.util.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -61,8 +58,20 @@ data class LitBallQuery(
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
     var lastExpansionDate: Date? = null,
-    var noNewAccepted: Boolean = false
+    var noNewAccepted: Boolean = false,
+    var expSearchParams: Pair<String, BooleanArray>? = null,
 ) {
+    init {
+        setting.type = type
+        expSearchParams?.let { pair ->
+            setting.pubDate = pair.first
+            setting.pubType =
+                ArticleType.entries.map { it.s2name }
+                    .zip(pair.second.toList())
+                    .filter { it.second }
+                    .map { it.first }
+        }
+    }
     fun syncBuffers() {
         acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()
         rejectedSet = getDOIs(getQueryDir(name), FileType.REJECTED.fileName).filter { it.isNotBlank() }.toMutableSet()
@@ -296,8 +305,11 @@ data class LitBallQuery(
         val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
 
         val matcher = StringPatternMatcher(setting)
+        val dateMatcher = DateMatcher(expSearchParams?.first)
         val result = S2Client.getBulkPaperSearch(setting) {
-            if (!matcher.parser2.match(it.title?: ""))
+            if (typeMatches(it.publicationTypes, expSearchParams?.second)
+                && dateMatcher.matches(it.publicationDate)
+                && !matcher.parser2.match(it.title?: ""))
                 paperDetailsList.add(it)
         }
         // Bail out on Cancel

@@ -13,6 +13,8 @@ data class QuerySetting(
     var forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
     var classifier: String = "",
     var annotationClasses: MutableSet<String> = mutableSetOf(),
+    var pubDate: String = "",
+    var pubType: List<String> = emptyList()
 ) {
     override fun toString(): String {
         return "QuerySetting(type=${type.name} posKeyWords=$mandatoryKeyWords, negKeyWords=$forbiddenKeyWords, classifier=$classifier), annotationClasses=$annotationClasses"
