@@ -56,6 +56,10 @@ class DateMatcher(filteredDate: String?) {
     init {
         initialized = filteredDate?.let { fDate ->
             when (fDate.length) {
+                0 -> return@let true.also {
+                    fromYear = -infinity
+                    toYear = infinity
+                }
                 1, 2, 3, 6, 7, 8 -> return@let false
                 4 -> if (fDate.all { it.isDigit() }) {
                     fromYear = fDate.toInt()
@@ -69,9 +73,9 @@ class DateMatcher(filteredDate: String?) {
                     fromYear = fDate.slice(0..3).toInt()
                     toYear = infinity
                 } else if (fDate[0] == '-'
-                    && fDate.slice(0..3).all { it.isDigit() }
+                    && fDate.slice(1..4).all { it.isDigit() }
                 ) {
-                    fromYear = infinity
+                    fromYear = -infinity
                     toYear = fDate.slice(1..4).toInt()
                 } else
                     return@let false
