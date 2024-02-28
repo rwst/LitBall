@@ -50,14 +50,15 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun onRemoveFiltered() {
         handle.scope?.launch(Dispatchers.IO) {
             PaperList.deleteFiltered()
+            refreshList()
         }
     }
 
     fun onAcceptFiltered(value: Boolean) {
         handle.scope?.launch(Dispatchers.IO) {
             PaperList.acceptFiltered(value)
+            refreshList()
         }
-        refreshList()
     }
 
     fun onEditorCloseClicked() {
