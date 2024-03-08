@@ -1,6 +1,6 @@
- - make settings in query lateinit and remove !!
- - query type 1: more filters: pubdate, articletype
  - query type 4: S2 recommendations https://api.semanticscholar.org/api-docs/recommendations
+ - Q1: don't discard non-DOI results / use archived directly by prefixing with "S2:"
+ - make path editable by click
 
 Doc:
  - json export
@@ -12,7 +12,6 @@ Doc:
    - local Chinese papers are underrepresented in S2
 
 Features:
- - don't discard non-DOI expr search results / use archived directly?
  - refactor: rename model functions so they reflect the event not the intent
  - "duplicate" sorting controls code in A/F rootstore
  - clicking sort in filtering2 still grabs focus
@@ -22,6 +21,7 @@ Features:
  - new query from old (allowing change of keywords but shortcutting some download)
  - file selectors in settings dialog
  - HTTP buffer
+ - complain if Q1 date filter in wrong format
  - settings mutex
  - manually add DOIs to accepted
 

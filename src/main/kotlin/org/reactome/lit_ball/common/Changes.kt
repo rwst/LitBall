@@ -2,6 +2,12 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
+v2402
+ - HTTP 429 effectively means "use API key"
+ - use bulk API for paper refs too
+ - better list sync after manipulate filtered
+ - query type 1: more filters: pubdate, articletype
+
 v2401
  - filter button/dialog in paper lists
  - in paper list, put query name in header
