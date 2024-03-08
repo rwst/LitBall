@@ -165,8 +165,18 @@ object S2Client : ScholarClient {
         return true
     }
 
-    // Full protocol for non-bulk download of paper refs for a list of DOIs
     suspend fun getRefs(
+        doiSet: List<String>,
+        action: (String, S2Service.PaperRefs) -> Unit
+    ): Boolean {
+        return if (Settings.map["S2-API-key"].isNullOrEmpty())
+            getSinglePaperRefs(doiSet, action)
+        else
+            getBulkPaperRefs(doiSet, action)
+    }
+
+    // Full protocol for non-bulk download of paper refs for a list of DOIs
+    private suspend fun getSinglePaperRefs(
         doiSet: List<String>,
         action: (String, S2Service.PaperRefs) -> Unit
     ): Boolean {
@@ -183,6 +193,33 @@ object S2Client : ScholarClient {
             if (!pair.second) return false
             delay(strategy.delay(true))
             pair.first?.also { (action)(doi, it) }
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
+                return false
+        }
+        RootStore.setProgressIndication()
+        return true
+    }
+    // Full protocol for bulk download of paper details for a list of DOIs
+    private suspend fun getBulkPaperRefs(
+        doiSet: List<String>,
+        action: (String, S2Service.PaperRefs) -> Unit
+    ): Boolean {
+        strategy = DelayStrategy(BULK_QUERY_DELAY)
+        val size = doiSet.size
+        val indicatorTitle = "Downloading references and\n" +
+                "citations for all accepted papers"
+        var index = 0
+        doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { dois ->
+            val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
+                S2Service.getBulkPaperRefs(
+                    dois,
+                    "paperId,citations,citations.externalIds,references,references.externalIds"
+                )
+            }
+            if (!pair.second) return false
+            delay(strategy.delay(true))
+            pair.first?.filterNotNull()?.forEachIndexed { index, paperRefs -> action(dois[index], paperRefs) } // DO NOT remove filterNotNull()
+            index += dois.size
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
