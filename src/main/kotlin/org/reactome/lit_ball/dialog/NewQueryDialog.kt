@@ -113,6 +113,9 @@ fun NewQueryDialog(
                            accepted).
                         3. (default) Snowballing with automated and supervised
                            filtering.
+                        4. Similarity search: give some DOI/PMID(s) and get a number
+                           of "recommended papers" from S2, optionally applying
+                           keyword filters.
                     """.trimIndent(),
                         Modifier.align(Alignment.CenterVertically)) {
                         Icon(
