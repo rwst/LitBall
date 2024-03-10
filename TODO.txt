@@ -1,6 +1,7 @@
  - query type 4: S2 recommendations https://api.semanticscholar.org/api-docs/recommendations
  - Q1: don't discard non-DOI results / use archived directly by prefixing with "S2:"
  - make path editable by click
+ - bulk PMID lookup
 
 Doc:
  - json export
