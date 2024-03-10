@@ -12,6 +12,7 @@ class DateMatcherTest {
     companion object {
         val testData = listOf(
             TestData("", "2002", true),
+            TestData("", "2002-01-04", true),
             TestData("2002", "2002", true),
             TestData("2000-2004", "2002", true),
             TestData("1999", "2002", false),

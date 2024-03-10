@@ -97,7 +97,9 @@ class DateMatcher(filteredDate: String?) {
 
     fun matches(publicationDate: String?): Boolean {
         if (!initialized) return false
+        if (fromYear == -infinity && toYear == infinity) return true
         publicationDate?.let { pDate ->
+            if (pDate.isBlank()) return true
             if (pDate.length < 4 || pDate.any { !it.isDigit() })
                 return false
             val pYear = pDate.slice(0..3).toInt()
