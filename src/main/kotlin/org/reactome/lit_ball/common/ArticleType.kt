@@ -6,6 +6,12 @@ enum class ArticleType(val s2name: String) {
     REVIEW("Review");
 }
 
+fun typeStringsToBoolArray(types: List<String>): BooleanArray {
+    return BooleanArray(ArticleType.entries.size) { index ->
+        ArticleType.entries[index].s2name in types
+    }
+}
+
 fun typeMatches(publicationTypes: List<String>?, filteredTypes: BooleanArray?): Boolean {
     publicationTypes?.let { pTypes ->
         filteredTypes?.let { fTypes ->
@@ -21,3 +27,4 @@ fun typeMatches(publicationTypes: List<String>?, filteredTypes: BooleanArray?): 
     }
     return true
 }
+

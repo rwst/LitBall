@@ -44,6 +44,7 @@ object QueryList {
                     }
                 }
                 newQuery.type = newQuery.setting.type
+                newQuery.expSearchParams = Pair(newQuery.setting.pubDate, typeStringsToBoolArray(newQuery.setting.pubType))
                 newQuery
             }
         }
