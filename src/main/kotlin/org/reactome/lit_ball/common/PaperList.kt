@@ -78,24 +78,18 @@ object PaperList {
         } else {
             mutableListOf()
         }
-        papers.forEach { it.doi = it.details.externalIds?.get("DOI")?.uppercase() }
+        papers.forEach { it.setPaperIdFromDetails() }
         accepted?.let {
-            papers = papers.filter { it.doi in accepted }.toMutableList()
+            papers = papers.filter { it.paperId in accepted }.toMutableList()
             var maxId = if (papers.isNotEmpty()) papers.maxOf { it.id } else 0
-            val acceptedWithDetails = papers.map { it.doi ?: "" }.toSet()
+            val acceptedWithDetails = papers.map { it.paperId ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
             S2Client.getPaperDetails(acceptedWithoutDetails) {
-                val extIds = it.externalIds?.toMutableMap()
-                if (extIds != null) {
-                    val oldDoi = extIds["DOI"]
-                    val doi = oldDoi?.uppercase()
-                    if (doi != null && doi != oldDoi) {
-                        extIds["DOI"] = doi
-                        it.externalIds = extIds
-                    }
-                    papers.add(Paper(id = maxId, details = it, doi = doi))
-                    maxId += 1
-                }
+                val newPaper = Paper(id = maxId, details = it)
+                newPaper.uppercaseDoi()
+                newPaper.setPaperIdFromDetails()
+                papers.add(newPaper)
+                maxId += 1
             }
         }
         listHandle.setFullList(papers)
@@ -131,7 +125,7 @@ object PaperList {
         val pathPrefix = path?.substringBeforeLast("/")
         val pathStr = "$pathPrefix/${fileType.fileName}"
         val thisList = listHandle.getFullList().filter { it.tag == tag }
-            .mapNotNull { item -> item.doi }
+            .mapNotNull { item -> item.paperId }
         theSet += thisList
         File(pathStr).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
     }
@@ -171,8 +165,8 @@ object PaperList {
 
     fun delete(id: Int) {
         val p = listHandle.getDisplayedPaper(id) ?: return
-        query.acceptedSet.removeIf { acc -> p.doi?.let { it == acc }?: false }
-        listHandle.delete(p.doi)
+        query.acceptedSet.removeIf { acc -> p.paperId?.let { it == acc }?: false }
+        listHandle.delete(p.paperId)
         try {
             writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
         } catch (e: Exception) {
@@ -185,7 +179,7 @@ object PaperList {
         val fList = listHandle.getFilteredList()
         fList?.let {
             listHandle.deleteAllFiltered()
-            val dois = it.map { p -> p.doi }.toSet()
+            val dois = it.map { p -> p.paperId }.toSet()
             query.acceptedSet.removeIf { acc -> dois.contains(acc) }
             try {
                 writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
@@ -211,7 +205,7 @@ object PaperList {
         val revFile = File(exportedCatPath.replace("$", "Reviews"))
         revFile.writeText(CSV_HEADER)
         listHandle.getFullList().forEach {
-            val doi = it.doi
+            val doi = it.paperId
             val date = it.details.publicationDate ?: ""
             val pmid = it.details.externalIds?.get("PubMed")
             val pmc = it.details.externalIds?.get("PubMedCentral")
@@ -245,7 +239,7 @@ object PaperList {
         File(exportedPath).writeText("")
         val json = ConfiguredUglyJson.get()
         listHandle.getFullList().forEach { thePaper ->
-            val doi = thePaper.doi
+            val doi = thePaper.paperId
             doi?.let { theDoi ->
                 val meta = mapOf("DOI" to JsonPrimitive(theDoi))
                 val outMap = emptyMap<String, JsonElement>().toMutableMap()
@@ -281,7 +275,7 @@ object PaperList {
             DATE: ${p.details.publicationDate} $textPMID
             A: ${p.details.abstract}
             TLDR: ${p.details.tldr?.get("text")}
-            DOI: ${p.doi}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
+            DOI: ${p.paperId}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
         """.trimIndent()
     }
 
@@ -336,7 +330,7 @@ object PaperList {
         listHandle.getFullList().forEach {
             val text = (it.details.title ?: "") + " " + (it.details.tldr?.get("text") ?: "")
             stringBuilder.append("\"" + NLPService.preprocess(text) + "\",")
-            stringBuilder.append("\"${it.doi ?: ""}\"\n")
+            stringBuilder.append("\"${it.paperId ?: ""}\"\n")
         }
         File(path).writeText(stringBuilder.toString())
     }

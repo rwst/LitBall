@@ -249,8 +249,7 @@ data class LitBallQuery(
                 val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
                 file.writeText(
                     json.encodeToString(
-                        paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd, doi = pd.externalIds?.get("DOI")
-                            ?.uppercase()) })
+                        paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd).uppercaseDoi().setPaperIdFromDetails() })
                 )
                 mergeIntoArchive(paperDetailsList)
             } catch (e: Exception) {
@@ -294,7 +293,7 @@ data class LitBallQuery(
             details.addAll(list)
             file.writeText(
                 json.encodeToString(
-                    details.mapIndexed { idx, pd -> Paper(idx, pd, doi = pd.externalIds?.get("DOI")?.uppercase()) })
+                    details.mapIndexed { idx, pd -> Paper(idx, pd).uppercaseDoi().setPaperIdFromDetails() })
             )
         }
     }
@@ -311,7 +310,7 @@ data class LitBallQuery(
                 && dateMatcher.matches(it.publicationDate)
                 && !matcher.parser2.match(it.title?: ""))
                 paperDetailsList.add(it)
-        }
+            }
         // Bail out on Cancel
         if (!result) return
         Logger.i(tag, "Retained ${paperDetailsList.size} records")

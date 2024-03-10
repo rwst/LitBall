@@ -106,11 +106,11 @@ class PaperListHandle {
     fun delete(doi: String?) {
         if (doi.isNullOrEmpty()) return
         val tmp1 = fullList.toMutableList()
-        tmp1.removeIf { p -> p.doi?.let { it == doi }?: false }
+        tmp1.removeIf { p -> p.paperId?.let { it == doi }?: false }
         fullList = tmp1.toList()
         filteredList?.let { list ->
             val tmp2 = list.toMutableList()
-            tmp2.removeIf { p -> p.doi?.let { it == doi } ?: false }
+            tmp2.removeIf { p -> p.paperId?.let { it == doi } ?: false }
             filteredList = tmp2.toList()
         }
         updateShadowMap()
@@ -118,9 +118,9 @@ class PaperListHandle {
 
     fun deleteAllFiltered() {
         filteredList?.let { list ->
-            val dois = list.map { it.doi }.toSet()
+            val dois = list.map { it.paperId }.toSet()
             val fList = fullList.toMutableList()
-            fList.removeIf { dois.contains(it.doi) }
+            fList.removeIf { dois.contains(it.paperId) }
             fullList = fList.toList()
             filteredList = null
             updateShadowMap()
@@ -151,17 +151,17 @@ class PaperListHandle {
     }
 
     fun setFullTagsFromFiltered() {
-        val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.doi?: "",it.tag) } ?: emptyMap()
+        val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.paperId?: "",it.tag) } ?: emptyMap()
         setFullTagsFromDoiMap(tagMap)
     }
 
     fun setFullTagsFromDoiMap(tagMap: Map<String, Tag>) {
         val list = fullList.map {
-            val newTag = tagMap[it.doi]?: Tag.Accepted
+            val newTag = tagMap[it.paperId]?: Tag.Accepted
             if (it.tag == newTag)
                 it
             else
-                Paper(it.id, it.details, newTag, it.flags, it.details.externalIds?.get("DOI")?.uppercase())
+                Paper(it.id, it.details, newTag, it.flags).uppercaseDoi().setPaperIdFromDetails()
         }
         fullList = list
     }

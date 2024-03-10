@@ -129,17 +129,18 @@ object S2Client : ScholarClient {
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         var index = 0
-        doiSet.chunked(DETAILS_CHUNK_SIZE).forEach {
+        doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
+            val paperIds = ids.map { if ( it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getBulkPaperDetails(
-                    it,
+                    paperIds,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
             }
             if (!pair.second) return false
             delay(strategy.delay(true))
             pair.first?.filterNotNull()?.forEach(action) // DO NOT remove filterNotNull()
-            index += it.size
+            index += paperIds.size
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
@@ -158,7 +159,7 @@ object S2Client : ScholarClient {
         doiSet.forEachIndexed { index, it ->
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getSinglePaperDetails(
-                    it,
+                    if ( it.startsWith("S2:")) it.substring(3) else it,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
             }
@@ -193,7 +194,7 @@ object S2Client : ScholarClient {
         doiSet.forEachIndexed { index, doi ->
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getPaperRefs(
-                    doi,
+                    if ( doi.startsWith("S2:")) doi.substring(3) else doi,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
                 )
             }
@@ -217,9 +218,10 @@ object S2Client : ScholarClient {
                 "citations for all accepted papers"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { dois ->
+            val paperIds = dois.map { if ( it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getBulkPaperRefs(
-                    dois,
+                    paperIds,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
                 )
             }
