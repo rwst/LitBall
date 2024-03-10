@@ -24,6 +24,17 @@ class DateMatcherTest {
             TestData("-1999", "2002", false),
             TestData("2002-", "2002", true),
             TestData("-2002", "2002", true),
+            TestData("2002", "2002-01-04", true),
+            TestData("2000-2004", "2002-01-04", true),
+            TestData("1999", "2002-01-04", false),
+            TestData("1997-1999", "2002-01-04", false),
+            TestData("1999-", "2002-01-04", true),
+            TestData("2004-", "2002-01-04", false),
+            TestData("2004-2006", "2002-01-04", false),
+            TestData("-2006", "2002-01-04", true),
+            TestData("-1999", "2002-01-04", false),
+            TestData("2002-", "2002-01-04", true),
+            TestData("-2002", "2002-01-04", true),
         )
     }
 

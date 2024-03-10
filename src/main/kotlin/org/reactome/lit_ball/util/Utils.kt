@@ -100,9 +100,10 @@ class DateMatcher(filteredDate: String?) {
         if (fromYear == -infinity && toYear == infinity) return true
         publicationDate?.let { pDate ->
             if (pDate.isBlank()) return true
-            if (pDate.length < 4 || pDate.any { !it.isDigit() })
+            val pYearString = pDate.substringBefore('-')
+            if (pYearString.length != 4 || pYearString.any { !it.isDigit() })
                 return false
-            val pYear = pDate.slice(0..3).toInt()
+            val pYear = pYearString.toInt()
             if (fromYear == infinity)
                 return pYear <= toYear
             if (toYear == infinity)
