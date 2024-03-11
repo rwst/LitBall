@@ -3,10 +3,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
-    id("org.jetbrains.compose") version "1.5.0"
-    id("com.github.gmazzo.buildconfig") version "4.1.2"
-    id("dev.hydraulic.conveyor") version "1.5"
+    kotlin("plugin.serialization") version "2.0.0-Beta4"
+    id("org.jetbrains.compose") version "1.6.10-dev1498"
+    id("com.github.gmazzo.buildconfig") version "5.3.5"
+    id("dev.hydraulic.conveyor") version "1.9"
+    id("com.github.ben-manes.versions") version "0.51.0"
 }
 
 repositories {
@@ -23,9 +24,9 @@ tasks {
             test {
                 kotlin.srcDirs("src/commonTest/kotlin")
                 dependencies {
-                    implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
-                    implementation("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
-                    implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+                    implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:2.0.0-Beta4")
+                    implementation("org.jetbrains.kotlin:kotlin-test-common:2.0.0-Beta4")
+                    implementation("org.jetbrains.kotlin:kotlin-test:2.0.0-Beta4")
                 }
             }
             main {
@@ -101,9 +102,9 @@ kotlin {
             kotlin.srcDirs("src/commonTest/kotlin")
             kotlin.srcDirs("src/main/kotlin")
             dependencies {
-                implementation ("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
-                implementation ("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
-                implementation ("org.jetbrains.kotlin:kotlin-test:1.9.0")
+                implementation ("org.jetbrains.kotlin:kotlin-test-annotations-common:2.0.0-Beta4")
+                implementation ("org.jetbrains.kotlin:kotlin-test-common:2.0.0-Beta4")
+                implementation ("org.jetbrains.kotlin:kotlin-test:2.0.0-Beta4")
             }
         }
     }}
@@ -111,23 +112,23 @@ kotlin {
 dependencies {
     implementation("org.jetbrains.compose.material3:material3-desktop:1.5.0")
     implementation(compose.desktop.currentOs)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-    implementation("com.squareup.okio:okio:3.3.0")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
+    implementation("com.squareup.okio:okio:3.8.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.12")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.12")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("io.github.oshai:kotlin-logging-jvm:5.0.0")
-    implementation("org.slf4j:slf4j-simple:2.0.5")
+    implementation ("io.github.oshai:kotlin-logging-jvm:6.0.3")
+    implementation("org.slf4j:slf4j-simple:2.1.0-alpha1")
     implementation("dev.dirs:directories:26")
-    implementation("org.testng:testng:7.7.0")
+    implementation("org.testng:testng:7.9.0")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:4.4.3")
-    implementation("org.jetbrains.lets-plot:lets-plot-common:4.0.1")
-    implementation("org.jetbrains.lets-plot:platf-awt:4.0.1")
-    implementation("org.jetbrains.lets-plot:lets-plot-compose:1.0.0")
-    implementation("org.apache.commons:commons-jexl3:3.2.1")
-    implementation("org.apache.jena:jena-arq:4.10.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-common:4.3.0")
+    implementation("org.jetbrains.lets-plot:platf-awt:4.3.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-compose:1.0.2")
+    implementation("org.apache.commons:commons-jexl3:3.3")
+    implementation("org.apache.jena:jena-arq:5.0.0-rc1")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
