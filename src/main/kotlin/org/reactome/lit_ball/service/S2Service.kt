@@ -32,12 +32,6 @@ object S2Service {
     )
 
     @Serializable
-    data class Citations(
-        val paperId: String? = "",
-        var externalIds: Map<String, String>? = emptyMap(),
-    )
-
-    @Serializable
     data class References(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
@@ -46,7 +40,7 @@ object S2Service {
     @Serializable
     data class PaperRefs(
         val paperId: String? = "",
-        var citations: List<Citations>? = null,
+        var citations: List<References>? = null,
         var references: List<References>? = null,
     )
 
