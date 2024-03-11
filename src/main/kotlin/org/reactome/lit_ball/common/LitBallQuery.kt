@@ -142,8 +142,8 @@ data class LitBallQuery(
         var nulls = 0
         val size = missingAccepted.size
         val result = S2Client.getRefs(missingAccepted.toList()) { doi, refs ->
-            val rlist = refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList()
-            val clist = refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList()
+            val rlist = refs.citations?.let { idListFromPaperRefs(it) } ?: emptyList()
+            val clist = refs.references?.let { idListFromPaperRefs(it) } ?: emptyList()
             if (rlist.isEmpty() && clist.isEmpty())
                 nulls += 1
             doiSet.addAll(rlist)
@@ -218,7 +218,7 @@ data class LitBallQuery(
                 return
             }
             Logger.i(tag, "Retained ${paperDetailsList.size} records")
-            val filteredDOIs = paperDetailsList.mapNotNull { it.externalIds?.get("DOI")?.uppercase() }
+            val filteredDOIs = idListFromPaperDetailsList(paperDetailsList)
             rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
             rejectedSet.addAll(rejectedDOIs)
         } else {
@@ -318,10 +318,7 @@ data class LitBallQuery(
         sanitize(paperDetailsList)
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
-        acceptedSet = paperDetailsList
-            .mapNotNull { it.externalIds?.get("DOI") }
-            .filterNot { it.isEmpty() }
-            .toMutableSet()
+        acceptedSet = idSetFromPaperDetailsList(paperDetailsList)
         if (queryDir.isDirectory && queryDir.canWrite()) {
             try {
                 val file = File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}")

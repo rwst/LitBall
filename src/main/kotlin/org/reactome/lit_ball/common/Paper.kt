@@ -46,3 +46,21 @@ class Paper(
         return this
     }
 }
+
+fun idSetFromPaperDetailsList(pDList: List<S2Service.PaperDetails>): MutableSet<String> {
+    return idListFromPaperDetailsList(pDList).toMutableSet()
+}
+
+fun idListFromPaperDetailsList(pDList: List<S2Service.PaperDetails>): List<String> {
+    return pDList.map { pd ->
+        pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.uppercase() }
+        "S2:${pd.paperId}"
+    }
+}
+
+fun idListFromPaperRefs(refList: List<S2Service.References>): List<String> {
+    return refList.map { pd ->
+        pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.uppercase() }
+        "S2:${pd.paperId}"
+    }
+}
