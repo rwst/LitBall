@@ -23,7 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -154,6 +156,7 @@ fun Filtering2ListContent(
     }
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun CardWithTextIconAndRadiobutton(
     item: Paper,
@@ -201,7 +204,14 @@ fun CardWithTextIconAndRadiobutton(
             }
             Text(
                 text = cardTitle ?: "",
-                fontSize = 12.sp,
+                style = LocalTextStyle.current.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 0.sp,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.Both // Adjust this to change trimming behavior
+                    )
+                ),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .weight(1F).align(Alignment.CenterVertically)

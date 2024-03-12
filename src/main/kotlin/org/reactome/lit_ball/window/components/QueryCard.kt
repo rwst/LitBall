@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -93,7 +94,14 @@ fun QueryCard(
                 }
                 Text(
                     text = "Accepted: ${item.nrAccepted()}",
-                    fontSize = 14.sp,
+                    style = androidx.compose.material.LocalTextStyle.current.copy(
+                        fontSize = 14.sp,
+                        lineHeight = 0.sp,
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.Both // Adjust this to change trimming behavior
+                        )
+                    ),
                     fontWeight = if (item.noNewAccepted) FontWeight.Bold else FontWeight.Normal
                 )
             }
@@ -107,10 +115,17 @@ fun QueryCard(
                             item.lastExpansionDate
                         )
                     }",
+                    style = androidx.compose.material.LocalTextStyle.current.copy(
+                        fontSize = 14.sp,
+                        lineHeight = 0.sp,
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.Both // Adjust this to change trimming behavior
+                        )
+                    ),
                     modifier = Modifier
                         .align(Alignment.Top)
                         .padding(vertical = 8.dp),
-                    fontSize = 14.sp
                 )
             }
 
@@ -135,7 +150,14 @@ fun QueryCard(
                 ) {
                     Text(
                         text = "Annotate\naccepted",
-                        fontSize = 14.sp
+                        style = androidx.compose.material.LocalTextStyle.current.copy(
+                            fontSize = 14.sp,
+                            lineHeight = 0.sp,
+                            lineHeightStyle = LineHeightStyle(
+                                alignment = LineHeightStyle.Alignment.Center,
+                                trim = LineHeightStyle.Trim.Both // Adjust this to change trimming behavior
+                            )
+                        ),
                     )
                 }
             }
