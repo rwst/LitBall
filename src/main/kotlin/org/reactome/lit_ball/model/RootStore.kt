@@ -167,7 +167,7 @@ object RootStore {
     }
 
     fun onQuerySettingsClicked(id: Int?) {
-        AnnotatingRootStore.refreshList()
+        AnnotatingRootStore.state.paperListStore.refreshList()
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 

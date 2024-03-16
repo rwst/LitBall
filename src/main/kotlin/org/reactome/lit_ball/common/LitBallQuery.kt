@@ -355,7 +355,7 @@ data class LitBallQuery(
                 return
             }
             PaperList.setFromQuery(this, file)
-            Filtering2RootStore.refreshList()
+            Filtering2RootStore.state.paperListStore.refreshList()
         } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
             return
@@ -414,7 +414,7 @@ data class LitBallQuery(
                 return
             }
             PaperList.setFromQuery(this, file, acceptedSet)
-            AnnotatingRootStore.refreshList()
+            AnnotatingRootStore.state.paperListStore.refreshList()
             PaperList.saveAnnotated()
         } else {
             handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))

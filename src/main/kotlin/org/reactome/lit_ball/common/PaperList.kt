@@ -152,7 +152,7 @@ object PaperList {
         path?.let { File(it).delete() }
         if (!auto) {
             RootStore.setFiltered2()
-            Filtering2RootStore.switchRoot()
+            Filtering2RootStore.state.paperListStore.switchRoot()
             val noAcc = listHandle.getFullList().count { it.tag == Tag.Accepted }
             RootStore.setInformationalDialog("$noAcc papers added to accepted")
             query.let {
@@ -316,7 +316,7 @@ object PaperList {
                 Tag.Rejected
         }
         listHandle.setFullTagsFromDoiMap(tagMap)
-        Filtering2RootStore.refreshList()
+        Filtering2RootStore.state.paperListStore.refreshList()
     }
 
     fun applyFilter(filterString: String) {

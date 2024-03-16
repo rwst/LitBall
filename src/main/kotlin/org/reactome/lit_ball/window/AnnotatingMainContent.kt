@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
@@ -56,24 +57,12 @@ internal fun AnnotatingMainContent(
 
         Column {
             Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
-                SortingControls(model.sortingControls, focusRequester)
-                FilterControls(model.state.paperListStore, focusRequester)
-                Spacer(modifier = Modifier.width(8.dp))
-                TextButton(
-                    onClick = {},
-                    modifier = Modifier.padding(0.dp)
-                ) {
-                    Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + model.state.items.size.toString())
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Tooltip("Save and go back\nto main screen", Modifier.align(Alignment.CenterVertically)) {
-                    TextButton(
-                        onClick = { model.onDoAnnotateStopped() },
-                        modifier = Modifier.padding(0.dp)
-                    ) {
-                        Text("Query: ${PaperList.query.name}")
-                    }
-                }
+                paperListHeader(
+                    model.state.paperListStore,
+                    focusRequester,
+                    lazyListState,
+                    Modifier.align(Alignment.CenterVertically),
+                )
             }
             AnnotatingListContent(
                 items = model.state.items,
@@ -81,6 +70,7 @@ internal fun AnnotatingMainContent(
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,
                 focusRequester = focusRequester,
+                setupListScroller = { model.state.paperListStore.setupListScroller(it) },
             )
         }
     }
@@ -93,6 +83,7 @@ fun AnnotatingListContent(
     onFlagSet: (Int, Int, Boolean) -> Unit,
     lazyListState: LazyListState,
     focusRequester: FocusRequester,
+    setupListScroller: (Channel<Int>) -> Unit,
 ) {
     val onKeyDown: (KeyEvent) -> Boolean = handleKeyPressed(lazyListState)
 
@@ -101,7 +92,7 @@ fun AnnotatingListContent(
             .focusRequester(focusRequester)
             .onPreviewKeyEvent(onKeyDown)
     ) {
-        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, AnnotatingRootStore::setupListScroller)
+        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, setupListScroller)
         Column {
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
