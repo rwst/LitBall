@@ -30,15 +30,15 @@ fun createFigure(model: AnnotatingRootStore): Figure {
 }
 
 @Composable
-fun BarChartDialog (
+fun BarChartDialog(
     model: AnnotatingRootStore,
     focusRequester: FocusRequester,
-    ) {
-    androidx.compose.material.AlertDialog (
+) {
+    androidx.compose.material.AlertDialog(
         onDismissRequest = {
             model.setStat(false)
             focusRequester.requestFocus()
-                           },
+        },
         confirmButton = {},
         dismissButton = {
             TextButton(
@@ -50,7 +50,7 @@ fun BarChartDialog (
                 Text("Dismiss")
             }
         },
-        title = { Text("Publications / Time Period")},
+        title = { Text("Publications / Time Period") },
         text = {
             PlotPanel(
                 figure = createFigure(model),

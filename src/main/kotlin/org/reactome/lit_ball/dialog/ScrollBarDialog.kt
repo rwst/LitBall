@@ -31,7 +31,7 @@ internal fun ScrollbarDialog(
                 .background(color = Color.Black.copy(alpha = 0.5f)),
             contentAlignment = Alignment.Center,
         ) {
-            Box(modifier = Modifier.size(screenHeight*.9f).background(color = Color.White)) {
+            Box(modifier = Modifier.size(screenHeight * .9f).background(color = Color.White)) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     topComposable()
                     Row(modifier = Modifier.weight(1f)) {

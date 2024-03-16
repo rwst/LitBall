@@ -38,7 +38,12 @@ object RootStore {
 
     val railItems: List<RailItem> = listOf(
         RailItem("Info", "About LitBall", Icons.Info, 0, onClicked = { setAboutDialog(true) }),
-        RailItem("Doc", "Open documentation in browser", Icons.Article, 1, onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
+        RailItem(
+            "Doc",
+            "Open documentation in browser",
+            Icons.Article,
+            1,
+            onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
         RailItem("Settings", "General Settings", Icons.Settings, 2) { setEditingSettings(true) },
         RailItem("Exit", "Exit application", Icons.Logout, 3, onClicked = { buttonExit() })
     )
@@ -78,6 +83,7 @@ object RootStore {
     fun refreshList() {
         setState { copy(items = QueryList.list.toList()) }
     }
+
     fun refreshQueryPathDisplay() {
         val stringBuilder = StringBuilder(Settings.map["path-to-queries"])
         setState { copy(queryPath = stringBuilder.toString()) }
@@ -164,16 +170,21 @@ object RootStore {
         AnnotatingRootStore.refreshList()
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
+
     fun onDeleteQueryClicked(id: Int?) {
         val name = QueryList.itemFromId(id)?.name
-        setState { copy(doConfirmationDialog = Pair(
-            {
-                scope.launch(Dispatchers.IO) {
-                    QueryList.removeDir(id)
-                    QueryList.fill()
-                }
-            },
-            "You really want to delete Query $name?"))
+        setState {
+            copy(
+                doConfirmationDialog = Pair(
+                    {
+                        scope.launch(Dispatchers.IO) {
+                            QueryList.removeDir(id)
+                            QueryList.fill()
+                        }
+                    },
+                    "You really want to delete Query $name?"
+                )
+            )
         }
     }
 
@@ -182,7 +193,7 @@ object RootStore {
     }
 
     fun onQueryPathClicked() {
-        scope.launch (Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             QueryList.fill()
         }
     }
@@ -230,8 +241,7 @@ object RootStore {
                 refreshList()
                 delay(100) // TODO: this is a hack
                 scrollChannel?.send(0)
-            }
-            else {
+            } else {
                 val name = QueryList.list[scrollTo].name
                 QueryList.sort(sortingType)
                 refreshList()

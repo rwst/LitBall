@@ -60,6 +60,7 @@ class DateMatcher(filteredDate: String?) {
                     fromYear = -infinity
                     toYear = infinity
                 }
+
                 1, 2, 3, 6, 7, 8 -> return@let false
                 4 -> if (fDate.all { it.isDigit() }) {
                     fromYear = fDate.toInt()

@@ -18,8 +18,10 @@ import org.reactome.lit_ball.model.PaperListScreenStore
 internal fun FilterControls(model: PaperListScreenStore, focusRequester: FocusRequester) {
     val filterToggle = model.state.filterDialog
     Row {
-        Tooltip(if (!filterToggle) "Activate filter" else "Remove filter",
-            Modifier.align(Alignment.CenterVertically)) {
+        Tooltip(
+            if (!filterToggle) "Activate filter" else "Remove filter",
+            Modifier.align(Alignment.CenterVertically)
+        ) {
             IconButton(
                 onClick = {
                     model.setFilterDialog(!filterToggle)

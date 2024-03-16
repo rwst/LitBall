@@ -13,7 +13,7 @@ object S2RetrofitHelper {
     private const val USER_AGENT = "LitBall ${BuildConfig.APP_VERSION} (https://github.com/rwst/LitBall)"
     private var logging = HttpLoggingInterceptor()
 
-    fun getInstance(headers: Map<String,String> = emptyMap(), timeout: Long = 30): Retrofit {
+    fun getInstance(headers: Map<String, String> = emptyMap(), timeout: Long = 30): Retrofit {
         logging.level = HttpLoggingInterceptor.Level.BASIC
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(logging)

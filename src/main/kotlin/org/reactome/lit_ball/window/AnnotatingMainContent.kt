@@ -141,7 +141,7 @@ fun CardWithFlagBoxes(
     val model = AnnotatingRootStore
     val cardTitle = item.details.title
     val cardPMID: String? = item.details.externalIds?.get("PubMed")
-    val year = item.details.publicationDate?.substringBefore("-")?: ""
+    val year = item.details.publicationDate?.substringBefore("-") ?: ""
     val cardYear = if (year == "null") "" else year
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
     Card(

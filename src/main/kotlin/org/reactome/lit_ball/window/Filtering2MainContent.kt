@@ -138,10 +138,10 @@ fun Filtering2ListContent(
                     CardWithTextIconAndRadiobutton(
                         item = item,
                         onClicked = { onItemClicked(item.id) },
-                        onOptionSelected = {
-                            btn -> onItemRadioButtonClicked(item.id, btn)
+                        onOptionSelected = { btn ->
+                            onItemRadioButtonClicked(item.id, btn)
                             focusRequester.requestFocus()
-                                           },
+                        },
                     )
                     Divider()
                 }
@@ -165,7 +165,7 @@ fun CardWithTextIconAndRadiobutton(
 ) {
     val cardTitle = item.details.title
     val cardPMID: String? = item.details.externalIds?.get("PubMed")
-    val year = item.details.publicationDate?.substringBefore("-")?: ""
+    val year = item.details.publicationDate?.substringBefore("-") ?: ""
     val cardYear = if (year == "null") "" else year
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
     val radioButtonOptions = Tag.entries.map { it.name }
@@ -182,7 +182,10 @@ fun CardWithTextIconAndRadiobutton(
         ) {
             Column {
                 Text(text = cardYear, modifier = Modifier.padding(start = 8.dp), fontSize = 12.sp)
-                Tooltip(text = "Open PubMed / Google Scholar\nin Browser", Modifier.align(Alignment.CenterHorizontally)) {
+                Tooltip(
+                    text = "Open PubMed / Google Scholar\nin Browser",
+                    Modifier.align(Alignment.CenterHorizontally)
+                ) {
                     IconButton(
                         onClick = {
                             Filtering2RootStore.scope?.launch(Dispatchers.IO) {

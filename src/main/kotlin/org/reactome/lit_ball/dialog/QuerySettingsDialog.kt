@@ -35,8 +35,8 @@ fun QuerySettingsDialog(
     val field3Value = rememberSaveable { mutableStateOf(item.setting.classifier) }
     val field4Value =
         rememberSaveable { mutableStateOf(item.setting.annotationClasses.joinToString(separator = ", ")) }
-    val keyword1WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
-    val keyword2WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
+    val keyword1WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    val keyword2WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
 
     AlertDialog(
         onDismissRequest = {
@@ -87,7 +87,8 @@ fun QuerySettingsDialog(
         text = {
             Column(horizontalAlignment = Alignment.Start) {
                 Row {
-                    Tooltip(text = """
+                    Tooltip(
+                        text = """
                         Enter either
                         1. keywords/phrases separated by comma, no wildcards, or
                         2. logical expression of keywords/phrases starting with
@@ -96,7 +97,8 @@ fun QuerySettingsDialog(
                         In both cases keyphrases are matched to words in title,
                         abstract, and TLDR for a positive match.
                     """.trimIndent(),
-                        Modifier.align(Alignment.CenterVertically)) {
+                        Modifier.align(Alignment.CenterVertically)
+                    ) {
                         Icon(
                             painterResource(Icons.Help),
                             contentDescription = "Query Settings",
@@ -111,13 +113,14 @@ fun QuerySettingsDialog(
                         onValueChange = {
                             field1Value.value = it
                             keyword1WarningValue.value = null
-                                        },
+                        },
                         label = { Text("Mandatory keywords / expression") },
                         placeholder = { Text("") }
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     keyword1WarningValue.value?.also {
-                        Text(it,
+                        Text(
+                            it,
                             color = Color.Red,
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
@@ -126,7 +129,8 @@ fun QuerySettingsDialog(
                     }
                 }
                 Row {
-                    Tooltip(text = """
+                    Tooltip(
+                        text = """
                         Optionally enter either
                         1. keywords/phrases separated by comma, no wildcards, or
                         2. logical expression of keywords/phrases starting with
@@ -135,7 +139,8 @@ fun QuerySettingsDialog(
                         In both cases keyphrases are matched to words in title,
                         for a negative match.
                     """.trimIndent(),
-                        Modifier.align(Alignment.CenterVertically)) {
+                        Modifier.align(Alignment.CenterVertically)
+                    ) {
                         Icon(
                             painterResource(Icons.Help),
                             contentDescription = "Query Settings",
@@ -150,13 +155,14 @@ fun QuerySettingsDialog(
                         onValueChange = {
                             field2Value.value = it
                             keyword2WarningValue.value = null
-                                        },
+                        },
                         label = { Text("Forbidden keywords / expression") },
                         placeholder = { Text("") }
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     keyword2WarningValue.value?.also {
-                        Text(it,
+                        Text(
+                            it,
                             color = Color.Red,
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
@@ -165,13 +171,15 @@ fun QuerySettingsDialog(
                     }
                 }
                 Row {
-                    Tooltip(text = """
+                    Tooltip(
+                        text = """
                         On Linux, if the YDF package is installed, this
                         is the name of the model that will be used for
                         automated filtering in the Supervised Filtering
                         screen.
                     """.trimIndent(),
-                        Modifier.align(Alignment.CenterVertically)) {
+                        Modifier.align(Alignment.CenterVertically)
+                    ) {
                         Icon(
                             painterResource(Icons.Help),
                             contentDescription = "Query Settings",

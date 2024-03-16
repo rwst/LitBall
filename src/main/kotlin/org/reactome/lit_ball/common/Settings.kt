@@ -1,7 +1,8 @@
 package org.reactome.lit_ball.common
 
+import dev.dirs.ProjectDirectories
+import dev.dirs.UserDirectories
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -9,8 +10,6 @@ import org.reactome.lit_ball.util.handleException
 import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
 import java.nio.file.Paths
-import dev.dirs.ProjectDirectories
-import dev.dirs.UserDirectories
 
 @Serializable
 object Settings {

@@ -12,7 +12,7 @@ suspend fun getDOIsforPMIDs(pmidList: List<String>): List<String?> {
         missing = map.filterValues { it == null }.keys.toList()
         if (missing.isNotEmpty()) {
             val response = client.getSinglePaperDOIfromPMIDs(missing)
-            missing.forEachIndexed { index, s ->  map[s] = response[index] }
+            missing.forEachIndexed { index, s -> map[s] = response[index] }
         }
     }
     return pmidList.map { map[it] }
@@ -39,8 +39,7 @@ class S2PMID2DOIClient : PMID2DOIClient() {
                     )
                 }
                 delay(S2Client.strategy.delay(false))
-            }
-            while (!pair.second)
+            } while (!pair.second)
             delay(S2Client.strategy.delay(true))
             pair.first?.also {
                 list[index] = it.externalIds?.get("DOI")
@@ -68,8 +67,9 @@ class WDQSPMID2DOIClient : PMID2DOIClient() {
             WDQSService.query(queryString).forEach { sol ->
                 indexMap[sol["pmid"]]?.let { list[it] = sol["doi"] }
             }
+        } catch (e: Exception) {
+            throw e
         }
-        catch (e: Exception) { throw e }
         return list
     }
 }

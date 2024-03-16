@@ -3,7 +3,10 @@
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -54,7 +57,7 @@ private fun createWindow(
                                     onValueChange = {
                                         textField.value = it
                                         store.onFilterChanged(textField.value)
-                                                    },
+                                    },
                                     label = null,
                                 )
                             }
@@ -94,7 +97,7 @@ private fun createWindow(
 
 @Composable
 fun AnnotatingFilterDialog(store: PaperListScreenStore) {
-    val textField= rememberSaveable { mutableStateOf("") }
+    val textField = rememberSaveable { mutableStateOf("") }
     createWindow(store, textField) {
         Button(
             onClick = store::onRemoveFiltered,
@@ -103,23 +106,25 @@ fun AnnotatingFilterDialog(store: PaperListScreenStore) {
             Text(
                 "Remove all",
                 color = Color.White,
-                fontSize = 14.sp,)
+                fontSize = 14.sp,
+            )
         }
     }
 }
 
 @Composable
 fun Filtering2FilterDialog(store: PaperListScreenStore) {
-    val textField= rememberSaveable { mutableStateOf("") }
+    val textField = rememberSaveable { mutableStateOf("") }
     createWindow(store, textField) {
         Button(
             onClick = { store.onAcceptFiltered(true) },
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text(
-            "Accept all",
-            color = Color.White,
-            fontSize = 14.sp,)
+                "Accept all",
+                color = Color.White,
+                fontSize = 14.sp,
+            )
         }
         Spacer(modifier = Modifier.width(14.dp))
         Button(
@@ -129,7 +134,8 @@ fun Filtering2FilterDialog(store: PaperListScreenStore) {
             Text(
                 "Reject all",
                 color = Color.White,
-                fontSize = 14.sp,)
+                fontSize = 14.sp,
+            )
         }
     }
 }

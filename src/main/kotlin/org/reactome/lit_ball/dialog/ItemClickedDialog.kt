@@ -26,5 +26,5 @@ internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit, focusRequeste
             onDoneClicked()
             focusRequester.requestFocus()
         },
-        )
+    )
 }

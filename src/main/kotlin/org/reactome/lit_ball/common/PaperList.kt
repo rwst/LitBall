@@ -165,7 +165,7 @@ object PaperList {
 
     fun delete(id: Int) {
         val p = listHandle.getDisplayedPaper(id) ?: return
-        query.acceptedSet.removeIf { acc -> p.paperId?.let { it == acc }?: false }
+        query.acceptedSet.removeIf { acc -> p.paperId?.let { it == acc } ?: false }
         listHandle.delete(p.paperId)
         try {
             writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
@@ -310,11 +310,11 @@ object PaperList {
         processJob.join()
         val classificationsMap = processCsvFile(resultPath)
         val tagMap: Map<String, Tag> = classificationsMap.mapValues { (_, value) ->
-                if (value > THRESHOLD)
-                    Tag.Accepted
-                else
-                    Tag.Rejected
-            }
+            if (value > THRESHOLD)
+                Tag.Accepted
+            else
+                Tag.Rejected
+        }
         listHandle.setFullTagsFromDoiMap(tagMap)
         Filtering2RootStore.refreshList()
     }

@@ -22,6 +22,7 @@ class PaperListHandle {
             }
         updateShadowMap()
     }
+
     fun getList(): List<Paper> {
         if (filteredList == null)
             return fullList
@@ -31,9 +32,11 @@ class PaperListHandle {
     fun getFullList(): List<Paper> {
         return fullList
     }
+
     fun getFilteredList(): List<Paper>? {
         return filteredList
     }
+
     @Suppress("SENSELESS_COMPARISON")
     fun setFullList(list: List<Paper>) {
         fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
@@ -45,6 +48,7 @@ class PaperListHandle {
                 }
             }
         }
+
         fun sanitize() {
             fullList.forEachIndexed { index, paper ->
                 val newPaper: Paper = paper
@@ -82,7 +86,7 @@ class PaperListHandle {
             return
         fullList = fullList.toMutableList().apply {
             this[index] = new
-            }.toList()
+        }.toList()
         filteredList?.let {
             val findex = filteredShadowMap?.get(id) ?: return
             filteredList = it.toMutableList().apply {
@@ -90,6 +94,7 @@ class PaperListHandle {
             }.toList()
         }
     }
+
     private fun updateShadowMap() {
         fullShadowMap.clear()
         fullList.forEachIndexed { index, paper ->
@@ -103,10 +108,11 @@ class PaperListHandle {
             map
         }
     }
+
     fun delete(doi: String?) {
         if (doi.isNullOrEmpty()) return
         val tmp1 = fullList.toMutableList()
-        tmp1.removeIf { p -> p.paperId?.let { it == doi }?: false }
+        tmp1.removeIf { p -> p.paperId?.let { it == doi } ?: false }
         fullList = tmp1.toList()
         filteredList?.let { list ->
             val tmp2 = list.toMutableList()
@@ -151,13 +157,13 @@ class PaperListHandle {
     }
 
     fun setFullTagsFromFiltered() {
-        val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.paperId?: "",it.tag) } ?: emptyMap()
+        val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.paperId ?: "", it.tag) } ?: emptyMap()
         setFullTagsFromDoiMap(tagMap)
     }
 
     fun setFullTagsFromDoiMap(tagMap: Map<String, Tag>) {
         val list = fullList.map {
-            val newTag = tagMap[it.paperId]?: Tag.Accepted
+            val newTag = tagMap[it.paperId] ?: Tag.Accepted
             if (it.tag == newTag)
                 it
             else
@@ -165,6 +171,7 @@ class PaperListHandle {
         }
         fullList = list
     }
+
     fun setTag(id: Int, tag: Tag) {
         updateItemInBothLists(id) {
             if (it.tag == tag)

@@ -1,6 +1,5 @@
 package org.reactome.lit_ball.common
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.reactome.lit_ball.service.S2Service
 import org.reactome.lit_ball.util.ConfiguredJson
@@ -12,11 +11,12 @@ import kotlin.properties.Delegates
 object ExpandQueryCache {
     private lateinit var file: File
     private var maxAge by Delegates.notNull<Int>()
-    private const val MILLISECONDS_PER_DAY = 1000L*3600*24
+    private const val MILLISECONDS_PER_DAY = 1000L * 3600 * 24
     fun init(aFile: File) {
         file = aFile
-        maxAge = Settings.map["cache-max-age-days"]?.toInt()?: 31
+        maxAge = Settings.map["cache-max-age-days"]?.toInt() ?: 31
     }
+
     fun get(doiSet: MutableSet<String>): Pair<Set<String>, MutableSet<String>> {
         if (!file.exists()) {
             return Pair(doiSet, mutableSetOf())
@@ -40,8 +40,9 @@ object ExpandQueryCache {
         refs.forEach {
             refDois.addAll(it.second)
         }
-        return Pair (missingDois, refDois)
+        return Pair(missingDois, refDois)
     }
+
     fun add(doi: String, refs: S2Service.PaperRefs) {
         val json = ConfiguredUglyJson.get()
         val dois: MutableSet<String> = mutableSetOf()

@@ -29,6 +29,7 @@ fun handleKeyPressed(lazyListState: LazyListState): (KeyEvent) -> Boolean {
                         lazyListState.scrollToItem(topItem + 1)
                         true
                     }
+
                     else -> false
                 }
             }

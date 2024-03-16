@@ -12,7 +12,7 @@ val logicOpSymbols = listOf("&&", "||", "!")
 val logicDelims = logicOps.map { " $it " } + logicOps.map { " ${it.uppercase(Locale.ENGLISH)} " }
 
 class StringPatternMatcher(setting: QuerySetting) {
-    abstract class PatternParser (val regexes: List<Regex>, val expr: String) {
+    abstract class PatternParser(val regexes: List<Regex>, val expr: String) {
         abstract val wordList: List<String>
         abstract val theExpr: String
         abstract fun match(text: String): Boolean
@@ -20,19 +20,19 @@ class StringPatternMatcher(setting: QuerySetting) {
         companion object {
             fun createFrom(aSet: Set<String>?): PatternParser {
                 if (aSet.isNullOrEmpty())
-                    return KeywordListParser(emptyList(),  emptyList(), "")
+                    return KeywordListParser(emptyList(), emptyList(), "")
                 if (logicOpRegexes.any { it.containsMatchIn(aSet.first()) }) {
                     val wordList = aSet
                         .first()
-                        .split ("(", ")", *logicDelims.toTypedArray())
+                        .split("(", ")", *logicDelims.toTypedArray())
                         .map { it.trim() }
                         .filterNot { it.isEmpty() }
                     var expr = aSet.first()
                     wordList.forEachIndexed { index, s -> expr = expr.replaceFirst(s, "word$index") }
                     return LogicalExpressionParser(wordList,
                         wordList
-                        .map { "\\b" + it.replace("*", "\\p{Alnum}*") + "\\b" }
-                        .map { it.toRegex(RegexOption.IGNORE_CASE) },
+                            .map { "\\b" + it.replace("*", "\\p{Alnum}*") + "\\b" }
+                            .map { it.toRegex(RegexOption.IGNORE_CASE) },
                         expr
                     )
                 }
@@ -44,12 +44,15 @@ class StringPatternMatcher(setting: QuerySetting) {
             }
         }
     }
+
     class KeywordListParser(words: List<String>, regexes: List<Regex>, expr: String) : PatternParser(regexes, expr) {
         override val wordList: List<String> = words
         override val theExpr: String = expr
         override fun match(text: String) = regexes.any { it.containsMatchIn(text) }
     }
-    class LogicalExpressionParser(words: List<String>, regexes: List<Regex>, expr: String) : PatternParser(regexes, expr) {
+
+    class LogicalExpressionParser(words: List<String>, regexes: List<Regex>, expr: String) :
+        PatternParser(regexes, expr) {
         override val wordList: List<String> = words
         override val theExpr: String = expr
         override fun match(text: String): Boolean {
@@ -71,33 +74,40 @@ class StringPatternMatcher(setting: QuerySetting) {
         parser1 = PatternParser.createFrom(setting.mandatoryKeyWords)
         parser2 = PatternParser.createFrom(setting.forbiddenKeyWords)
     }
+
     fun match(text1: String, text2: String): Boolean {
         return parser1.match(text1) && !parser2.match(text2)
     }
+
     companion object {
         val logicOpRegexes: List<Regex>
+
         init {
             logicOpRegexes = makeRegexListFrom(logicOps.toSet())
         }
+
         fun makeRegexListFrom(aSet: Set<String>): List<Regex> = aSet
             .filter { it.isNotEmpty() }
             .map { s ->
                 s.split(".")
-                    .joinToString(separator = ".", prefix = "\\b", postfix = "\\b") { Regex.escape(it) } }
-                    .map { it.toRegex(RegexOption.IGNORE_CASE) }
+                    .joinToString(separator = ".", prefix = "\\b", postfix = "\\b") { Regex.escape(it) }
+            }
+            .map { it.toRegex(RegexOption.IGNORE_CASE) }
 
         fun patternSettingFrom(value: String): MutableSet<String> {
             if (logicOpRegexes.any { it.containsMatchIn(value) })
                 return mutableSetOf(value)
             return value.splitToSet(",")
         }
+
         fun validateSetting(value: String): Boolean {
             if (logicOpRegexes.any { it.containsMatchIn(value) }) {
                 val parser = PatternParser.createFrom(mutableSetOf(value))
                 try {
                     parser.match("")
+                } catch (e: Exception) {
+                    return false
                 }
-                catch (e: Exception) { return false }
             }
             return true
         }
@@ -121,7 +131,7 @@ object ExpressionEvaluator {
         null
     }
 
-    fun evaluateAsBoolean(expression: String, vars: Map<String,  Boolean>): Boolean? {
+    fun evaluateAsBoolean(expression: String, vars: Map<String, Boolean>): Boolean? {
         vars.forEach { (key, value) -> jexlContext.set(key, value) }
 
         val boolean = evaluate(expression) as? Boolean

@@ -14,7 +14,7 @@ import org.reactome.lit_ball.model.PaperListScreenStore
 fun PaperListScreenEvents(
     model: PaperListScreenStore,
     focusRequester: FocusRequester,
-    ) {
+) {
     val state = model.state
     state.editingItemId?.also { item ->
         ItemClickedDialog(

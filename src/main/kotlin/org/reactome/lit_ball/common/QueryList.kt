@@ -10,6 +10,7 @@ import java.io.IOException
 import java.nio.file.Files
 
 const val DAY_IN_MS = 1000L * 60 * 60 * 24
+
 @Serializable
 object QueryList {
     var list: List<LitBallQuery> = listOf()
@@ -38,13 +39,14 @@ object QueryList {
                 newQuery.noNewAccepted = newQuery.readNoNewAccepted()
                 if (newQuery.noNewAccepted) {
                     val now = System.currentTimeMillis()
-                    val cacheMillis = DAY_IN_MS * (Settings.map["cache-max-age-days"]?: "30").toInt()
+                    val cacheMillis = DAY_IN_MS * (Settings.map["cache-max-age-days"] ?: "30").toInt()
                     if (now - (newQuery.lastExpansionDate?.time ?: 0) > cacheMillis) {
                         newQuery.noNewAccepted = false
                     }
                 }
                 newQuery.type = newQuery.setting.type
-                newQuery.expSearchParams = Pair(newQuery.setting.pubDate, typeStringsToBoolArray(newQuery.setting.pubType))
+                newQuery.expSearchParams =
+                    Pair(newQuery.setting.pubDate, typeStringsToBoolArray(newQuery.setting.pubType))
                 newQuery
             }
         }
@@ -82,8 +84,9 @@ object QueryList {
         RootStore.doSort(
             SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()),
             list.size - 1,
-            )
+        )
     }
+
     fun removeDir(id: Int?) {
         val name = itemFromId(id)?.name
         val queryDir = name?.let { getQueryDir(it) }

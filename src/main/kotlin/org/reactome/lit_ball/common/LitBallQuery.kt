@@ -22,7 +22,9 @@ import java.util.*
 import kotlin.io.path.Path
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1, EXPLODED }
+
 const val EXPLODED_LIMIT = 20000
+
 @Serializable
 enum class Qtype(val pretty: String) {
     EXPRESSION_SEARCH("Expression Search"),
@@ -72,6 +74,7 @@ data class LitBallQuery(
                     .map { it.first }
         }
     }
+
     fun syncBuffers() {
         acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()
         rejectedSet = getDOIs(getQueryDir(name), FileType.REJECTED.fileName).filter { it.isNotBlank() }.toMutableSet()
@@ -83,7 +86,7 @@ data class LitBallQuery(
         return "Query(id=$id, name=$name, status=$status, setting=$setting, nrAccepted=${nrAccepted()}, nrRejected=${nrRejected()}, lastExpansionDate=$lastExpansionDate)"
     }
 
-    fun nextActionText(): String = when(type) {
+    fun nextActionText(): String = when (type) {
         Qtype.EXPRESSION_SEARCH ->
             arrayOf(
                 "Complete the Setting",
@@ -91,6 +94,7 @@ data class LitBallQuery(
                 "Search",
                 "Search",
             )[status.ordinal]
+
         Qtype.SNOWBALLING ->
             arrayOf(
                 "Complete the Setting",
@@ -98,6 +102,7 @@ data class LitBallQuery(
                 "Start expansion",
                 "Start expansion",
             )[status.ordinal]
+
         Qtype.SUPERVISED_SNOWBALLING ->
             arrayOf(
                 "Complete the Setting",
@@ -134,6 +139,7 @@ data class LitBallQuery(
         mutex.unlock()
         return
     }
+
     private suspend fun snowBall(auto: Boolean = false) {
         val tag = "EXPAND"
         val queryDir = getQueryDir(name)
@@ -209,7 +215,7 @@ data class LitBallQuery(
                     it.tldr?.get("text") ?: "",
                     it.abstract ?: ""
                 )
-                if (matcher.match(textsOfPaper.joinToString(" "), it.title?: ""))
+                if (matcher.match(textsOfPaper.joinToString(" "), it.title ?: ""))
                     paperDetailsList.add(it)
             }
             // Bail out on Cancel
@@ -249,7 +255,9 @@ data class LitBallQuery(
                 val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
                 file.writeText(
                     json.encodeToString(
-                        paperDetailsList.mapIndexed { idx, pd -> Paper(idx, pd).uppercaseDoi().setPaperIdFromDetails() })
+                        paperDetailsList.mapIndexed { idx, pd ->
+                            Paper(idx, pd).uppercaseDoi().setPaperIdFromDetails()
+                        })
                 )
                 mergeIntoArchive(paperDetailsList)
             } catch (e: Exception) {
@@ -308,9 +316,10 @@ data class LitBallQuery(
         val result = S2Client.getBulkPaperSearch(setting) {
             if (typeMatches(it.publicationTypes, expSearchParams?.second)
                 && dateMatcher.matches(it.publicationDate)
-                && !matcher.parser2.match(it.title?: ""))
+                && !matcher.parser2.match(it.title ?: "")
+            )
                 paperDetailsList.add(it)
-            }
+        }
         // Bail out on Cancel
         if (!result) return
         Logger.i(tag, "Retained ${paperDetailsList.size} records")
@@ -334,6 +343,7 @@ data class LitBallQuery(
         status = QueryStatus.FILTERED2
         RootStore.refreshList()
     }
+
     suspend fun filter2() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {
@@ -371,6 +381,7 @@ data class LitBallQuery(
             return
         }
     }
+
     private suspend fun autoSnowBall() {
         while (true) {
             snowBall(true)
@@ -382,13 +393,16 @@ data class LitBallQuery(
             acceptAll()
         }
         if (status == QueryStatus.EXPLODED) {
-            RootStore.setInformationalDialog("""
+            RootStore.setInformationalDialog(
+                """
                 Number of new DOIs exceeds EXPLODED_LIMIT of $EXPLODED_LIMIT.
                 Please try again with more specific keywords / expression.
-                """.trimIndent())
+                """.trimIndent()
+            )
             status = QueryStatus.FILTERED2
         }
     }
+
     suspend fun annotate() {
         val queryDir = getQueryDir(name)
         if (queryDir.isDirectory && queryDir.canRead()) {

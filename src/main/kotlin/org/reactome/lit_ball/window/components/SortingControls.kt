@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 fun SortingControls(
     controls: List<SortingControlItem>,
     focusRequester: FocusRequester? = null,
-    ) {
+) {
     Row {
         controls.forEach { item ->
             Tooltip(item.tooltipText, Modifier.align(Alignment.CenterVertically)) {
@@ -26,7 +26,7 @@ fun SortingControls(
                     onClick = {
                         item.onClicked()
                         focusRequester?.requestFocus()
-                              },
+                    },
                     modifier = Modifier
                         .align(Alignment.CenterVertically),
                 ) {

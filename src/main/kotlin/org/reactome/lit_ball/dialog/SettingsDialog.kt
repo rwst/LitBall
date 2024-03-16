@@ -33,7 +33,7 @@ internal fun SettingsDialog(
     val advancedKeys = Settings.advancedSet
     val textFields = rememberSaveable { keys.map { key -> mutableStateOf(Settings.map[key] ?: "") } }
     val isAdvancedSettingsVisible = remember { mutableStateOf(false) }
-    val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
+    val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
 
     AlertDialog(
         title = { Text("Edit settings") },

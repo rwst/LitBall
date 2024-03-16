@@ -21,8 +21,7 @@ fun openInBrowser(pmid: String?, title: String?) {
         openInBrowser(
             URI("https://pubmed.ncbi.nlm.nih.gov/$pmid/")
         )
-    }
-    else if (title != null) {
+    } else if (title != null) {
         val spaceRegex = Regex("[\\p{javaWhitespace}\u00A0\u2007\u202F]+")
         val theTitle = spaceRegex.replace(title, " ")
         openInBrowser(

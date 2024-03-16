@@ -24,7 +24,9 @@ object ProdigyService {
     }
 
     fun call(cmd: String, args: String, directory: String): Job? {
-        if (pythonPath == null) { return null }
+        if (pythonPath == null) {
+            return null
+        }
         val process =
             executeCommand("${pythonPath}/bin/python3 -m $cmd $args", directory)
 

@@ -44,9 +44,9 @@ fun NewQueryDialog(
     val flagCheckedValue = rememberSaveable { mutableStateOf(BooleanArray(ArticleType.entries.size) { true }) }
     val checkValue = rememberSaveable { mutableStateOf(true) }
     val nameCheckValue = rememberSaveable { mutableStateOf(true) }
-    val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
-    val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
-    val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null)  }
+    val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
 
     AlertDialog(
         onDismissRequest = { (onCloseClicked)() },
@@ -78,7 +78,12 @@ fun NewQueryDialog(
                     nameCheckValue.value = name !in QueryList.list.map { it.name }
                     if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
-                            QueryList.addNewItem(typeValue.value, name, dois.toSet(), Pair(pubYearValue.value, flagCheckedValue.value))
+                            QueryList.addNewItem(
+                                typeValue.value,
+                                name,
+                                dois.toSet(),
+                                Pair(pubYearValue.value, flagCheckedValue.value)
+                            )
                         }
                         (onCloseClicked)()
                     }
@@ -102,7 +107,8 @@ fun NewQueryDialog(
         text = {
             Column(horizontalAlignment = Alignment.Start) {
                 Row {
-                    Tooltip(text = """
+                    Tooltip(
+                        text = """
                         Available query types are:
                         1. Simple expression search: your positive and negative
                            keyphrases/expressions are sent to Semantic Scholar
@@ -117,7 +123,8 @@ fun NewQueryDialog(
                            of "recommended papers" from S2, optionally applying
                            keyword filters.
                     """.trimIndent(),
-                        Modifier.align(Alignment.CenterVertically)) {
+                        Modifier.align(Alignment.CenterVertically)
+                    ) {
                         Icon(
                             painterResource(Icons.Help),
                             contentDescription = "Query Settings",
@@ -133,8 +140,7 @@ fun NewQueryDialog(
                         onOptionSelected = { btn ->
                             if (btn == 0 && Settings.map["S2-API-key"].isNullOrEmpty()) {
                                 typeWarningValue.value = "S2 API key needed"
-                            }
-                            else {
+                            } else {
                                 typeWarningValue.value = null
                             }
                             typeValue.value = btn
@@ -152,11 +158,13 @@ fun NewQueryDialog(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
-                    Tooltip(text = """
+                    Tooltip(
+                        text = """
                         Enter name of query. The string is cut off
                         at the first '/' (slash) character.
                     """.trimIndent(),
-                        Modifier.align(Alignment.CenterVertically)) {
+                        Modifier.align(Alignment.CenterVertically)
+                    ) {
                         Icon(
                             painterResource(Icons.Help),
                             contentDescription = "Query Settings",
@@ -170,7 +178,7 @@ fun NewQueryDialog(
                         value = nameValue.value,
                         onValueChange = {
                             nameValue.value = it.substringBefore("/")
-                                        },
+                        },
                         label = { Text("Query name") },
                     )
                     pathWarningValue.value?.also {
@@ -221,8 +229,7 @@ fun NewQueryDialog(
                             )
                         }
                     }
-                }
-                else {
+                } else {
                     Row {
                         Tooltip(
                             text = """
@@ -264,12 +271,12 @@ fun NewQueryDialog(
                         }
                         Spacer(modifier = Modifier.width(24.dp))
                         Row {
-                            Column (
+                            Column(
                                 verticalArrangement = Arrangement.spacedBy(0.dp)
-                            ){
+                            ) {
                                 ArticleType.entries.forEach { articleType ->
                                     val (checkedState, onStateChange) = remember { mutableStateOf(flagCheckedValue.value[articleType.ordinal]) }
-                                    Row (
+                                    Row(
                                         modifier = Modifier
                                             .padding(vertical = 0.dp)
                                             .height(24.dp),
@@ -278,7 +285,7 @@ fun NewQueryDialog(
                                         Checkbox(
                                             checked = checkedState,
                                             onCheckedChange = {
-                                                if (!checkedState || flagCheckedValue.value.count { it } > 1 ) {
+                                                if (!checkedState || flagCheckedValue.value.count { it } > 1) {
                                                     onStateChange(!checkedState)
                                                     flagCheckedValue.value[articleType.ordinal] = !checkedState
                                                 }

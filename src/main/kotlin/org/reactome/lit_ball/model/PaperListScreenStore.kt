@@ -40,6 +40,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun onClassifierConfirmed() {
         handle.scope?.launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
+
     fun onFilterChanged(filter: String) {
         handle.scope?.launch(Dispatchers.IO) {
             PaperList.applyFilter(filter)
@@ -76,6 +77,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun setYdfNotFoundAlert(ydfNotFoundAlert: Boolean) {
         setState { copy(ydfNotFoundAlert = ydfNotFoundAlert) }
     }
+
     fun setFilterDialog(value: Boolean) {
         setState { copy(filterDialog = value) }
         if (!value) onFilterChanged("")

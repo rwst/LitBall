@@ -41,7 +41,7 @@ fun QueryCard(
     )
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
-            Column (modifier = Modifier.align(Alignment.CenterVertically)) {
+            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Tooltip("Query-specific settings", Modifier.align(Alignment.CenterHorizontally)) {
                     IconButton(
                         onClick = { (onSettingsClicked)(item.id) },

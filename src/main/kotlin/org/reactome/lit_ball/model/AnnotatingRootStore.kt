@@ -117,6 +117,7 @@ object AnnotatingRootStore : ModelHandle {
             PaperList.exportAnnotated()
         }
     }
+
     private fun doExportText() {
         scope?.launch(Dispatchers.IO) {
             PaperList.exportText()
@@ -143,9 +144,9 @@ object AnnotatingRootStore : ModelHandle {
     }
 
     fun getEpochs(): List<Long> = state.items
-            .mapNotNull { it.details.publicationDate }
-            .filter { it.isNotEmpty() }
-            .map { LocalDate.parse(it).toEpochMilliseconds() }
+        .mapNotNull { it.details.publicationDate }
+        .filter { it.isNotEmpty() }
+        .map { LocalDate.parse(it).toEpochMilliseconds() }
 
     fun setupListScroller(theChannel: Channel<Int>) {
         scrollChannel = theChannel

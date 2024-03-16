@@ -116,6 +116,7 @@ object S2Service {
             @Query("query") query: String,
             @Query("fields") fields: String,
         ): Response<SearchResult>
+
         @GET("/graph/v1/paper/search/bulk")
         suspend fun getRequestWithToken(
             @Query("query") query: String,
@@ -123,6 +124,7 @@ object S2Service {
             @Query("fields") fields: String,
         ): Response<SearchResult>
     }
+
     suspend fun getBulkPaperSearch(
         query: String,
         fields: String,

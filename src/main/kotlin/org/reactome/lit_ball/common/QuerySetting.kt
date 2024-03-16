@@ -1,7 +1,6 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.Logger
 import java.io.File

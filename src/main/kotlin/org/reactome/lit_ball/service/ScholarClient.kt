@@ -33,12 +33,14 @@ object S2Client : ScholarClient {
             } catch (e: SocketTimeoutException) {
                 Logger.i(TAG, "TIMEOUT")
                 if (indicatorTitle != null
-                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT"))
+                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT")
+                )
                     return Pair(null, false)
             } catch (e: HttpException) {
                 Logger.i(TAG, "ERROR ${e.code()}")
                 if (indicatorTitle != null
-                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}"))
+                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}")
+                )
                     return Pair(null, false)
                 when (e.code()) {
                     400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
@@ -49,6 +51,7 @@ object S2Client : ScholarClient {
                         }
                         delay(strategy.delay(false))
                     }
+
                     504 -> delay(strategy.delay(false))
                     // API says too fast, so delay and repeat
                     else -> throw e
@@ -130,7 +133,7 @@ object S2Client : ScholarClient {
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
-            val paperIds = ids.map { if ( it.startsWith("S2:")) it.substring(3) else it }
+            val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getBulkPaperDetails(
                     paperIds,
@@ -159,7 +162,7 @@ object S2Client : ScholarClient {
         doiSet.forEachIndexed { index, it ->
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getSinglePaperDetails(
-                    if ( it.startsWith("S2:")) it.substring(3) else it,
+                    if (it.startsWith("S2:")) it.substring(3) else it,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
             }
@@ -194,7 +197,7 @@ object S2Client : ScholarClient {
         doiSet.forEachIndexed { index, doi ->
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getPaperRefs(
-                    if ( doi.startsWith("S2:")) doi.substring(3) else doi,
+                    if (doi.startsWith("S2:")) doi.substring(3) else doi,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
                 )
             }
@@ -207,6 +210,7 @@ object S2Client : ScholarClient {
         RootStore.setProgressIndication()
         return true
     }
+
     // Full protocol for bulk download of paper details for a list of DOIs
     private suspend fun getBulkPaperRefs(
         doiSet: List<String>,
@@ -218,7 +222,7 @@ object S2Client : ScholarClient {
                 "citations for all accepted papers"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { dois ->
-            val paperIds = dois.map { if ( it.startsWith("S2:")) it.substring(3) else it }
+            val paperIds = dois.map { if (it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Service.getBulkPaperRefs(
                     paperIds,
@@ -227,7 +231,8 @@ object S2Client : ScholarClient {
             }
             if (!pair.second) return false
             delay(strategy.delay(true))
-            pair.first?.filterNotNull()?.forEachIndexed { index, paperRefs -> action(dois[index], paperRefs) } // DO NOT remove filterNotNull()
+            pair.first?.filterNotNull()
+                ?.forEachIndexed { index, paperRefs -> action(dois[index], paperRefs) } // DO NOT remove filterNotNull()
             index += dois.size
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false

@@ -20,10 +20,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Tooltip(text: String,
-            modifier: Modifier,
-            content: @Composable () -> Unit)
-{
+fun Tooltip(
+    text: String,
+    modifier: Modifier,
+    content: @Composable () -> Unit
+) {
     TooltipArea(
         tooltip = {
             // composable tooltip content

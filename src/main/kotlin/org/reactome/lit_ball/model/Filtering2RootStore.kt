@@ -94,6 +94,7 @@ object Filtering2RootStore : ModelHandle {
         PaperList.listHandle.setFullAllTags(Tag.Accepted)
         refreshList()
     }
+
     fun rejectAll() {
         PaperList.listHandle.setFullAllTags(Tag.Rejected)
         refreshList()
