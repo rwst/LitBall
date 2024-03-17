@@ -65,7 +65,7 @@ internal fun AnnotatingMainContent(
                 )
             }
             AnnotatingListContent(
-                items = model.state.items,
+                items = model.state.paperListState.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,

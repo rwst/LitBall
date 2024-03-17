@@ -95,4 +95,5 @@ data class Filtering2RootState(
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(Filtering2RootStore),
+    var paperListState: PaperListScreenState = paperListStore.state
 )

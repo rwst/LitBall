@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import org.reactome.lit_ball.common.FileType
-import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.util.SystemFunction
@@ -57,7 +56,7 @@ object AnnotatingRootStore : ModelHandle {
     }
 
     override fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore) {
-        setState { copy(paperListStore = paperListScreenStore) }
+        setState { copy(paperListState = paperListScreenStore.state) }
     }
 
     private fun buttonExit() {
@@ -99,14 +98,13 @@ object AnnotatingRootStore : ModelHandle {
         setState { copy(showStats = boolean) }
     }
 
-    fun getEpochs(): List<Long> = state.items
+    fun getEpochs(): List<Long> = state.paperListState.items
         .mapNotNull { it.details.publicationDate }
         .filter { it.isNotEmpty() }
         .map { LocalDate.parse(it).toEpochMilliseconds() }
 }
 
 data class AnnotatingRootState(
-    val items: List<Paper> = PaperList.toList(),
     val settings: Settings = Settings,
     val activeRailItem: String = "",
     val editingSettings: Boolean = false,
@@ -117,4 +115,5 @@ data class AnnotatingRootState(
     val isClassifierSet: Boolean = false,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(AnnotatingRootStore),
     val showStats: Boolean = false,
-)
+    var paperListState: PaperListScreenState = paperListStore.state
+    )
