@@ -32,7 +32,7 @@ object S2Service {
     )
 
     @Serializable
-    data class References(
+    data class PaperFullId(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
     )
@@ -40,8 +40,8 @@ object S2Service {
     @Serializable
     data class PaperRefs(
         val paperId: String? = "",
-        var citations: List<References>? = null,
-        var references: List<References>? = null,
+        var citations: List<PaperFullId>? = null,
+        var references: List<PaperFullId>? = null,
     )
 
     interface PaperRefsApi {

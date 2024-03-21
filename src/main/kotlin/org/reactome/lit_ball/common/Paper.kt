@@ -58,7 +58,7 @@ fun idListFromPaperDetailsList(pDList: List<S2Service.PaperDetails>): List<Strin
     }
 }
 
-fun idListFromPaperRefs(refList: List<S2Service.References>): List<String> {
+fun idListFromPaperRefs(refList: List<S2Service.PaperFullId>): List<String> {
     return refList.map { pd ->
         pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.uppercase() }
         "S2:${pd.paperId}"
