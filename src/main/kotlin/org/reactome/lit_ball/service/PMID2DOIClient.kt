@@ -1,6 +1,7 @@
 package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.delay
+import org.reactome.lit_ball.common.Settings
 
 val clients = listOf(S2PMID2DOIClient(), WDQSPMID2DOIClient())
 
@@ -11,7 +12,7 @@ suspend fun getDOIsforPMIDs(pmidList: List<String>): List<String?> {
     clients.forEach { client ->
         missing = map.filterValues { it == null }.keys.toList()
         if (missing.isNotEmpty()) {
-            val response = client.getSinglePaperDOIfromPMIDs(missing)
+            val response = client.getPaperDOIfromPMIDs(missing)
             missing.forEachIndexed { index, s -> map[s] = response[index] }
         }
     }
@@ -19,30 +20,56 @@ suspend fun getDOIsforPMIDs(pmidList: List<String>): List<String?> {
 }
 
 abstract class PMID2DOIClient {
-    abstract suspend fun getSinglePaperDOIfromPMIDs(pmidList: List<String>): List<String?>
+    abstract suspend fun getPaperDOIfromPMIDs(pmidList: List<String>): List<String?>
 }
 
 class S2PMID2DOIClient : PMID2DOIClient() {
-    override suspend fun getSinglePaperDOIfromPMIDs(
+    override suspend fun getPaperDOIfromPMIDs(
         pmidList: List<String>,
     ): List<String?> {
         S2Client.strategy = DelayStrategy(S2Client.SINGLE_QUERY_DELAY)
         val size = pmidList.size
         val list = MutableList<String?>(size) { null }
-        pmidList.forEachIndexed { index, it ->
-            var pair: Pair<S2Service.PaperDetails?, Boolean>
+        if (Settings.map["S2-API-key"].isNullOrEmpty()) {
+            pmidList.forEachIndexed { index, it ->
+                var pair: Pair<S2Service.PaperDetails?, Boolean>
+                do {
+                    pair = S2Client.getDataOrHandleExceptions(index, size, null) {
+                        S2Service.getSinglePaperDetails(
+                            "PMID:$it",
+                            "externalIds"
+                        )
+                    }
+                    delay(S2Client.strategy.delay(false))
+                } while (!pair.second)
+                delay(S2Client.strategy.delay(true))
+                pair.first?.also {
+                    list[index] = it.externalIds?.get("DOI")
+                }
+            }
+        }
+        else {
+            var pair: Pair<List<S2Service.PaperDetails>?, Boolean>
+            val ids = pmidList.map { "PMID:$it" }
             do {
-                pair = S2Client.getDataOrHandleExceptions(index, size, null) {
-                    S2Service.getSinglePaperDetails(
-                        "PMID:$it",
+                pair = S2Client.getDataOrHandleExceptions(size, size, null) {
+                    S2Service.getBulkPaperDetails(
+                        ids,
                         "externalIds"
                     )
                 }
                 delay(S2Client.strategy.delay(false))
             } while (!pair.second)
             delay(S2Client.strategy.delay(true))
-            pair.first?.also {
-                list[index] = it.externalIds?.get("DOI")
+            val map = emptyMap<String, String>().toMutableMap()
+            pair.first?.onEach {
+                val pmid = it.externalIds?.get("PMID") ?: ""
+                val doi = it.externalIds?.get("DOI")
+                val id = doi ?: "S2:${it.paperId}"
+                map[pmid] = id
+            }
+            pmidList.forEachIndexed { index, it ->
+                map[it]?.let { list[index] = it }
             }
         }
         return list
@@ -50,7 +77,7 @@ class S2PMID2DOIClient : PMID2DOIClient() {
 }
 
 class WDQSPMID2DOIClient : PMID2DOIClient() {
-    override suspend fun getSinglePaperDOIfromPMIDs(pmidList: List<String>): List<String?> {
+    override suspend fun getPaperDOIfromPMIDs(pmidList: List<String>): List<String?> {
         val queryString = """
             PREFIX wdt: <http://www.wikidata.org/prop/direct/>
             SELECT DISTINCT ?pmid ?doi
