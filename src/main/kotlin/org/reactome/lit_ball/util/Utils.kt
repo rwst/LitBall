@@ -121,7 +121,7 @@ fun checkFileInDirectory(dir: File, fileName: String): File? {
     val file: File
     if (dir.isDirectory && dir.canRead()) {
         try {
-            file = File("${dir.absolutePath}/$fileName)")
+            file = File("${dir.absolutePath}/$fileName")
         } catch (e: Exception) {
             handleException(e)
             return null

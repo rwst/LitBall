@@ -14,6 +14,7 @@ import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Service
 import org.reactome.lit_ball.util.*
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.attribute.FileTime
@@ -394,7 +395,11 @@ data class LitBallQuery(
     fun readNoNewAccepted(): Boolean {
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.NONEWACCEPTED.fileName)?.let { file ->
-            return file.readText().trim() == "true"
+            try {
+                return file.readText().trim() == "true"
+            } catch (e: FileNotFoundException) {
+                return false
+            }
         }
         return false
     }

@@ -38,7 +38,7 @@ object PaperList {
         this.query = query
         fileName = file.name
         path = file.absolutePath
-        readFromFile(file, accepted)
+        readAcceptedFromFile(file, accepted)
     }
 
     fun toList(): List<Paper> {
@@ -67,7 +67,7 @@ object PaperList {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    suspend fun readFromFile(file: File, accepted: MutableSet<String>?) {
+    suspend fun readAcceptedFromFile(file: File, accepted: MutableSet<String>?) {
         val json = ConfiguredJson.get()
         if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
 
@@ -81,7 +81,7 @@ object PaperList {
         papers.forEach { it.setPaperIdFromDetails() }
         accepted?.let {
             papers = papers.filter { it.paperId in accepted }.toMutableList()
-            var maxId = if (papers.isNotEmpty()) papers.maxOf { it.id } else 0
+            var maxId = papers.size
             val acceptedWithDetails = papers.map { it.paperId ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
             S2Client.getPaperDetails(acceptedWithoutDetails) {
