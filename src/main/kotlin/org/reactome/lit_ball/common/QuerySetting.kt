@@ -26,7 +26,6 @@ data class QuerySetting(
             return try {
                 json.decodeFromString<QuerySetting>(text)
             } catch (e: Exception) {
-                println(e)
                 Logger.error(e)
                 QuerySetting()
             }

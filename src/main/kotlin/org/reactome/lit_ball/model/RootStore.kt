@@ -247,7 +247,6 @@ object RootStore {
                 refreshList()
                 delay(100) // TODO: this is a hack
                 val index = QueryList.list.indexOfFirst { it.name == name }
-                println(Pair(name, index))
                 if (index >= 0)
                     scrollChannel?.send(index)
                 else
