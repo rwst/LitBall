@@ -14,7 +14,6 @@ import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Service
 import org.reactome.lit_ball.util.*
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.attribute.FileTime
@@ -183,10 +182,10 @@ data class LitBallQuery(
             else
                 RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
         }
-        if (queryDir.isDirectory && queryDir.canWrite()) {
+        checkFileInDirectory(queryDir, FileType.EXPANDED.fileName)?.let { file ->
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status = try {
-                File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").writeText(text)
+                file.writeText(text)
                 lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
                 QueryStatus.EXPANDED
             } catch (e: Exception) {
@@ -283,14 +282,7 @@ data class LitBallQuery(
     @OptIn(ExperimentalSerializationApi::class)
     private fun mergeIntoArchive(list: MutableList<S2Service.PaperDetails>) {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canRead()) {
-            val file: File
-            try {
-                file = File("${queryDir.absolutePath}/${FileType.ARCHIVED.fileName}")
-            } catch (e: Exception) {
-                handleException(e)
-                return
-            }
+        checkFileInDirectory(queryDir, FileType.ARCHIVED.fileName)?.let { file ->
             val json = ConfiguredJson.get()
             val papers: MutableSet<Paper> = if (file.exists()) {
                 json.decodeFromStream<List<Paper>>(file.inputStream()).toMutableSet()
@@ -328,15 +320,9 @@ data class LitBallQuery(
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = idSetFromPaperDetailsList(paperDetailsList)
-        if (queryDir.isDirectory && queryDir.canWrite()) {
-            try {
-                val file = File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}")
-                file.writeText(acceptedSet.joinToString("\n"))
-                mergeIntoArchive(paperDetailsList)
-            } catch (e: Exception) {
-                handleException(e)
-                return
-            }
+        checkFileInDirectory(queryDir, FileType.ACCEPTED.fileName)?.let { file ->
+            file.writeText(acceptedSet.joinToString("\n"))
+            mergeIntoArchive(paperDetailsList)
         }
         noNewAccepted = true
         writeNoNewAccepted()
@@ -346,39 +332,19 @@ data class LitBallQuery(
 
     suspend fun filter2() {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canRead()) {
-            val file: File
-            try {
-                file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
-            } catch (e: Exception) {
-                handleException(e)
-                return
-            }
+        checkFileInDirectory(queryDir, FileType.FILTERED1.fileName)?.let { file ->
             PaperList.setFromQuery(this, file)
             Filtering2RootStore.state.paperListStore.refreshList()
-        } else {
-            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
-            return
         }
     }
 
     private suspend fun acceptAll() {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canRead()) {
-            val file: File
-            try {
-                file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
-            } catch (e: Exception) {
-                handleException(e)
-                return
-            }
+        checkFileInDirectory(queryDir, FileType.FILTERED1.fileName)?.let { file ->
             PaperList.setFromQuery(this, file)
             PaperList.listHandle.setFullAllTags(Tag.Accepted)
             PaperList.finish(true)
             syncBuffers()
-        } else {
-            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
-            return
         }
     }
 
@@ -405,32 +371,18 @@ data class LitBallQuery(
 
     suspend fun annotate() {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canRead()) {
-            val file: File
-            try {
-                file = File("${queryDir.absolutePath}/${FileType.ARCHIVED.fileName}")
-            } catch (e: Exception) {
-                handleException(e)
-                return
-            }
+        checkFileInDirectory(queryDir, FileType.ARCHIVED.fileName)?.let { file ->
             PaperList.setFromQuery(this, file, acceptedSet)
             AnnotatingRootStore.state.paperListStore.refreshList()
             PaperList.saveAnnotated()
-        } else {
-            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
-            return
         }
     }
 
     suspend fun writeNoNewAccepted() {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canWrite()) {
+        checkFileInDirectory(queryDir, FileType.NONEWACCEPTED.fileName)?.let { file ->
             val text = noNewAccepted.toString()
-            try {
-                File("${queryDir.absolutePath}/${FileType.NONEWACCEPTED.fileName}").writeText(text)
-            } catch (e: Exception) {
-                handleException(e)
-            }
+            file.writeText(text)
         }
         val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
         val now = FileTime.fromMillis(System.currentTimeMillis())
@@ -441,28 +393,18 @@ data class LitBallQuery(
 
     fun readNoNewAccepted(): Boolean {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canRead()) {
-            try {
-                return File("${queryDir.absolutePath}/${FileType.NONEWACCEPTED.fileName}").readText().trim() == "true"
-            } catch (e: FileNotFoundException) {
-                return false
-            } catch (e: Exception) {
-                handleException(e)
-            }
+        checkFileInDirectory(queryDir, FileType.NONEWACCEPTED.fileName)?.let { file ->
+            return file.readText().trim() == "true"
         }
         return false
     }
 
     fun saveSettings() {
         val queryDir = getQueryDir(name)
-        if (queryDir.isDirectory && queryDir.canWrite()) {
+        checkFileInDirectory(queryDir, FileType.SETTINGS.fileName)?.let { file ->
             val json = ConfiguredJson.get()
             val text = json.encodeToString<QuerySetting>(setting)
-            try {
-                File("${queryDir.absolutePath}/${FileType.SETTINGS.fileName}").writeText(text)
-            } catch (e: Exception) {
-                handleException(e)
-            }
+            file.writeText(text)
         }
     }
 }
