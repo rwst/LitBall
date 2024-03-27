@@ -1,4 +1,9 @@
 ## START
+v2404
+ - more date matcher fixes
+ - don't discard non-DOI results / use archived directly by prefixing with "S2:"
+ - bulk PMID lookup
+
 v2403
  - fix expression search date matching
  - fix expression search type matching

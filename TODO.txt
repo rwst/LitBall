@@ -1,7 +1,4 @@
  - query type 4: S2 recommendations https://api.semanticscholar.org/api-docs/recommendations
- - Q1: don't discard non-DOI results / use archived directly by prefixing with "S2:"
- - make path editable by click
- - bulk PMID lookup
 
 Doc:
  - json export
@@ -14,7 +11,6 @@ Doc:
 
 Features:
  - refactor: rename model functions so they reflect the event not the intent
- - "duplicate" sorting controls code in A/F rootstore
  - clicking sort in filtering2 still grabs focus
  - clicking delete in annotate still grabs focus
  - going Main from annotate resets list pos
@@ -25,6 +21,7 @@ Features:
  - complain if Q1 date filter in wrong format
  - settings mutex
  - manually add DOIs to accepted
+ - when annotate, why is S2 accessed again? because some accepted dois are defect
 
 Other ideas:
  - replace 404 msg with "Paper not found"
