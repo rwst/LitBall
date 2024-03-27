@@ -37,6 +37,8 @@ You should now see the "Start Expansion" button in the query card, and the numbe
 
 Congratulations! You went through one cycle of snowballing. Do this until no more new papers are acceptable. You always see the date of the last expansion in the card, so wait some months until new papers on your topic will have appeared. They will be found in a new expansion step, as they likely cite one of the papers you accepted.
 
+*It is highly recommended that you get an API key from Semantic Scholar (see https://www.semanticscholar.org/product/api#api-key) because usage of bulk services by LitBall is much faster and more reliable.*
+
 # Thanks
 
 We are using some free commercial icons from [Icons8](https://icons8.com)
