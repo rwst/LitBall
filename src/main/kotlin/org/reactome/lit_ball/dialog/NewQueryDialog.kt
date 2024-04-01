@@ -2,9 +2,7 @@
 
 package org.reactome.lit_ball.dialog
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -15,12 +13,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball.common.ArticleType
 import org.reactome.lit_ball.common.QueryList
+import org.reactome.lit_ball.common.QueryType
 import org.reactome.lit_ball.common.Settings
 import java.io.File
 import kotlin.io.path.Path
@@ -74,7 +74,7 @@ fun NewQueryDialog(
                     if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
                             QueryList.addNewItem(
-                                typeValue.value,
+                                QueryType.entries[typeValue.value],
                                 name,
                                 dois.toSet(),
                                 Pair(pubYearValue.value, flagCheckedValue.value)
@@ -115,5 +115,10 @@ fun NewQueryDialog(
                     Text("Query name already exists in directory.")
             }
         },
-    )
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        modifier = Modifier
+            .padding(28.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+        )
 }

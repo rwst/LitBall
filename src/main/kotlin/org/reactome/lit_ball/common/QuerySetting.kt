@@ -7,7 +7,7 @@ import java.io.File
 
 @Serializable
 data class QuerySetting(
-    var type: Qtype = Qtype.SUPERVISED_SNOWBALLING,
+    var type: QueryType = QueryType.SUPERVISED_SNOWBALLING,
     var mandatoryKeyWords: MutableSet<String> = mutableSetOf(),
     var forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
     var classifier: String = "",

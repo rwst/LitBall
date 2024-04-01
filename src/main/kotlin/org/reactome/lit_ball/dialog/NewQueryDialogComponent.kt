@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.ArticleType
-import org.reactome.lit_ball.common.Qtype
+import org.reactome.lit_ball.common.QueryType
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.service.getDOIsforPMIDs
 import org.reactome.lit_ball.window.components.Icons
@@ -35,8 +35,7 @@ private const val queryTypeTooltipText = """
                         3. (default) Snowballing with automated and supervised
                            filtering.
                         4. Similarity search: give some DOI/PMID(s) and get a number
-                           of "recommended papers" from S2, optionally applying
-                           keyword filters.
+                           of "recommended papers" from S2
                     """
 
 private const val doiInputHelpTooltipText = """
@@ -191,14 +190,14 @@ fun queryTypeComponent(
             text = queryTypeTooltipText.trimIndent(),
             Modifier.align(Alignment.CenterVertically)
         ) {
-            Modifier.size(20.dp).align(Alignment.CenterVertically)
+            helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
         }
         Spacer(modifier = Modifier.width(14.dp))
         RadioButtonOptions(
-            Qtype.entries.map { it.pretty },
+            QueryType.entries.map { it.pretty },
             typeValue.value,
             onOptionSelected = { btn ->
-                if (btn == 0 && Settings.map["S2-API-key"].isNullOrEmpty()) {
+                if ((btn == 0 || btn == 3) && Settings.map["S2-API-key"].isNullOrEmpty()) {
                     typeWarningValue.value = "S2 API key needed"
                 } else {
                     typeWarningValue.value = null

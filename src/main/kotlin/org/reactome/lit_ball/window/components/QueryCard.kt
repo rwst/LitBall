@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.reactome.lit_ball.common.LitBallQuery
-import org.reactome.lit_ball.common.Qtype
+import org.reactome.lit_ball.common.QueryType
 import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.util.formatDateToyyyyMMMddFormat
 import org.reactome.lit_ball.window.MARGIN_SCROLLBAR
@@ -38,6 +38,7 @@ fun QueryCard(
         Color.hsv(186F, 1F, 1F),
         Color.hsv(163f, 1f, 1f),
         Color.hsv(0f, 0f, .9f),
+        Color.hsv(150f, 1f, .9f),
     )
     ElevatedCard {
         Row(modifier = Modifier.clickable(onClick = onClicked)) {
@@ -108,7 +109,7 @@ fun QueryCard(
 
             Spacer(modifier = Modifier.width(24.dp))
 
-            if (item.type != Qtype.EXPRESSION_SEARCH) {
+            if (item.type != QueryType.EXPRESSION_SEARCH) {
                 Text(
                     text = "Rejected: ${item.nrRejected()}\nStatus: ${item.status}\nLast expansion: ${
                         formatDateToyyyyMMMddFormat(

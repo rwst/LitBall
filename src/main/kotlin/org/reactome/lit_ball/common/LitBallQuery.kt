@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.AnnotatingRootStore
@@ -24,13 +23,6 @@ import kotlin.io.path.Path
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1, EXPLODED }
 
 const val EXPLODED_LIMIT = 20000
-
-@Serializable
-enum class Qtype(val pretty: String) {
-    EXPRESSION_SEARCH("Expression Search"),
-    SNOWBALLING("Snowballing"),
-    SUPERVISED_SNOWBALLING("Snowballing with Interleaved Supervision"),
-}
 
 fun getQueryDir(name: String): File {
     val queryPath = Settings.map["path-to-queries"] ?: ""
@@ -54,7 +46,7 @@ fun getDOIs(dir: File, fileName: String): MutableSet<String> {
 data class LitBallQuery(
     var id: Int,
     val name: String = "",
-    var type: Qtype = Qtype.SUPERVISED_SNOWBALLING,
+    var type: QueryType = QueryType.SUPERVISED_SNOWBALLING,
     var status: QueryStatus = QueryStatus.UNINITIALIZED,
     var setting: QuerySetting = QuerySetting(),
     var acceptedSet: MutableSet<String> = mutableSetOf(),
@@ -87,7 +79,7 @@ data class LitBallQuery(
     }
 
     fun nextActionText(): String = when (type) {
-        Qtype.EXPRESSION_SEARCH ->
+        QueryType.EXPRESSION_SEARCH ->
             arrayOf(
                 "Complete the Setting",
                 "Search",
@@ -95,7 +87,7 @@ data class LitBallQuery(
                 "Search",
             )[status.ordinal]
 
-        Qtype.SNOWBALLING ->
+        QueryType.SNOWBALLING ->
             arrayOf(
                 "Complete the Setting",
                 "Start expansion",
@@ -103,12 +95,20 @@ data class LitBallQuery(
                 "Start expansion",
             )[status.ordinal]
 
-        Qtype.SUPERVISED_SNOWBALLING ->
+        QueryType.SUPERVISED_SNOWBALLING ->
             arrayOf(
                 "Complete the Setting",
                 "Start expansion",
                 "Automatic filtering",
                 "Supervised filtering"
+            )[status.ordinal]
+
+        QueryType.SIMILARITY_SEARCH ->
+            arrayOf(
+                "Search",
+                "Search",
+                "Search",
+                "Search",
             )[status.ordinal]
     }
 
@@ -132,9 +132,10 @@ data class LitBallQuery(
     suspend fun expand() {
         if (!mutex.tryLock()) return
         when (type) {
-            Qtype.EXPRESSION_SEARCH -> expressionSearch()
-            Qtype.SNOWBALLING -> autoSnowBall()
-            Qtype.SUPERVISED_SNOWBALLING -> snowBall()
+            QueryType.EXPRESSION_SEARCH -> expressionSearch()
+            QueryType.SNOWBALLING -> autoSnowBall()
+            QueryType.SUPERVISED_SNOWBALLING -> snowBall()
+            QueryType.SIMILARITY_SEARCH -> similaritySearch()
         }
         mutex.unlock()
         return
@@ -329,6 +330,10 @@ data class LitBallQuery(
         writeNoNewAccepted()
         status = QueryStatus.FILTERED2
         RootStore.refreshList()
+    }
+
+    private fun similaritySearch() {
+
     }
 
     suspend fun filter2() {

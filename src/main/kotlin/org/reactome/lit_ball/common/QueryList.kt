@@ -54,7 +54,7 @@ object QueryList {
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
-    fun addNewItem(type: Int, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
+    fun addNewItem(type: QueryType, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
         val queryDir = getQueryDir(name)
         if (queryDir.exists()) {
             handleException(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
@@ -75,13 +75,17 @@ object QueryList {
         list = list.plus(
             LitBallQuery(
                 id = list.size,
-                type = Qtype.entries[type],
+                type = type,
                 name = name,
                 acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet(),
                 expSearchParams = expSearchParams,
             )
         )
-        RootStore.doSort(
+        if (type == QueryType.SIMILARITY_SEARCH) {
+            list.last().status = QueryStatus.FILTERED2
+            list.last().saveSettings()
+        }
+        RootStore.doSort( // TODO
             SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()),
             list.size - 1,
         )
