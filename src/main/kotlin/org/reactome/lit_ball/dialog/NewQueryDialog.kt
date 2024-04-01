@@ -32,6 +32,28 @@ import kotlin.io.path.Path
 import kotlin.io.path.isWritable
 
 
+private const val queryTypeTooltipText = """
+                        Available query types are:
+                        1. Simple expression search: your positive and negative
+                           keyphrases/expressions are sent to Semantic Scholar
+                           for a search over the whole graph. Starting DOIs are
+                           ignored.
+                        2. Snowballing with automated keyphrase/expression
+                           filtering. No supervised filtering (all matches are
+                           accepted).
+                        3. (default) Snowballing with automated and supervised
+                           filtering.
+                        4. Similarity search: give some DOI/PMID(s) and get a number
+                           of "recommended papers" from S2, optionally applying
+                           keyword filters.
+                    """
+
+private const val doiInputHelpTooltipText = """
+                            Input one DOI/PMID per line. It is not necessary to manually trim
+                            the DOI strings. LitBall will automatically chop off everything
+                            before the “10.” part, so simply copypasting a DOI link will be
+                            handled. PMID links will be stripped to just the number"""
+
 @Composable
 fun NewQueryDialog(
     rootScope: CoroutineScope,
@@ -108,30 +130,10 @@ fun NewQueryDialog(
             Column(horizontalAlignment = Alignment.Start) {
                 Row {
                     Tooltip(
-                        text = """
-                        Available query types are:
-                        1. Simple expression search: your positive and negative
-                           keyphrases/expressions are sent to Semantic Scholar
-                           for a search over the whole graph. Starting DOIs are
-                           ignored.
-                        2. Snowballing with automated keyphrase/expression
-                           filtering. No supervised filtering (all matches are
-                           accepted).
-                        3. (default) Snowballing with automated and supervised
-                           filtering.
-                        4. Similarity search: give some DOI/PMID(s) and get a number
-                           of "recommended papers" from S2, optionally applying
-                           keyword filters.
-                    """.trimIndent(),
+                        text = queryTypeTooltipText.trimIndent(),
                         Modifier.align(Alignment.CenterVertically)
                     ) {
-                        Icon(
-                            painterResource(Icons.Help),
-                            contentDescription = "Query Settings",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(20.dp)
-                                .align(Alignment.CenterVertically),
-                        )
+                        Modifier.size(20.dp).align(Alignment.CenterVertically)
                     }
                     Spacer(modifier = Modifier.width(14.dp))
                     RadioButtonOptions(
@@ -165,13 +167,7 @@ fun NewQueryDialog(
                     """.trimIndent(),
                         Modifier.align(Alignment.CenterVertically)
                     ) {
-                        Icon(
-                            painterResource(Icons.Help),
-                            contentDescription = "Query Settings",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(20.dp)
-                                .align(Alignment.CenterVertically),
-                        )
+                        helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
                     }
                     Spacer(modifier = Modifier.width(14.dp))
                     TextField(
@@ -194,20 +190,10 @@ fun NewQueryDialog(
                 if (typeValue.value > 0) {
                     Row {
                         Tooltip(
-                            text = """
-                            Input one DOI/PMID per line. It is not necessary to manually trim
-                            the DOI strings. LitBall will automatically chop off everything
-                            before the “10.” part, so simply copypasting a DOI link will be
-                            handled. PMID links will be stripped to just the number""".trimIndent(),
+                            text = doiInputHelpTooltipText.trimIndent(),
                             Modifier.align(Alignment.CenterVertically)
                         ) {
-                            Icon(
-                                painterResource(Icons.Help),
-                                contentDescription = "Query Settings",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(20.dp)
-                                    .align(Alignment.CenterVertically),
-                            )
+                            helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
                         }
                         Spacer(modifier = Modifier.width(14.dp))
                         TextField(
@@ -236,13 +222,7 @@ fun NewQueryDialog(
                             (Optional) Input a range of years to filter publication dates of articles""".trimIndent(),
                             Modifier.align(Alignment.CenterVertically)
                         ) {
-                            Icon(
-                                painterResource(Icons.Help),
-                                contentDescription = "Query Settings",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(20.dp)
-                                    .align(Alignment.CenterVertically),
-                            )
+                            helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
                         }
                         Spacer(modifier = Modifier.width(14.dp))
                         TextField(
@@ -261,13 +241,7 @@ fun NewQueryDialog(
                             (Optional) Check one or more article types""".trimIndent(),
                             Modifier.align(Alignment.CenterVertically)
                         ) {
-                            Icon(
-                                painterResource(Icons.Help),
-                                contentDescription = "Query Settings",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(20.dp)
-                                    .align(Alignment.CenterVertically),
-                            )
+                            helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
                         }
                         Spacer(modifier = Modifier.width(24.dp))
                         Row {
@@ -308,6 +282,15 @@ fun NewQueryDialog(
                     Text("Query name already exists in directory.")
             }
         },
+    )
+}
+
+private fun helpIcon(modifier: Modifier) {
+    Icon(
+        painterResource(Icons.Help),
+        contentDescription = "Query Settings",
+        tint = Color.Gray,
+        modifier = modifier,
     )
 }
 
