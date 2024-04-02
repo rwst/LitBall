@@ -332,8 +332,29 @@ data class LitBallQuery(
         RootStore.refreshList()
     }
 
-    private fun similaritySearch() {
+    // Similarity Search will add 20 new papers. User deletes as much as wanted. Following clicks on Search will
+    // add the same amount of what remains accepted, but at least 20.
+    private suspend fun similaritySearch() {
+        val queryDir = getQueryDir(name)
+        val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
+        val ids = acceptedSet.toMutableList()
+        val result = S2Client.getSimilarDetails(ids) {
+            paperDetailsList.add(it)
+        }
+        // Bail out on Cancel
+        if (!result) return
+        Logger.i(tag, "Retained ${paperDetailsList.size} records")
+        uppercaseDois(paperDetailsList)
+        sanitize(paperDetailsList)
+        RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
+        acceptedSet = ids.plus(idSetFromPaperDetailsList(paperDetailsList)).toMutableSet()
+        checkFileInDirectory(queryDir, FileType.ACCEPTED.fileName)?.let { file ->
+            file.writeText(acceptedSet.joinToString("\n"))
+            mergeIntoArchive(paperDetailsList)
+        }
+        status = QueryStatus.FILTERED2
+        RootStore.refreshList()
     }
 
     suspend fun filter2() {

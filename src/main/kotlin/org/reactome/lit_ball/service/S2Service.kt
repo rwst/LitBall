@@ -30,6 +30,10 @@ object S2Service {
         val token: String,
         var data: List<PaperDetails> = emptyList(),
     )
+    @Serializable
+    data class RecommendResult(
+        var recommendedPapers: List<PaperDetails> = emptyList(),
+    )
 
     @Serializable
     data class PaperFullId(
@@ -163,5 +167,28 @@ object S2Service {
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         throw HttpException(result)
+    }
+    interface BulkRecommendedDetailsApi {
+        @POST("/recommendations/v1/papers/")
+        suspend fun postRequest(
+            @Body positivePaperIds: Map<String, @JvmSuppressWildcards List<Any>>,
+            @Query("fields") fields: String,
+            @Query("limit") limit: Int
+        ): Response<RecommendResult>
+    }
+    suspend fun getBulkRecommendedDetails(
+        ids: List<String>,
+        fields: String,
+        limit: Int
+    ): List<PaperDetails>? {
+        val api = S2RetrofitHelper.getBulkInstance().create(BulkRecommendedDetailsApi::class.java)
+        val map = mapOf("positivePaperIds" to ids, "negativePaperIds" to emptyList())
+        val result = api.postRequest(map, fields, limit)
+        if (result.isSuccessful) {
+            Logger.i(TAG, result.body().toString())
+            return result.body()?.recommendedPapers
+        }
+        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
+        return null
     }
 }

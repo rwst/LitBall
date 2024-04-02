@@ -240,6 +240,36 @@ object S2Client : ScholarClient {
         RootStore.setProgressIndication()
         return true
     }
+    suspend fun getSimilarDetails(
+        doiSet: List<String>,
+        action: (S2Service.PaperDetails) -> Unit
+    ): Boolean {
+        val minPapers = 20
+        val maxPapers = 500 // limit given by S2
+        strategy = DelayStrategy(BULK_QUERY_DELAY)
+        val size = doiSet.size
+        val limit = if (size*2 < minPapers) minPapers else if (size*2 > maxPapers) maxPapers else size*2
+        val indicatorTitle = "Downloading similar papers"
+        var index = 0
+        doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
+            val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
+            val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
+                S2Service.getBulkRecommendedDetails(
+                    paperIds,
+                    "paperId,externalIds,title,abstract,publicationTypes,publicationDate",
+                    limit
+                )
+            }
+            if (!pair.second) return false
+            delay(strategy.delay(true))
+            pair.first?.filterNotNull()?.forEach(action) // DO NOT remove filterNotNull()
+            index += paperIds.size
+            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
+                return false
+        }
+        RootStore.setProgressIndication()
+        return true
+    }
 }
 
 class DelayStrategy(private val minDelay: Long) {
