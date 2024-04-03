@@ -2,6 +2,9 @@ package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
+v2405
+ - new query type: S2 recommendations
+
 v2404
  - more date matcher fixes
  - don't discard non-DOI results / use archived directly by prefixing with "S2:"
@@ -11,6 +14,12 @@ v2403
  - fix expression search date matching
  - fix expression search type matching
  - better handling of 492
+
+v2402
+ - HTTP 429 effectively means "use API key"
+ - use bulk API for paper refs too
+ - better list sync after manipulate filtered
+ - query type 1: more filters: pubdate, articletype
 
 v2401
  - filter button/dialog in paper lists

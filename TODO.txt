@@ -1,4 +1,13 @@
- - query type 4: S2 recommendations https://api.semanticscholar.org/api-docs/recommendations
+ - new query from old (allowing change of keywords but shortcutting some download)
+ - new query from old (type 1,2,3 from type 1)
+ - easy change/selection of query path
+ - opening/closing filter dialog removes focus on list
+ - focus: clicking sort in filtering2 still grabs focus
+ - focus: clicking delete in annotate still grabs focus
+ - focus: when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
+ - going Main from annotate resets list pos
+ - TAB does not advance field in new query dialog etc
+ - manually add IDs to accepted by adding an IDs field to query settings dialog
 
 Doc:
  - json export
@@ -11,16 +20,10 @@ Doc:
 
 Features:
  - refactor: rename model functions so they reflect the event not the intent
- - clicking sort in filtering2 still grabs focus
- - clicking delete in annotate still grabs focus
- - going Main from annotate resets list pos
- - when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
- - new query from old (allowing change of keywords but shortcutting some download)
  - file selectors in settings dialog
  - HTTP buffer
  - complain if Q1 date filter in wrong format
  - settings mutex
- - manually add DOIs to accepted
  - when annotate, why is S2 accessed again? because some accepted dois are defect
 
 Other ideas:

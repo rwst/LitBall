@@ -1,4 +1,7 @@
 ## START
+v2405
+ - new query type: S2 recommendations
+
 v2404
  - more date matcher fixes
  - don't discard non-DOI results / use archived directly by prefixing with "S2:"
