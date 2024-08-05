@@ -101,7 +101,7 @@ fun FlagBoxes(
                                 text = flags[flagNr - 1],
                                 fontSize = textHeights[nRows],
                                 modifier = Modifier
-                                    .padding(horizontal = 0.dp)
+                                    .padding(horizontal = 0.dp, vertical = 0.dp)
                             )
                         }
                     }
