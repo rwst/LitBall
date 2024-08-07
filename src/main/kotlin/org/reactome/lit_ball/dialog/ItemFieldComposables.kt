@@ -13,8 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 
 @Composable
 fun RadioButtonOptions(
@@ -95,13 +98,16 @@ fun FlagBoxes(
                                 },
                                 modifier = Modifier
                                     .scale(boxScales[nRows])
-                                    .padding(horizontal = 0.dp)
+                                    .padding(horizontal = 0.dp, vertical = 0.dp),
                             )
                             Text(
                                 text = flags[flagNr - 1],
                                 fontSize = textHeights[nRows],
+                                style = TextStyle(lineHeightStyle = LineHeightStyle(
+                                    alignment = LineHeightStyle.Alignment.Center,
+                                    trim = LineHeightStyle.Trim.None)),
                                 modifier = Modifier
-                                    .padding(horizontal = 0.dp, vertical = 0.dp)
+                                    .padding(top = 0.dp)
                             )
                         }
                     }
