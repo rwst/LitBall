@@ -88,7 +88,7 @@ object S2Service {
             return result.body()
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
+        throw HttpException(result)
     }
 
     interface BulkPaperRefsApi : BulkPaperApiBase {
@@ -111,7 +111,7 @@ object S2Service {
             return result.body()
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
+        throw HttpException(result)
     }
 
     interface BulkPaperSearchApi : BulkPaperApiBase {
@@ -144,7 +144,7 @@ object S2Service {
             return result.body()
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
+        throw HttpException(result)
     }
 
     suspend fun getSinglePaperDetails(paperId: String, fields: String): PaperDetails? {
@@ -189,6 +189,6 @@ object S2Service {
             return result.body()?.recommendedPapers
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        return null
+        throw HttpException(result)
     }
 }
