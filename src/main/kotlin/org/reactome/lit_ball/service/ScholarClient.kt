@@ -44,9 +44,13 @@ object S2Client : ScholarClient {
                     return Pair(null, false)
                 when (e.code()) {
                     400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
+                    403 -> {
+                        RootStore.setInformationalDialog("API returns 403, bailing out. Is the API key from Semantic Scholar expired?")
+                        return Pair(null, false)
+                    }
                     429 -> {
                         if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-                            RootStore.setInformationalDialog("Single paper API returns 429, bailing out. Suggest getting API key from Semantic Scholar.")
+                            RootStore.setInformationalDialog("API returns 429, bailing out. Suggest getting API key from Semantic Scholar.")
                             return Pair(null, false)
                         }
                         delay(strategy.delay(false))
