@@ -1,3 +1,4 @@
+ - if 0 papers added in snowball, don't write expanded.txt, don't advance status
  - new query from old (allowing change of keywords but shortcutting some download)
  - new query from old (type 1,2,3 from type 1)
  - easy change/selection of query path
@@ -8,6 +9,7 @@
  - going Main from annotate resets list pos
  - TAB does not advance field in new query dialog etc
  - manually add IDs to accepted by adding an IDs field to query settings dialog
+ - add global option to set logging in S2RetrofitHelper, default NONE
 
 Doc:
  - json export
