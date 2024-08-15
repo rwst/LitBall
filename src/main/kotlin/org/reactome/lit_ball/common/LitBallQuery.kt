@@ -10,7 +10,6 @@ import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.AGService
-import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Interface
 import org.reactome.lit_ball.service.getAGService
 import org.reactome.lit_ball.util.*
@@ -56,7 +55,7 @@ data class LitBallQuery(
     var lastExpansionDate: Date? = null,
     var noNewAccepted: Boolean = false,
     var expSearchParams: Pair<String, BooleanArray>? = null,
-    var agService: AGService? = getAGService(),
+    var agService: AGService = getAGService(),
 ) {
     init {
         setting.type = type
@@ -151,7 +150,7 @@ data class LitBallQuery(
         val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
         var nulls = 0
         val size = missingAccepted.size
-        val result = S2Client.getRefs(missingAccepted.toList()) { doi, refs ->
+        val result = agService.getRefs(missingAccepted.toList()) { doi, refs ->
             val rlist = refs.citations?.let { idListFromPaperRefs(it) } ?: emptyList()
             val clist = refs.references?.let { idListFromPaperRefs(it) } ?: emptyList()
             if (rlist.isEmpty() && clist.isEmpty())
@@ -213,7 +212,7 @@ data class LitBallQuery(
         if (queryDir.isDirectory && queryDir.canRead()) {
             val matcher = StringPatternMatcher(setting)
             val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
-            val result = S2Client.getPaperDetails(doiSet) {
+            val result = agService.getPaperDetails(doiSet) {
                 val textsOfPaper: Set<String> = setOf(
                     it.title ?: "",
                     it.tldr?.get("text") ?: "",
@@ -310,7 +309,7 @@ data class LitBallQuery(
 
         val matcher = StringPatternMatcher(setting)
         val dateMatcher = DateMatcher(expSearchParams?.first)
-        val result = S2Client.getBulkPaperSearch(setting) {
+        val result = agService.getBulkPaperSearch(setting) {
             if (typeMatches(it.publicationTypes, expSearchParams?.second)
                 && dateMatcher.matches(it.publicationDate)
                 && !matcher.parser2.match(it.title ?: "")
@@ -341,7 +340,7 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
         val ids = acceptedSet.toMutableList()
-        val result = S2Client.getSimilarDetails(ids) {
+        val result = agService.getSimilarDetails(ids) {
             paperDetailsList.add(it)
         }
         // Bail out on Cancel

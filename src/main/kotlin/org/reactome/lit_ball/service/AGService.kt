@@ -32,6 +32,6 @@ interface AGService {
     ): Pair<T?, Boolean>
 }
 
-fun getAGService(): AGService? {
-    return mapOf("S2" to S2Client, "Entrez" to EntrezClient)[Settings.map["AG-service"]]
+fun getAGService(): AGService {
+    return mapOf("S2" to S2Client, "Entrez" to EntrezClient)[Settings.map["AG-service"]] ?: EntrezClient
 }
