@@ -21,8 +21,6 @@ import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.window.components.Tooltip
 import java.io.File
-import kotlin.io.path.Path
-import kotlin.io.path.isWritable
 
 @Composable
 internal fun SettingsDialog(
@@ -42,10 +40,16 @@ internal fun SettingsDialog(
             TextButton(
                 onClick = {
                     pathWarningValue.value = null
-                    val dirFile = File(textFields[0].value)
-                    if (!dirFile.exists() && !Path(dirFile.parent).isWritable()) {
-                        pathWarningValue.value = "Query directory cannot be created. Please change value or permissions"
-                        return@TextButton
+                    val dirFile = Settings.map["path-to-queries"]?.let { File(it) }
+                    if (dirFile != null) {
+                        if (!dirFile.exists()) {
+                            val parentDir = dirFile.parentFile
+                            if (parentDir == null || !parentDir.canWrite()) {
+                                pathWarningValue.value =
+                                    "Query directory '$dirFile' cannot be created. Please change value or permissions"
+                                return@TextButton
+                            }
+                        }
                     }
                     keys.forEachIndexed { index, key ->
                         Settings.map[key] = textFields[index].value
