@@ -1,9 +1,9 @@
 package org.reactome.lit_ball.service
 
 import org.reactome.lit_ball.common.QuerySetting
+import org.reactome.lit_ball.common.Settings
 
 interface AGService {
-    // Full protocol for bulk download of paper details for a search
     suspend fun getBulkPaperSearch(
         setting: QuerySetting,
         action: (S2Interface.PaperDetails) -> Unit
@@ -23,4 +23,15 @@ interface AGService {
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean
+
+    suspend fun <T> getDataOrHandleExceptions(
+        index: Int,
+        size: Int,
+        indicatorTitle: String? = null,
+        getData: suspend () -> T
+    ): Pair<T?, Boolean>
+}
+
+fun getAGService(): AGService? {
+    return mapOf("S2" to S2Client, "Entrez" to EntrezClient)[Settings.map["AG-service"]]
 }

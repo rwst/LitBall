@@ -9,8 +9,10 @@ import kotlinx.serialization.json.decodeFromStream
 import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
+import org.reactome.lit_ball.service.AGService
 import org.reactome.lit_ball.service.S2Client
 import org.reactome.lit_ball.service.S2Interface
+import org.reactome.lit_ball.service.getAGService
 import org.reactome.lit_ball.util.*
 import java.io.File
 import java.io.FileNotFoundException
@@ -54,6 +56,7 @@ data class LitBallQuery(
     var lastExpansionDate: Date? = null,
     var noNewAccepted: Boolean = false,
     var expSearchParams: Pair<String, BooleanArray>? = null,
+    var agService: AGService? = getAGService(),
 ) {
     init {
         setting.type = type

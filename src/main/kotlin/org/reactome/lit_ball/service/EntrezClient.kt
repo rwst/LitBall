@@ -11,7 +11,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
-object S2Client : AGService {
+object EntrezClient : AGService {
     private const val DETAILS_CHUNK_SIZE = 30
     const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 1000L
@@ -291,3 +291,4 @@ object S2Client : AGService {
         return true
     }
 }
+

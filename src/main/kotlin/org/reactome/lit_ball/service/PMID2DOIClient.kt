@@ -27,7 +27,7 @@ class S2PMID2DOIClient : PMID2DOIClient() {
     override suspend fun getPaperDOIfromPMIDs(
         pmidList: List<String>,
     ): List<String?> {
-        S2Client.strategy = DelayStrategy(S2Client.SINGLE_QUERY_DELAY)
+        S2Client.strategy = S2Client.DelayStrategy(S2Client.SINGLE_QUERY_DELAY)
         val size = pmidList.size
         val list = MutableList<String?>(size) { null }
         if (Settings.map["S2-API-key"].isNullOrEmpty()) {

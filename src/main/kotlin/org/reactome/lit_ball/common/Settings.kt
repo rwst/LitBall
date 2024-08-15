@@ -50,6 +50,7 @@ object Settings {
 
     private fun reset() {
         map.clear()
+        map["AG-Service"] = "Entrez"
         map["path-to-queries"] = homeDir
         map["directory-prefix"] = "Query-"
         map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
@@ -58,6 +59,7 @@ object Settings {
         map["paper-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
         map["cache-max-age-days"] = "30"
         map["S2-API-key"] = ""
+        map["Entrez-API-key"] = ""
         map["PYTHONPATH"] = System.getenv("PYTHONPATH") ?: ""
     }
 
@@ -109,8 +111,15 @@ object Settings {
             access through bulk queries. Also enables queries of
             type 1 (bulk expression search).
         """.trimIndent(),
+        "Entrez-API-key" to """
+            Input your API key from your NCBI account for faster
+            access.
+        """.trimIndent(),
         "PYTHONPATH" to """
             Path to your Python where Spacy / Prodigy is installed.
         """.trimIndent(),
+        "AG-service" to """
+            One of S2 / Entrez.
+        """.trimIndent()
     )
 }
