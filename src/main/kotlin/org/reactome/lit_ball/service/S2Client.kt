@@ -11,9 +11,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
-interface ScholarClient
-
-object S2Client : ScholarClient {
+object S2Client : AGService {
     private const val DETAILS_CHUNK_SIZE = 30
     const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 1000L
@@ -71,16 +69,16 @@ object S2Client : ScholarClient {
     }
 
     // Full protocol for bulk download of paper details for a search
-    suspend fun getBulkPaperSearch(
+    override suspend fun getBulkPaperSearch(
         setting: QuerySetting,
-        action: (S2Service.PaperDetails) -> Unit
+        action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
         val tag = "BULKSEARCH"
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val s2expr = S2SearchExpression.from(setting)
         val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
-            S2Service.getBulkPaperSearch(
+            S2Interface.getBulkPaperSearch(
                 query = s2expr,
                 fields = "paperId,externalIds,title,abstract,publicationTypes,publicationDate"
             )
@@ -95,7 +93,7 @@ object S2Client : ScholarClient {
         var numDone = data.size
         while (total > numDone) {
             pair = getDataOrHandleExceptions(numDone, total, indicatorTitle) {
-                S2Service.getBulkPaperSearch(
+                S2Interface.getBulkPaperSearch(
                     query = s2expr,
                     fields = "paperId,externalIds,title,abstract,publicationTypes,publicationDate",
                     token,
@@ -117,9 +115,9 @@ object S2Client : ScholarClient {
         return true
     }
 
-    suspend fun getPaperDetails(
+    override suspend fun getPaperDetails(
         doiSet: List<String>,
-        action: (S2Service.PaperDetails) -> Unit
+        action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
         return if (Settings.map["S2-API-key"].isNullOrEmpty())
             getSinglePaperDetails(doiSet, action)
@@ -130,7 +128,7 @@ object S2Client : ScholarClient {
     // Full protocol for bulk download of paper details for a list of DOIs
     private suspend fun getBulkPaperDetails(
         doiSet: List<String>,
-        action: (S2Service.PaperDetails) -> Unit
+        action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size
@@ -139,7 +137,7 @@ object S2Client : ScholarClient {
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
             val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Service.getBulkPaperDetails(
+                S2Interface.getBulkPaperDetails(
                     paperIds,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
@@ -158,14 +156,14 @@ object S2Client : ScholarClient {
     // Full protocol for non-bulk download of paper details for a list of DOIs
     private suspend fun getSinglePaperDetails(
         doiSet: List<String>,
-        action: (S2Service.PaperDetails) -> Unit
+        action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
         strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
         doiSet.forEachIndexed { index, it ->
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Service.getSinglePaperDetails(
+                S2Interface.getSinglePaperDetails(
                     if (it.startsWith("S2:")) it.substring(3) else it,
                     "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
                 )
@@ -180,9 +178,9 @@ object S2Client : ScholarClient {
         return true
     }
 
-    suspend fun getRefs(
+    override suspend fun getRefs(
         doiSet: List<String>,
-        action: (String, S2Service.PaperRefs) -> Unit
+        action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
         return if (Settings.map["S2-API-key"].isNullOrEmpty())
             getSinglePaperRefs(doiSet, action)
@@ -193,14 +191,14 @@ object S2Client : ScholarClient {
     // Full protocol for non-bulk download of paper refs for a list of DOIs
     private suspend fun getSinglePaperRefs(
         doiSet: List<String>,
-        action: (String, S2Service.PaperRefs) -> Unit
+        action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
         strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
         doiSet.forEachIndexed { index, doi ->
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Service.getPaperRefs(
+                S2Interface.getPaperRefs(
                     if (doi.startsWith("S2:")) doi.substring(3) else doi,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
                 )
@@ -218,7 +216,7 @@ object S2Client : ScholarClient {
     // Full protocol for bulk download of paper details for a list of DOIs
     private suspend fun getBulkPaperRefs(
         doiSet: List<String>,
-        action: (String, S2Service.PaperRefs) -> Unit
+        action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size
@@ -228,7 +226,7 @@ object S2Client : ScholarClient {
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { dois ->
             val paperIds = dois.map { if (it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Service.getBulkPaperRefs(
+                S2Interface.getBulkPaperRefs(
                     paperIds,
                     "paperId,citations,citations.externalIds,references,references.externalIds"
                 )
@@ -244,9 +242,9 @@ object S2Client : ScholarClient {
         RootStore.setProgressIndication()
         return true
     }
-    suspend fun getSimilarDetails(
+    override suspend fun getSimilarDetails(
         doiSet: List<String>,
-        action: (S2Service.PaperDetails) -> Unit
+        action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
         val minPapers = 20
         val maxPapers = 500 // limit given by S2
@@ -258,7 +256,7 @@ object S2Client : ScholarClient {
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
             val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Service.getBulkRecommendedDetails(
+                S2Interface.getBulkRecommendedDetails(
                     paperIds,
                     "paperId,externalIds,title,abstract,publicationTypes,publicationDate",
                     limit

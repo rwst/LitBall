@@ -1,7 +1,7 @@
 package org.reactome.lit_ball.common
 
 import kotlinx.serialization.encodeToString
-import org.reactome.lit_ball.service.S2Service
+import org.reactome.lit_ball.service.S2Interface
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.ConfiguredUglyJson
 import java.io.File
@@ -43,7 +43,7 @@ object ExpandQueryCache {
         return Pair(missingDois, refDois)
     }
 
-    fun add(doi: String, refs: S2Service.PaperRefs) {
+    fun add(doi: String, refs: S2Interface.PaperRefs) {
         val json = ConfiguredUglyJson.get()
         val dois: MutableSet<String> = mutableSetOf()
         dois.addAll(refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())

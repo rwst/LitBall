@@ -10,7 +10,7 @@ import org.reactome.lit_ball.model.AnnotatingRootStore
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.S2Client
-import org.reactome.lit_ball.service.S2Service
+import org.reactome.lit_ball.service.S2Interface
 import org.reactome.lit_ball.util.*
 import java.io.File
 import java.io.FileNotFoundException
@@ -202,7 +202,7 @@ data class LitBallQuery(
         if (!mutex.tryLock()) return
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
-        val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
+        val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
         val rejectedDOIs: Set<String>
 
         // Load and match details of DOIs in expanded.txt
@@ -282,7 +282,7 @@ data class LitBallQuery(
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private fun mergeIntoArchive(list: MutableList<S2Service.PaperDetails>) {
+    private fun mergeIntoArchive(list: MutableList<S2Interface.PaperDetails>) {
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.ARCHIVED.fileName)?.let { file ->
             val json = ConfiguredJson.get()
@@ -291,7 +291,7 @@ data class LitBallQuery(
             } else {
                 mutableSetOf()
             }
-            val details: MutableSet<S2Service.PaperDetails> = papers.map { it.details }.toMutableSet()
+            val details: MutableSet<S2Interface.PaperDetails> = papers.map { it.details }.toMutableSet()
             details.addAll(list)
             file.writeText(
                 json.encodeToString(
@@ -303,7 +303,7 @@ data class LitBallQuery(
     private suspend fun expressionSearch() {
         val tag = "EXPRSEARCH"
         val queryDir = getQueryDir(name)
-        val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
+        val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
 
         val matcher = StringPatternMatcher(setting)
         val dateMatcher = DateMatcher(expSearchParams?.first)
@@ -336,7 +336,7 @@ data class LitBallQuery(
     // add the same amount of what remains accepted, but at least 20.
     private suspend fun similaritySearch() {
         val queryDir = getQueryDir(name)
-        val paperDetailsList = mutableListOf<S2Service.PaperDetails>()
+        val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
         val ids = acceptedSet.toMutableList()
         val result = S2Client.getSimilarDetails(ids) {
             paperDetailsList.add(it)
@@ -451,7 +451,7 @@ private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String
     }
 }
 
-private fun sanitize(list: MutableList<S2Service.PaperDetails>) {
+private fun sanitize(list: MutableList<S2Interface.PaperDetails>) {
     list.forEachIndexed { index, paper ->
         val newPaper = paper.copy()
         var isChanged = false
@@ -468,7 +468,7 @@ private fun sanitize(list: MutableList<S2Service.PaperDetails>) {
     }
 }
 
-fun uppercaseDois(list: MutableList<S2Service.PaperDetails>) {
+fun uppercaseDois(list: MutableList<S2Interface.PaperDetails>) {
     list.forEach {
         val extIds = it.externalIds?.toMutableMap()
         if (extIds != null) {

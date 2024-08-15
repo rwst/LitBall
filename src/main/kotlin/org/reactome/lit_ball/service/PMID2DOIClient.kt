@@ -32,10 +32,10 @@ class S2PMID2DOIClient : PMID2DOIClient() {
         val list = MutableList<String?>(size) { null }
         if (Settings.map["S2-API-key"].isNullOrEmpty()) {
             pmidList.forEachIndexed { index, it ->
-                var pair: Pair<S2Service.PaperDetails?, Boolean>
+                var pair: Pair<S2Interface.PaperDetails?, Boolean>
                 do {
                     pair = S2Client.getDataOrHandleExceptions(index, size, null) {
-                        S2Service.getSinglePaperDetails(
+                        S2Interface.getSinglePaperDetails(
                             "PMID:$it",
                             "externalIds"
                         )
@@ -49,11 +49,11 @@ class S2PMID2DOIClient : PMID2DOIClient() {
             }
         }
         else {
-            var pair: Pair<List<S2Service.PaperDetails>?, Boolean>
+            var pair: Pair<List<S2Interface.PaperDetails>?, Boolean>
             val ids = pmidList.map { "PMID:$it" }
             do {
                 pair = S2Client.getDataOrHandleExceptions(size, size, null) {
-                    S2Service.getBulkPaperDetails(
+                    S2Interface.getBulkPaperDetails(
                         ids,
                         "externalIds"
                     )

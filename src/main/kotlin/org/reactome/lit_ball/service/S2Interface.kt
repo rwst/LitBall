@@ -7,7 +7,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.http.*
 
-object S2Service {
+object S2Interface {
 
     // Copyright 2023 Ralf Stephan
     private const val TAG = "S2Service"
