@@ -1,9 +1,17 @@
 package org.reactome.lit_ball.service
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URL
+import kotlinx.serialization.Serializable
+import org.reactome.lit_ball.util.Logger
+import org.reactome.lit_ball.util.S2RetrofitHelper
+import retrofit2.HttpException
+import retrofit2.Response
+import retrofit2.http.*
 
+object EntrezInterface {
+
+    // Copyright 2024 Ralf Stephan
+    private const val TAG = "EntrezService"
+}
 /*
 class EntrezApi(private val email: String, private val apiKey: String? = null) {
     private val baseUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
