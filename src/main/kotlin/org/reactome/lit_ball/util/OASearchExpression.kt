@@ -2,18 +2,18 @@ package org.reactome.lit_ball.util
 
 import org.reactome.lit_ball.common.QuerySetting
 
-object S2SearchExpression {
-    val logicOpSymbols = listOf(" + ", " | ", " -")
+object OASearchExpression {
+    val logicOpSymbols = listOf(" AND ", " OR ", " NOT ")
     fun from(setting: QuerySetting): String {
         val matcher = StringPatternMatcher(setting)
-        return matcher.getS2SearchExpression()
+        return matcher.getOASearchExpression()
     }
 }
 
-private val notRegex = "-\\s*".toRegex()
+private val notRegex = " NOT\\s*".toRegex()
 private val spaceRegex = "\\s+".toRegex()
 
-fun StringPatternMatcher.getS2SearchExpression(): String {
+fun StringPatternMatcher.getOASearchExpression(): String {
     if (this.parser1.theExpr.isEmpty()) {
         return this.parser1.wordList.joinToString(separator = " | ") {
             if (it.contains(' '))
@@ -23,10 +23,10 @@ fun StringPatternMatcher.getS2SearchExpression(): String {
     }
     var expr = this.parser1.theExpr
     StringPatternMatcher.logicOpRegexes.forEachIndexed { idx, rgx ->
-        expr = expr.replace(rgx, S2SearchExpression.logicOpSymbols[idx])
+        expr = expr.replace(rgx, OASearchExpression.logicOpSymbols[idx])
     }
     expr = expr.replace(spaceRegex, " ")
-    expr = expr.replace(notRegex, "-")
+    expr = expr.replace(notRegex, "NOT")
     this.parser1.wordList.forEachIndexed { index, s ->
         var str = s
         if (s.contains(' '))
