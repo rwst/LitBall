@@ -33,5 +33,5 @@ interface AGService {
 }
 
 fun getAGService(): AGService {
-    return mapOf("S2" to S2Client, "OpenAlex" to OpenAlexClient)[Settings.map["AG-service"]] ?: OpenAlexClient
+    return mapOf("S2" to S2Client, "OpenAlex" to OpenAlexClient)[Settings.map["AG-service"]] ?: S2Client
 }

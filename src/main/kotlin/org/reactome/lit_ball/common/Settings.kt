@@ -50,7 +50,7 @@ object Settings {
 
     private fun reset() {
         map.clear()
-        map["AG-Service"] = "S2"
+        map["AG-service"] = "S2"
         map["path-to-queries"] = homeDir
         map["directory-prefix"] = "Query-"
         map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
