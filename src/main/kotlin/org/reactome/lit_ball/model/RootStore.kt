@@ -104,7 +104,7 @@ object RootStore {
     fun setFiltered2() {
         QueryList.itemFromId(state.doFilter2)?.let {
             it.syncBuffers()
-            it.status = QueryStatus.FILTERED2
+            it.status.value = QueryStatus.FILTERED2
         }
     }
 
@@ -120,9 +120,9 @@ object RootStore {
 
     fun onQuerySettingsCloseClicked() {
         val query = state.editingQuerySettings ?: throw CantHappenException()
-        if (query.status == QueryStatus.UNINITIALIZED && query.setting.mandatoryKeyWords.isNotEmpty()
+        if (query.status.value == QueryStatus.UNINITIALIZED && query.setting.mandatoryKeyWords.isNotEmpty()
         ) {
-            query.status = QueryStatus.FILTERED2
+            query.status.value = QueryStatus.FILTERED2
             setState { copy(items = QueryList.list.toList()) }
         }
         setState { copy(editingQuerySettings = null) }

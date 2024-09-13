@@ -1,5 +1,6 @@
 package org.reactome.lit_ball.common
 
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
@@ -25,7 +26,7 @@ object QueryList {
                 val newQuery = LitBallQuery(
                     id = index,
                     name = it.name.removePrefix(prefix),
-                    status = getStatus(it),
+                    status = mutableStateOf(getStatus(it)),
                     acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }
                         .toMutableSet(),
                     rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }
@@ -82,7 +83,7 @@ object QueryList {
             )
         )
         if (type == QueryType.SIMILARITY_SEARCH) {
-            list.last().status = QueryStatus.FILTERED2
+            list.last().status.value = QueryStatus.FILTERED2
             list.last().saveSettings()
         }
         RootStore.doSort( // TODO

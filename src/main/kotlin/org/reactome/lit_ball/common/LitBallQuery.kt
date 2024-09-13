@@ -1,5 +1,7 @@
 package org.reactome.lit_ball.common
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
@@ -48,7 +50,7 @@ data class LitBallQuery(
     var id: Int,
     val name: String = "",
     var type: QueryType = QueryType.SUPERVISED_SNOWBALLING,
-    var status: QueryStatus = QueryStatus.UNINITIALIZED,
+    var status: MutableState<QueryStatus> = mutableStateOf(QueryStatus.UNINITIALIZED),
     var setting: QuerySetting = QuerySetting(),
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
@@ -87,7 +89,7 @@ data class LitBallQuery(
                 "Search",
                 "Search",
                 "Search",
-            )[status.ordinal]
+            )[status.value.ordinal]
 
         QueryType.SNOWBALLING ->
             arrayOf(
@@ -95,7 +97,7 @@ data class LitBallQuery(
                 "Start expansion",
                 "Start expansion",
                 "Start expansion",
-            )[status.ordinal]
+            )[status.value.ordinal]
 
         QueryType.SUPERVISED_SNOWBALLING ->
             arrayOf(
@@ -103,7 +105,7 @@ data class LitBallQuery(
                 "Start expansion",
                 "Automatic filtering",
                 "Supervised filtering"
-            )[status.ordinal]
+            )[status.value.ordinal]
 
         QueryType.SIMILARITY_SEARCH ->
             arrayOf(
@@ -111,7 +113,7 @@ data class LitBallQuery(
                 "Search",
                 "Search",
                 "Search",
-            )[status.ordinal]
+            )[status.value.ordinal]
     }
 
     fun getFileDate(fromFile: Boolean = false, fileType: FileType): Date? {
@@ -164,12 +166,12 @@ data class LitBallQuery(
         if (missingAccepted.isEmpty()) {
             if (!auto)
                 RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
-            status = QueryStatus.FILTERED2
+            status.value = QueryStatus.FILTERED2
             return
         }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
         if (auto && newDoiSet.size > EXPLODED_LIMIT) {
-            status = QueryStatus.EXPLODED
+            status.value = QueryStatus.EXPLODED
             return
         }
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
@@ -188,7 +190,7 @@ data class LitBallQuery(
         }
         checkFileInDirectory(queryDir, FileType.EXPANDED.fileName)?.let { file ->
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
-            status = try {
+            status.value = try {
                 file.writeText(text)
                 lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
                 QueryStatus.EXPANDED
@@ -196,7 +198,7 @@ data class LitBallQuery(
                 handleException(e)
                 QueryStatus.FILTERED2
             }
-            RootStore.refreshList()
+//            RootStore.refreshList()
         }
     }
 
@@ -247,10 +249,9 @@ data class LitBallQuery(
             if (paperDetailsList.isEmpty()) {
                 File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}").delete()
                 File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
-                status = QueryStatus.FILTERED2
+                status.value = QueryStatus.FILTERED2
                 noNewAccepted = true
                 writeNoNewAccepted()
-                RootStore.refreshList()
                 mutex.unlock()
                 return
             }
@@ -278,8 +279,7 @@ data class LitBallQuery(
             }
         }
         File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
-        status = QueryStatus.FILTERED1
-        RootStore.refreshList()
+        status.value = QueryStatus.FILTERED1
         mutex.unlock()
     }
 
@@ -330,8 +330,7 @@ data class LitBallQuery(
         }
         noNewAccepted = true
         writeNoNewAccepted()
-        status = QueryStatus.FILTERED2
-        RootStore.refreshList()
+        status.value = QueryStatus.FILTERED2
     }
 
     // Similarity Search will add 20 new papers. User deletes as much as wanted. Following clicks on Search will
@@ -355,8 +354,7 @@ data class LitBallQuery(
             file.writeText(acceptedSet.joinToString("\n"))
             mergeIntoArchive(paperDetailsList)
         }
-        status = QueryStatus.FILTERED2
-        RootStore.refreshList()
+        status.value = QueryStatus.FILTERED2
     }
 
     suspend fun filter2() {
@@ -380,21 +378,21 @@ data class LitBallQuery(
     private suspend fun autoSnowBall() {
         while (true) {
             snowBall(true)
-            if (status == QueryStatus.FILTERED2 || status == QueryStatus.EXPLODED) break
+            if (status.value == QueryStatus.FILTERED2 || status.value == QueryStatus.EXPLODED) break
             mutex.unlock()
             filter1(true)
             mutex.tryLock()
-            if (status == QueryStatus.FILTERED2) break
+            if (status.value == QueryStatus.FILTERED2) break
             acceptAll()
         }
-        if (status == QueryStatus.EXPLODED) {
+        if (status.value == QueryStatus.EXPLODED) {
             RootStore.setInformationalDialog(
                 """
                 Number of new DOIs exceeds EXPLODED_LIMIT of $EXPLODED_LIMIT.
                 Please try again with more specific keywords / expression.
                 """.trimIndent()
             )
-            status = QueryStatus.FILTERED2
+            status.value = QueryStatus.FILTERED2
         }
     }
 
