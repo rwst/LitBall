@@ -130,6 +130,7 @@ dependencies {
     implementation("org.jetbrains.lets-plot:lets-plot-compose:1.0.3")
     implementation("org.apache.commons:commons-jexl3:3.4.0")
     implementation("org.apache.jena:jena-arq:5.0.0-rc1")
+//    implementation("io.github.benedekh:ktalex:1.0.0")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)

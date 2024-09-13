@@ -50,7 +50,7 @@ object Settings {
 
     private fun reset() {
         map.clear()
-        map["AG-Service"] = "Entrez"
+        map["AG-Service"] = "S2"
         map["path-to-queries"] = homeDir
         map["directory-prefix"] = "Query-"
         map["path-to-YDF"] = Paths.get("").toAbsolutePath().toString()
@@ -59,6 +59,7 @@ object Settings {
         map["paper-sort-type"] = SortingType.ALPHA_ASCENDING.toString()
         map["cache-max-age-days"] = "30"
         map["S2-API-key"] = ""
+        map["OpenAlex-email"] = ""
         map["Entrez-API-key"] = ""
         map["PYTHONPATH"] = System.getenv("PYTHONPATH") ?: ""
     }
@@ -111,15 +112,21 @@ object Settings {
             access through bulk queries. Also enables queries of
             type 1 (bulk expression search).
         """.trimIndent(),
+        "OpenAlex-email" to """
+            Sending a valid mail address with requests to openalex.org
+            will put you in the "polite pool" which has much faster and
+            more consistent response times.
+        """.trimIndent(),
         "Entrez-API-key" to """
             Input your API key from your NCBI account for faster
-            access.
+            access to Entrez services (not implemented).
         """.trimIndent(),
         "PYTHONPATH" to """
             Path to your Python where Spacy / Prodigy is installed.
         """.trimIndent(),
         "AG-service" to """
-            One of S2 / Entrez.
+            S2 is the only choice at the moment.
         """.trimIndent()
+//            One of S2 / OpenAlex.
     )
 }

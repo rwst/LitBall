@@ -1,22 +1,11 @@
 package org.reactome.lit_ball.service
 
-import kotlinx.coroutines.delay
+//import ktalex.dal.client.WorkClient
 import org.reactome.lit_ball.common.QuerySetting
 import org.reactome.lit_ball.common.Settings
-import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.Logger
-import org.reactome.lit_ball.util.S2SearchExpression
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import javax.net.ssl.SSLException
 
-object EntrezClient : AGService {
-    private const val DETAILS_CHUNK_SIZE = 30
-    const val SINGLE_QUERY_DELAY = 100L
-    private const val BULK_QUERY_DELAY = 1000L
-    private const val TAG = "S2Client"
-    lateinit var strategy: DelayStrategy
+object OpenAlexClient : AGService {
+    private const val TAG = "OAClient"
 
     override suspend fun <T> getDataOrHandleExceptions(
         index: Int,
@@ -24,6 +13,8 @@ object EntrezClient : AGService {
         indicatorTitle: String?,
         getData: suspend () -> T
     ): Pair<T?, Boolean> {
+//        val client = WorkClient(mailTo = Settings.map["OpenAlex-email"]?: "")
+/*
         while (true) {
             try {
                 val data = getData()
@@ -66,6 +57,8 @@ object EntrezClient : AGService {
                 return Pair(null, false)
             }
         }
+*/
+        return Pair(null, false)
     }
 
     // Full protocol for bulk download of paper details for a search
@@ -73,9 +66,10 @@ object EntrezClient : AGService {
         setting: QuerySetting,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
+/*
         val tag = "BULKSEARCH"
         strategy = DelayStrategy(BULK_QUERY_DELAY)
-        val s2expr = S2SearchExpression.from(setting)
+        val s2expr = OASearchExpression.from(setting)
         val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
             S2Interface.getBulkPaperSearch(
@@ -112,6 +106,7 @@ object EntrezClient : AGService {
                 return false
         }
         RootStore.setProgressIndication()
+*/
         return true
     }
 
@@ -119,7 +114,7 @@ object EntrezClient : AGService {
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty())
+        return if (Settings.map["OpenAlex-email"].isNullOrEmpty())
             getSinglePaperDetails(doiSet, action)
         else
             getBulkPaperDetails(doiSet, action)
@@ -130,6 +125,7 @@ object EntrezClient : AGService {
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
+/*
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
@@ -150,6 +146,7 @@ object EntrezClient : AGService {
                 return false
         }
         RootStore.setProgressIndication()
+*/
         return true
     }
 
@@ -158,6 +155,7 @@ object EntrezClient : AGService {
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
+/*
         strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
@@ -175,6 +173,7 @@ object EntrezClient : AGService {
                 return false
         }
         RootStore.setProgressIndication()
+*/
         return true
     }
 
@@ -182,7 +181,7 @@ object EntrezClient : AGService {
         doiSet: List<String>,
         action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty())
+        return if (Settings.map["OpenAlex-email"].isNullOrEmpty())
             getSinglePaperRefs(doiSet, action)
         else
             getBulkPaperRefs(doiSet, action)
@@ -193,6 +192,7 @@ object EntrezClient : AGService {
         doiSet: List<String>,
         action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
+/*
         strategy = DelayStrategy(SINGLE_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading references and\ncitations for all accepted papers"
@@ -210,6 +210,7 @@ object EntrezClient : AGService {
                 return false
         }
         RootStore.setProgressIndication()
+*/
         return true
     }
 
@@ -218,6 +219,7 @@ object EntrezClient : AGService {
         doiSet: List<String>,
         action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
+/*
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading references and\n" +
@@ -240,12 +242,14 @@ object EntrezClient : AGService {
                 return false
         }
         RootStore.setProgressIndication()
+*/
         return true
     }
     override suspend fun getSimilarDetails(
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
+/*
         val minPapers = 20
         val maxPapers = 500 // limit given by S2
         strategy = DelayStrategy(BULK_QUERY_DELAY)
@@ -270,24 +274,7 @@ object EntrezClient : AGService {
                 return false
         }
         RootStore.setProgressIndication()
+*/
         return true
-    }
-}
-
-class DelayStrategy(private val minDelay: Long) {
-    fun delay(wasSuccessful: Boolean): Long {
-        return if (wasSuccessful) {
-            noFails = 0
-            minDelay
-        } else {
-            noFails += 1
-            val mul = if (noFails <= multiplier.size) multiplier[noFails] else multiplier.last()
-            mul * minDelay
-        }
-    }
-
-    companion object {
-        var noFails = 0
-        val multiplier = listOf(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024)
     }
 }
