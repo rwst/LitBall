@@ -5,6 +5,8 @@ With snowballing, it facilitates the creation and maintenance of systematic lite
 
 Please see https://litball.readthedocs.io/ for the documentation.
 
+**Note: Semantic Scholar now requires you to apply for a (free) API key, go to https://www.semanticscholar.org/product/api#api-key-form.** We are preparing to offer OpenAlex support but, due to lack of time, would welcome your help in the implementation. OpenAlex would be the only other academic graph API useful for LitBall.
+
 LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). Get it from https://github.com/rwst/LitBall/releases/, there are binaries for Linux/Windows/Mac, made with the help of [Conveyor](https://conveyor.hydraulic.dev/latest/). Please give us feedback, especially on Win/Mac, as we only test on Linux.
 
 ## Quick Install
