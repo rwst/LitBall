@@ -137,8 +137,10 @@ object S2Client : AGService {
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty())
-            getSinglePaperDetails(doiSet, action)
+        return if (Settings.map["S2-API-key"].isNullOrEmpty()) {
+            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
+            false
+        }
         else
             getBulkPaperDetails(doiSet, action)
     }
@@ -172,6 +174,7 @@ object S2Client : AGService {
     }
 
     // Full protocol for non-bulk download of paper details for a list of DOIs
+/*
     private suspend fun getSinglePaperDetails(
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
@@ -195,18 +198,22 @@ object S2Client : AGService {
         RootStore.setProgressIndication()
         return true
     }
+*/
 
     override suspend fun getRefs(
         doiSet: List<String>,
         action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty())
-            getSinglePaperRefs(doiSet, action)
+        return if (Settings.map["S2-API-key"].isNullOrEmpty()) {
+            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
+            false
+        }
         else
             getBulkPaperRefs(doiSet, action)
     }
 
     // Full protocol for non-bulk download of paper refs for a list of DOIs
+/*
     private suspend fun getSinglePaperRefs(
         doiSet: List<String>,
         action: (String, S2Interface.PaperRefs) -> Unit
@@ -230,6 +237,7 @@ object S2Client : AGService {
         RootStore.setProgressIndication()
         return true
     }
+*/
 
     // Full protocol for bulk download of paper details for a list of DOIs
     private suspend fun getBulkPaperRefs(
