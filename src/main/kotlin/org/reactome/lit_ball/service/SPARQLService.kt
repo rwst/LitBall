@@ -3,7 +3,7 @@ package org.reactome.lit_ball.service
 import org.apache.jena.sparql.exec.http.QueryExecutionHTTPBuilder
 
 object WDQSService {
-    private const val URI = "https://query.wikidata.org/sparql"
+    private const val URI = "https://query-scholarly.wikidata.org/sparql"
     private val qeb: QueryExecutionHTTPBuilder = QueryExecutionHTTPBuilder
         .service(URI)
 
