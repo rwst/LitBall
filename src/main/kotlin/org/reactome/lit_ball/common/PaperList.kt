@@ -83,7 +83,9 @@ object PaperList {
             var maxId = papers.size
             val acceptedWithDetails = papers.map { it.paperId ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
-            query.agService.getPaperDetails(acceptedWithoutDetails) {
+            query.agService.getPaperDetails(acceptedWithoutDetails,
+                fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
+                ) {
                 val newPaper = Paper(id = maxId, details = it)
                 newPaper.uppercaseDoi()
                 newPaper.setPaperIdFromDetails()

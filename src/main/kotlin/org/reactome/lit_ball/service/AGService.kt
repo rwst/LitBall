@@ -11,6 +11,7 @@ interface AGService {
 
     suspend fun getPaperDetails(
         doiSet: List<String>,
+        fields: String,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean
 

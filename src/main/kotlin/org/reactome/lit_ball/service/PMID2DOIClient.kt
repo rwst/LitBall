@@ -1,8 +1,5 @@
 package org.reactome.lit_ball.service
 
-import kotlinx.coroutines.delay
-import org.reactome.lit_ball.common.Settings
-
 val clients = listOf(S2PMID2DOIClient(), WDQSPMID2DOIClient())
 
 // Iterates through clients to get DOIs for PMIDs
@@ -30,47 +27,20 @@ class S2PMID2DOIClient : PMID2DOIClient() {
         S2Client.strategy = S2Client.DelayStrategy(S2Client.SINGLE_QUERY_DELAY)
         val size = pmidList.size
         val list = MutableList<String?>(size) { null }
-        if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-            pmidList.forEachIndexed { index, it ->
-                var pair: Pair<S2Interface.PaperDetails?, Boolean>
-                do {
-                    pair = S2Client.getDataOrHandleExceptions(index, size, null) {
-                        S2Interface.getSinglePaperDetails(
-                            "PMID:$it",
-                            "externalIds"
-                        )
-                    }
-                    delay(S2Client.strategy.delay(false))
-                } while (!pair.second)
-                delay(S2Client.strategy.delay(true))
-                pair.first?.also {
-                    list[index] = it.externalIds?.get("DOI")
-                }
-            }
+        val ids = pmidList.map { "PMID:$it" }
+        val map = emptyMap<String, String>().toMutableMap()
+        S2Client.getPaperDetails(
+            ids,
+            "externalIds"
+        )
+        {
+            val pmid = it.externalIds?.get("PMID") ?: ""
+            val doi = it.externalIds?.get("DOI")
+            val id = doi ?: "S2:${it.paperId}"
+            map[pmid] = id
         }
-        else {
-            var pair: Pair<List<S2Interface.PaperDetails>?, Boolean>
-            val ids = pmidList.map { "PMID:$it" }
-            do {
-                pair = S2Client.getDataOrHandleExceptions(size, size, null) {
-                    S2Interface.getBulkPaperDetails(
-                        ids,
-                        "externalIds"
-                    )
-                }
-                delay(S2Client.strategy.delay(false))
-            } while (!pair.second)
-            delay(S2Client.strategy.delay(true))
-            val map = emptyMap<String, String>().toMutableMap()
-            pair.first?.onEach {
-                val pmid = it.externalIds?.get("PMID") ?: ""
-                val doi = it.externalIds?.get("DOI")
-                val id = doi ?: "S2:${it.paperId}"
-                map[pmid] = id
-            }
-            pmidList.forEachIndexed { index, it ->
-                map[it]?.let { list[index] = it }
-            }
+        pmidList.forEachIndexed { index, it ->
+            map[it]?.let { list[index] = it }
         }
         return list
     }

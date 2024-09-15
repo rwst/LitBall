@@ -110,19 +110,10 @@ object OpenAlexClient : AGService {
         return true
     }
 
+    // Full protocol for bulk download of paper details for a list of DOIs
     override suspend fun getPaperDetails(
         doiSet: List<String>,
-        action: (S2Interface.PaperDetails) -> Unit
-    ): Boolean {
-        return if (Settings.map["OpenAlex-email"].isNullOrEmpty())
-            getSinglePaperDetails(doiSet, action)
-        else
-            getBulkPaperDetails(doiSet, action)
-    }
-
-    // Full protocol for bulk download of paper details for a list of DOIs
-    private suspend fun getBulkPaperDetails(
-        doiSet: List<String>,
+        fields: String,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
 /*

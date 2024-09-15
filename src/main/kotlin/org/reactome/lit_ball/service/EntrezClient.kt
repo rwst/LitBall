@@ -115,19 +115,10 @@ object EntrezClient : AGService {
         return true
     }
 
+    // Full protocol for bulk download of paper details for a list of DOIs
     override suspend fun getPaperDetails(
         doiSet: List<String>,
-        action: (S2Interface.PaperDetails) -> Unit
-    ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty())
-            getSinglePaperDetails(doiSet, action)
-        else
-            getBulkPaperDetails(doiSet, action)
-    }
-
-    // Full protocol for bulk download of paper details for a list of DOIs
-    private suspend fun getBulkPaperDetails(
-        doiSet: List<String>,
+        fields: String,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
         strategy = DelayStrategy(BULK_QUERY_DELAY)
@@ -146,31 +137,6 @@ object EntrezClient : AGService {
             delay(strategy.delay(true))
             pair.first?.filterNotNull()?.forEach(action) // DO NOT remove filterNotNull()
             index += paperIds.size
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
-                return false
-        }
-        RootStore.setProgressIndication()
-        return true
-    }
-
-    // Full protocol for non-bulk download of paper details for a list of DOIs
-    private suspend fun getSinglePaperDetails(
-        doiSet: List<String>,
-        action: (S2Interface.PaperDetails) -> Unit
-    ): Boolean {
-        strategy = DelayStrategy(SINGLE_QUERY_DELAY)
-        val size = doiSet.size
-        val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
-        doiSet.forEachIndexed { index, it ->
-            val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Interface.getSinglePaperDetails(
-                    if (it.startsWith("S2:")) it.substring(3) else it,
-                    "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
-                )
-            }
-            if (!pair.second) return false
-            delay(strategy.delay(true))
-            pair.first?.also(action)
             if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }

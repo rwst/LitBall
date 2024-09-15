@@ -133,34 +133,25 @@ object S2Client : AGService {
         return true
     }
 
-    override suspend fun getPaperDetails(
-        doiSet: List<String>,
-        action: (S2Interface.PaperDetails) -> Unit
-    ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
-            false
-        }
-        else
-            getBulkPaperDetails(doiSet, action)
-    }
 
     // Full protocol for bulk download of paper details for a list of DOIs
-    private suspend fun getBulkPaperDetails(
+    override suspend fun getPaperDetails(
         doiSet: List<String>,
+        fields: String,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
+        if (Settings.map["S2-API-key"].isNullOrEmpty()) {
+            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
+            return false
+        }
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size
-        val indicatorTitle = "Downloading missing titles, TLDRs,\nand abstracts"
+        val indicatorTitle = "Downloading paper details"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
             val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
-                S2Interface.getBulkPaperDetails(
-                    paperIds,
-                    "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
-                )
+                S2Interface.getBulkPaperDetails(paperIds, fields)
             }
             if (!pair.second) return false
             delay(strategy.delay(true))
