@@ -91,6 +91,7 @@ object S2Client : AGService {
         setting: QuerySetting,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
+        if (!checkKey()) return false
         val tag = "BULKSEARCH"
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val s2expr = S2SearchExpression.from(setting)
@@ -140,10 +141,7 @@ object S2Client : AGService {
         fields: String,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
-        if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
-            return false
-        }
+        if (!checkKey()) return false
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size
         val indicatorTitle = "Downloading paper details"
@@ -195,10 +193,7 @@ object S2Client : AGService {
         doiSet: List<String>,
         action: (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
-        return if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
-            false
-        }
+        return if (!checkKey()) false
         else
             getBulkPaperRefs(doiSet, action)
     }
@@ -289,4 +284,13 @@ object S2Client : AGService {
         RootStore.setProgressIndication()
         return true
     }
+
+    private fun checkKey() : Boolean {
+        return if (Settings.map["S2-API-key"].isNullOrEmpty()) {
+            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
+            false
+            }
+        else true
+    }
 }
+
