@@ -50,9 +50,9 @@ fun ProgressIndicator(parameter: ProgressIndicatorParameter) {
                         modifier = Modifier.padding(8.dp)
                     )
                     CircularProgressIndicator(
-                        parameter.value,
-                        strokeWidth = 8.dp,
+                        progress = { parameter.value },
                         modifier = Modifier.size(100.dp).padding(16.dp),
+                        strokeWidth = 8.dp,
                     )
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     Text(

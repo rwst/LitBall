@@ -2,10 +2,10 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    kotlin("plugin.serialization") version "2.0.20-RC"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
     id("org.jetbrains.compose") version "1.6.11"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20-RC"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
     id("com.github.gmazzo.buildconfig") version "5.4.0"
     id("dev.hydraulic.conveyor") version "1.10"
     id("com.github.ben-manes.versions") version "0.51.0"
@@ -15,6 +15,10 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        name = "Compose DEV"
+    }
 }
 
 tasks {
