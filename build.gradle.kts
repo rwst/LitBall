@@ -114,8 +114,14 @@ kotlin {
         }
     }}
 
+val letsPlotVersion = extra["letsPlot.version"] as String
+val letsPlotKotlinVersion = extra["letsPlotKotlin.version"] as String
+val letsPlotSkiaVersion = extra["letsPlotSkia.version"] as String
+val kotlinVersion = extra["kotlin.version"] as String
+val composeVersion = extra["compose.version"] as String
+
 dependencies {
-    implementation("org.jetbrains.compose.material3:material3-desktop:1.6.11")
+    implementation("org.jetbrains.compose.material3:material3-desktop:$composeVersion")
     implementation(compose.desktop.currentOs)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
@@ -128,10 +134,10 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.1.0-alpha1")
     implementation("dev.dirs:directories:26")
     implementation("org.testng:testng:7.10.2")
-    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:4.8.0")
-    implementation("org.jetbrains.lets-plot:lets-plot-common:4.4.1")
-    implementation("org.jetbrains.lets-plot:platf-awt:4.4.1")
-    implementation("org.jetbrains.lets-plot:lets-plot-compose:1.0.4")
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:$letsPlotKotlinVersion")
+    implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
+    implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
+    implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")
     implementation("org.apache.commons:commons-jexl3:3.4.0")
     implementation("org.apache.jena:jena-arq:5.0.0-rc1")
 //    implementation("io.github.benedekh:ktalex:1.0.0")
