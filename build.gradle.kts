@@ -117,11 +117,12 @@ kotlin {
 val letsPlotVersion = extra["letsPlot.version"] as String
 val letsPlotKotlinVersion = extra["letsPlotKotlin.version"] as String
 val letsPlotSkiaVersion = extra["letsPlotSkia.version"] as String
+val letsPlotMaterialVersion = extra["letsPlotMaterial.version"] as String
 val kotlinVersion = extra["kotlin.version"] as String
 val composeVersion = extra["compose.version"] as String
 
 dependencies {
-    implementation("org.jetbrains.compose.material3:material3-desktop:$composeVersion")
+    implementation("org.jetbrains.compose.material3:material3-desktop:$letsPlotMaterialVersion")
     implementation(compose.desktop.currentOs)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
