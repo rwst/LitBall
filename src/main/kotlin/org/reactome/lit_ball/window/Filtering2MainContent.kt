@@ -115,7 +115,9 @@ fun Filtering2ListContent(
         setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, setupListScroller)
         Column {
             LazyColumn(
-                Modifier.fillMaxSize().padding(end = 12.dp),
+                Modifier.fillMaxSize()
+                    .padding(end = 12.dp)
+                    .onPreviewKeyEvent(handleKeyPressed(lazyListState)),
                 lazyListState
             ) {
                 items(

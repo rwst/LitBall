@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.LitBallQuery
@@ -28,10 +29,7 @@ import org.reactome.lit_ball.common.QueryStatus
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.setupLazyListScroller
-import org.reactome.lit_ball.window.components.QueryCard
-import org.reactome.lit_ball.window.components.Rail
-import org.reactome.lit_ball.window.components.SortingControls
-import org.reactome.lit_ball.window.components.Tooltip
+import org.reactome.lit_ball.window.components.*
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 private const val TAG = "MainContent"
@@ -91,7 +89,9 @@ private fun ListContent(
     ) {
         setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, RootStore::setupListScroller)
         LazyColumn(
-            Modifier.fillMaxSize().padding(end = 12.dp),
+            modifier = Modifier.fillMaxSize()
+                .padding(end = 12.dp)
+                .onPreviewKeyEvent(handleKeyPressed(lazyListState)),
             lazyListState
         ) {
             items(
