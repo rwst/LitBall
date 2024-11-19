@@ -18,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
@@ -97,6 +98,7 @@ fun AnnotatingListContent(
             LazyColumn(
                 Modifier.fillMaxSize()
                     .padding(end = 12.dp)
+                    .focusRequester(focusRequester)
                     .onPreviewKeyEvent(handleKeyPressed(lazyListState)),
                 lazyListState
             ) {
@@ -188,7 +190,8 @@ fun CardWithFlagBoxes(
                     onClick = { model.deleteClicked(item.id) },
                     modifier = Modifier
                         .size(height = 30.dp, width = 30.dp)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
+                        .focusProperties { canFocus = false },
                 ) {
                     Icon(
                         painter = painterResource(Icons.Delete),

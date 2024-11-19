@@ -9,15 +9,14 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun SortingControls(
-    controls: List<SortingControlItem>,
-    focusRequester: FocusRequester? = null,
+    controls: List<SortingControlItem>
 ) {
     Row {
         controls.forEach { item ->
@@ -25,10 +24,9 @@ fun SortingControls(
                 IconButton(
                     onClick = {
                         item.onClicked()
-                        focusRequester?.requestFocus()
                     },
                     modifier = Modifier
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically).focusProperties { canFocus = false },
                 ) {
                     Icon(
                         painterResource(item.iconPainterResource),

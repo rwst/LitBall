@@ -20,7 +20,7 @@ fun paperListHeader(
     lazyListState: LazyListState,
     alignmentModifier: Modifier
 ) {
-    SortingControls(model.sortingControls, focusRequester)
+    SortingControls(model.sortingControls)
     FilterControls(model, focusRequester)
     Spacer(modifier = Modifier.width(8.dp))
     TextButton(
