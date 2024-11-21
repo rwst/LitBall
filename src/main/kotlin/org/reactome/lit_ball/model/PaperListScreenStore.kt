@@ -49,7 +49,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         ) { doSort(SortingType.DATE_DESCENDING) },
     )
     private fun doSort(sortingType: SortingType) {
-        AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
+        handle.scope?.launch(Dispatchers.IO) {
             PaperList.sort(sortingType)
             refreshList()
             delay(100) // TODO: this is a hack
