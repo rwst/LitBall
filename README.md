@@ -1,3 +1,5 @@
+<img src="https://github.com/user-attachments/assets/b1567370-86df-4d4a-84e1-633362adb6e9" width="100" height="100" alt="Logo">
+
 # LitBall
 LitBall is a JVM desktop app for systematic literature collection, using the Semantic Scholar academic graph.
 LitBall offers several search methods: expression search, snowballing, interleaved snowballing, and similarity search. 
