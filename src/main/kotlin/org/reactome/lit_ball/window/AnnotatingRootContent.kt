@@ -24,6 +24,7 @@ fun AnnotatingRootContent(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+
     if (state.showStats) {
         BarChartDialog(model, focusRequester)
     }

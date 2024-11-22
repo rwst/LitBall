@@ -3,10 +3,8 @@
 package org.reactome.lit_ball.window
 
 import RootType
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.ui.focus.FocusRequester
 import org.reactome.lit_ball.dialog.*
 import org.reactome.lit_ball.model.RootStore
 
@@ -17,13 +15,19 @@ fun RootContent(
     val model = remember { RootStore }
     val state = model.state
     val scope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
     RootStore.scope = scope
     RootStore.state = state
     RootStore.rootSwitch = rootSwitch
 
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     MainContent(
         model,
         rootSwitch = rootSwitch,
+        focusRequester = focusRequester,
     )
 
     RootStore.init()

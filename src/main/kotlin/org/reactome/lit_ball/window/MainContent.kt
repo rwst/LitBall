@@ -15,7 +15,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +37,7 @@ private const val TAG = "MainContent"
 internal fun MainContent(
     model: RootStore,
     rootSwitch: MutableState<RootType>,
+    focusRequester: FocusRequester,
 ) {
     Row(modifier = Modifier.fillMaxSize()) {
         Rail(
@@ -65,6 +65,7 @@ internal fun MainContent(
                 onItemGoClicked = { status, id -> model.nextAction(status, id) },
                 onItemAnnotateClicked = { id -> model.onAnnotateStarted(id) },
                 onDeleteClicked = { id -> model.onDeleteQueryClicked(id) },
+                focusRequester = focusRequester,
             )
         }
     }
@@ -78,8 +79,8 @@ private fun ListContent(
     onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
     onItemAnnotateClicked: (id: Int) -> Unit,
     onDeleteClicked: (id: Int) -> Unit,
+    focusRequester: FocusRequester,
 ) {
-    val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
 
     Box(
