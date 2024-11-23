@@ -3,6 +3,7 @@
 package org.reactome.lit_ball.window.components
 
 import RootType
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
@@ -23,6 +24,11 @@ fun Rail(
     val selectedItem by remember { mutableStateOf(0) }
 
     NavigationRail {
+        Image(
+            painterResource(org.reactome.lit_ball.window.components.Icons.Logo),
+            contentDescription = null,
+            modifier = Modifier.size(72.dp),
+        )
         railItems.forEach { item ->
             Tooltip(item.tooltipText, Modifier.align(Alignment.CenterHorizontally)) {
                 NavigationRailItem(
