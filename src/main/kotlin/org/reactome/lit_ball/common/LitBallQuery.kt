@@ -188,6 +188,12 @@ data class LitBallQuery(
             else
                 RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
         }
+        if (nulls == size) {
+            if (!auto)
+                RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
+            status.value = QueryStatus.FILTERED2
+            return
+        }
         checkFileInDirectory(queryDir, FileType.EXPANDED.fileName)?.let { file ->
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status.value = try {
