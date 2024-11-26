@@ -2,14 +2,13 @@
  - new query from old (allowing change of keywords but shortcutting some download)
  - new query from old (type 1,2,3 from type 1)
  - easy change/selection of query path
- - opening/closing filter dialog removes focus on list
- - focus: clicking sort in filtering2 still grabs focus
- - focus: clicking delete in annotate still grabs focus
- - focus: when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
  - going Main from annotate resets list pos
  - TAB does not advance field in new query dialog etc
  - manually add IDs to accepted by adding an IDs field to query settings dialog
  - add global option to set logging in S2RetrofitHelper, default NONE
+ - focus: opening/closing filter dialog removes focus on list
+ - focus: clicking sort in Annotate still grabs focus
+ - focus: when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
 
 Doc:
  - json export
@@ -21,6 +20,9 @@ Doc:
    - local Chinese papers are underrepresented in S2
 
 Features:
+ - DB: use Exposed to handle simple text or JSON files
+       alternatively use Exposed with SQLite, see below for both
+ - remove all instances of delay()
  - refactor: rename model functions so they reflect the event not the intent
  - file selectors in settings dialog
  - HTTP buffer
@@ -45,3 +47,191 @@ The abstract typically contains several key sentences that cover different aspec
  - Limitations Sentence(s) (if applicable): Sometimes, authors include a sentence about the limitations of their study to provide a balanced view and acknowledge any factors that may affect the interpretation of the results.
  - Future Work Sentence(s) (if applicable): This may suggest directions for future research based on the findings of the current study.
  - Statement of Importance Sentence(s): Occasionally, an abstract may include a sentence that directly addresses the importance or impact of the research to highlight its relevance to the field or society.
+
+ Kotlin Exposed is primarily an ORM/Query DSL for SQL databases, designed to work with databases like H2, MySQL, PostgreSQL, etc., through JDBC. However, you can use Kotlin Exposed in a more unconventional way to handle simple text or JSON files by creating a custom `TransactionManager` and `Database` implementation. Here's a high-level overview of how you might approach this:
+
+ ### Step 1: Setup a Custom Database
+
+ 1. **Define a Custom `Database` and `TransactionManager`:**
+    - Exposed's functionality depends on transactions, which are typically managed by JDBC connections. For file-based storage, you'll simulate this.
+    - Create a custom `Database` that points to your file storage instead of a JDBC URL.
+
+ ```kotlin
+ class FileDatabase : Database() {
+     override fun createTransaction(isolation: Int) = FileTransaction()
+ }
+
+ class FileTransaction : Transaction() {
+     var file: File? = null
+     // Implement necessary methods to simulate transaction behavior with file I/O
+ }
+ ```
+
+ ### Step 2: Define Your Data Model
+
+ - Use Exposed's table definition to model your data, even though it won't directly interact with an SQL database.
+
+ ```kotlin
+ object Users : Table("users") {
+     val id = integer("id").autoIncrement().primaryKey()
+     val name = varchar("name", length = 50)
+     val age = integer("age")
+ }
+ ```
+
+ ### Step 3: Implement Custom DAO Operations
+
+ - For each operation (insert, update, delete, select), you'll need to implement how it reads from or writes to your files.
+
+ #### Insert:
+
+ ```kotlin
+ fun insertUser(name: String, age: Int) {
+     transaction(FileDatabase) {
+         val user = Users.insert {
+             it[Users.name] = name
+             it[Users.age] = age
+         }
+         // Here you would write to your file
+         File("users.json").appendText(Json.encodeToString(user.resultRow.toMap()) + "\n")
+     }
+ }
+ ```
+
+ #### Select:
+
+ ```kotlin
+ fun selectAllUsers(): List<Map<String, Any>> {
+     val users = mutableListOf<Map<String, Any>>()
+     transaction(FileDatabase) {
+         // Read from file
+         File("users.json").readLines().forEach { line ->
+             users.add(Json.decodeFromString<Map<String, Any>>(line))
+         }
+     }
+     return users
+ }
+ ```
+
+ #### Update/Delete:
+
+ - For updates or deletions, you'd need to read the file, modify the in-memory representation, and then write back to the file entirely.
+
+ ```kotlin
+ fun updateUser(id: Int, name: String) {
+     transaction(FileDatabase) {
+         val lines = File("users.json").readLines().toMutableList()
+         val userIndex = lines.indexOfFirst { line ->
+             Json.decodeFromString<Map<String, Any>>(line)["id"] as Int == id
+         }
+         if (userIndex != -1) {
+             val updatedUser = Json.decodeFromString<Map<String, Any>>(lines[userIndex]).toMutableMap()
+             updatedUser["name"] = name
+             lines[userIndex] = Json.encodeToString(updatedUser)
+             File("users.json").writeText(lines.joinToString("\n"))
+         }
+     }
+ }
+ ```
+
+ ### Step 4: Transaction Management
+
+ - Since you're not using JDBC, traditional transaction management like commit and rollback would need to be simulated. For instance, write operations could be done to a temporary file first.
+
+ ```kotlin
+ class FileTransaction : Transaction() {
+     var tempFile = File("temp_users.json")
+
+     override fun commit() {
+         File("users.json").delete()
+         tempFile.renameTo(File("users.json"))
+     }
+
+     override fun rollback() {
+         tempFile.delete()
+     }
+ }
+ ```
+
+ ### Considerations:
+
+ - **Atomicity**: For true atomicity, you might need to use file system features like atomic writes or moving files atomically when committing changes.
+
+ - **Concurrency**: Handling concurrent access to files would require locking mechanisms or a queue for operations to prevent race conditions.
+
+ - **Performance**: Operations on large files or frequent writes might become slow, and you'd need to consider optimizations like batch processing or memory caching.
+
+ - **JSON Handling**: The example assumes using JSON for simplicity. For better integration with Exposed's types, you might want to serialize/deserialize directly to/from Kotlin data classes.
+
+ This approach leverages Exposed's DSL for defining data models and operations but requires a lot of custom work to make file I/O work in a way that mimics database operations. It's more of an academic exercise or suitable for very small applications where the overhead of a real database is not justified. For most practical applications, using a proper database system would be recommended for reasons including performance, scalability, and reliability.
+
+ Among the SQL databases supported by Kotlin Exposed, **SQLite** typically has the lowest footprint. Here's why:
+
+ 1. **Embedded Database**: SQLite is an embedded database, meaning it does not require a separate server process. This reduces the overall system resources needed since it operates within the same process as your application.
+
+ 2. **Single File Storage**: SQLite stores an entire database (definitions, tables, indices, and data) in a single disk file, making it very lightweight in terms of storage requirements.
+
+ 3. **Low Memory Usage**: When configured for in-memory usage (using the `:memory:` database name), SQLite can operate with a very small memory footprint, suitable for applications where low memory usage is critical.
+
+ 4. **No Configuration Needed**: Unlike other databases that might require extensive configuration, SQLite has minimal setup, reducing the overhead in terms of both configuration file size and the time to get operational.
+
+ 5. **Less Overhead**: Being designed for embedded use, SQLite has lower overhead in terms of CPU and I/O compared to traditional client-server databases like MySQL or PostgreSQL in full-blown configurations.
+
+ ### Usage with Kotlin Exposed:
+
+ Here's a simple example of how you might set up SQLite with Kotlin Exposed:
+
+ ```kotlin
+ import org.jetbrains.exposed.sql.Database
+ import org.jetbrains.exposed.sql.SchemaUtils
+ import org.jetbrains.exposed.sql.Table
+ import org.jetbrains.exposed.sql.transactions.transaction
+
+ object Users : Table("users") {
+     val id = integer("id").autoIncrement().primaryKey()
+     val name = varchar("name", length = 50)
+     val age = integer("age")
+ }
+
+ fun main() {
+     // Connect to an in-memory SQLite database
+     Database.connect("jdbc:sqlite::memory:", driver = "org.sqlite.JDBC")
+
+     transaction {
+         // Create the table if it doesn't exist
+         SchemaUtils.create(Users)
+
+         // Insert data
+         Users.insert {
+             it[name] = "Alice"
+             it[age] = 30
+         }
+
+         // Select data
+         val allUsers = Users.selectAll().map { it[Users.name] to it[Users.age] }
+         println(allUsers)
+     }
+ }
+ ```
+
+ Remember, for this to work, you'll need the SQLite JDBC driver in your classpath:
+
+ ```gradle
+ dependencies {
+     implementation "org.xerial:sqlite-jdbc:3.36.0.3"
+     implementation "org.jetbrains.exposed:exposed-core:0.38.2"
+     implementation "org.jetbrains.exposed:exposed-jdbc:0.38.2"
+ }
+ ```
+
+ **Note**: The version numbers for libraries might be different; always check for the latest versions at Maven Central or similar repositories.
+
+ **Considerations**:
+
+ - While SQLite has the lowest footprint, it's less suitable for concurrent writes from multiple processes or for very large datasets due to its locking mechanisms.
+
+ - For applications requiring high concurrency or larger scale operations, databases like H2 (in its embedded mode) or even PostgreSQL might be considered if you're looking for something with a low footprint but more capabilities.
+
+ - If you're focusing on footprint size for deployment, SQLite's simplicity shines, but for application development, the choice might also depend on features like SQL support, transaction capabilities, and ecosystem support.
+
+ Therefore, SQLite is the go-to when looking for the database with the smallest footprint among those supported by Kotlin Exposed.
