@@ -12,6 +12,7 @@ import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.PaperListScreenStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.NLPService
+import org.reactome.lit_ball.service.S2Interface
 import org.reactome.lit_ball.service.YDFService
 import org.reactome.lit_ball.util.ConfiguredJson
 import org.reactome.lit_ball.util.ConfiguredUglyJson
@@ -83,14 +84,21 @@ object PaperList {
             var maxId = papers.size
             val acceptedWithDetails = papers.map { it.paperId ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
-            query.agService.getPaperDetails(acceptedWithoutDetails,
-                fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
+            if (acceptedWithoutDetails.isNotEmpty()) {
+                val list: MutableList<S2Interface.PaperDetails> = mutableListOf()
+                query.agService.getPaperDetails(
+                    acceptedWithoutDetails,
+                    fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
                 ) {
-                val newPaper = Paper(id = maxId, details = it)
-                newPaper.uppercaseDoi()
-                newPaper.setPaperIdFromDetails()
-                papers.add(newPaper)
-                maxId += 1
+                    val newPaper = Paper(id = maxId, details = it)
+                    newPaper.uppercaseDoi()
+                    newPaper.setPaperIdFromDetails()
+                    papers.add(newPaper)
+                    list.add(newPaper.details)
+                    maxId += 1
+                }
+                // case not handled: DOIs that are referred to by S2 but don't exist
+                if (list.isNotEmpty()) { query.mergeIntoArchive(list) }
             }
         }
         listHandle.setFullList(papers)

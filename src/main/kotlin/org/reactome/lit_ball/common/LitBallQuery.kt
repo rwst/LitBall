@@ -286,7 +286,7 @@ data class LitBallQuery(
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    private fun mergeIntoArchive(list: MutableList<S2Interface.PaperDetails>) {
+    fun mergeIntoArchive(list: MutableList<S2Interface.PaperDetails>) {
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.ARCHIVED.fileName)?.let { file ->
             val json = ConfiguredJson.get()
