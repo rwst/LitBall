@@ -32,6 +32,7 @@ fun NewQueryDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {
+    val copyFromValue = rememberSaveable { mutableStateOf("") }
     val typeValue = rememberSaveable { mutableStateOf(2) }
     val fieldValue = rememberSaveable { mutableStateOf("") }
     val nameValue = rememberSaveable { mutableStateOf("") }
@@ -42,6 +43,8 @@ fun NewQueryDialog(
     val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    val copyFromWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    val queryPath = Settings.map["path-to-queries"] ?: ""
 
     AlertDialog(
         onDismissRequest = { (onCloseClicked)() },
@@ -55,7 +58,6 @@ fun NewQueryDialog(
                     pathWarningValue.value = null
                     doiWarningValue.value = null
 
-                    val queryPath = Settings.map["path-to-queries"] ?: ""
                     if (File(queryPath).exists() && !Path(queryPath).isWritable()) {
                         pathWarningValue.value = "Query directory is not writable"
                         return@TextButton
@@ -97,9 +99,17 @@ fun NewQueryDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
+                queryCopyFromComponent(copyFromValue, copyFromWarningValue)
+                Spacer(modifier = Modifier.height(8.dp))
                 queryTypeComponent(typeValue, typeWarningValue)
                 Spacer(modifier = Modifier.height(8.dp))
                 queryNameComponent(nameValue, pathWarningValue)
+
+                if (copyFromValue.value.isNotBlank()) {
+                    nameValue.value = generateSequence(1) { it + 1 }
+                        .map { "${copyFromValue.value}-$it" }
+                        .first { it !in QueryList.list.map { query -> query.name } }
+                }
 
                 if (typeValue.value > 0) {
                     queryPaperIdsComponent(fieldValue, pathWarningValue, doiWarningValue)

@@ -1,20 +1,19 @@
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.reactome.lit_ball.common.ArticleType
+import org.reactome.lit_ball.common.QueryList
 import org.reactome.lit_ball.common.QueryType
 import org.reactome.lit_ball.common.Settings
 import org.reactome.lit_ball.service.getDOIsforPMIDs
@@ -213,6 +212,47 @@ fun queryTypeComponent(
                     .align(Alignment.CenterVertically)
                     .padding(start = 24.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun queryCopyFromComponent(
+    copyFromValue: MutableState<String>,
+    copyFromWarningValue: MutableState<String?>
+) {
+    val copyFromIsSetValue = rememberSaveable { mutableStateOf(false) }
+
+    Row {
+        Tooltip(
+            text = """
+                If set, allows selection of existing query, from which
+                name, DOIs and specific query settings are copied.
+                    """.trimIndent(),
+            Modifier.align(Alignment.CenterVertically)
+        ) {
+            helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
+        }
+        Spacer(modifier = Modifier.width(14.dp))
+        TextButton(
+            onClick = { copyFromIsSetValue.value = !copyFromIsSetValue.value },
+            modifier = Modifier.align(Alignment.CenterVertically)
+        ) { Text("Copy from query: ${copyFromValue.value}") }
+        Spacer(modifier = Modifier.width(14.dp))
+        if (copyFromIsSetValue.value) {
+            Box {
+                DropdownMenu(
+                    expanded = copyFromIsSetValue.value,
+                    onDismissRequest = {
+                        copyFromValue.value = ""
+                        copyFromIsSetValue.value = false })
+                {
+                    QueryList.list.map { it.name }.forEach {
+                        DropdownMenuItem(onClick = { copyFromValue.value = it; copyFromIsSetValue.value = false })
+                        { Text(it) }
+                    }
+                }
+            }
         }
     }
 }
