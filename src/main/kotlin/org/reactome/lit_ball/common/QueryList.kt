@@ -33,10 +33,7 @@ object QueryList {
                         .toMutableSet(),
                 )
                 newQuery.setting = getSetting(it)
-                newQuery.lastExpansionDate = newQuery.getFileDate(
-                    fromFile = true,
-                    fileType = FileType.ACCEPTED
-                )
+                newQuery.lastExpansionDate = newQuery.getFileDate(fromFile = true, FileType.ACCEPTED)
                 newQuery.noNewAccepted = newQuery.readNoNewAccepted()
                 if (newQuery.noNewAccepted) {
                     val now = System.currentTimeMillis()
