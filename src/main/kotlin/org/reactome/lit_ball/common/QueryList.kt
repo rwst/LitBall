@@ -97,7 +97,7 @@ object QueryList {
                 try {
                     queryDir.deleteRecursively()
                 } catch (e: Exception) {
-                    Logger.error(e)
+                    handleException(e)
                 }
             }
         }
