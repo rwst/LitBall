@@ -194,7 +194,7 @@ data class LitBallQuery(
             status.value = QueryStatus.FILTERED2
             return
         }
-        checkFileInDirectory(queryDir, FileType.EXPANDED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.EXPANDED)?.let { file ->
             val text = newDoiSet.joinToString("\n").uppercase() + "\n"
             status.value = try {
                 file.writeText(text)
@@ -294,7 +294,7 @@ data class LitBallQuery(
     @OptIn(ExperimentalSerializationApi::class)
     fun mergeIntoArchive(list: MutableList<S2Interface.PaperDetails>) {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.ARCHIVED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.ARCHIVED)?.let { file ->
             val json = ConfiguredJson.get()
             val papers: MutableSet<Paper> = if (file.exists()) {
                 json.decodeFromStream<List<Paper>>(file.inputStream()).toMutableSet()
@@ -332,7 +332,7 @@ data class LitBallQuery(
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = idSetFromPaperDetailsList(paperDetailsList)
-        checkFileInDirectory(queryDir, FileType.ACCEPTED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.ACCEPTED)?.let { file ->
             file.writeText(acceptedSet.joinToString("\n"))
             mergeIntoArchive(paperDetailsList)
         }
@@ -358,7 +358,7 @@ data class LitBallQuery(
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = ids.plus(idSetFromPaperDetailsList(paperDetailsList)).toMutableSet()
-        checkFileInDirectory(queryDir, FileType.ACCEPTED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.ACCEPTED)?.let { file ->
             file.writeText(acceptedSet.joinToString("\n"))
             mergeIntoArchive(paperDetailsList)
         }
@@ -367,7 +367,7 @@ data class LitBallQuery(
 
     suspend fun filter2() {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.FILTERED1.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.FILTERED1)?.let { file ->
             PaperList.setFromQuery(this, file)
             Filtering2RootStore.state.paperListStore.refreshList()
         }
@@ -375,7 +375,7 @@ data class LitBallQuery(
 
     private suspend fun acceptAll() {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.FILTERED1.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.FILTERED1)?.let { file ->
             PaperList.setFromQuery(this, file)
             PaperList.listHandle.setFullAllTags(Tag.Accepted)
             PaperList.finish(true)
@@ -406,7 +406,7 @@ data class LitBallQuery(
 
     suspend fun annotate() {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.ARCHIVED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.ARCHIVED)?.let { file ->
             PaperList.setFromQuery(this, file, acceptedSet)
             AnnotatingRootStore.state.paperListStore.refreshList()
             PaperList.saveAnnotated()
@@ -415,7 +415,7 @@ data class LitBallQuery(
 
     suspend fun writeNoNewAccepted() {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.NONEWACCEPTED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.NONEWACCEPTED)?.let { file ->
             val text = noNewAccepted.toString()
             file.writeText(text)
         }
@@ -428,7 +428,7 @@ data class LitBallQuery(
 
     fun readNoNewAccepted(): Boolean {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.NONEWACCEPTED.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.NONEWACCEPTED)?.let { file ->
             try {
                 return file.readText().trim() == "true"
             } catch (e: FileNotFoundException) {
@@ -440,7 +440,7 @@ data class LitBallQuery(
 
     fun saveSettings() {
         val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.SETTINGS.fileName)?.let { file ->
+        checkFileInDirectory(queryDir, FileType.SETTINGS)?.let { file ->
             val json = ConfiguredJson.get()
             val text = json.encodeToString<QuerySetting>(setting)
             file.writeText(text)

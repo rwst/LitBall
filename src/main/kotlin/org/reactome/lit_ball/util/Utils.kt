@@ -116,20 +116,3 @@ class DateMatcher(filteredDate: String?) {
         return true
     }
 }
-
-fun checkFileInDirectory(dir: File, fileName: String): File? {
-    val file: File
-    if (dir.isDirectory && dir.canRead()) {
-        try {
-            file = File("${dir.absolutePath}/$fileName")
-        } catch (e: Exception) {
-            handleException(e)
-            return null
-        }
-
-    } else {
-        handleException(IOException("Cannot access directory ${dir.absolutePath}"))
-        return null
-    }
-    return file
-}

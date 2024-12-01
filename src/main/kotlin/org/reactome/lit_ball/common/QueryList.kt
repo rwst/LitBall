@@ -3,12 +3,10 @@ package org.reactome.lit_ball.common
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.handleException
+import org.reactome.lit_ball.util.makeQueryDir
 import org.reactome.lit_ball.window.components.SortingType
 import java.io.File
-import java.io.IOException
-import java.nio.file.Files
 
 const val DAY_IN_MS = 1000L * 60 * 60 * 24
 
@@ -54,16 +52,7 @@ object QueryList {
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
     fun addNewItem(type: QueryType, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
         val queryDir = getQueryDir(name)
-        if (queryDir.exists()) {
-            handleException(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
-            return
-        }
-        try {
-            Files.createDirectory(queryDir.toPath())
-        } catch (e: Exception) {
-            handleException(e)
-            return
-        }
+        if (!makeQueryDir(queryDir)) return
         try {
             File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}").writeText(dois.joinToString("\n") + "\n")
         } catch (e: Exception) {
