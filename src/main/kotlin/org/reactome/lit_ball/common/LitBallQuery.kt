@@ -148,7 +148,7 @@ data class LitBallQuery(
     private suspend fun snowBall(auto: Boolean = false) {
         val tag = "EXPAND"
         val queryDir = getQueryDir(name)
-        ExpandQueryCache.init(File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}"))
+        ExpandQueryCache.init(queryDir)
         val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
         var nulls = 0
         val size = missingAccepted.size

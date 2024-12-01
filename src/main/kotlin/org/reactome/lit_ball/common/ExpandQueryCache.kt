@@ -12,8 +12,8 @@ object ExpandQueryCache {
     private lateinit var file: File
     private var maxAge by Delegates.notNull<Int>()
     private const val MILLISECONDS_PER_DAY = 1000L * 3600 * 24
-    fun init(aFile: File) {
-        file = aFile
+    fun init(queryDir: File) {
+        file = File("${queryDir.absolutePath}/${FileType.CACHE_EXPANDED.fileName}")
         maxAge = Settings.map["cache-max-age-days"]?.toInt() ?: 31
     }
 
