@@ -37,8 +37,8 @@ fun getQueryDir(name: String): File {
     return File("$queryPath/$prefix$name")
 }
 
-fun getDOIs(dir: File, fileName: String): MutableSet<String> {
-    val filePath = dir.absolutePath + "/" + fileName
+fun getDOIs(dir: File, fileType: FileType): MutableSet<String> {
+    val filePath = dir.absolutePath + "/" + fileType.fileName
     val doiFile = File(filePath)
     if (doiFile.exists() && doiFile.isFile && doiFile.canRead()) {
         return doiFile.readLines().map { it.uppercase() }.toMutableSet()
@@ -72,8 +72,8 @@ data class LitBallQuery(
     }
 
     fun syncBuffers() {
-        acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED.fileName).filter { it.isNotBlank() }.toMutableSet()
-        rejectedSet = getDOIs(getQueryDir(name), FileType.REJECTED.fileName).filter { it.isNotBlank() }.toMutableSet()
+        acceptedSet = getDOIs(getQueryDir(name), FileType.ACCEPTED).filter { it.isNotBlank() }.toMutableSet()
+        rejectedSet = getDOIs(getQueryDir(name), FileType.REJECTED).filter { it.isNotBlank() }.toMutableSet()
     }
 
     fun nrAccepted() = acceptedSet.size
@@ -219,7 +219,7 @@ data class LitBallQuery(
         // Result goes into paperDetailsList
         if (queryDir.isDirectory && queryDir.canRead()) {
             val matcher = StringPatternMatcher(setting)
-            val doiSet = getDOIs(queryDir, FileType.EXPANDED.fileName).toList()
+            val doiSet = getDOIs(queryDir, FileType.EXPANDED).toList()
             val result = agService.getPaperDetails(doiSet,
                 fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
             ) {

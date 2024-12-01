@@ -27,9 +27,9 @@ object QueryList {
                     id = index,
                     name = it.name.removePrefix(prefix),
                     status = mutableStateOf(getStatus(it)),
-                    acceptedSet = getDOIs(it, FileType.ACCEPTED.fileName).filter { doi -> doi.isNotBlank() }
+                    acceptedSet = getDOIs(it, FileType.ACCEPTED).filter { doi -> doi.isNotBlank() }
                         .toMutableSet(),
-                    rejectedSet = getDOIs(it, FileType.REJECTED.fileName).filter { doi -> doi.isNotBlank() }
+                    rejectedSet = getDOIs(it, FileType.REJECTED).filter { doi -> doi.isNotBlank() }
                         .toMutableSet(),
                 )
                 newQuery.setting = getSetting(it)
