@@ -75,7 +75,7 @@ tasks {
                     object DefaultScriptsData {
                         val scriptMap = mapOf<String, String>(
                     """.trimIndent())
-            scriptMap.toSortedMap().forEach { k, v ->
+            scriptMap.toSortedMap().forEach { (k, v) ->
                 val text = v.replace("\"\"\"", "longstringdelimiterreplacement")
                 srcFile.appendText("\"$k\" to \"\"\"${text}\"\"\",\n")
             }
