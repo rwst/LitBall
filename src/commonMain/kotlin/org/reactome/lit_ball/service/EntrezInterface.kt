@@ -1,12 +1,5 @@
 package org.reactome.lit_ball.service
 
-import kotlinx.serialization.Serializable
-import org.reactome.lit_ball.util.Logger
-import org.reactome.lit_ball.util.S2RetrofitHelper
-import retrofit2.HttpException
-import retrofit2.Response
-import retrofit2.http.*
-
 object EntrezInterface {
 
     // Copyright 2024 Ralf Stephan

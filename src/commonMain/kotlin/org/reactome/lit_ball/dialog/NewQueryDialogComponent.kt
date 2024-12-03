@@ -218,8 +218,7 @@ fun queryTypeComponent(
 
 @Composable
 fun queryCopyFromComponent(
-    copyFromValue: MutableState<String>,
-    copyFromWarningValue: MutableState<String?>
+    copyFromValue: MutableState<String>
 ) {
     val copyFromIsSetValue = rememberSaveable { mutableStateOf(false) }
 

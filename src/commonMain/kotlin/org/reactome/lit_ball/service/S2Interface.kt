@@ -56,14 +56,6 @@ object S2Interface {
         ): Response<PaperRefs>
     }
 
-    interface SinglePaperApi {
-        @GET("/graph/v1/paper/{paper_id}")
-        suspend fun get(
-            @Path("paper_id") paperId: String,
-            @Query("fields") fields: String,
-        ): Response<PaperDetails>
-    }
-
     interface BulkPaperApiBase {
         //suspend fun postRequest(map: Map<String, List<String>>, fields: String): Response<Any>?
     }
@@ -139,17 +131,6 @@ object S2Interface {
             api.getRequestWithToken(query, token, fields)
         else
             api.getRequest(query, fields)
-        if (result.isSuccessful) {
-            Logger.i(TAG, result.body().toString())
-            return result.body()
-        }
-        Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
-        throw HttpException(result)
-    }
-
-    suspend fun getSinglePaperDetails(paperId: String, fields: String): PaperDetails? {
-        val singlePaperApi = S2RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
-        val result = singlePaperApi.get(paperId, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()

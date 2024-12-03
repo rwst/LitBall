@@ -2,7 +2,6 @@ package org.reactome.lit_ball.util
 
 import org.testng.Assert
 import org.testng.annotations.Test
-import org.reactome.lit_ball.util
 
 class DateMatcherTest {
     data class TestData(

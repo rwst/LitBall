@@ -43,7 +43,7 @@ fun NewQueryDialog(
     val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
-    val copyFromWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    rememberSaveable { mutableStateOf(null) }
     val queryPath = Settings.map["path-to-queries"] ?: ""
 
     AlertDialog(
@@ -99,7 +99,7 @@ fun NewQueryDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
-                queryCopyFromComponent(copyFromValue, copyFromWarningValue)
+                queryCopyFromComponent(copyFromValue)
                 Spacer(modifier = Modifier.height(8.dp))
                 queryTypeComponent(typeValue, typeWarningValue)
                 Spacer(modifier = Modifier.height(8.dp))
