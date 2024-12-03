@@ -35,14 +35,14 @@ tasks {
                 }
             }
             main {
-                kotlin.srcDirs("src/commonMain/kotlin")
+                kotlin.srcDirs("src/main/kotlin")
             }
         }
     }
     register<Copy>("changes") {
         from(layout.projectDirectory.file("CHANGES.txt"))
         rename("CHANGES.txt", "Changes.kt")
-        into(layout.projectDirectory.file("src/commonMain/kotlin/org/reactome/lit_ball/common"))
+        into(layout.projectDirectory.file("src/main/kotlin/org/reactome/lit_ball/common"))
         filter { line ->
             when(line) {
                 "## START" -> """
@@ -68,7 +68,7 @@ tasks {
                     scriptMap[it.name] = it.readText()
                 }
             }
-            val srcFile = layout.projectDirectory.file("src/commonMain/kotlin/org/reactome/lit_ball/util/DefaultScriptsData.kt").asFile
+            val srcFile = layout.projectDirectory.file("src/main/kotlin/org/reactome/lit_ball/util/DefaultScriptsData.kt").asFile
             srcFile.writeText("""
                 package org.reactome.lit_ball.util
 
@@ -97,7 +97,7 @@ kotlin {
     project.sourceSets.create("commonTest")
     sourceSets {
         val main: KotlinSourceSet by getting {
-            kotlin.srcDirs("src/commonMain/kotlin/org/reactome/lit_ball")
+            kotlin.srcDirs("src/main/kotlin/org/reactome/lit_ball")
             resources.srcDirs("resources")
             dependencies {
                 //
