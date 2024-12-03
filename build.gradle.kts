@@ -35,14 +35,14 @@ tasks {
                 }
             }
             main {
-                kotlin.srcDirs("src/main/kotlin")
+                kotlin.srcDirs("src/commonMain/kotlin")
             }
         }
     }
     register<Copy>("changes") {
         from(layout.projectDirectory.file("CHANGES.txt"))
         rename("CHANGES.txt", "Changes.kt")
-        into(layout.projectDirectory.file("src/main/kotlin/org/reactome/lit_ball/common"))
+        into(layout.projectDirectory.file("src/commonMain/kotlin/org/reactome/lit_ball/common"))
         filter { line ->
             when(line) {
                 "## START" -> """
@@ -68,7 +68,7 @@ tasks {
                     scriptMap[it.name] = it.readText()
                 }
             }
-            val srcFile = layout.projectDirectory.file("src/main/kotlin/org/reactome/lit_ball/util/DefaultScriptsData.kt").asFile
+            val srcFile = layout.projectDirectory.file("src/commonMain/kotlin/org/reactome/lit_ball/util/DefaultScriptsData.kt").asFile
             srcFile.writeText("""
                 package org.reactome.lit_ball.util
 
@@ -97,7 +97,7 @@ kotlin {
     project.sourceSets.create("commonTest")
     sourceSets {
         val main: KotlinSourceSet by getting {
-            kotlin.srcDirs("src/main/kotlin")
+            kotlin.srcDirs("src/commonMain/kotlin")
             resources.srcDirs("resources")
             dependencies {
                 //
@@ -105,12 +105,13 @@ kotlin {
         }
         val commonTest: KotlinSourceSet by getting {
             kotlin.srcDirs("src/commonTest/kotlin")
-            kotlin.srcDirs("src/main/kotlin")
             dependencies {
                 implementation ("org.jetbrains.kotlin:kotlin-test-annotations-common:2.0.0-Beta4")
                 implementation ("org.jetbrains.kotlin:kotlin-test-common:2.0.0-Beta4")
                 implementation ("org.jetbrains.kotlin:kotlin-test:2.0.0-Beta4")
+                implementation("org.testng:testng:7.10.2")
             }
+            dependsOn(main)
         }
     }}
 
@@ -134,7 +135,6 @@ dependencies {
     implementation ("io.github.oshai:kotlin-logging-jvm:7.0.0")
     implementation("org.slf4j:slf4j-simple:2.1.0-alpha1")
     implementation("dev.dirs:directories:26")
-    implementation("org.testng:testng:7.10.2")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:$letsPlotKotlinVersion")
     implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
     implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
