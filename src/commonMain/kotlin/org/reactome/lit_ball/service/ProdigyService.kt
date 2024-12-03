@@ -6,7 +6,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball.common.Settings
-import org.reactome.lit_ball.model.AnnotatingRootStore
+import model.AnnotatingRootStore
 import org.reactome.lit_ball.util.Logger
 import java.io.BufferedReader
 import java.io.File

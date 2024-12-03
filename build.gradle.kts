@@ -97,7 +97,7 @@ kotlin {
     project.sourceSets.create("commonTest")
     sourceSets {
         val main: KotlinSourceSet by getting {
-            kotlin.srcDirs("src/commonMain/kotlin")
+            kotlin.srcDirs("src/commonMain/kotlin/org/reactome/lit_ball")
             resources.srcDirs("resources")
             dependencies {
                 //

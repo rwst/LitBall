@@ -1,6 +1,5 @@
 package org.reactome.lit_ball.model
 
-import RootType
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +12,7 @@ import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
+import window.RootType
 
 object Filtering2RootStore : ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())

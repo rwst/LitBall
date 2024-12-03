@@ -14,11 +14,11 @@ import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.window.AnnotatingRootContent
 import org.reactome.lit_ball.window.Filtering2RootContent
 import org.reactome.lit_ball.window.RootContent
+import window.RootType
 import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 
-enum class RootType { MAIN_ROOT, FILTER2_ROOT, ANNOTATE_ROOT }
 fun main() {
     application {
         val rootSwitch = remember { mutableStateOf(RootType.MAIN_ROOT) }

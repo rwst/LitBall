@@ -2,12 +2,12 @@
 
 package org.reactome.lit_ball.window
 
-import RootType
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import org.reactome.lit_ball.dialog.AnnotatingFilterDialog
 import org.reactome.lit_ball.dialog.BarChartDialog
-import org.reactome.lit_ball.model.AnnotatingRootStore
+import model.AnnotatingRootStore
+import window.RootType
 
 @Composable
 fun AnnotatingRootContent(

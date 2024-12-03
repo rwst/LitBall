@@ -2,7 +2,6 @@
 
 package org.reactome.lit_ball.window
 
-import RootType
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,6 +35,7 @@ import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
 import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.*
+import window.RootType
 
 private const val TAG = "Filtering2MainContent"
 

@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.geom.geomHistogram
 import org.jetbrains.letsPlot.letsPlot
 import org.jetbrains.letsPlot.scale.scaleXDateTime
 import org.jetbrains.letsPlot.skia.compose.PlotPanel
-import org.reactome.lit_ball.model.AnnotatingRootStore
+import model.AnnotatingRootStore
 
 fun createFigure(model: AnnotatingRootStore): Figure {
     val dateEpochs = model.getEpochs()

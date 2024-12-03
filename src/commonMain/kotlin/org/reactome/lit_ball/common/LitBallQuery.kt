@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
-import org.reactome.lit_ball.model.AnnotatingRootStore
+import model.AnnotatingRootStore
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.service.AGService

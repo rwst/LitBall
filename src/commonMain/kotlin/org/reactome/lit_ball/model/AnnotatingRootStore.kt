@@ -1,6 +1,5 @@
-package org.reactome.lit_ball.model
+package model
 
-import RootType
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,10 +12,14 @@ import kotlinx.datetime.LocalDate
 import org.reactome.lit_ball.common.FileType
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.common.Settings
+import org.reactome.lit_ball.model.ModelHandle
+import org.reactome.lit_ball.model.PaperListScreenState
+import org.reactome.lit_ball.model.PaperListScreenStore
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.toEpochMilliseconds
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
+import window.RootType
 
 
 object AnnotatingRootStore : ModelHandle {

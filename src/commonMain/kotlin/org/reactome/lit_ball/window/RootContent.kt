@@ -2,11 +2,11 @@
 
 package org.reactome.lit_ball.window
 
-import RootType
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import org.reactome.lit_ball.dialog.*
 import org.reactome.lit_ball.model.RootStore
+import window.RootType
 
 @Composable
 fun RootContent(

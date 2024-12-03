@@ -1,6 +1,5 @@
 package org.reactome.lit_ball.model
 
-import RootType
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import model.AnnotatingRootStore
 import org.reactome.lit_ball.common.*
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.util.CantHappenException
@@ -20,6 +20,7 @@ import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.RailItem
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
+import window.RootType
 import java.net.URI
 
 object RootStore {

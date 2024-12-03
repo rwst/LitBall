@@ -2,7 +2,6 @@
 
 package org.reactome.lit_ball.window
 
-import RootType
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,6 +28,7 @@ import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.setupLazyListScroller
 import org.reactome.lit_ball.window.components.*
+import window.RootType
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 private const val TAG = "MainContent"

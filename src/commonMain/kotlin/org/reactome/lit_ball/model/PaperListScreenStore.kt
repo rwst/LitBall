@@ -1,6 +1,5 @@
 package org.reactome.lit_ball.model
 
-import RootType
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +15,7 @@ import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.SortingControlItem
 import org.reactome.lit_ball.window.components.SortingType
+import window.RootType
 
 interface ModelHandle {
     fun refreshClassifierButton()
