@@ -1,6 +1,7 @@
 package org.reactome.lit_ball.dialog
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,16 +12,18 @@ import org.reactome.lit_ball.common.PaperList
 
 @Suppress("FunctionName")
 @Composable
-internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit, focusRequester: FocusRequester) {
+internal fun PaperDetailDialog(id: Int, onDoneClicked: () -> Unit, focusRequester: FocusRequester) {
     ScrollbarDialog(
         topComposable = {},
         scrollableContent = {
-            Text(
-                modifier = Modifier
-                    .padding(16.dp),
-                text = PaperList.pretty(id),
-                fontSize = 14.sp,
-            )
+            SelectionContainer {
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    text = PaperList.pretty(id),
+                    fontSize = 14.sp,
+                )
+            }
         },
         onDoneClicked = {
             onDoneClicked()
