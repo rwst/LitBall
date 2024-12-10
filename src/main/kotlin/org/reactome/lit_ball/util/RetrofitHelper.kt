@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit
 
 object S2RetrofitHelper {
     private const val BASE_URL = "https://api.semanticscholar.org/"
+//    private const val BASE_URL = "http://localhost:8000/"
     private const val USER_AGENT = "LitBall"
     private var logging = HttpLoggingInterceptor()
 

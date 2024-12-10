@@ -56,15 +56,29 @@ object S2Interface {
         ): Response<PaperRefs>
     }
 
+    @Serializable
+    data class MockDetails(
+        val status: String = "",
+        val received: String = "",
+        val requestLine: String = "",
+        val headers: String = "",
+    )
+
     interface BulkPaperApiBase {
         //suspend fun postRequest(map: Map<String, List<String>>, fields: String): Response<Any>?
+    }
+
+    interface MockDetailsApi : BulkPaperApiBase {
+        @POST("/graph/v1/paper/batch")
+        suspend fun postRequest(
+            @Body ids: Map<String, @JvmSuppressWildcards Any>,
+        ): Response<MockDetails>
     }
 
     interface BulkPaperDetailsApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
-            @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
-            @Query("fields") fields: String,
+            @Body ids: Map<String, @JvmSuppressWildcards Any>,
         ): Response<List<PaperDetails>>
     }
 
@@ -73,11 +87,12 @@ object S2Interface {
         fields: String
     ): List<PaperDetails>? {
         val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperDetailsApi::class.java)
-        val map = mapOf("ids" to ids)
-        val result = api.postRequest(map, fields)
+//        val api = S2RetrofitHelper.getBulkInstance().create(MockDetailsApi::class.java)
+        val map = mapOf("ids" to ids, "fields" to fields)
+        val result = api.postRequest(map)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
-            return result.body()
+            return result.body()// null
         }
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         throw HttpException(result)
