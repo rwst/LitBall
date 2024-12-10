@@ -38,7 +38,7 @@ object PaperList {
         this.query = query
         fileName = file.name
         path = file.absolutePath
-        readAcceptedFromFile(file, accepted)
+        readAcceptedDetailsFromFile(file, accepted)
     }
 
     fun toList(): List<Paper> {
@@ -67,7 +67,7 @@ object PaperList {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    suspend fun readAcceptedFromFile(file: File, accepted: MutableSet<String>?) {
+    suspend fun readAcceptedDetailsFromFile(file: File, accepted: MutableSet<String>?) {
         val json = ConfiguredJson.get()
         if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
 
@@ -91,7 +91,7 @@ object PaperList {
                     fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
                 ) {
                     val newPaper = Paper(id = maxId, details = it)
-                    newPaper.uppercaseDoi()
+                    newPaper.lowercaseDoi()
                     newPaper.setPaperIdFromDetails()
                     papers.add(newPaper)
                     list.add(newPaper.details)

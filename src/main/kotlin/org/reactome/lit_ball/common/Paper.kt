@@ -26,18 +26,18 @@ class Paper(
     }
 
     fun setPaperIdFromDetails(): Paper {
-        paperId = details.externalIds?.get("DOI")?.uppercase()
+        paperId = details.externalIds?.get("DOI")?.lowercase()
         if (paperId.isNullOrBlank()) {
-            paperId = "S2:${details.paperId}"
+            paperId = "s2:${details.paperId}"
         }
         return this
     }
 
-    fun uppercaseDoi(): Paper {
+    fun lowercaseDoi(): Paper {
         val extIds = details.externalIds?.toMutableMap()
         if (extIds != null) {
             val oldDoi = extIds["DOI"]
-            val doi = oldDoi?.uppercase()
+            val doi = oldDoi?.lowercase()
             if (doi != null && doi != oldDoi) {
                 extIds["DOI"] = doi
                 details.externalIds = extIds
@@ -53,14 +53,14 @@ fun idSetFromPaperDetailsList(pDList: List<S2Interface.PaperDetails>): MutableSe
 
 fun idListFromPaperDetailsList(pDList: List<S2Interface.PaperDetails>): List<String> {
     return pDList.map { pd ->
-        pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.uppercase() }
-        "S2:${pd.paperId}"
+        pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.lowercase() }
+        "s2:${pd.paperId?.lowercase()}"
     }
 }
 
 fun idListFromPaperRefs(refList: List<S2Interface.PaperFullId>): List<String> {
     return refList.map { pd ->
-        pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.uppercase() }
-        "S2:${pd.paperId}"
+        pd.externalIds?.get("DOI")?.let { if (it.isNotBlank()) return@map it.lowercase() }
+        "s2:${pd.paperId?.lowercase()}"
     }
 }

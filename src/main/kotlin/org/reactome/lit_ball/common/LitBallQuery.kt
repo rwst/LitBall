@@ -41,7 +41,7 @@ fun getDOIs(dir: File, fileType: FileType): MutableSet<String> {
     val filePath = dir.absolutePath + "/" + fileType.fileName
     val doiFile = File(filePath)
     if (doiFile.exists() && doiFile.isFile && doiFile.canRead()) {
-        return doiFile.readLines().map { it.uppercase() }.toMutableSet()
+        return doiFile.readLines().map { it.lowercase() }.toMutableSet()
     }
     return mutableSetOf()
 }
@@ -195,7 +195,7 @@ data class LitBallQuery(
             return
         }
         checkFileInDirectory(queryDir, FileType.EXPANDED)?.let { file ->
-            val text = newDoiSet.joinToString("\n").uppercase() + "\n"
+            val text = newDoiSet.joinToString("\n").lowercase() + "\n"
             status.value = try {
                 file.writeText(text)
                 lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
@@ -245,7 +245,7 @@ data class LitBallQuery(
             mutex.unlock()
             return
         }
-        uppercaseDois(paperDetailsList)
+        lowercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
         Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
         if (!auto)
@@ -268,7 +268,7 @@ data class LitBallQuery(
                 file.writeText(
                     json.encodeToString(
                         paperDetailsList.mapIndexed { idx, pd ->
-                            Paper(idx, pd).uppercaseDoi().setPaperIdFromDetails()
+                            Paper(idx, pd).lowercaseDoi().setPaperIdFromDetails()
                         })
                 )
                 mergeIntoArchive(paperDetailsList)
@@ -277,7 +277,7 @@ data class LitBallQuery(
                 mutex.unlock()
                 return
             }
-            val text = rejectedDOIs.joinToString("\n").uppercase() + "\n"
+            val text = rejectedDOIs.joinToString("\n").lowercase() + "\n"
             try {
                 File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
             } catch (e: Exception) {
@@ -305,7 +305,7 @@ data class LitBallQuery(
             details.addAll(list)
             file.writeText(
                 json.encodeToString(
-                    details.mapIndexed { idx, pd -> Paper(idx, pd).uppercaseDoi().setPaperIdFromDetails() })
+                    details.mapIndexed { idx, pd -> Paper(idx, pd).lowercaseDoi().setPaperIdFromDetails() })
             )
         }
     }
@@ -327,7 +327,7 @@ data class LitBallQuery(
         // Bail out on Cancel
         if (!result) return
         Logger.i(tag, "Retained ${paperDetailsList.size} records")
-        uppercaseDois(paperDetailsList)
+        lowercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
@@ -353,7 +353,7 @@ data class LitBallQuery(
         // Bail out on Cancel
         if (!result) return
         Logger.i(tag, "Retained ${paperDetailsList.size} records")
-        uppercaseDois(paperDetailsList)
+        lowercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
@@ -476,15 +476,15 @@ private fun sanitize(list: MutableList<S2Interface.PaperDetails>) {
     }
 }
 
-fun uppercaseDois(list: MutableList<S2Interface.PaperDetails>) {
+fun lowercaseDois(list: MutableList<S2Interface.PaperDetails>) {
     list.forEach {
         val extIds = it.externalIds?.toMutableMap()
         if (extIds != null) {
             val doi = extIds["DOI"]
             if (doi != null) {
-                val upperDoi = doi.uppercase()
-                if (doi != upperDoi) {
-                    extIds["DOI"] = upperDoi
+                val lowerDoi = doi.lowercase()
+                if (doi != lowerDoi) {
+                    extIds["DOI"] = lowerDoi
                     it.externalIds = extIds
                 }
             }

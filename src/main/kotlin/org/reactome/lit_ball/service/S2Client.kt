@@ -147,7 +147,7 @@ object S2Client : AGService {
         val indicatorTitle = "Downloading paper details"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
-            val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
+            val paperIds = ids.map { if (it.startsWith("s2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Interface.getBulkPaperDetails(paperIds, fields)
             }
@@ -236,7 +236,7 @@ object S2Client : AGService {
                 "citations for all accepted papers"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { dois ->
-            val paperIds = dois.map { if (it.startsWith("S2:")) it.substring(3) else it }
+            val paperIds = dois.map { if (it.startsWith("s2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Interface.getBulkPaperRefs(
                     paperIds,
@@ -266,7 +266,7 @@ object S2Client : AGService {
         val indicatorTitle = "Downloading similar papers"
         var index = 0
         doiSet.chunked(DETAILS_CHUNK_SIZE).forEach { ids ->
-            val paperIds = ids.map { if (it.startsWith("S2:")) it.substring(3) else it }
+            val paperIds = ids.map { if (it.startsWith("s2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Interface.getBulkRecommendedDetails(
                     paperIds,

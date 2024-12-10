@@ -1,4 +1,3 @@
- - copy/paste in paper detail dialog no longer working
  - TEST THIS: if 0 papers added in snowball, don't write expanded.txt, don't advance status
  - new query from old (allowing change of keywords but shortcutting some download)
  - new query from old (type 1,2,3 from type 1)
@@ -29,7 +28,7 @@ Features:
  - HTTP buffer
  - complain if Q1 date filter in wrong format
  - settings mutex
- - when annotate, why is S2 accessed again? because some accepted dois are defect
+ - on clicking Annotate: if papers not in archive: either 1. ask to dl or 2. have a frequency for doing auto
 
 Other ideas:
  - replace 404 msg with "Paper not found"
