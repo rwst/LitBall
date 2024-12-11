@@ -91,7 +91,7 @@ object PaperList {
                     fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
                 ) {
                     val newPaper = Paper(id = maxId, details = it)
-                    newPaper.setPaperIdFromDetails()
+                    newPaper.setPaperIdFromDetails().fixNullTldr()
                     papers.add(newPaper)
                     list.add(newPaper.details)
                     maxId += 1

@@ -22,13 +22,21 @@ class Paper(
 ) {
 
     override fun toString(): String {
-        return "Paper(details=$details, tag=$tag, flags=$flags)"
+        return "Paper(id=$id, details=$details, tag=$tag, flags=$flags, paperId=$paperId)"
     }
 
     fun setPaperIdFromDetails(): Paper {
         paperId = details.externalIds?.get("DOI")?.lowercase()
         if (paperId.isNullOrBlank()) {
             paperId = "s2:${details.paperId}"
+        }
+        return this
+    }
+
+    fun fixNullTldr(): Paper {
+        val tldr = details.tldr
+        if (tldr != null && tldr.get("text") == null) {
+            details.tldr = null
         }
         return this
     }
