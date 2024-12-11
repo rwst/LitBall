@@ -78,8 +78,10 @@ object S2Interface {
     interface BulkPaperDetailsApi : BulkPaperApiBase {
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
+            @QueryMap params: Map<String, String>,
             @Body ids: Map<String, @JvmSuppressWildcards Any>,
         ): Response<List<PaperDetails>>
+
     }
 
     suspend fun getBulkPaperDetails(
@@ -88,8 +90,9 @@ object S2Interface {
     ): List<PaperDetails>? {
         val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperDetailsApi::class.java)
 //        val api = S2RetrofitHelper.getBulkInstance().create(MockDetailsApi::class.java)
-        val map = mapOf("ids" to ids, "fields" to fields)
-        val result = api.postRequest(map)
+        val qmap = mapOf("fields" to fields)
+        val map = mapOf("ids" to ids)
+        val result = api.postRequest(qmap, map)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()// null
