@@ -167,7 +167,7 @@ class PaperListHandle {
             if (it.tag == newTag)
                 it
             else
-                Paper(it.id, it.details, newTag, it.flags).lowercaseDoi().setPaperIdFromDetails()
+                Paper(it.id, it.details, newTag, it.flags).setPaperIdFromDetails()
         }
         fullList = list
     }

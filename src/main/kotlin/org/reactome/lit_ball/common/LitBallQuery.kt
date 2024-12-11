@@ -268,7 +268,7 @@ data class LitBallQuery(
                 file.writeText(
                     json.encodeToString(
                         paperDetailsList.mapIndexed { idx, pd ->
-                            Paper(idx, pd).lowercaseDoi().setPaperIdFromDetails()
+                            Paper(idx, pd).setPaperIdFromDetails()
                         })
                 )
                 mergeIntoArchive(paperDetailsList)
@@ -305,7 +305,7 @@ data class LitBallQuery(
             details.addAll(list)
             file.writeText(
                 json.encodeToString(
-                    details.mapIndexed { idx, pd -> Paper(idx, pd).lowercaseDoi().setPaperIdFromDetails() })
+                    details.mapIndexed { idx, pd -> Paper(idx, pd).setPaperIdFromDetails() })
             )
         }
     }

@@ -32,19 +32,6 @@ class Paper(
         }
         return this
     }
-
-    fun lowercaseDoi(): Paper {
-        val extIds = details.externalIds?.toMutableMap()
-        if (extIds != null) {
-            val oldDoi = extIds["DOI"]
-            val doi = oldDoi?.lowercase()
-            if (doi != null && doi != oldDoi) {
-                extIds["DOI"] = doi
-                details.externalIds = extIds
-            }
-        }
-        return this
-    }
 }
 
 fun idSetFromPaperDetailsList(pDList: List<S2Interface.PaperDetails>): MutableSet<String> {

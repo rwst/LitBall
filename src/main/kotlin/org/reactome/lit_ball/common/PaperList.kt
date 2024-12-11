@@ -91,7 +91,6 @@ object PaperList {
                     fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
                 ) {
                     val newPaper = Paper(id = maxId, details = it)
-                    newPaper.lowercaseDoi()
                     newPaper.setPaperIdFromDetails()
                     papers.add(newPaper)
                     list.add(newPaper.details)
