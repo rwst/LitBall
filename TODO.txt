@@ -1,3 +1,9 @@
+ - investigate rejected papers in WNV query
+ - query type 3: accepted get presented again, even rejected get presented?
+ - query type 3: initial accepted not accessible
+ - filter reject does not work
+ - 's2:null' in rejected.txt
+ - sort annotated by unannotated first
  - TEST THIS: if 0 papers added in snowball, don't write expanded.txt, don't advance status
  - new query from old (allowing change of keywords but shortcutting some download)
  - new query from old (type 1,2,3 from type 1)
