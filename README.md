@@ -11,15 +11,11 @@ Please see https://litball.readthedocs.io/ for the documentation.
 
 LitBall uses [Kotlin/Compose](https://www.jetbrains.com/lp/compose-mpp/). The only way to install LitBall at the moment is by creating a LitBall project in (free) IntelliJ IDEA, using this Github repo.
 
-## Quick Install
-Download link: https://github.com/rwst/LitBall/releases/ 
-
-Optionally, if you want to use AI filters, you need the YDF package, see https://github.com/google/yggdrasil-decision-forests
-
 ## LitBall Configuration
 See Settings on the Main screen. The first path will be the directory that holds your current queries. Changing this will read and display all queries in that directory.
 
 ## Quick Start
+- Insert your Semantic Scholar API key in Settings on the Main screen
 - Click on New Query
 - Name your query
 - Input DOIs of starting papers (1-10)
