@@ -219,7 +219,7 @@ data class LitBallQuery(
         // Result goes into paperDetailsList
         if (queryDir.isDirectory && queryDir.canRead()) {
             val matcher = StringPatternMatcher(setting)
-            val doiSet = getDOIs(queryDir, FileType.EXPANDED).toList()
+            val doiSet = getDOIs(queryDir, FileType.EXPANDED).minus(acceptedSet).minus(rejectedSet).toList()
             val result = agService.getPaperDetails(doiSet,
                 fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
             ) {
