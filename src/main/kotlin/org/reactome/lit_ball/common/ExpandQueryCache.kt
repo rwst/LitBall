@@ -46,8 +46,8 @@ object ExpandQueryCache {
     fun add(doi: String, refs: S2Interface.PaperRefs) {
         val json = ConfiguredUglyJson.get()
         val dois: MutableSet<String> = mutableSetOf()
-        dois.addAll(refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
-        dois.addAll(refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.uppercase() } ?: emptyList())
+        dois.addAll(refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.lowercase() } ?: emptyList())
+        dois.addAll(refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.lowercase() } ?: emptyList())
         file.appendText(json.encodeToString(Pair(doi, dois.toList())) + "\n")
     }
 }
