@@ -152,23 +152,20 @@ data class LitBallQuery(
         val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
         var nulls = 0
         val size = missingAccepted.size
-        val result = agService.getRefs(missingAccepted.toList()) { doi, refs ->
-            val rlist = refs.citations?.let { idListFromPaperRefs(it) } ?: emptyList()
-            val clist = refs.references?.let { idListFromPaperRefs(it) } ?: emptyList()
-            if (rlist.isEmpty() && clist.isEmpty())
-                nulls += 1
-            doiSet.addAll(rlist)
-            doiSet.addAll(clist)
-            ExpandQueryCache.add(doi, refs)
+        var result = true
+        if (size != 0) {
+            result = agService.getRefs(missingAccepted.toList()) { doi, refs ->
+                val rlist = refs.citations?.let { idListFromPaperRefs(it) } ?: emptyList()
+                val clist = refs.references?.let { idListFromPaperRefs(it) } ?: emptyList()
+                if (rlist.isEmpty() && clist.isEmpty())
+                    nulls += 1
+                doiSet.addAll(rlist)
+                doiSet.addAll(clist)
+                ExpandQueryCache.add(doi, refs)
+            }
         }
         if (!result) return
         Logger.i(tag, "Received ${doiSet.size} DOIs")
-        if (missingAccepted.isEmpty()) {
-            if (!auto)
-                RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
-            status.value = QueryStatus.FILTERED2
-            return
-        }
         val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
         if (auto && newDoiSet.size > EXPLODED_LIMIT) {
             status.value = QueryStatus.EXPLODED
@@ -176,7 +173,7 @@ data class LitBallQuery(
         }
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
         if (!auto) {
-            if (nulls == size)
+            if (size != 0 && nulls == size)
                 RootStore.setInformationalDialog(
                     """
                     None of the $size DOIs was found on Semantic
@@ -188,7 +185,7 @@ data class LitBallQuery(
             else
                 RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
         }
-        if (nulls == size) {
+        if (newDoiSet.isEmpty() && size != 0 && nulls == size) {
             if (!auto)
                 RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
             status.value = QueryStatus.FILTERED2
@@ -204,7 +201,6 @@ data class LitBallQuery(
                 handleException(e)
                 QueryStatus.FILTERED2
             }
-//            RootStore.refreshList()
         }
     }
 
