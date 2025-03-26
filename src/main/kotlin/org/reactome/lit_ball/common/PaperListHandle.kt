@@ -140,7 +140,7 @@ class PaperListHandle {
      */
     fun setFullAllTags(tag: Tag) {
         val list = fullList.toMutableList()
-        list.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.uppercase()) }
+        list.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
         fullList = list.toList()
     }
 
@@ -150,7 +150,7 @@ class PaperListHandle {
                 if (p.tag == tag)
                     p
                 else
-                    Paper(p.id, p.details, tag, p.flags, p.details.externalIds?.get("DOI")?.uppercase())
+                    Paper(p.id, p.details, tag, p.flags, p.details.externalIds?.get("DOI")?.lowercase())
             }
             filteredList = list
         }
@@ -177,7 +177,7 @@ class PaperListHandle {
             if (it.tag == tag)
                 it
             else
-                Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.uppercase())
+                Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase())
         }
     }
 
