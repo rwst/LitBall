@@ -164,13 +164,13 @@ data class LitBallQuery(
             }
             if (!agServiceStatus) return
         }
-        Logger.i(tag, "Received ${allLinkedDois.size} DOIs")
+        Logger.i(tag, "New snowball size: ${allLinkedDois.size}")
         val newDoiSet = allLinkedDois.minus(acceptedSet).minus(rejectedSet)
         if (auto && newDoiSet.size > EXPLODED_LIMIT) {
             status.value = QueryStatus.EXPLODED
             return
         }
-        Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
+        Logger.i(tag, "${newDoiSet.size} new DOIs. Writing to expanded...")
         if (!auto) {
             if (nrMissing != 0 && nulls == nrMissing)
                 RootStore.setInformationalDialog(
@@ -182,7 +182,13 @@ data class LitBallQuery(
                 """.trimIndent()
                 )
             else
-                RootStore.setInformationalDialog("Received ${allLinkedDois.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
+                RootStore.setInformationalDialog(
+                    """
+                    Accepted Dois: ${acceptedSet.size}. Not cached: $nrMissing
+                    Updated snowball size: ${allLinkedDois.size}
+                    New DOIs: ${newDoiSet.size}. Writing to expanded...
+                """.trimIndent()
+                )
         }
         if (newDoiSet.isEmpty() && nrMissing != 0 && nulls == nrMissing) {
             if (!auto)
