@@ -149,43 +149,42 @@ data class LitBallQuery(
         val tag = "EXPAND"
         val queryDir = getQueryDir(name)
         ExpandQueryCache.init(queryDir)
-        val (missingAccepted, doiSet) = ExpandQueryCache.get(acceptedSet)
+        val (missingAccepted, allLinkedDois) = ExpandQueryCache.get(acceptedSet)
         var nulls = 0
-        val size = missingAccepted.size
-        var result = true
-        if (size != 0) {
-            result = agService.getRefs(missingAccepted.toList()) { doi, refs ->
+        val nrMissing = missingAccepted.size
+        if (nrMissing != 0) {
+            val agServiceStatus = agService.getRefs(missingAccepted.toList()) { doi, refs ->
                 val rlist = refs.citations?.let { idListFromPaperRefs(it) } ?: emptyList()
                 val clist = refs.references?.let { idListFromPaperRefs(it) } ?: emptyList()
                 if (rlist.isEmpty() && clist.isEmpty())
                     nulls += 1
-                doiSet.addAll(rlist)
-                doiSet.addAll(clist)
+                allLinkedDois.addAll(rlist)
+                allLinkedDois.addAll(clist)
                 ExpandQueryCache.add(doi, refs)
             }
+            if (!agServiceStatus) return
         }
-        if (!result) return
-        Logger.i(tag, "Received ${doiSet.size} DOIs")
-        val newDoiSet = doiSet.minus(acceptedSet).minus(rejectedSet)
+        Logger.i(tag, "Received ${allLinkedDois.size} DOIs")
+        val newDoiSet = allLinkedDois.minus(acceptedSet).minus(rejectedSet)
         if (auto && newDoiSet.size > EXPLODED_LIMIT) {
             status.value = QueryStatus.EXPLODED
             return
         }
         Logger.i(tag, "${newDoiSet.size} new DOIs received. Writing to expanded...")
         if (!auto) {
-            if (size != 0 && nulls == size)
+            if (nrMissing != 0 && nulls == nrMissing)
                 RootStore.setInformationalDialog(
                     """
-                    None of the $size DOIs was found on Semantic
+                    None of the $nrMissing DOIs was found on Semantic
                     Scholar. Please check:
                     1. are you searching outside the biomed or compsci fields?
                     2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
                 """.trimIndent()
                 )
             else
-                RootStore.setInformationalDialog("Received ${doiSet.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
+                RootStore.setInformationalDialog("Received ${allLinkedDois.size} DOIs\n\n${newDoiSet.size} new DOIs received. Writing to expanded...")
         }
-        if (newDoiSet.isEmpty() && size != 0 && nulls == size) {
+        if (newDoiSet.isEmpty() && nrMissing != 0 && nulls == nrMissing) {
             if (!auto)
                 RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
             status.value = QueryStatus.FILTERED2
