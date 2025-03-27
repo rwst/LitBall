@@ -80,7 +80,7 @@ object PaperList {
         }
         papers.forEach { it.setPaperIdFromDetails() }
         accepted?.let {
-            papers = papers.filter { it.paperId in accepted }.toMutableList()
+            papers = papers.distinctBy { it.paperId }.filter { it.paperId in accepted }.toMutableList()
             var maxId = papers.size
             val acceptedWithDetails = papers.map { it.paperId ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
