@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import model.AnnotatingRootStore
 import org.reactome.lit_ball.common.Paper
 import org.reactome.lit_ball.common.PaperList
 import org.reactome.lit_ball.dialog.FlagBoxes
-import model.AnnotatingRootStore
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser
 import org.reactome.lit_ball.util.setupLazyListScroller
@@ -136,9 +136,15 @@ fun CardWithFlagBoxes(
     val year = item.details.publicationDate?.substringBefore("-") ?: ""
     val cardYear = if (year == "null") "" else year
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
+    val hasFlagSet = item.flags.isNotEmpty()
     Card(
         elevation = 4.dp,
-        backgroundColor = if (!isReview) Color.White else Color.LightGray,
+        backgroundColor = when {
+            !isReview && !hasFlagSet -> Color.White
+            !isReview && hasFlagSet -> Color(red = 233, green = 233, blue = 233)
+            isReview && !hasFlagSet -> Color.LightGray
+            else -> Color(red = 189, green = 189, blue = 189)
+        },
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
