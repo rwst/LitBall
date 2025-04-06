@@ -37,8 +37,9 @@ object AnnotatingRootStore : ModelHandle {
     val railItems: List<RailItem> = listOf(
         RailItem("Stats", "Publication date statistics", Icons.BarChart, 0) { setStat(true) },
         RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Save, 1) { doSave() },
-        RailItem("Export", "Write ${FileType.EXPORTED_CSV.fileName}", Icons.ExportNotes, 2) { doExport() },
+        RailItem("Export\nCSV", "Write ${FileType.EXPORTED_CSV.fileName}", Icons.ExportNotes, 2) { doExport() },
         RailItem("Export\nText", "Write ${FileType.EXPORTED_JSONL.fileName}", Icons.ExportNotes, 2) { doExportText() },
+        RailItem("Export\nto BibTeX", "Write ${FileType.EXPORTED_BIBTEX.fileName}", Icons.ExportNotes, 2) { doExportBibTex() },
         RailItem(
             "Main",
             "Save and go back\nto main screen",
@@ -88,6 +89,12 @@ object AnnotatingRootStore : ModelHandle {
     private fun doExportText() {
         scope?.launch(Dispatchers.IO) {
             PaperList.exportText()
+        }
+    }
+
+    private fun doExportBibTex() {
+        scope?.launch(Dispatchers.IO) {
+            PaperList.exportBibTex()
         }
     }
 

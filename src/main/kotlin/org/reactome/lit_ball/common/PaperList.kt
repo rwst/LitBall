@@ -8,6 +8,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromStream
+import org.apache.jena.vocabulary.OWLResults.output
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.PaperListScreenStore
 import org.reactome.lit_ball.model.RootStore
@@ -261,6 +262,36 @@ object PaperList {
                 }
             }
         }
+    }
+
+    fun exportBibTex() {
+        val pathPrefix = path?.substringBeforeLast("/")
+        val exportedPath = "$pathPrefix/${FileType.EXPORTED_BIBTEX.fileName}"
+        File(exportedPath).writeText("")
+        var out = ""
+        listHandle.getFullList().forEachIndexed { index, thePaper ->
+            var output = "@article{${query.name}-${index},\n"
+            thePaper.details.title.let { output += "title = {${it}},\n" }
+            thePaper.details.abstract?.let { output += "abstract = {${it}},\n" }
+            thePaper.paperId?.let {
+                output += if (it.startsWith("10."))
+                    "doi = {${it}},\n"
+                else
+                    "url = {https://www.semanticscholar.org/paper/${it.substring(3)}},\n"
+            }
+            thePaper.details.externalIds?.let {
+                if (it.containsKey("PubMed"))
+                    output += "url = {https://pubmed.ncbi.nlm.nih.gov/${it["PubMed"]}/},\n"
+            }
+            if (thePaper.flags.isNotEmpty()) {
+                output += "keywords = "
+                thePaper.flags.forEach { flag -> output += "$flag, " }
+                output += "\n"
+            }
+            output += "}\n\n"
+            out += output
+        }
+        File(exportedPath).appendText(out)
     }
 
     fun setTag(id: Int, btn: Int) {
