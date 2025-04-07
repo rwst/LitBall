@@ -199,7 +199,7 @@ object PaperList {
         }
     }
 
-    private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,Scholar\n"
+    private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,SScholar,GScholar\n"
     fun exportAnnotated() {
         val pathPrefix = path?.substringBeforeLast("/")
         val exportedPath = "$pathPrefix/${FileType.EXPORTED_CSV.fileName}"
@@ -214,7 +214,8 @@ object PaperList {
         val revFile = File(exportedCatPath.replace("$", "Reviews"))
         revFile.writeText(CSV_HEADER)
         listHandle.getFullList().forEach {
-            val doi = it.paperId
+            val paperId = it.paperId
+            val doi = if (paperId?.startsWith("10.") == true) paperId else null
             val date = it.details.publicationDate ?: ""
             val pmid = it.details.externalIds?.get("PubMed")
             val pmc = it.details.externalIds?.get("PubMedCentral")
@@ -227,6 +228,7 @@ object PaperList {
                 .append(if (pmid != null) "https://pubmed.ncbi.nlm.nih.gov/$pmid/," else ",")
                 .append(if (pmc != null) "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC$pmc/," else ",")
                 .append(if (doi != null) "https://doi.org/$doi," else ",")
+                .append("https://www.semanticscholar.org/paper/${it.details.paperId},")
                 .append(
                     if (title.isEmpty()) "" else
                         "https://scholar.google.de/scholar?hl=en&as_sdt=0%2C5&q=${sanTitle.replace(" ", "+")}&btnG="
