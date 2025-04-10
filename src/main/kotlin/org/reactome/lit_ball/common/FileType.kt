@@ -11,6 +11,7 @@ enum class FileType(val fileName: String) {
     EXPORTED_BIBTEX("exported.bib"),
     EXPORTED_CSV("exported.csv"),
     EXPORTED_CAT_CSV("exported-$.csv"),
+    EXPORTED_UNTAGGED_CSV("exported-untagged.csv"),
     EXPORTED_JSONL("exported.jsonl"),
     CACHE_EXPANDED("expanded.cached.txt"),
     NONEWACCEPTED("no-new-accepted.txt"),

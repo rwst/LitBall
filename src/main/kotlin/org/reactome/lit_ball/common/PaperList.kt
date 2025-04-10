@@ -204,6 +204,8 @@ object PaperList {
         val pathPrefix = path?.substringBeforeLast("/")
         val exportedPath = "$pathPrefix/${FileType.EXPORTED_CSV.fileName}"
         File(exportedPath).writeText(CSV_HEADER)
+        val exportedUntaggedPath = "$pathPrefix/${FileType.EXPORTED_UNTAGGED_CSV.fileName}"
+        File(exportedUntaggedPath).writeText(CSV_HEADER)
         val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT_CSV.fileName}"
         val fileMap = mutableMapOf<String, File>()
         query.setting.annotationClasses.forEach {
@@ -236,8 +238,13 @@ object PaperList {
                 .append("\n")
                 .toString()
             File(exportedPath).appendText(outStr)
-            it.flags.forEach { flag ->
-                fileMap[flag]?.appendText(outStr)
+            if (it.flags.isEmpty()) {
+                File(exportedUntaggedPath).appendText(outStr)
+            }
+            else {
+                it.flags.forEach { flag ->
+                    fileMap[flag]?.appendText(outStr)
+                }
             }
             if (it.details.publicationTypes?.contains("Review") == true)
                 revFile.appendText(outStr)
