@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.window.components
+package window.components
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.input.key.*

@@ -1,12 +1,12 @@
-package org.reactome.lit_ball.service
+package service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.model.Filtering2RootStore
-import org.reactome.lit_ball.util.Logger
+import model.Filtering2RootStore
+import util.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -27,7 +27,7 @@ object YDFService {
         }
 
         val process =
-            executeCommand("${path}/predict --model=$modelPath --dataset=csv:$datasetPath --key=$key --output=csv:$resultPath")
+            executeCommand("$path/predict --model=$modelPath --dataset=csv:$datasetPath --key=$key --output=csv:$resultPath")
         if (!process.isAlive)
             return null
         val stderrReader = BufferedReader(InputStreamReader(process.errorStream))

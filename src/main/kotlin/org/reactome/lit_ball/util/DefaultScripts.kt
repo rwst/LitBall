@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.util
+package util
 
 import dev.dirs.ProjectDirectories
 import java.io.File

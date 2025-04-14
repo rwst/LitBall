@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.service
+package service
 
 object NLPService {
     private var initialized = false

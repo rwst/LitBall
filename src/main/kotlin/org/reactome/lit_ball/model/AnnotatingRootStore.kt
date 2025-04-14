@@ -12,13 +12,10 @@ import kotlinx.datetime.LocalDate
 import common.FileType
 import common.PaperList
 import common.Settings
-import org.reactome.lit_ball.model.ModelHandle
-import org.reactome.lit_ball.model.PaperListScreenState
-import org.reactome.lit_ball.model.PaperListScreenStore
-import org.reactome.lit_ball.util.SystemFunction
-import org.reactome.lit_ball.util.toEpochMilliseconds
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.RailItem
+import util.SystemFunction
+import util.toEpochMilliseconds
+import window.components.Icons
+import window.components.RailItem
 import window.RootType
 
 

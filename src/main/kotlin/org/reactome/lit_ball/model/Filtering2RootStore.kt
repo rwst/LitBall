@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.model
+package model
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -12,9 +12,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.reactome.lit_ball.util.SystemFunction
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.RailItem
+import util.SystemFunction
+import window.components.Icons
+import window.components.RailItem
 import window.RootType
 
 object Filtering2RootStore : ModelHandle {

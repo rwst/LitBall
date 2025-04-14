@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.dialog
+package dialog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.AlertDialog
@@ -24,9 +24,9 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.reactome.lit_ball.model.PaperListScreenStore
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.Tooltip
+import model.PaperListScreenStore
+import window.components.Icons
+import window.components.Tooltip
 
 @Composable
 private fun createWindow(

@@ -1,14 +1,14 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.focus.FocusRequester
-import org.reactome.lit_ball.dialog.ConfirmationDialog
-import org.reactome.lit_ball.dialog.InformationalDialog
-import org.reactome.lit_ball.dialog.PaperDetailDialog
-import org.reactome.lit_ball.dialog.ProgressIndicator
-import org.reactome.lit_ball.model.PaperListScreenStore
+import dialog.ConfirmationDialog
+import dialog.InformationalDialog
+import dialog.PaperDetailDialog
+import dialog.ProgressIndicator
+import model.PaperListScreenStore
 
 @Composable
 fun PaperListScreenEvents(

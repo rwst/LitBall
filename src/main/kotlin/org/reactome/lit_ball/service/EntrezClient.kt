@@ -1,11 +1,11 @@
-package org.reactome.lit_ball.service
+package service
 
 import kotlinx.coroutines.delay
 import common.QuerySetting
 import common.Settings
-import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.Logger
-import org.reactome.lit_ball.util.S2SearchExpression
+import model.RootStore
+import util.Logger
+import util.S2SearchExpression
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

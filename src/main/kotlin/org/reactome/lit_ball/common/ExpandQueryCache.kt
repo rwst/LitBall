@@ -1,9 +1,9 @@
 package common
 
 import kotlinx.serialization.encodeToString
-import org.reactome.lit_ball.service.S2Interface
-import org.reactome.lit_ball.util.ConfiguredJson
-import org.reactome.lit_ball.util.ConfiguredUglyJson
+import service.S2Interface
+import util.ConfiguredJson
+import util.ConfiguredUglyJson
 import java.io.File
 import java.util.*
 import kotlin.properties.Delegates

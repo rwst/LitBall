@@ -1,8 +1,8 @@
-package org.reactome.lit_ball.service
+package service
 
 import kotlinx.serialization.Serializable
-import org.reactome.lit_ball.util.Logger
-import org.reactome.lit_ball.util.S2RetrofitHelper
+import util.Logger
+import util.S2RetrofitHelper
 import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.http.*

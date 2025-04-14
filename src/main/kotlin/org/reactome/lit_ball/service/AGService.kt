@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.service
+package service
 
 import common.QuerySetting
 import common.Settings

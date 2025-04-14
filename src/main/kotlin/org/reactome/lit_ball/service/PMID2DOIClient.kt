@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.service
+package service
 
 val clients = listOf(S2PMID2DOIClient(), WDQSPMID2DOIClient())
 

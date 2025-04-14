@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window.components
+package window.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
@@ -25,7 +25,7 @@ fun Rail(
 
     NavigationRail {
         Image(
-            painterResource(org.reactome.lit_ball.window.components.Icons.Logo),
+            painterResource(window.components.Icons.Logo),
             contentDescription = null,
             modifier = Modifier.size(72.dp),
         )

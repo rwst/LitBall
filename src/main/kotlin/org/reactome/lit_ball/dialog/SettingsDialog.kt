@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.dialog
+package dialog
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +19,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import common.Settings
-import org.reactome.lit_ball.window.components.Tooltip
+import window.components.Tooltip
+import window.components.Icons
 import java.io.File
 
 @Composable
@@ -77,7 +78,7 @@ internal fun SettingsDialog(
                         Row {
                             Tooltip(text = Settings.helpText[key] ?: key, Modifier.align(Alignment.CenterVertically)) {
                                 Icon(
-                                    painterResource(org.reactome.lit_ball.window.components.Icons.Help),
+                                    painterResource(Icons.Help),
                                     contentDescription = "Query Settings",
                                     tint = Color.Gray,
                                     modifier = Modifier.size(20.dp)

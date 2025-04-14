@@ -10,10 +10,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import org.reactome.lit_ball.util.SystemFunction
-import org.reactome.lit_ball.window.AnnotatingRootContent
-import org.reactome.lit_ball.window.Filtering2RootContent
-import org.reactome.lit_ball.window.RootContent
+import util.SystemFunction
+import window.AnnotatingRootContent
+import window.Filtering2RootContent
+import window.RootContent
 import window.RootType
 import java.nio.file.Paths
 import kotlin.io.path.exists

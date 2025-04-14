@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
@@ -24,11 +24,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import common.LitBallQuery
 import common.QueryStatus
-import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.Logger
-import org.reactome.lit_ball.util.setupLazyListScroller
-import org.reactome.lit_ball.window.components.*
-import window.RootType
+import model.RootStore
+import util.Logger
+import util.setupLazyListScroller
+import window.components.*
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 private const val TAG = "MainContent"

@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.model
+package model
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -11,10 +11,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import common.Paper
 import common.PaperList
-import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.SortingControlItem
-import org.reactome.lit_ball.window.components.SortingType
+import dialog.ProgressIndicatorParameter
+import window.components.Icons
+import window.components.SortingControlItem
+import window.components.SortingType
 import window.RootType
 
 interface ModelHandle {

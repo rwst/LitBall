@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.window.components
+package window.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -11,7 +11,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.model.PaperListScreenStore
+import model.PaperListScreenStore
 
 @Suppress("FunctionName")
 @Composable

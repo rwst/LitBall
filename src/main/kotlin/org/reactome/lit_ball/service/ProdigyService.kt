@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.service
+package service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import common.Settings
 import model.AnnotatingRootStore
-import org.reactome.lit_ball.util.Logger
+import util.Logger
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -28,7 +28,7 @@ object ProdigyService {
             return null
         }
         val process =
-            executeCommand("${pythonPath}/bin/python3 -m $cmd $args", directory)
+            executeCommand("$pythonPath/bin/python3 -m $cmd $args", directory)
 
         if (!process.isAlive)
             return null

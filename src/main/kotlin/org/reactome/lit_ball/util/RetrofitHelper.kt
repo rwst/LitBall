@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.util
+package util
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

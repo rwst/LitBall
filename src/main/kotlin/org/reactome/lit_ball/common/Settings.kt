@@ -4,10 +4,10 @@ import dev.dirs.ProjectDirectories
 import dev.dirs.UserDirectories
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
-import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.ConfiguredJson
-import org.reactome.lit_ball.util.handleException
-import org.reactome.lit_ball.window.components.SortingType
+import model.RootStore
+import util.ConfiguredJson
+import util.handleException
+import window.components.SortingType
 import java.io.File
 import java.nio.file.Paths
 

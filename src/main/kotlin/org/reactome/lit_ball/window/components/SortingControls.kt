@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window.components
+package window.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size

@@ -3,6 +3,9 @@ package org.reactome.lit_ball.util
 import common.QuerySetting
 import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
+import util.OASearchExpression
+import util.S2SearchExpression
+import util.StringPatternMatcher
 
 class ExpressionTransformer {
     data class TestData(

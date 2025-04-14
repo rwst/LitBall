@@ -1,6 +1,6 @@
 @file:Suppress("ConstPropertyName")
 
-package org.reactome.lit_ball.window.components
+package window.components
 
 object Icons {
     const val ArrowBack = "drawable/arrow_back.svg"

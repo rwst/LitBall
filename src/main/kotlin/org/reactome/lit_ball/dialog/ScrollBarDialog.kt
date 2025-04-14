@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.dialog
+package dialog
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*

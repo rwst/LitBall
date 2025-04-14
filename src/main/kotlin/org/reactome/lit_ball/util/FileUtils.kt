@@ -1,6 +1,7 @@
-package org.reactome.lit_ball.util
+package util
 
 import common.FileType
+import util.handleException
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files

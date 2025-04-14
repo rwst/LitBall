@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.util
+package util
 
     object DefaultScriptsData {
         val scriptMap = mapOf<String, String>() }

@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
@@ -29,13 +29,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import common.Paper
 import common.Tag
-import org.reactome.lit_ball.dialog.RadioButtonOptions
-import org.reactome.lit_ball.model.Filtering2RootStore
-import org.reactome.lit_ball.util.SystemFunction
-import org.reactome.lit_ball.util.openInBrowser
-import org.reactome.lit_ball.util.setupLazyListScroller
-import org.reactome.lit_ball.window.components.*
-import window.RootType
+import dialog.RadioButtonOptions
+import model.Filtering2RootStore
+import util.SystemFunction
+import util.openInBrowser
+import util.setupLazyListScroller
+import window.components.*
 
 private const val TAG = "Filtering2MainContent"
 

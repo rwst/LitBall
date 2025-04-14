@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.dialog
+package dialog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -16,9 +16,9 @@ import common.ArticleType
 import common.QueryList
 import common.QueryType
 import common.Settings
-import org.reactome.lit_ball.service.getDOIsforPMIDs
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.Tooltip
+import service.getDOIsforPMIDs
+import window.components.Icons
+import window.components.Tooltip
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 

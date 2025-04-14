@@ -2,10 +2,10 @@ package common
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
-import org.reactome.lit_ball.model.RootStore
-import org.reactome.lit_ball.util.handleException
-import org.reactome.lit_ball.util.makeQueryDir
-import org.reactome.lit_ball.window.components.SortingType
+import model.RootStore
+import util.handleException
+import util.makeQueryDir
+import window.components.SortingType
 import java.io.File
 
 const val DAY_IN_MS = 1000L * 60 * 60 * 24

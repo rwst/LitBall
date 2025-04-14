@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.window.components
+package window.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import common.PaperList
-import org.reactome.lit_ball.model.PaperListScreenStore
+import model.PaperListScreenStore
 
 @Composable
 fun paperListHeader(

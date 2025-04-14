@@ -3,6 +3,7 @@ package org.reactome.lit_ball.util
 import common.QuerySetting
 import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
+import util.StringPatternMatcher
 
 class KeywordMatcherTest {
     data class TestData(

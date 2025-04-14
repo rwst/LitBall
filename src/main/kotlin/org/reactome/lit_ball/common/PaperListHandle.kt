@@ -1,6 +1,6 @@
 package common
 
-import org.reactome.lit_ball.window.components.SortingType
+import window.components.SortingType
 
 /**
  * Paper list handle behaves as full paper list, unless filtered list is set.

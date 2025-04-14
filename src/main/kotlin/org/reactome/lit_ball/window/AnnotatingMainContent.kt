@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
@@ -31,12 +31,11 @@ import kotlinx.coroutines.launch
 import model.AnnotatingRootStore
 import common.Paper
 import common.PaperList
-import org.reactome.lit_ball.dialog.FlagBoxes
-import org.reactome.lit_ball.util.SystemFunction
-import org.reactome.lit_ball.util.openInBrowser
-import org.reactome.lit_ball.util.setupLazyListScroller
-import org.reactome.lit_ball.window.components.*
-import window.RootType
+import dialog.FlagBoxes
+import util.SystemFunction
+import util.openInBrowser
+import util.setupLazyListScroller
+import window.components.*
 
 private const val TAG = "AnnotatingMainContent"
 

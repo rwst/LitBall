@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.window.components
+package window.components
 
 data class RailItem(
     val text: String,

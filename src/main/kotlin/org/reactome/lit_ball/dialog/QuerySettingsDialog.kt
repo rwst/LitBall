@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.dialog
+package dialog
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -17,10 +17,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import common.LitBallQuery
-import org.reactome.lit_ball.util.StringPatternMatcher
-import org.reactome.lit_ball.util.splitToSet
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.Tooltip
+import util.StringPatternMatcher
+import util.splitToSet
+import window.components.Icons
+import window.components.Tooltip
 
 @Composable
 fun QuerySettingsDialog(

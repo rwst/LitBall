@@ -1,12 +1,11 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
-import org.reactome.lit_ball.dialog.Filtering2FilterDialog
-import org.reactome.lit_ball.model.Filtering2RootStore
-import window.RootType
+import dialog.Filtering2FilterDialog
+import model.Filtering2RootStore
 
 @Composable
 fun Filtering2RootContent(

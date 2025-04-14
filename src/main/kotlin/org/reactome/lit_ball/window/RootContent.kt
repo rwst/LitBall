@@ -1,12 +1,14 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
-import org.reactome.lit_ball.dialog.*
-import org.reactome.lit_ball.model.RootStore
-import window.RootType
+import dialog.*
+import dialog.AboutDialog
+import dialog.ConfirmationDialog
+import dialog.InformationalDialog
+import model.RootStore
 
 @Composable
 fun RootContent(

@@ -1,13 +1,12 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.window
+package window
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
-import org.reactome.lit_ball.dialog.AnnotatingFilterDialog
-import org.reactome.lit_ball.dialog.BarChartDialog
+import dialog.AnnotatingFilterDialog
+import dialog.BarChartDialog
 import model.AnnotatingRootStore
-import window.RootType
 
 @Composable
 fun AnnotatingRootContent(

@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package org.reactome.lit_ball.dialog
+package dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -1,8 +1,8 @@
 package common
 
 import kotlinx.serialization.Serializable
-import org.reactome.lit_ball.util.ConfiguredJson
-import org.reactome.lit_ball.util.Logger
+import util.ConfiguredJson
+import util.Logger
 import java.io.File
 
 @Serializable

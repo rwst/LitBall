@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.model
+package model
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -10,16 +10,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import model.AnnotatingRootStore
-import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
-import org.reactome.lit_ball.util.CantHappenException
-import org.reactome.lit_ball.util.DefaultScripts
-import org.reactome.lit_ball.util.SystemFunction
-import org.reactome.lit_ball.util.openInBrowser
-import org.reactome.lit_ball.window.components.Icons
-import org.reactome.lit_ball.window.components.RailItem
-import org.reactome.lit_ball.window.components.SortingControlItem
-import org.reactome.lit_ball.window.components.SortingType
+import dialog.ProgressIndicatorParameter
+import util.CantHappenException
+import util.DefaultScripts
+import util.SystemFunction
+import util.openInBrowser
+import window.components.Icons
+import window.components.RailItem
+import window.components.SortingControlItem
+import window.components.SortingType
 import window.RootType
 import java.net.URI
 

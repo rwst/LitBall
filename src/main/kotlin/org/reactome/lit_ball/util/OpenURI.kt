@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.util
+package util
 
 import java.awt.Desktop
 import java.net.URI

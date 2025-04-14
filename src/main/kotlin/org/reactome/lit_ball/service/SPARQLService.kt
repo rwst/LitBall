@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.service
+package service
 
 import org.apache.jena.sparql.exec.http.QueryExecutionHTTPBuilder
 
