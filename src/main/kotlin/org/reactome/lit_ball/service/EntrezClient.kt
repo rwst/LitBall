@@ -14,7 +14,7 @@ import javax.net.ssl.SSLException
 
 object EntrezClient : AGService {
     private const val DETAILS_CHUNK_SIZE = 30
-    const val SINGLE_QUERY_DELAY = 100L
+    private const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
     lateinit var strategy: DelayStrategy

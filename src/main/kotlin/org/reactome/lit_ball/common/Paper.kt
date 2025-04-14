@@ -35,7 +35,7 @@ class Paper(
 
     fun fixNullTldr(): Paper {
         val tldr = details.tldr
-        if (tldr != null && tldr.get("text") == null) {
+        if (tldr != null && tldr["text"] == null) {
             details.tldr = null
         }
         return this
