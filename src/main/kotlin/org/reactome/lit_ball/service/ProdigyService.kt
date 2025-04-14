@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED")
 package service
 
 import kotlinx.coroutines.Dispatchers

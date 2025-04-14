@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED")
+
 package service
 
 object EntrezInterface {

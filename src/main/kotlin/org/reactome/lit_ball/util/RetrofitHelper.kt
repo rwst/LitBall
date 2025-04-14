@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED")
 package util
 
 import okhttp3.OkHttpClient
