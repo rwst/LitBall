@@ -115,6 +115,20 @@ class KeywordMatcherTest {
                 "",
                 true
             ),
+            TestData(
+                "(Dengue || DENV) && (Antibody-dependent enhancement || Antibody Dependent Enhancement || ADE || autoimmune || autoimmunity || autoantibody || autoantibodies)",
+                "",
+                "Lorem DENV ipsum autoimmune stait",
+                "",
+                false
+            ),
+            TestData(
+                "(Dengue or DENV) and (Antibody-dependent enhancement or Antibody Dependent Enhancement or ADE or autoimmune or autoimmunity or autoantibody or autoantibodies)",
+                "",
+                "Lorem DENV ipsum autoimmune stait",
+                "",
+                true
+            ),
         )
     }
     @Test
