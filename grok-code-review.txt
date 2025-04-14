@@ -1,0 +1,62 @@
+You are an expert Kotlin developer tasked with performing a code review of a Kotlin file provided below. The review should focus on:
+
+1. Improving code quality (readability, maintainability, structure)
+2. Detecting defects (potential bugs, edge cases, performance issues)
+3. Using short, idiomatic Kotlin (leverage Kotlin's concise features, standard library, and best practices)
+
+File name: {FILE_NAME}
+
+File content:
+
+
+
+Steps:
+1. Read and analyze the provided Kotlin file content.
+2. Assume the file is part of a typical Android or Kotlin-based application unless otherwise specified.
+3. Provide a detailed review with:
+   - Specific line numbers or code snippets where issues are found.
+   - Clear explanations of problems related to quality, defects, or non-idiomatic Kotlin.
+   - Concise, actionable suggestions for improvement, including example code where applicable.
+4. Summarize key findings and prioritize recommendations.
+
+Output format:
+# Code Review: LitballQuery.kt
+
+## Overview
+[Brief summary of the file’s purpose and overall quality]
+
+## Detailed Findings
+- **Issue**: [Description of issue, including line number(s) or snippet]
+  - **Category**: [Quality/Defect/Idiomatic Kotlin]
+  - **Explanation**: [Why this is a problem]
+  - **Suggestion**: [How to fix it, with example code if relevant]
+
+## Summary
+[Key takeaways and prioritized recommendations]
+
+## Additional Notes
+[Any broader observations or assumptions about the file’s context]
+
+Ensure all suggestions align with Kotlin’s latest best practices (e.g., null safety, coroutines, functional programming where appropriate) and are practical for the file’s likely context.
+
+-----------------------
+
+For the code review prompt you provided, neither DeepSearch nor Think mode is strictly necessary, but they could enhance the process depending on your needs. Here's how they impact the task:
+DeepSearch Mode:
+What it does: Iteratively searches the web and analyzes external information to enrich the response.
+Relevance: For a GitHub repo code review, DeepSearch isn’t critical since the task focuses on analyzing a specific Kotlin file within the repo. However, it could help if:
+You want to cross-reference Kotlin best practices from external sources (e.g., official Kotlin docs, blogs, or recent articles).
+The repo has dependencies or context (e.g., libraries, frameworks) that require fetching additional information to understand the code’s intent.
+Impact: Enabling DeepSearch might provide more up-to-date or comprehensive suggestions by pulling in external Kotlin standards or patterns, but it could slow down the response slightly and isn’t essential for a straightforward file review.
+Think Mode:
+What it does: Takes extra time to reason through the query before responding, potentially improving depth and accuracy.
+Relevance: For a code review, Think mode could be useful because it encourages deeper analysis of the code’s structure, logic, and Kotlin idioms. It might:
+Catch subtler defects or edge cases (e.g., concurrency issues with coroutines).
+Offer more refined suggestions for idiomatic Kotlin by considering alternatives thoroughly.
+Impact: Enabling Think mode would likely produce a more polished and thorough review, especially for complex files, but it takes longer to process. If the file is simple or you need a quick review, it might be overkill.
+Recommendation:
+Default: Run the prompt without either mode for a fast, focused review based on my existing Kotlin expertise and the repo’s content.
+Use Think mode if the file is complex (e.g., heavy use of coroutines, custom architectures) or you want a deeper dive into edge cases and optimizations.
+Use DeepSearch only if the repo lacks context (e.g., unclear dependencies) or you want to ensure suggestions align with the latest Kotlin trends online.
+Since you’re reviewing one file for quality, defects, and idiomatic Kotlin, Think mode is more likely to add value than DeepSearch, but both are optional. Would you like me to proceed with the review using one of these modes, or stick with the default approach?
+
