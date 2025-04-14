@@ -50,14 +50,14 @@ data class LitBallQuery(
     var id: Int,
     val name: String = "",
     var type: QueryType = QueryType.SUPERVISED_SNOWBALLING,
-    var status: MutableState<QueryStatus> = mutableStateOf(QueryStatus.UNINITIALIZED),
+    val status: MutableState<QueryStatus> = mutableStateOf(QueryStatus.UNINITIALIZED),
     var setting: QuerySetting = QuerySetting(),
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
     var lastExpansionDate: Date? = null,
     var noNewAccepted: Boolean = false,
     var expSearchParams: Pair<String, BooleanArray>? = null,
-    var agService: AGService = getAGService(),
+    val agService: AGService = getAGService(),
 ) {
     init {
         setting.type = type
