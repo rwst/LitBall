@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package common
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -8,7 +8,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromStream
-import org.apache.jena.vocabulary.OWLResults.output
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.model.PaperListScreenStore
 import org.reactome.lit_ball.model.RootStore
@@ -36,7 +35,7 @@ object PaperList {
         }
 
     suspend fun setFromQuery(query: LitBallQuery, file: File, accepted: MutableSet<String>? = null) {
-        this.query = query
+        PaperList.query = query
         fileName = file.name
         path = file.absolutePath
         readAcceptedDetailsFromFile(file, accepted)

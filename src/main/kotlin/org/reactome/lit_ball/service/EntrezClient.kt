@@ -1,8 +1,8 @@
 package org.reactome.lit_ball.service
 
 import kotlinx.coroutines.delay
-import org.reactome.lit_ball.common.QuerySetting
-import org.reactome.lit_ball.common.Settings
+import common.QuerySetting
+import common.Settings
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.S2SearchExpression

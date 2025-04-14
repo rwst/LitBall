@@ -1,7 +1,7 @@
 package org.reactome.lit_ball.service
 
-import org.reactome.lit_ball.common.QuerySetting
-import org.reactome.lit_ball.common.Settings
+import common.QuerySetting
+import common.Settings
 
 interface AGService {
     suspend fun getBulkPaperSearch(

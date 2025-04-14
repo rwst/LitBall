@@ -19,9 +19,9 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.reactome.lit_ball.common.LitBallQuery
-import org.reactome.lit_ball.common.QueryStatus
-import org.reactome.lit_ball.common.QueryType
+import common.LitBallQuery
+import common.QueryStatus
+import common.QueryType
 import org.reactome.lit_ball.util.formatDateToyyyyMMMddFormat
 import org.reactome.lit_ball.window.MARGIN_SCROLLBAR
 

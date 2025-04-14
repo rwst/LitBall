@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.LitBallQuery
+import common.LitBallQuery
 import org.reactome.lit_ball.util.StringPatternMatcher
 import org.reactome.lit_ball.util.splitToSet
 import org.reactome.lit_ball.window.components.Icons

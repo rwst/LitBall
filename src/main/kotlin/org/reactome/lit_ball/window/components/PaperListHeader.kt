@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.common.PaperList
+import common.PaperList
 import org.reactome.lit_ball.model.PaperListScreenStore
 
 @Composable

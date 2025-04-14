@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.reactome.lit_ball.common.PaperList
+import common.PaperList
 
 @Suppress("FunctionName")
 @Composable

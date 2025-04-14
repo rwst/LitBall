@@ -18,10 +18,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.reactome.lit_ball.common.ArticleType
-import org.reactome.lit_ball.common.QueryList
-import org.reactome.lit_ball.common.QueryType
-import org.reactome.lit_ball.common.Settings
+import common.ArticleType
+import common.QueryList
+import common.QueryType
+import common.Settings
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.isWritable

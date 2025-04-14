@@ -3,7 +3,7 @@ package org.reactome.lit_ball.util
 import org.apache.commons.jexl3.JexlBuilder
 import org.apache.commons.jexl3.JexlException
 import org.apache.commons.jexl3.MapContext
-import org.reactome.lit_ball.common.QuerySetting
+import common.QuerySetting
 import java.util.*
 
 const val tag = "KeywordMatcher"

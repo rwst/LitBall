@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package common
 
 enum class ArticleType(val s2name: String) {
     ARTICLE("JournalArticle"),

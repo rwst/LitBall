@@ -1,6 +1,6 @@
 package org.reactome.lit_ball.util
 
-import org.reactome.lit_ball.common.QuerySetting
+import common.QuerySetting
 
 object OASearchExpression {
     val logicOpSymbols = listOf(" AND ", " OR ", " NOT ")

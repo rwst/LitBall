@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package common
 
 import kotlinx.serialization.Serializable
 

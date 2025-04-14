@@ -3,7 +3,7 @@ package org.reactome.lit_ball.util
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.reactome.lit_ball.BuildConfig
-import org.reactome.lit_ball.common.Settings
+import common.Settings
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit

@@ -1,8 +1,8 @@
 package org.reactome.lit_ball.service
 
 //import ktalex.dal.client.WorkClient
-import org.reactome.lit_ball.common.QuerySetting
-import org.reactome.lit_ball.common.Settings
+import common.QuerySetting
+import common.Settings
 
 object OpenAlexClient : AGService {
     private const val TAG = "OAClient"

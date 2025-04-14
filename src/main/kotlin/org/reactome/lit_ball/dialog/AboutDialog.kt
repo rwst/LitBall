@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.reactome.lit_ball.common.About
-import org.reactome.lit_ball.common.Changes
+import common.About
+import common.Changes
 
 @Suppress("FunctionName")
 @Composable

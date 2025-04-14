@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package common
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -420,6 +420,7 @@ data class LitBallQuery(
             val text = noNewAccepted.toString()
             file.writeText(text)
         }
+        // Update the last modified time of the accepted file to indicate when it was last processed
         val path = "${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}"
         val now = FileTime.fromMillis(System.currentTimeMillis())
         withContext(Dispatchers.IO) {

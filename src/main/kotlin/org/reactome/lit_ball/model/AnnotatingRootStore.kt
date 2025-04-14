@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
-import org.reactome.lit_ball.common.FileType
-import org.reactome.lit_ball.common.PaperList
-import org.reactome.lit_ball.common.Settings
+import common.FileType
+import common.PaperList
+import common.Settings
 import org.reactome.lit_ball.model.ModelHandle
 import org.reactome.lit_ball.model.PaperListScreenState
 import org.reactome.lit_ball.model.PaperListScreenStore

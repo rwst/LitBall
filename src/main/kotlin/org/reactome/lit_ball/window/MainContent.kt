@@ -22,8 +22,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.common.LitBallQuery
-import org.reactome.lit_ball.common.QueryStatus
+import common.LitBallQuery
+import common.QueryStatus
 import org.reactome.lit_ball.model.RootStore
 import org.reactome.lit_ball.util.Logger
 import org.reactome.lit_ball.util.setupLazyListScroller

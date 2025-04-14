@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.Tag
+import common.Paper
+import common.Tag
 import org.reactome.lit_ball.dialog.RadioButtonOptions
 import org.reactome.lit_ball.model.Filtering2RootStore
 import org.reactome.lit_ball.util.SystemFunction

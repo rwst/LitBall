@@ -1,6 +1,6 @@
 package org.reactome.lit_ball.util
 
-import org.reactome.lit_ball.common.QuerySetting
+import common.QuerySetting
 import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
 

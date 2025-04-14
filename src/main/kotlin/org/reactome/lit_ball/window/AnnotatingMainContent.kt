@@ -29,8 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import model.AnnotatingRootStore
-import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.PaperList
+import common.Paper
+import common.PaperList
 import org.reactome.lit_ball.dialog.FlagBoxes
 import org.reactome.lit_ball.util.SystemFunction
 import org.reactome.lit_ball.util.openInBrowser

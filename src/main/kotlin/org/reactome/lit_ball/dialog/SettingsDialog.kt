@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball.common.Settings
+import common.Settings
 import org.reactome.lit_ball.window.components.Tooltip
 import java.io.File
 

@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball.common.ArticleType
-import org.reactome.lit_ball.common.QueryList
-import org.reactome.lit_ball.common.QueryType
-import org.reactome.lit_ball.common.Settings
+import common.ArticleType
+import common.QueryList
+import common.QueryType
+import common.Settings
 import org.reactome.lit_ball.service.getDOIsforPMIDs
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.Tooltip

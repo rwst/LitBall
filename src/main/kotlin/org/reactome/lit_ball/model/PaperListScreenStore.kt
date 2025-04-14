@@ -9,8 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.reactome.lit_ball.common.Paper
-import org.reactome.lit_ball.common.PaperList
+import common.Paper
+import common.PaperList
 import org.reactome.lit_ball.dialog.ProgressIndicatorParameter
 import org.reactome.lit_ball.window.components.Icons
 import org.reactome.lit_ball.window.components.SortingControlItem

@@ -1,4 +1,4 @@
-package org.reactome.lit_ball.common
+package common
 
 enum class FileType(val fileName: String) {
     ACCEPTED("accepted.txt"),
