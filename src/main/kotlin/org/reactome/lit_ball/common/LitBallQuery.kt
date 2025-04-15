@@ -147,13 +147,15 @@ data class LitBallQuery(
 
     private suspend fun snowBall(auto: Boolean = false) {
         val tag = "EXPAND"
-        val queryDir = getQueryDir(name)
-        ExpandQueryCache.init(queryDir)
-        val (missingAccepted, allLinkedDois) = ExpandQueryCache.get(acceptedSet)
-        var nulls = 0
-        val nrMissing = missingAccepted.size
-        if (nrMissing != 0) {
-            val agServiceStatus = agService.getRefs(missingAccepted.toList()) { doi, refs ->
+        fun fetchMissingReferences(): Pair<Set<String>, MutableSet<String>> {
+            ExpandQueryCache.init(getQueryDir(name))
+            val (missingAccepted, allLinkedDois) = ExpandQueryCache.get(acceptedSet)
+            return Pair(missingAccepted, allLinkedDois)
+        }
+        suspend fun fetchMissingAccepted(missingAccepted: Set<String>, allLinkedDois: MutableSet<String>) :
+                Pair<Boolean, Int> {
+            var nulls = 0
+            return Pair(agService.getRefs(missingAccepted.toList()) { doi, refs ->
                 val rlist = refs.citations?.let { idListFromPaperRefs(it) } ?: emptyList()
                 val clist = refs.references?.let { idListFromPaperRefs(it) } ?: emptyList()
                 if (rlist.isEmpty() && clist.isEmpty())
@@ -161,18 +163,40 @@ data class LitBallQuery(
                 allLinkedDois.addAll(rlist)
                 allLinkedDois.addAll(clist)
                 ExpandQueryCache.add(doi, refs)
+            }, nulls)
+        }
+        fun writeExpandedFile(newDoiSet: Set<String>) {
+            checkFileInDirectory(getQueryDir(name), FileType.EXPANDED)?.let { file ->
+                val text = newDoiSet.joinToString("\n").lowercase() + "\n"
+                status.value = try {
+                    file.writeText(text)
+                    lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
+                    QueryStatus.EXPANDED
+                } catch (e: Exception) {
+                    handleException(e)
+                    QueryStatus.FILTERED2
+                }
             }
-            if (!agServiceStatus) return
+        }
+        val (missingAccepted, allLinkedDois) = fetchMissingReferences()
+        val nrMissing = missingAccepted.size
+        var allNullsMissing = false
+        if (nrMissing != 0) {
+            val (status, nulls) = fetchMissingAccepted(missingAccepted, allLinkedDois)
+            allNullsMissing = nulls == nrMissing
+            if (!status) return
         }
         Logger.i(tag, "New snowball size: ${allLinkedDois.size}")
+
         val newDoiSet = allLinkedDois.minus(acceptedSet).minus(rejectedSet)
         if (auto && newDoiSet.size > EXPLODED_LIMIT) {
             status.value = QueryStatus.EXPLODED
             return
         }
         Logger.i(tag, "${newDoiSet.size} new DOIs. Writing to expanded...")
+
         if (!auto) {
-            if (nrMissing != 0 && nulls == nrMissing)
+            if (nrMissing != 0 && allNullsMissing)
                 RootStore.setInformationalDialog(
                     """
                     None of the $nrMissing DOIs was found on Semantic
@@ -190,23 +214,13 @@ data class LitBallQuery(
                 """.trimIndent()
                 )
         }
-        if (newDoiSet.isEmpty() && nrMissing != 0 && nulls == nrMissing) {
+        if (newDoiSet.isEmpty() && nrMissing != 0 && allNullsMissing) {
             if (!auto)
                 RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
             status.value = QueryStatus.FILTERED2
             return
         }
-        checkFileInDirectory(queryDir, FileType.EXPANDED)?.let { file ->
-            val text = newDoiSet.joinToString("\n").lowercase() + "\n"
-            status.value = try {
-                file.writeText(text)
-                lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
-                QueryStatus.EXPANDED
-            } catch (e: Exception) {
-                handleException(e)
-                QueryStatus.FILTERED2
-            }
-        }
+        writeExpandedFile(newDoiSet)
     }
 
     suspend fun filter1(auto: Boolean = false) {
