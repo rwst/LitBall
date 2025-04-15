@@ -225,13 +225,9 @@ data class LitBallQuery(
     }
 
     suspend fun filter1(auto: Boolean = false) {
-        if (!mutex.tryLock()) return
-        return mutex.withLock {
-            val tag = "FILTER"
-            val queryDir = getQueryDir(name)
-            val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
-            val rejectedDOIs: Set<String>
-
+        val tag = "FILTER"
+        val queryDir = getQueryDir(name)
+        suspend fun fetchDetails(paperDetailsList: MutableList<S2Interface.PaperDetails>, rejectedDOIs : MutableSet<String>) : Boolean {
             // Load and match details of DOIs in expanded.txt
             // Result goes into paperDetailsList
             if (queryDir.isDirectory && queryDir.canRead()) {
@@ -251,22 +247,21 @@ data class LitBallQuery(
                 }
                 // Bail out on Cancel
                 if (!result) {
-                    return
+                    return false
                 }
                 Logger.i(tag, "Retained ${paperDetailsList.size} records")
                 val filteredDOIs = idListFromPaperDetailsList(paperDetailsList)
-                rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
+                rejectedDOIs.addAll(doiSet.toSet().minus(filteredDOIs.toSet()))
                 rejectedSet.addAll(rejectedDOIs)
             } else {
                 handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
-                return
+                return false
             }
             lowercaseDois(paperDetailsList)
             sanitize(paperDetailsList)
-            Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
-            if (!auto)
-                RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
-
+            return true
+        }
+        suspend fun writeFiltered(paperDetailsList: MutableList<S2Interface.PaperDetails>) : Boolean{
             // Write filtered.txt if new matches exist
             val json = ConfiguredJson.get()
             if (queryDir.isDirectory && queryDir.canWrite()) {
@@ -276,7 +271,7 @@ data class LitBallQuery(
                     status.value = QueryStatus.FILTERED2
                     noNewAccepted = true
                     writeNoNewAccepted()
-                    return
+                    return false
                 }
                 try {
                     val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
@@ -289,16 +284,35 @@ data class LitBallQuery(
                     mergeIntoArchive(paperDetailsList)
                 } catch (e: Exception) {
                     handleException(e)
-                    return
-                }
-                val text = rejectedDOIs.joinToString("\n").lowercase() + "\n"
-                try {
-                    File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
-                } catch (e: Exception) {
-                    handleException(e)
-                    return
+                    return false
                 }
             }
+            return true
+        }
+        fun writeRejected(rejectedDOIs : MutableSet<String>) : Boolean {
+            val text = rejectedDOIs.joinToString("\n").lowercase() + "\n"
+            try {
+                File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
+            } catch (e: Exception) {
+                handleException(e)
+                return false
+            }
+            return true
+        }
+        if (!mutex.tryLock()) return
+        return mutex.withLock {
+            val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
+            val rejectedDOIs = mutableSetOf<String>()
+
+            if (!fetchDetails(paperDetailsList, rejectedDOIs)) return
+
+            Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
+            if (!auto) {
+                RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
+            }
+
+            if (!writeFiltered(paperDetailsList)) return
+            if (!writeRejected(rejectedDOIs)) return
             File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
             status.value = QueryStatus.FILTERED1
         }
