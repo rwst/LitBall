@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
@@ -225,85 +226,82 @@ data class LitBallQuery(
 
     suspend fun filter1(auto: Boolean = false) {
         if (!mutex.tryLock()) return
-        val tag = "FILTER"
-        val queryDir = getQueryDir(name)
-        val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
-        val rejectedDOIs: Set<String>
+        return mutex.withLock {
+            val tag = "FILTER"
+            val queryDir = getQueryDir(name)
+            val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
+            val rejectedDOIs: Set<String>
 
-        // Load and match details of DOIs in expanded.txt
-        // Result goes into paperDetailsList
-        if (queryDir.isDirectory && queryDir.canRead()) {
-            val matcher = StringPatternMatcher(setting)
-            val doiSet = getDOIs(queryDir, FileType.EXPANDED).minus(acceptedSet).minus(rejectedSet).toList()
-            val result = agService.getPaperDetails(doiSet,
-                fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
-            ) {
-                val textsOfPaper: Set<String> = setOf(
-                    it.title ?: "",
-                    it.tldr?.get("text") ?: "",
-                    it.abstract ?: ""
-                )
-                if (matcher.match(textsOfPaper.joinToString(" "), it.title ?: ""))
-                    paperDetailsList.add(it)
-            }
-            // Bail out on Cancel
-            if (!result) {
-                mutex.unlock()
+            // Load and match details of DOIs in expanded.txt
+            // Result goes into paperDetailsList
+            if (queryDir.isDirectory && queryDir.canRead()) {
+                val matcher = StringPatternMatcher(setting)
+                val doiSet = getDOIs(queryDir, FileType.EXPANDED).minus(acceptedSet).minus(rejectedSet).toList()
+                val result = agService.getPaperDetails(
+                    doiSet,
+                    fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
+                ) {
+                    val textsOfPaper: Set<String> = setOf(
+                        it.title ?: "",
+                        it.tldr?.get("text") ?: "",
+                        it.abstract ?: ""
+                    )
+                    if (matcher.match(textsOfPaper.joinToString(" "), it.title ?: ""))
+                        paperDetailsList.add(it)
+                }
+                // Bail out on Cancel
+                if (!result) {
+                    return
+                }
+                Logger.i(tag, "Retained ${paperDetailsList.size} records")
+                val filteredDOIs = idListFromPaperDetailsList(paperDetailsList)
+                rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
+                rejectedSet.addAll(rejectedDOIs)
+            } else {
+                handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
                 return
             }
-            Logger.i(tag, "Retained ${paperDetailsList.size} records")
-            val filteredDOIs = idListFromPaperDetailsList(paperDetailsList)
-            rejectedDOIs = doiSet.toSet().minus(filteredDOIs.toSet())
-            rejectedSet.addAll(rejectedDOIs)
-        } else {
-            handleException(IOException("Cannot access directory ${queryDir.absolutePath}"))
-            mutex.unlock()
-            return
-        }
-        lowercaseDois(paperDetailsList)
-        sanitize(paperDetailsList)
-        Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
-        if (!auto)
-            RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
+            lowercaseDois(paperDetailsList)
+            sanitize(paperDetailsList)
+            Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
+            if (!auto)
+                RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
 
-        // Write filtered.txt if new matches exist
-        val json = ConfiguredJson.get()
-        if (queryDir.isDirectory && queryDir.canWrite()) {
-            if (paperDetailsList.isEmpty()) {
-                File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}").delete()
-                File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
-                status.value = QueryStatus.FILTERED2
-                noNewAccepted = true
-                writeNoNewAccepted()
-                mutex.unlock()
-                return
+            // Write filtered.txt if new matches exist
+            val json = ConfiguredJson.get()
+            if (queryDir.isDirectory && queryDir.canWrite()) {
+                if (paperDetailsList.isEmpty()) {
+                    File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}").delete()
+                    File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
+                    status.value = QueryStatus.FILTERED2
+                    noNewAccepted = true
+                    writeNoNewAccepted()
+                    return
+                }
+                try {
+                    val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
+                    file.writeText(
+                        json.encodeToString(
+                            paperDetailsList.mapIndexed { idx, pd ->
+                                Paper(idx, pd).setPaperIdFromDetails()
+                            })
+                    )
+                    mergeIntoArchive(paperDetailsList)
+                } catch (e: Exception) {
+                    handleException(e)
+                    return
+                }
+                val text = rejectedDOIs.joinToString("\n").lowercase() + "\n"
+                try {
+                    File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
+                } catch (e: Exception) {
+                    handleException(e)
+                    return
+                }
             }
-            try {
-                val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
-                file.writeText(
-                    json.encodeToString(
-                        paperDetailsList.mapIndexed { idx, pd ->
-                            Paper(idx, pd).setPaperIdFromDetails()
-                        })
-                )
-                mergeIntoArchive(paperDetailsList)
-            } catch (e: Exception) {
-                handleException(e)
-                mutex.unlock()
-                return
-            }
-            val text = rejectedDOIs.joinToString("\n").lowercase() + "\n"
-            try {
-                File("${queryDir.absolutePath}/${FileType.REJECTED.fileName}").appendText(text)
-            } catch (e: Exception) {
-                handleException(e)
-                mutex.unlock()
-                return
-            }
+            File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
+            status.value = QueryStatus.FILTERED1
         }
-        File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
-        status.value = QueryStatus.FILTERED1
-        mutex.unlock()
     }
 
     @OptIn(ExperimentalSerializationApi::class)
