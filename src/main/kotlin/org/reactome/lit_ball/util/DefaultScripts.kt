@@ -1,6 +1,7 @@
 package util
 
 import dev.dirs.ProjectDirectories
+import org.reactome.lit_ball.util.DefaultScriptsData
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest

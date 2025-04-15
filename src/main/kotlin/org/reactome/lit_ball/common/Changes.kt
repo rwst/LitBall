@@ -1,4 +1,4 @@
-package common
+package org.reactome.lit_ball.common
 
 object Changes {
     val text = """
