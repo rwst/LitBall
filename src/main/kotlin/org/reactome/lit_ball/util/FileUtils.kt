@@ -1,6 +1,8 @@
 package util
 
 import common.FileType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -19,11 +21,14 @@ fun makeQueryDir(queryDir: File) : Boolean {
     return true
 }
 
-fun checkFileInDirectory(dir: File, fileType: FileType): File? {
+suspend fun checkFileInDirectory(dir: File, fileType: FileType): File? {
     val file: File
-    if (dir.isDirectory && dir.canRead()) {
+    val canRead = withContext(Dispatchers.IO) { dir.isDirectory && dir.canRead() }
+    if (canRead) {
         try {
-            file = File("${dir.absolutePath}/${fileType.fileName}")
+            withContext(Dispatchers.IO) {
+                file = File("${dir.absolutePath}/${fileType.fileName}")
+            }
         } catch (e: Exception) {
             handleException(e)
             return null

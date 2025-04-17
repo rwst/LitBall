@@ -191,7 +191,7 @@ object S2Client : AGService {
 
     override suspend fun getRefs(
         doiSet: List<String>,
-        action: (String, S2Interface.PaperRefs) -> Unit
+        action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
         return if (!checkKey()) false
         else
@@ -228,7 +228,7 @@ object S2Client : AGService {
     // Full protocol for bulk download of paper details for a list of DOIs
     private suspend fun getBulkPaperRefs(
         doiSet: List<String>,
-        action: (String, S2Interface.PaperRefs) -> Unit
+        action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val size = doiSet.size

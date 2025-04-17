@@ -17,7 +17,7 @@ interface AGService {
 
     suspend fun getRefs(
         doiSet: List<String>,
-        action: (String, S2Interface.PaperRefs) -> Unit
+        action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean
 
     suspend fun getSimilarDetails(
