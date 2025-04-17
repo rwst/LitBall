@@ -84,37 +84,21 @@ data class LitBallQuery(
     }
 
     fun nextActionText(): String = when (type) {
-        QueryType.EXPRESSION_SEARCH ->
-            arrayOf(
-                "Complete the Setting",
-                "Search",
-                "Search",
-                "Search",
-            )[status.value.ordinal]
-
-        QueryType.SNOWBALLING ->
-            arrayOf(
-                "Complete the Setting",
-                "Start expansion",
-                "Start expansion",
-                "Start expansion",
-            )[status.value.ordinal]
-
-        QueryType.SUPERVISED_SNOWBALLING ->
-            arrayOf(
-                "Complete the Setting",
-                "Start expansion",
-                "Automatic filtering",
-                "Supervised filtering"
-            )[status.value.ordinal]
-
-        QueryType.SIMILARITY_SEARCH ->
-            arrayOf(
-                "Search",
-                "Search",
-                "Search",
-                "Search",
-            )[status.value.ordinal]
+        QueryType.EXPRESSION_SEARCH -> when (status.value) {
+            QueryStatus.UNINITIALIZED -> "Complete the Setting"
+            else -> "Search"
+        }
+        QueryType.SNOWBALLING -> when (status.value) {
+            QueryStatus.UNINITIALIZED -> "Complete the Setting"
+            else -> "Start expansion"
+        }
+        QueryType.SUPERVISED_SNOWBALLING -> when (status.value) {
+            QueryStatus.UNINITIALIZED -> "Complete the Setting"
+            QueryStatus.EXPANDED -> "Automatic filtering"
+            QueryStatus.FILTERED1 -> "Supervised filtering"
+            else -> "Start expansion"
+            }
+        QueryType.SIMILARITY_SEARCH -> "Search"
     }
 
     fun getFileDate(fromFile: Boolean = false, fileType: FileType): Date? {
