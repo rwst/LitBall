@@ -88,16 +88,19 @@ data class LitBallQuery(
             QueryStatus.UNINITIALIZED -> "Complete the Setting"
             else -> "Search"
         }
+
         QueryType.SNOWBALLING -> when (status.value) {
             QueryStatus.UNINITIALIZED -> "Complete the Setting"
             else -> "Start expansion"
         }
+
         QueryType.SUPERVISED_SNOWBALLING -> when (status.value) {
             QueryStatus.UNINITIALIZED -> "Complete the Setting"
             QueryStatus.EXPANDED -> "Automatic filtering"
             QueryStatus.FILTERED1 -> "Supervised filtering"
             else -> "Start expansion"
-            }
+        }
+
         QueryType.SIMILARITY_SEARCH -> "Search"
     }
 
@@ -138,7 +141,8 @@ data class LitBallQuery(
                 ExpandQueryCache.get(acceptedSet)
             }
         }
-        suspend fun fetchMissingAccepted(missingAccepted: Set<String>, allLinkedDois: MutableSet<String>) :
+
+        suspend fun fetchMissingAccepted(missingAccepted: Set<String>, allLinkedDois: MutableSet<String>):
                 Pair<Boolean, Int> {
             var nulls = 0
             return Pair(agService.getRefs(missingAccepted.toList()) { doi, refs ->
@@ -153,6 +157,7 @@ data class LitBallQuery(
                 }
             }, nulls)
         }
+
         suspend fun writeExpandedFile(newDoiSet: Set<String>) {
             checkFileInDirectory(getQueryDir(name), FileType.EXPANDED)?.let { file ->
                 val text = newDoiSet.joinToString("\n").lowercase() + "\n"
@@ -216,7 +221,10 @@ data class LitBallQuery(
     suspend fun filter1(auto: Boolean = false) {
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
-        suspend fun fetchDetails(paperDetailsList: MutableList<S2Interface.PaperDetails>, rejectedDOIs : MutableSet<String>) : Boolean {
+        suspend fun fetchDetails(
+            paperDetailsList: MutableList<S2Interface.PaperDetails>,
+            rejectedDOIs: MutableSet<String>
+        ): Boolean {
             // Load and match details of DOIs in expanded.txt
             // Result goes into paperDetailsList
             if (queryDir.isDirectory && queryDir.canRead()) {
@@ -250,7 +258,8 @@ data class LitBallQuery(
             sanitize(paperDetailsList)
             return true
         }
-        suspend fun writeFiltered(paperDetailsList: MutableList<S2Interface.PaperDetails>) : Boolean{
+
+        suspend fun writeFiltered(paperDetailsList: MutableList<S2Interface.PaperDetails>): Boolean {
             // Write filtered.txt if new matches exist
             val json = ConfiguredJson.get()
             if (queryDir.isDirectory && queryDir.canWrite()) {
@@ -271,7 +280,7 @@ data class LitBallQuery(
                                     Paper(idx, pd).setPaperIdFromDetails()
                                 })
                         )
-                        }
+                    }
                     mergeIntoArchive(paperDetailsList)
                 } catch (e: Exception) {
                     handleException(e)
@@ -280,7 +289,8 @@ data class LitBallQuery(
             }
             return true
         }
-        suspend fun writeRejected(rejectedDOIs : MutableSet<String>) : Boolean {
+
+        suspend fun writeRejected(rejectedDOIs: MutableSet<String>): Boolean {
             val text = rejectedDOIs.joinToString("\n").lowercase() + "\n"
             try {
                 withContext(Dispatchers.IO) {
