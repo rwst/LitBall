@@ -1,7 +1,9 @@
 package common
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
@@ -48,14 +50,14 @@ object PaperList {
     @OptIn(ExperimentalSerializationApi::class)
     suspend fun readAcceptedDetailsFromFile(file: File, accepted: MutableSet<String>?) {
         val json = ConfiguredJson.get()
-        if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
-
-        if (path == null) path = file.absolutePath
-        val f = File(file.absolutePath)
-        var papers = if (f.exists()) {
-            json.decodeFromStream<List<Paper>>(f.inputStream()).toMutableList()
-        } else {
-            mutableListOf()
+        var papers = withContext(Dispatchers.IO) {
+            if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
+            if (path == null) path = file.absolutePath
+            if (file.exists()) {
+                json.decodeFromStream<List<Paper>>(file.inputStream()).toMutableList()
+            } else {
+                mutableListOf()
+            }
         }
         papers.forEach { it.setPaperIdFromDetails() }
         accepted?.let {
