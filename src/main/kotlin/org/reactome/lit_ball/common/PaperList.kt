@@ -130,7 +130,7 @@ object PaperList {
     }
 
     private fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
-        val pathPrefix = path?.substringBeforeLast("/")
+        val pathPrefix = path?.substringBeforeLast("/") ?: return
         val pathStr = "$pathPrefix/${fileType.fileName}"
         val thisList = listHandle.getFullList().filter { it.tag == tag }
             .mapNotNull { item -> item.paperId }
