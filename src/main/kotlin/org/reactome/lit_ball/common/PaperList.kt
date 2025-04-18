@@ -45,27 +45,6 @@ object PaperList {
         return listHandle.getList()
     }
 
-    fun new(files: List<File>): PaperList {
-        if (files.size > 1) throw Exception("multiple files selected in New")
-        val file = files[0]
-        val p: String
-        if (file.isDirectory) {
-            Settings.map["list-path"] = file.absolutePath
-            fileName = "/Untitled"
-            p = file.absolutePath + fileName
-        } else {
-            Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
-            p = file.absolutePath
-            fileName = file.name
-        }
-        path = p
-        Settings.save()
-        val f = File(p)
-        if (f.exists()) f.delete()
-        listHandle = PaperListHandle()
-        return this
-    }
-
     @OptIn(ExperimentalSerializationApi::class)
     suspend fun readAcceptedDetailsFromFile(file: File, accepted: MutableSet<String>?) {
         val json = ConfiguredJson.get()
