@@ -14,7 +14,7 @@ const val DAY_IN_MS = 1000L * 60 * 60 * 24
 object QueryList {
     var list: List<LitBallQuery> = listOf()
 
-    fun fill() {
+    suspend fun fill() {
         list = listOf()
         val queryPath = Settings.map["path-to-queries"] ?: ""
         val prefix = Settings.map["directory-prefix"] ?: ""
@@ -50,7 +50,7 @@ object QueryList {
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
-    fun addNewItem(type: QueryType, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
+    suspend fun addNewItem(type: QueryType, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
         val queryDir = getQueryDir(name)
         if (!makeQueryDir(queryDir)) return
         try {

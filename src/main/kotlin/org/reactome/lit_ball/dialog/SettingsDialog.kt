@@ -26,7 +26,7 @@ import java.io.File
 @Composable
 internal fun SettingsDialog(
     rootScope: CoroutineScope,
-    onCloseClicked: () -> Unit
+    onCloseClicked: suspend () -> Unit
 ) {
     val keys = Settings.map.keys.toList()
     val advancedKeys = Settings.advancedSet
@@ -36,7 +36,7 @@ internal fun SettingsDialog(
 
     AlertDialog(
         title = { Text("Edit settings") },
-        onDismissRequest = onCloseClicked,
+        onDismissRequest = { CoroutineScope(Dispatchers.IO).launch { onCloseClicked() } },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -57,8 +57,8 @@ internal fun SettingsDialog(
                     }
                     rootScope.launch(Dispatchers.IO) {
                         Settings.save()
+                        onCloseClicked()
                     }
-                    onCloseClicked()
                 }
             ) {
                 Text("Confirm")
@@ -66,7 +66,7 @@ internal fun SettingsDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = onCloseClicked
+                onClick = { CoroutineScope(Dispatchers.IO).launch { onCloseClicked() } }
             ) {
                 Text("Dismiss")
             }

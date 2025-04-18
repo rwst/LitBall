@@ -171,7 +171,7 @@ object OpenAlexClient : AGService {
 
     override suspend fun getRefs(
         doiSet: List<String>,
-        action: (String, S2Interface.PaperRefs) -> Unit
+        action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
         return if (Settings.map["OpenAlex-email"].isNullOrEmpty())
             getSinglePaperRefs(doiSet, action)
@@ -182,7 +182,7 @@ object OpenAlexClient : AGService {
     // Full protocol for non-bulk download of paper refs for a list of DOIs
     private suspend fun getSinglePaperRefs(
         doiSet: List<String>,
-        action: (String, S2Interface.PaperRefs) -> Unit
+        action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
 /*
         strategy = DelayStrategy(SINGLE_QUERY_DELAY)
@@ -209,7 +209,7 @@ object OpenAlexClient : AGService {
     // Full protocol for bulk download of paper details for a list of DOIs
     private suspend fun getBulkPaperRefs(
         doiSet: List<String>,
-        action: (String, S2Interface.PaperRefs) -> Unit
+        action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
 /*
         strategy = DelayStrategy(BULK_QUERY_DELAY)

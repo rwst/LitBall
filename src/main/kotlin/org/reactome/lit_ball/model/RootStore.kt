@@ -44,7 +44,11 @@ object RootStore {
             Icons.Article,
             1,
             onClicked = { openInBrowser(URI("https://litball.readthedocs.io/en/latest/")) }),
-        RailItem("Settings", "General Settings", Icons.Settings, 2) { setEditingSettings(true) },
+        RailItem("Settings", "General Settings", Icons.Settings, 2) {
+            CoroutineScope(Dispatchers.Main).launch {
+                setEditingSettings(true)
+            }
+        },
         RailItem("Exit", "Exit application", Icons.Logout, 3, onClicked = { buttonExit() })
     )
 
@@ -128,7 +132,7 @@ object RootStore {
         setState { copy(editingQuerySettings = null) }
     }
 
-    fun setEditingSettings(boolean: Boolean) {
+    suspend fun setEditingSettings(boolean: Boolean) {
         if (!boolean) {
             QueryList.fill()
             refreshQueryPathDisplay()
