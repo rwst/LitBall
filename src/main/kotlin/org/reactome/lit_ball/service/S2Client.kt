@@ -48,6 +48,7 @@ object S2Client : AGService {
                 return Pair(data, true)
             } catch (e: SocketTimeoutException) {
                 Logger.i(TAG, "TIMEOUT")
+                Logger.error(e)
                 if (indicatorTitle != null
                     && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT")
                 )
@@ -81,6 +82,7 @@ object S2Client : AGService {
                 RootStore.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
                 return Pair(null, false)
             } catch (e: SSLException) { // Proxy glitch? Retry
+                Logger.error(e)
                 return Pair(null, false)
             }
         }

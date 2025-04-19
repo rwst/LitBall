@@ -7,7 +7,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromStream
 import model.AnnotatingRootStore
 import model.Filtering2RootStore
@@ -463,6 +462,7 @@ data class LitBallQuery(
             try {
                 return file.readText().trim() == "true"
             } catch (e: FileNotFoundException) {
+                Logger.error(e)
                 return false
             }
         }

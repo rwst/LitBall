@@ -67,13 +67,8 @@ class StringPatternMatcher(setting: QuerySetting) {
         }
     }
 
-    val parser1: PatternParser
-    val parser2: PatternParser
-
-    init {
-        parser1 = PatternParser.createFrom(setting.mandatoryKeyWords)
-        parser2 = PatternParser.createFrom(setting.forbiddenKeyWords)
-    }
+    val parser1: PatternParser = PatternParser.createFrom(setting.mandatoryKeyWords)
+    val parser2: PatternParser = PatternParser.createFrom(setting.forbiddenKeyWords)
 
     fun match(text1: String, text2: String): Boolean {
         return parser1.match(text1) && !parser2.match(text2)
@@ -106,6 +101,7 @@ class StringPatternMatcher(setting: QuerySetting) {
                 try {
                     parser.match("")
                 } catch (e: Exception) {
+                    Logger.error(e)
                     return false
                 }
             }

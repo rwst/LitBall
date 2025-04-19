@@ -3,7 +3,6 @@ package common
 import dev.dirs.ProjectDirectories
 import dev.dirs.UserDirectories
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import model.RootStore
 import util.ConfiguredJson
 import util.handleException
