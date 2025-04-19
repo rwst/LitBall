@@ -2,10 +2,10 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
-    kotlin("jvm") version "2.0.20"
-    kotlin("plugin.serialization") version "2.0.20"
-    id("org.jetbrains.compose") version "1.6.11"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
+    kotlin("jvm") version "2.2.0-Beta1"
+    kotlin("plugin.serialization") version "2.2.0-Beta1"
+    id("org.jetbrains.compose") version "1.8.0-beta02"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.0-Beta1"
     id("com.github.gmazzo.buildconfig") version "5.4.0"
     id("dev.hydraulic.conveyor") version "1.10"
     id("com.github.ben-manes.versions") version "0.51.0"
@@ -119,29 +119,27 @@ val letsPlotVersion = extra["letsPlot.version"] as String
 val letsPlotKotlinVersion = extra["letsPlotKotlin.version"] as String
 val letsPlotSkiaVersion = extra["letsPlotSkia.version"] as String
 val letsPlotMaterialVersion = extra["letsPlotMaterial.version"] as String
-val kotlinVersion = extra["kotlin.version"] as String
-val composeVersion = extra["compose.version"] as String
 
 dependencies {
     implementation("org.jetbrains.compose.material3:material3-desktop:$letsPlotMaterialVersion")
     implementation(compose.desktop.currentOs)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
-    implementation("com.squareup.okio:okio:3.9.0")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.12")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.12")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("com.squareup.okio:okio:3.11.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation ("io.github.oshai:kotlin-logging-jvm:7.0.0")
+    implementation ("io.github.oshai:kotlin-logging-jvm:7.0.7")
     implementation("org.slf4j:slf4j-simple:2.1.0-alpha1")
     implementation("dev.dirs:directories:26")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-kernel:$letsPlotKotlinVersion")
     implementation("org.jetbrains.lets-plot:lets-plot-common:$letsPlotVersion")
     implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
-    implementation("org.jetbrains.lets-plot:lets-plot-compose:$letsPlotSkiaVersion")
-    implementation("org.apache.commons:commons-jexl3:3.4.0")
-    implementation("org.apache.jena:jena-arq:5.0.0-rc1")
-//    implementation("io.github.benedekh:ktalex:1.0.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-compose:${letsPlotSkiaVersion}")
+    implementation ("org.jetbrains.lets-plot:lets-plot-compose-desktop:${letsPlotSkiaVersion}")
+    implementation("org.apache.commons:commons-jexl3:3.5.0")
+    implementation("org.apache.jena:jena-arq:5.3.0")
 
     linuxAmd64(compose.desktop.linux_x64)
     macAmd64(compose.desktop.macos_x64)
