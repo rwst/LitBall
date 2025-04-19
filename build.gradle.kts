@@ -2,10 +2,10 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
-    kotlin("jvm") version "2.2.0-Beta1"
-    kotlin("plugin.serialization") version "2.2.0-Beta1"
-    id("org.jetbrains.compose") version "1.8.0-beta02"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.0-Beta1"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
+    id("org.jetbrains.compose") version "1.6.11"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
     id("com.github.gmazzo.buildconfig") version "5.4.0"
     id("dev.hydraulic.conveyor") version "1.10"
     id("com.github.ben-manes.versions") version "0.51.0"
@@ -91,6 +91,10 @@ tasks {
     }
 }
 
+compose.resources {
+
+}
+
 kotlin {
     jvmToolchain(20)
 //    project.sourceSets.create("main")
@@ -99,9 +103,6 @@ kotlin {
         val main: KotlinSourceSet by getting {
             kotlin.srcDirs("src/main/kotlin/org/reactome/lit_ball")
             resources.srcDirs("resources")
-            dependencies {
-                //
-            }
         }
         val commonTest: KotlinSourceSet by getting {
             kotlin.srcDirs("src/commonTest/kotlin")
@@ -121,8 +122,12 @@ val letsPlotSkiaVersion = extra["letsPlotSkia.version"] as String
 val letsPlotMaterialVersion = extra["letsPlotMaterial.version"] as String
 
 dependencies {
-    implementation("org.jetbrains.compose.material3:material3-desktop:$letsPlotMaterialVersion")
     implementation(compose.desktop.currentOs)
+    implementation("org.jetbrains.compose.material3:material3-desktop:$letsPlotMaterialVersion")
+    implementation("org.jetbrains.compose.runtime:runtime:1.6.11")
+    implementation("org.jetbrains.compose.foundation:foundation:1.6.11")
+    implementation("org.jetbrains.compose.ui:ui:1.6.11")
+    implementation("org.jetbrains.compose.components:components-resources:1.6.11") // Resources module
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     implementation("com.squareup.okio:okio:3.11.0")
