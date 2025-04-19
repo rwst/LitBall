@@ -54,7 +54,7 @@ object PaperList {
             if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
             if (path == null) path = file.absolutePath
             if (file.exists()) {
-                json.decodeFromStream<List<Paper>>(file.inputStream().use { it }).toMutableList()
+                json.decodeFromStream<List<Paper>>(file.inputStream()).toMutableList()
             } else {
                 mutableListOf()
             }
