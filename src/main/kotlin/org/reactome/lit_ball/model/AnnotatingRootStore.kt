@@ -32,7 +32,7 @@ object AnnotatingRootStore : ModelHandle {
     }
 
     val railItems: List<RailItem> = listOf(
-        RailItem("Stats", "Publication date statistics", Icons.BarChart, 0) { setStat(true) },
+//        RailItem("Stats", "Publication date statistics", Icons.BarChart, 0) { setStat(true) },
         RailItem("Save", "Save to ${FileType.ARCHIVED.fileName}", Icons.Save, 1) { doSave() },
         RailItem("Export\nCSV", "Write ${FileType.EXPORTED_CSV.fileName}", Icons.ExportNotes, 2) { doExport() },
         RailItem("Export\nText", "Write ${FileType.EXPORTED_JSONL.fileName}", Icons.ExportNotes, 2) { doExportText() },
