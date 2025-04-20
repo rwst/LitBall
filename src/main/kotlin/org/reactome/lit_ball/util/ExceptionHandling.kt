@@ -5,4 +5,9 @@ fun handleException(e: Exception) {
     throw e
 }
 
+fun handleException(t: Throwable) {
+    Logger.error(t)
+    throw t
+}
+
 class CantHappenException : Exception()
