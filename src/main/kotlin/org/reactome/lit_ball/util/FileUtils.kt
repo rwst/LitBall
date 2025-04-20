@@ -22,21 +22,36 @@ fun makeQueryDir(queryDir: File) : Boolean {
 }
 
 suspend fun checkFileInDirectory(dir: File, fileType: FileType): File? {
-    val file: File
-    val canRead = withContext(Dispatchers.IO) { dir.isDirectory && dir.canRead() }
-    if (canRead) {
-        try {
-            withContext(Dispatchers.IO) {
-                file = File("${dir.absolutePath}/${fileType.fileName}")
-            }
-        } catch (e: Exception) {
-            handleException(e)
+    try {
+        val canRead = withContext(Dispatchers.IO) { dir.isDirectory && dir.canRead() }
+        if (!canRead) {
+            handleException(IOException("Cannot access directory ${dir.absolutePath}"))
             return null
         }
 
-    } else {
-        handleException(IOException("Cannot access directory ${dir.absolutePath}"))
+        val file = File("${dir.absolutePath}/${fileType.fileName}")
+        val exists = withContext(Dispatchers.IO) { file.exists() }
+        
+        return if (exists) file else null
+        
+    } catch (e: SecurityException) {
+        handleException(e)
+        return null
+    } catch (e: IOException) {
+        handleException(e)
         return null
     }
-    return file
+}
+
+suspend fun <T> checkFileInDirectory(
+    dir: File,
+    fileType: FileType,
+    fileOperation: (File) -> Result<T>,
+    ): Result<T> {
+    return runCatching {
+        val file = File("${dir.absolutePath}/${fileType.fileName}")
+        val result = withContext(Dispatchers.IO) { fileOperation(file) }
+        result.onFailure { handleException(it) }
+        result.getOrThrow()
+    }
 }
