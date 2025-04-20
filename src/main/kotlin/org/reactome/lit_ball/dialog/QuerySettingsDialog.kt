@@ -56,10 +56,13 @@ fun QuerySettingsDialog(
                         return@TextButton
                     }
 
-                    item.setting.mandatoryKeyWords = StringPatternMatcher.patternSettingFrom(field1Value.value)
-                    item.setting.forbiddenKeyWords = StringPatternMatcher.patternSettingFrom(field2Value.value)
+                    item.setting.mandatoryKeyWords.clear()
+                    item.setting.mandatoryKeyWords.addAll(StringPatternMatcher.patternSettingFrom(field1Value.value))
+                    item.setting.forbiddenKeyWords.clear()
+                    item.setting.forbiddenKeyWords.addAll(StringPatternMatcher.patternSettingFrom(field2Value.value))
                     item.setting.classifier = field3Value.value.trim()
-                    item.setting.annotationClasses = field4Value.value.splitToSet(",")
+                    item.setting.annotationClasses.clear()
+                    item.setting.annotationClasses.addAll(field4Value.value.splitToSet(","))
                     item.setting.type = item.type
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()

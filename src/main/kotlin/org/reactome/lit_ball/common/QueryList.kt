@@ -3,6 +3,7 @@ package common
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 import model.RootStore
+import util.checkFileInDirectory
 import util.handleException
 import util.makeQueryDir
 import window.components.SortingType
@@ -140,10 +141,8 @@ private fun getStatus(dir: File): QueryStatus {
     return QueryStatus.UNINITIALIZED
 }
 
-private fun getSetting(dir: File): QuerySetting {
-    val filePath = dir.absolutePath + "/" + FileType.SETTINGS.fileName
-    val settingsFile = File(filePath)
-    if (settingsFile.exists() && settingsFile.isFile && settingsFile.canRead())
-        return QuerySetting.fromFile(settingsFile)
-    return QuerySetting()
+private suspend fun getSetting(dir: File): QuerySetting {
+    return checkFileInDirectory(dir, FileType.SETTINGS,
+        QuerySetting::fromFile
+    ).getOrElse { QuerySetting() }
 }

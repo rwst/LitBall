@@ -63,11 +63,13 @@ data class LitBallQuery(
         setting.type = type
         expSearchParams?.let { pair ->
             setting.pubDate = pair.first
-            setting.pubType =
+            setting.pubType.clear()
+            setting.pubType.addAll(
                 ArticleType.entries.map { it.s2name }
                     .zip(pair.second.toList())
                     .filter { it.second }
                     .map { it.first }
+            )
         }
     }
 
