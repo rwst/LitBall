@@ -15,10 +15,7 @@ import model.RootStore
 import service.NLPService
 import service.S2Interface
 import service.YDFService
-import util.ConfiguredJson
-import util.ConfiguredUglyJson
-import util.Logger
-import util.handleException
+import util.*
 import window.components.SortingType
 import java.io.File
 import java.io.IOException
@@ -252,35 +249,52 @@ object PaperList {
         }
     }
 
-    fun exportBibTex() {
-        val pathPrefix = path?.substringBeforeLast("/")
-        val exportedPath = "$pathPrefix/${FileType.EXPORTED_BIBTEX.fileName}"
-        File(exportedPath).writeText("")
-        var out = ""
-        listHandle.getFullList().forEachIndexed { index, thePaper ->
-            var output = "@article{${query.name}-${index},\n"
-            thePaper.details.title.let { output += "title = {${it}},\n" }
-            thePaper.details.abstract?.let { output += "abstract = {${it}},\n" }
-            thePaper.paperId?.let {
-                output += if (it.startsWith("10."))
-                    "doi = {${it}},\n"
-                else
-                    "url = {https://www.semanticscholar.org/paper/${it.substring(3)}},\n"
+    suspend fun exportRIS() {
+        val out = StringBuilder().apply {
+            listHandle.getFullList().forEach { paper ->
+                append(paper.toRIS())
             }
-            thePaper.details.externalIds?.let {
-                if (it.containsKey("PubMed"))
-                    output += "url = {https://pubmed.ncbi.nlm.nih.gov/${it["PubMed"]}/},\n"
+        }.toString()
+        
+        checkFileInDirectory(getQueryDir(query.name), FileType.EXPORTED_RIS) { file ->
+            runCatching {
+                file.writeText(out)
+            }.onFailure { e ->
+                // Handle the error appropriately
+                throw IOException("Failed to write RIS file", e)
             }
-            if (thePaper.flags.isNotEmpty()) {
-                output += "keywords = "
-                thePaper.flags.forEach { flag -> output += "$flag, " }
-                output += "\n"
-            }
-            output += "}\n\n"
-            out += output
         }
-        File(exportedPath).appendText(out)
     }
+
+//    fun exportBibTex() {
+//        val pathPrefix = path?.substringBeforeLast("/")
+//        val exportedPath = "$pathPrefix/${FileType.EXPORTED_BIBTEX.fileName}"
+//        File(exportedPath).writeText("")
+//        var out = ""
+//        listHandle.getFullList().forEachIndexed { index, thePaper ->
+//            var output = "@article{${query.name}-${index},\n"
+//            thePaper.details.title.let { output += "title = {${it}},\n" }
+//            thePaper.details.abstract?.let { output += "abstract = {${it}},\n" }
+//            thePaper.paperId?.let {
+//                output += if (it.startsWith("10."))
+//                    "doi = {${it}},\n"
+//                else
+//                    "url = {https://www.semanticscholar.org/paper/${it.substring(3)}},\n"
+//            }
+//            thePaper.details.externalIds?.let {
+//                if (it.containsKey("PubMed"))
+//                    output += "url = {https://pubmed.ncbi.nlm.nih.gov/${it["PubMed"]}/},\n"
+//            }
+//            if (thePaper.flags.isNotEmpty()) {
+//                output += "keywords = "
+//                thePaper.flags.forEach { flag -> output += "$flag, " }
+//                output += "\n"
+//            }
+//            output += "}\n\n"
+//            out += output
+//        }
+//        File(exportedPath).appendText(out)
+//    }
 
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]

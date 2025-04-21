@@ -17,8 +17,11 @@ object S2Interface {
     @Serializable
     data class PaperDetails(
         val paperId: String? = "",
-        var externalIds: Map<String, String>? = emptyMap(),
+        var externalIds: Map<String, String>? = emptyMap(), // map keys: "doi", "pmid"
+        var authors: List<String>? = emptyList(), // list of names
         val title: String? = "",
+        val venue: String? = "",
+        val journal: Map<String, String>? = emptyMap(), // map keys: "name", "issn", "volume", "pageFirst", "pageLast"
         val abstract: String? = "",
         var publicationTypes: List<String>? = emptyList(),
         var tldr: Map<String, String>? = emptyMap(),

@@ -40,6 +40,75 @@ class Paper(
         }
         return this
     }
+
+    fun toRIS(): String {
+        val sb = StringBuilder()
+
+        // Determine the type of reference (TY)
+        val type = when {
+            details.publicationTypes?.contains("Conference") == true -> "CONF"
+            else -> "JOUR"
+        }
+        sb.appendLine("TY  - $type")
+
+        // Map paperId to ID
+        paperId?.let { sb.appendLine("ID  - $it") }
+
+        // Map DOI from externalIds to DO
+        details.externalIds?.get("DOI")?.let {
+            sb.appendLine("DO  - $it")
+        }
+
+        // Map PMID from externalIds (as "PMID: value")
+        details.externalIds?.get("PubMed")?.let {
+            sb.appendLine("PMID  - $it")
+        }
+
+        // Map PMCID from externalIds (as "PMCID: value")
+        details.externalIds?.get("PubMedCentral")?.let {
+            sb.appendLine("PMCID  - $it")
+        }
+
+        // Map authors to AU (each author on a separate line)
+        details.authors?.forEach { sb.appendLine("AU  - $it") }
+
+        // Map title to TI
+        details.title?.let { sb.appendLine("TI  - $it") }
+
+        // Map venue to T2 if type is CONF
+        if (type == "CONF") {
+            details.venue?.let { sb.appendLine("T2  - $it") }
+        }
+
+        // Map journal fields if type is JOUR
+        if (type == "JOUR") {
+            details.journal?.let { journal ->
+                journal["name"]?.let { sb.appendLine("JF  - $it") }
+                journal["issn"]?.let { sb.appendLine("SN  - $it") }
+                journal["volume"]?.let { sb.appendLine("VL  - $it") }
+                journal["pageFirst"]?.let { sb.appendLine("SP  - $it") }
+                journal["pageLast"]?.let { sb.appendLine("EP  - $it") }
+            }
+        }
+
+        // Map abstract to AB
+        details.abstract?.let { sb.appendLine("AB  - $it") }
+
+        // Map publicationDate to PY, replacing "-" with "/" for compatibility
+        details.publicationDate?.let { date ->
+            sb.appendLine("PY  - ${date.subSequence(0, 4)}")
+        }
+        // Map flags to kW
+        flags.forEach { sb.appendLine("KW  - $it") }
+
+        details.externalIds?.get("PubMed")?.let {
+            sb.appendLine("UR  - https://pubmed.ncbi.nlm.nih.gov/$it/")
+        }
+        // End of RIS record
+        sb.appendLine("ER  -")
+
+        return sb.toString()
+    }
 }
 
 fun idSetFromPaperDetailsList(pDList: List<S2Interface.PaperDetails>): MutableSet<String> {
