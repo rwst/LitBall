@@ -4,7 +4,6 @@ import service.S2Interface
 import util.ConfiguredJson
 import util.ConfiguredUglyJson
 import java.io.File
-import java.util.*
 import kotlin.properties.Delegates
 
 object ExpandQueryCache {
@@ -20,25 +19,20 @@ object ExpandQueryCache {
         if (!file.exists()) {
             return Pair(doiSet, mutableSetOf())
         }
-        val date = Date(file.lastModified()).time
-        val now = Date().time
+        val date = file.lastModified()
+        val now = System.currentTimeMillis()
         if (now - date > maxAge * MILLISECONDS_PER_DAY) {
             file.delete()
             return Pair(doiSet, mutableSetOf())
         }
         val json = ConfiguredJson.get()
-        val refs = mutableSetOf<Pair<String, List<String>>>()
         val lines = file.readLines()
-        lines.forEach {
-            if (it.isNotBlank())
-                refs += json.decodeFromString<Pair<String, List<String>>>(it)
-        }
-        val doisFound = refs.map { it.first }
-        val missingDois = doiSet.minus(doisFound.toSet())
-        val refDois = mutableSetOf<String>()
-        refs.forEach {
-            refDois.addAll(it.second)
-        }
+        val refs = lines.filter { it.isNotBlank() }
+            .map { json.decodeFromString<Pair<String, List<String>>>(it) }
+            .toSet()
+        val doisFound = refs.map { it.first }.toSet()
+        val missingDois = doiSet.minus(doisFound)
+        val refDois = refs.flatMap { it.second }.toMutableSet()
         return Pair(missingDois, refDois)
     }
 
