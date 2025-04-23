@@ -41,6 +41,17 @@ class Paper(
         return this
     }
 
+    /**
+     * Converts the paper's details into RIS (Research Information Systems) format.
+     *
+     * The output format is a standard RIS string including fields such as type, ID, DOI, authors,
+     * title, journal details, publication date, keywords, abstract, and URLs.
+     * Each supported field is translated into its corresponding RIS tag.
+     * NOTE: since no ref manager supports multiple URLs (why?) we write the PubMed URL, and if not found,
+     * the Semantic Scholar URL.
+     *
+     * @return A string representation of the paper in RIS format.
+     */
     fun toRIS(): String {
         val sb = StringBuilder()
 
