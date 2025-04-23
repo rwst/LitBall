@@ -101,9 +101,14 @@ class Paper(
         // Map flags to kW
         flags.forEach { sb.appendLine("KW  - $it") }
 
-        details.externalIds?.get("PubMed")?.let {
-            sb.appendLine("UR  - https://pubmed.ncbi.nlm.nih.gov/$it/")
+        val pmid = details.externalIds?.get("PubMed")
+        if (pmid != null && pmid.isNotBlank()) {
+            sb.appendLine("UR  - https://pubmed.ncbi.nlm.nih.gov/$pmid/")
         }
+        else {
+            sb.appendLine("UR  - https://www.semanticscholar.org/paper/${paperId?.substring(3)}")
+        }
+
         // End of RIS record
         sb.appendLine("ER  -")
 
