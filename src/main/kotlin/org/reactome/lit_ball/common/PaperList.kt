@@ -74,7 +74,10 @@ object PaperList {
                     maxId += 1
                 }
                 // case not handled: DOIs that are referred to by S2 but don't exist
-                if (list.isNotEmpty()) { query.mergeIntoArchive(list) }
+                if (list.isNotEmpty()) {
+                    ArchivedCache.init(getQueryDir(query.name))
+                    ArchivedCache.merge(list)
+                }
             }
         }
         listHandle.setFullList(papers)

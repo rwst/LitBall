@@ -6,8 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.decodeFromStream
 import model.AnnotatingRootStore
 import model.Filtering2RootStore
 import model.RootStore
@@ -282,7 +280,8 @@ data class LitBallQuery(
                                 })
                         )
                     }
-                    mergeIntoArchive(paperDetailsList)
+                    ArchivedCache.init(queryDir)
+                    ArchivedCache.merge(paperDetailsList)
                 } catch (e: Exception) {
                     handleException(e)
                     return false
@@ -322,25 +321,6 @@ data class LitBallQuery(
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    suspend fun mergeIntoArchive(list: MutableList<S2Interface.PaperDetails>) {
-        val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.ARCHIVED)?.let { file ->
-            val json = ConfiguredJson.get()
-            val papers: MutableSet<Paper> = if (file.exists()) {
-                json.decodeFromStream<List<Paper>>(file.inputStream()).toMutableSet()
-            } else {
-                mutableSetOf()
-            }
-            val details: MutableSet<S2Interface.PaperDetails> = papers.map { it.details }.toMutableSet()
-            details.addAll(list)
-            file.writeText(
-                json.encodeToString(
-                    details.mapIndexed { idx, pd -> Paper(idx, pd).setPaperIdFromDetails() })
-            )
-        }
-    }
-
     private suspend fun expressionSearch() {
         val tag = "EXPRSEARCH"
         val queryDir = getQueryDir(name)
@@ -365,7 +345,8 @@ data class LitBallQuery(
         acceptedSet = idSetFromPaperDetailsList(paperDetailsList)
         checkFileInDirectory(queryDir, FileType.ACCEPTED)?.let { file ->
             file.writeText(acceptedSet.joinToString("\n"))
-            mergeIntoArchive(paperDetailsList)
+            ArchivedCache.init(queryDir)
+            ArchivedCache.merge(paperDetailsList)
         }
         noNewAccepted = true
         writeNoNewAccepted()
@@ -391,7 +372,8 @@ data class LitBallQuery(
         acceptedSet = ids.plus(idSetFromPaperDetailsList(paperDetailsList)).toMutableSet()
         checkFileInDirectory(queryDir, FileType.ACCEPTED)?.let { file ->
             file.writeText(acceptedSet.joinToString("\n"))
-            mergeIntoArchive(paperDetailsList)
+            ArchivedCache.init(queryDir)
+            ArchivedCache.set(paperDetailsList)
         }
         status.value = QueryStatus.FILTERED2
     }
@@ -405,6 +387,7 @@ data class LitBallQuery(
     }
 
     private suspend fun acceptAll() {
+        // TODO: why read it again from file?
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.FILTERED1)?.let { file ->
             PaperList.setFromQuery(this, file)
