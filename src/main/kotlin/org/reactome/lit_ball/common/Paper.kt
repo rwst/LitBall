@@ -117,7 +117,7 @@ class Paper(
             sb.appendLine("UR  - https://pubmed.ncbi.nlm.nih.gov/$pmid/")
         }
         else {
-            sb.appendLine("UR  - https://www.semanticscholar.org/paper/${paperId?.substring(3)}")
+            sb.appendLine("UR  - https://www.semanticscholar.org/paper/${details.paperId}/")
         }
 
         // End of RIS record
