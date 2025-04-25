@@ -231,7 +231,8 @@ object PaperList {
         }
     }
 
-    fun exportText() {
+    suspend fun exportText() {
+        getExtendedDetails()
         val pathPrefix = path?.substringBeforeLast("/")
         val exportedPath = "$pathPrefix/${FileType.EXPORTED_JSONL.fileName}"
         File(exportedPath).writeText("")
@@ -254,6 +255,7 @@ object PaperList {
     }
 
     suspend fun exportRIS() {
+        getExtendedDetails()
         val out = StringBuilder().apply {
             listHandle.getFullList().forEach { paper ->
                 append(paper.toRIS())
@@ -299,6 +301,31 @@ object PaperList {
 //        }
 //        File(exportedPath).appendText(out)
 //    }
+
+    private suspend fun getExtendedDetails() {
+        val paperidsWithoutAuthors = listHandle
+            .getFullList()
+            .filter { it.details.authors.isNullOrEmpty() }
+            .mapNotNull { it.paperId }
+        val extendedDetails = mutableListOf<S2Interface.PaperDetails>()
+        query.agService.getPaperDetails(
+            paperidsWithoutAuthors,
+            fields = "authors,journal",
+        ) {
+            extendedDetails.add(it)
+        }
+        val map = extendedDetails.associateBy { it.paperId }
+        listHandle
+            .getFullList()
+            .filter { it.details.authors.isNullOrEmpty() }
+            .forEach { paper ->
+                map[paper.details.paperId]?.let { details ->
+                    paper.details.authors = details.authors
+                    paper.details.journal = details.journal
+                }
+            }
+        saveAnnotated()
+    }
 
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.entries[btn]

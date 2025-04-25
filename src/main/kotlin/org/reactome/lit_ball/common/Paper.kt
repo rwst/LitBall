@@ -53,6 +53,19 @@ class Paper(
      * @return A string representation of the paper in RIS format.
      */
     fun toRIS(): String {
+        fun formatAuthor(author: String?): String {
+            if (author == null || author.isBlank()) return ""
+            val words = author.trim().split(" ")
+            if (words.size == 1) return words[0]
+            return "${words.last()}, ${words.dropLast(1).joinToString(" ")}"
+        }
+        fun formatPages(pages: String?): Pair<String, String>? {
+            if (pages == null) return null
+            val cleanPages = pages.replace("\\s".toRegex(), "")
+            if (cleanPages.isBlank()) return null
+            val parts = cleanPages.split("-", limit = 2)
+            return Pair(parts.getOrElse(0) { "" }, parts.getOrElse(1) { "" })
+        }
         val sb = StringBuilder()
 
         // Determine the type of reference (TY)
@@ -81,7 +94,7 @@ class Paper(
         }
 
         // Map authors to AU (each author on a separate line)
-        details.authors?.forEach { sb.appendLine("AU  - $it") }
+        details.authors?.forEach { sb.appendLine("AU  - ${formatAuthor(it["name"])}") }
 
         // Map title to TI
         details.title?.let { sb.appendLine("TI  - $it") }
@@ -97,8 +110,12 @@ class Paper(
                 journal["name"]?.let { sb.appendLine("JF  - $it") }
                 journal["issn"]?.let { sb.appendLine("SN  - $it") }
                 journal["volume"]?.let { sb.appendLine("VL  - $it") }
-                journal["pageFirst"]?.let { sb.appendLine("SP  - $it") }
-                journal["pageLast"]?.let { sb.appendLine("EP  - $it") }
+                journal["pages"]?.let {
+                    formatPages(it)?.let { (sp, ep) ->
+                        sb.appendLine("SP  - $sp")
+                        sb.appendLine("EP  - $ep")
+                    }
+                }
             }
         }
 
