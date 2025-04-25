@@ -57,7 +57,7 @@ object Filtering2RootStore : ModelHandle {
 
     private fun buttonExit() {
         runBlocking {
-            PaperList.save()
+            PaperList.saveFiltered()
         }
     }
 
@@ -83,7 +83,7 @@ object Filtering2RootStore : ModelHandle {
 
     private fun doSave() {
         scope?.launch(Dispatchers.IO) {
-            PaperList.save()
+            PaperList.saveFiltered()
         }
     }
 }

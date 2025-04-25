@@ -74,7 +74,7 @@ object ArchivedCache {
             }
         }
 
-    private suspend fun writeArchivedPapers(papers: MutableSet<Paper>) {
+    suspend fun writeArchivedPapers(papers: Set<Paper>) {
         withContext(Dispatchers.IO) {
             try {
                 file.writeText(json.encodeToString(papers))

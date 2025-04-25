@@ -62,7 +62,7 @@ object AnnotatingRootStore : ModelHandle {
 
     private fun buttonExit() {
         runBlocking {
-            PaperList.save()
+            PaperList.saveAnnotated()
         }
     }
 

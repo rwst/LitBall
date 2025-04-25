@@ -97,7 +97,7 @@ object PaperList {
      * Save current paper details to current path/file, which is FILTERED1 or ARCHIVED.
      * Does NOT advance query status.
      */
-    fun save() {
+    fun saveFiltered() {
         val json = ConfiguredJson.get()
         if (path == null) return
         val pathStr: String = path as String
@@ -105,8 +105,9 @@ object PaperList {
         File(pathStr).writeText(text)
     }
 
-    fun saveAnnotated() {
-        save()
+    suspend fun saveAnnotated() {
+        ArchivedCache.init(getQueryDir(query.name))
+        ArchivedCache.writeArchivedPapers(listHandle.getFullList().toSet())
     }
 
     private fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
