@@ -169,7 +169,7 @@ fun CardWithTextIconAndRadiobutton(
             Column {
                 Text(text = cardYear, modifier = Modifier.padding(start = 8.dp), fontSize = 12.sp)
                 Tooltip(
-                    text = "Open PubMed / Google Scholar\nin Browser",
+                    text = "Open PubMed / Semantic Scholar\nin Browser",
                     Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     IconButton(
