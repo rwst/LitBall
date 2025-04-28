@@ -151,7 +151,6 @@ fun CardWithTextIconAndRadiobutton(
     onOptionSelected: (btn: Int) -> Unit,
 ) {
     val cardTitle = item.details.title
-    val cardPMID: String? = item.details.externalIds?.get("PubMed")
     val year = item.details.publicationDate?.substringBefore("-") ?: ""
     val cardYear = if (year == "null") "" else year
     val isReview = item.details.publicationTypes?.contains("Review") ?: false
@@ -176,7 +175,7 @@ fun CardWithTextIconAndRadiobutton(
                     IconButton(
                         onClick = {
                             Filtering2RootStore.scope?.launch(Dispatchers.IO) {
-                                openInBrowser(cardPMID, cardTitle)
+                                openInBrowser(item)
                             }
                         },
                         modifier = Modifier.padding(0.dp)

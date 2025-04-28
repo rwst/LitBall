@@ -1,5 +1,6 @@
 package util
 
+import common.Paper
 import java.awt.Desktop
 import java.net.URI
 import java.util.*
@@ -16,7 +17,9 @@ fun openInBrowser(uri: URI) {
 }
 
 
-fun openInBrowser(pmid: String?, title: String?) {
+fun openInBrowser(paper: Paper) {
+    val pmid = paper.details.externalIds?.get("PubMed")
+    val title = paper.details.title
     if (pmid != null) {
         openInBrowser(
             URI("https://pubmed.ncbi.nlm.nih.gov/$pmid/")
