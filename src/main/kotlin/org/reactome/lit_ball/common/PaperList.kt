@@ -392,7 +392,7 @@ object PaperList {
             else
                 Tag.Rejected
         }
-        listHandle.setFullTagsFromDoiMap(tagMap)
+        listHandle.setFullTagsFromPaperIdMap(tagMap)
         Filtering2RootStore.state.paperListStore.refreshList()
     }
 

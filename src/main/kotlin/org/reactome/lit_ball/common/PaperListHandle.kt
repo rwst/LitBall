@@ -144,34 +144,33 @@ class PaperListHandle {
         fullList = list.toList()
     }
 
-    fun setFilteredAllTags(tag: Tag) {
-        filteredList?.let {
-            val list = it.map { p ->
-                if (p.tag == tag)
-                    p
-                else
-                    Paper(p.id, p.details, tag, p.flags, p.details.externalIds?.get("DOI")?.lowercase())
+    /**
+     * Updates the tag of all papers in the filtered list to the specified tag.
+     * Preserves other paper properties while updating the tag.
+     *
+     * @param newTag The tag to be applied to all papers in the filtered list
+     */
+    fun setFilteredAllTags(newTag: Tag) {
+        filteredList?.let { papers ->
+            val updatedPapers = papers.map { paper ->
+                if (paper.tag == newTag) paper else paper.copy(newTag)
             }
-            filteredList = list
+            filteredList = updatedPapers
         }
     }
 
     fun setFullTagsFromFiltered() {
         val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.paperId ?: "", it.tag) } ?: emptyMap()
-        setFullTagsFromDoiMap(tagMap)
+        setFullTagsFromPaperIdMap(tagMap)
     }
 
-    fun setFullTagsFromDoiMap(tagMap: Map<String, Tag>) {
-        val list = fullList.map {
-            val newTag = tagMap[it.paperId] ?: Tag.Accepted
-            if (it.tag == newTag)
-                it
-            else
-                Paper(it.id, it.details, newTag, it.flags).setPaperIdFromDetails()
+    fun setFullTagsFromPaperIdMap(tagMap: Map<String, Tag>) {
+        fullList = fullList.map { paper ->
+            val newTag = tagMap[paper.paperId] ?: Tag.Accepted
+            if (paper.tag == newTag) paper
+            else paper.copy(newTag)
         }
-        fullList = list
     }
-
     fun setTag(id: Int, tag: Tag) {
         updateItemInBothLists(id) {
             if (it.tag == tag)

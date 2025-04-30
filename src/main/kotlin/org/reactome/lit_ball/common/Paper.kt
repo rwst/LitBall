@@ -21,6 +21,8 @@ class Paper(
     var paperId: String? = null,
 ) {
 
+    fun copy(newTag: Tag = this.tag) = Paper(id, details, newTag, flags, paperId)
+
     override fun toString(): String {
         return "Paper(id=$id, details=$details, tag=$tag, flags=$flags, paperId=$paperId)"
     }
