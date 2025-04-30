@@ -21,6 +21,14 @@ fun makeQueryDir(queryDir: File) : Boolean {
     return true
 }
 
+/**
+ * Checks if a specified file type exists within a given directory while ensuring the directory is accessible.
+ *
+ * @param dir The directory to search for the file.
+ * @param fileType The type of file to search for, as defined by the `FileType` enum.
+ * @return The File object representing the specified file if it exists, or null if the directory is inaccessible
+ *         or an exception occurs during the operation.
+ */
 suspend fun checkFileInDirectory(dir: File, fileType: FileType): File? {
     try {
         val canRead = withContext(Dispatchers.IO) { dir.isDirectory && dir.canRead() }
@@ -32,8 +40,7 @@ suspend fun checkFileInDirectory(dir: File, fileType: FileType): File? {
     } catch (e: SecurityException) {
         handleException(e)
         return null
-    } catch (e: IOException) {
-        handleException(e)
+    } catch (_: IOException) {
         return null
     }
 }
