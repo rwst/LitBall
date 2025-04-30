@@ -210,6 +210,7 @@ data class LitBallQuery(
             status.value = QueryStatus.FILTERED2
             return
         }
+        println(newDoiSet)
         writeExpandedFile(newDoiSet)
     }
 
@@ -298,7 +299,6 @@ data class LitBallQuery(
             }
             return true
         }
-        if (!mutex.tryLock()) return
         return mutex.withLock {
             val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
             val rejectedDOIs = mutableSetOf<String>()
@@ -310,6 +310,7 @@ data class LitBallQuery(
                 RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
             }
 
+            println("hgn")
             if (!writeFiltered(paperDetailsList)) return
             if (!writeRejected(rejectedDOIs)) return
             File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
