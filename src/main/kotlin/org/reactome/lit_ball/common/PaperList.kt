@@ -170,6 +170,7 @@ object PaperList {
             query.rejectedSet.add(it)
         }
         writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+        writeToPath(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         query.syncBuffers()
     }
 
