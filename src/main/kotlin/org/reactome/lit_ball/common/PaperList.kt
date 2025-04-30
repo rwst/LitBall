@@ -110,13 +110,28 @@ object PaperList {
         ArchivedCache.writeArchivedPapers(listHandle.getFullList().toSet())
     }
 
-    private fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
+    /**
+     * Writes data to a file path based on the specified tag and file type.
+     * Filters a list of objects by the provided tag, extracts the `paperId` values,
+     * and writes the combined values with the input set into a file.
+     *
+     * @param tag The tag used to filter the list of objects.
+     * @param fileType The type of file to write to, which determines the file name.
+     * @param theSet A mutable set of strings to which filtered `paperId` values are added.
+     */
+    private suspend fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
         val pathPrefix = path?.substringBeforeLast("/") ?: return
         val pathStr = "$pathPrefix/${fileType.fileName}"
         val thisList = listHandle.getFullList().filter { it.tag == tag }
             .mapNotNull { item -> item.paperId }
         theSet += thisList
-        File(pathStr).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
+        withContext(Dispatchers.IO) {
+            try {
+                File(pathStr).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
+            } catch (e: Exception) {
+                handleException(e)
+            }
+        }
     }
 
     fun acceptFiltered(value: Boolean) {
@@ -131,13 +146,8 @@ object PaperList {
      * @param auto When auto is not set, a note appears with the number of accepted papers.
      */
     suspend fun finish(auto: Boolean = false) {
-        try {
-            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
-            writeToPath(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
-        } catch (e: Exception) {
-            handleException(e)
-            return
-        }
+        writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+        writeToPath(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         path?.let { File(it).delete() }
         if (!auto) {
             RootStore.setFiltered2()
@@ -152,29 +162,23 @@ object PaperList {
         }
     }
 
-    fun delete(id: Int) {
+    suspend fun delete(id: Int) {
         val p = listHandle.getDisplayedPaper(id) ?: return
-        query.acceptedSet.removeIf { acc -> p.paperId?.let { it == acc } ?: false }
-        listHandle.delete(p.paperId)
-        try {
-            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
-        } catch (e: Exception) {
-            handleException(e)
+        p.paperId?.let {
+            query.acceptedSet.remove(it)
+            listHandle.delete(it)
+            query.rejectedSet.add(it)
         }
+        writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
         query.syncBuffers()
     }
 
-    fun deleteFiltered() {
-        val fList = listHandle.getFilteredList()
-        fList?.let {
+    suspend fun deleteFiltered() {
+        listHandle.getFilteredList()?.let {
             listHandle.deleteAllFiltered()
             val dois = it.map { p -> p.paperId }.toSet()
             query.acceptedSet.removeIf { acc -> dois.contains(acc) }
-            try {
-                writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
-            } catch (e: Exception) {
-                handleException(e)
-            }
+            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
             query.syncBuffers()
         }
     }
