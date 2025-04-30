@@ -28,12 +28,7 @@ suspend fun checkFileInDirectory(dir: File, fileType: FileType): File? {
             handleException(IOException("Cannot access directory ${dir.absolutePath}"))
             return null
         }
-
-        val file = File("${dir.absolutePath}/${fileType.fileName}")
-        val exists = withContext(Dispatchers.IO) { file.exists() }
-        
-        return if (exists) file else null
-        
+        return File("${dir.absolutePath}/${fileType.fileName}")
     } catch (e: SecurityException) {
         handleException(e)
         return null
