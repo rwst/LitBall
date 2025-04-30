@@ -199,7 +199,7 @@ fun CardWithFlagBoxes(
                 ) {
                     Icon(
                         painter = painterResource(Icons.Delete),
-                        contentDescription = "Remove Query",
+                        contentDescription = "Remove Paper from accepted list",
                         tint = Color.Gray,
                         modifier = Modifier.size(48.dp).align(Alignment.CenterVertically),
                     )
