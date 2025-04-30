@@ -1,5 +1,7 @@
 package common
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import service.S2Interface
 import util.ConfiguredJson
 import util.ConfiguredUglyJson
@@ -15,32 +17,38 @@ object ExpandQueryCache {
         maxAge = Settings.map["cache-max-age-days"]?.toInt() ?: 31
     }
 
-    fun get(doiSet: MutableSet<String>): Pair<Set<String>, MutableSet<String>> {
+    suspend fun get(doiSet: MutableSet<String>): Pair<Set<String>, MutableSet<String>> {
         if (!file.exists()) {
             return Pair(doiSet, mutableSetOf())
         }
         val date = file.lastModified()
         val now = System.currentTimeMillis()
-        if (now - date > maxAge * MILLISECONDS_PER_DAY) {
-            file.delete()
-            return Pair(doiSet, mutableSetOf())
+        return withContext(Dispatchers.IO) {
+            if (now - date > maxAge * MILLISECONDS_PER_DAY) {
+                file.delete()
+                Pair(doiSet, mutableSetOf())
+            }
+            else {
+                val json = ConfiguredJson.get()
+                val lines = file.readLines()
+                val refs = lines.filter { it.isNotBlank() }
+                    .map { json.decodeFromString<Pair<String, List<String>>>(it) }
+                    .toSet()
+                val doisFound = refs.map { it.first }.toSet()
+                val missingDois = doiSet.minus(doisFound)
+                val refDois = refs.flatMap { it.second }.toMutableSet()
+                Pair(missingDois, refDois)
+            }
         }
-        val json = ConfiguredJson.get()
-        val lines = file.readLines()
-        val refs = lines.filter { it.isNotBlank() }
-            .map { json.decodeFromString<Pair<String, List<String>>>(it) }
-            .toSet()
-        val doisFound = refs.map { it.first }.toSet()
-        val missingDois = doiSet.minus(doisFound)
-        val refDois = refs.flatMap { it.second }.toMutableSet()
-        return Pair(missingDois, refDois)
     }
 
-    fun add(doi: String, refs: S2Interface.PaperRefs) {
+    suspend fun add(doi: String, refs: S2Interface.PaperRefs) {
         val json = ConfiguredUglyJson.get()
         val dois: MutableSet<String> = mutableSetOf()
         dois.addAll(refs.citations?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.lowercase() } ?: emptyList())
         dois.addAll(refs.references?.mapNotNull { cit -> cit.externalIds?.get("DOI")?.lowercase() } ?: emptyList())
-        file.appendText(json.encodeToString(Pair(doi, dois.toList())) + "\n")
+        withContext(Dispatchers.IO) {
+            file.appendText(json.encodeToString(Pair(doi, dois.toList())) + "\n")
+        }
     }
 }

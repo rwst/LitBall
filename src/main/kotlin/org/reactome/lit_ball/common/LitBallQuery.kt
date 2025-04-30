@@ -135,10 +135,8 @@ data class LitBallQuery(
     private suspend fun snowBall(auto: Boolean = false) {
         val tag = "EXPAND"
         suspend fun fetchMissingReferences(): Pair<Set<String>, MutableSet<String>> {
-            return withContext(Dispatchers.IO) {
-                ExpandQueryCache.init(getQueryDir(name))
-                ExpandQueryCache.get(acceptedSet)
-            }
+            ExpandQueryCache.init(getQueryDir(name))
+            return ExpandQueryCache.get(acceptedSet)
         }
 
         suspend fun fetchMissingAccepted(missingAccepted: Set<String>, allLinkedDois: MutableSet<String>):
@@ -151,9 +149,7 @@ data class LitBallQuery(
                     nulls += 1
                 allLinkedDois.addAll(rlist)
                 allLinkedDois.addAll(clist)
-                withContext(Dispatchers.IO) {
-                    ExpandQueryCache.add(doi, refs)
-                }
+                ExpandQueryCache.add(doi, refs)
             }, nulls)
         }
 
