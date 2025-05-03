@@ -243,9 +243,9 @@ object PaperList {
         File(exportedPath).writeText("")
         val json = ConfiguredUglyJson.get()
         listHandle.getFullList().forEach { thePaper ->
-            val doi = thePaper.paperId
-            doi?.let { theDoi ->
-                val meta = mapOf("DOI" to JsonPrimitive(theDoi))
+            val id = thePaper.paperId
+            id?.let { theId ->
+                val meta = mapOf("ID" to JsonPrimitive(theId))
                 val outMap = emptyMap<String, JsonElement>().toMutableMap()
 
                 outMap["meta"] = JsonObject(meta)
