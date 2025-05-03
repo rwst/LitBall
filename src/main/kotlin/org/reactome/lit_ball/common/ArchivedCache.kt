@@ -75,6 +75,7 @@ object ArchivedCache {
         }
 
     suspend fun writeArchivedPapers(papers: Set<Paper>) {
+        papers.forEach { it.tag = Tag.Accepted }
         withContext(Dispatchers.IO) {
             try {
                 file.writeText(json.encodeToString(papers))
