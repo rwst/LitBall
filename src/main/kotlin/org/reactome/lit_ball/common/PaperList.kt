@@ -55,7 +55,10 @@ object PaperList {
                 mutableListOf()
             }
         }
-        papers.forEach { it.setPaperIdFromDetails() }
+        papers.forEachIndexed { index, it ->
+            it.setPaperIdFromDetails()
+            it.id = index
+        }
         accepted?.let {
             papers = papers.distinctBy { it.paperId }.filter { it.paperId in accepted }.toMutableList()
             var maxId = papers.size
