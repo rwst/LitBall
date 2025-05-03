@@ -225,8 +225,8 @@ class PaperListHandle {
 
 fun sort(list: List<Paper>, type: SortingType): List<Paper> {
     return when (type) {
-        SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title }
-        SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title }
+        SortingType.ALPHA_ASCENDING -> list.sortedBy { it.details.title?.uppercase() }
+        SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.details.title?.uppercase() }
         SortingType.DATE_ASCENDING -> list.sortedBy { it.details.publicationDate }
         SortingType.DATE_DESCENDING -> list.sortedByDescending { it.details.publicationDate }
         else ->
