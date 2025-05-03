@@ -119,7 +119,7 @@ object PaperList {
      * @param fileType The type of file to write to, which determines the file name.
      * @param theSet A mutable set of strings to which filtered `paperId` values are added.
      */
-    private suspend fun writeToPath(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
+    private suspend fun mergeTaggedToSetAndWriteIds(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
         val pathPrefix = path?.substringBeforeLast("/") ?: return
         val pathStr = "$pathPrefix/${fileType.fileName}"
         val thisList = listHandle.getFullList().filter { it.tag == tag }
@@ -146,8 +146,8 @@ object PaperList {
      * @param auto When auto is not set, a note appears with the number of accepted papers.
      */
     suspend fun finish(auto: Boolean = false) {
-        writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
-        writeToPath(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
+        mergeTaggedToSetAndWriteIds(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+        mergeTaggedToSetAndWriteIds(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         path?.let { File(it).delete() }
         if (!auto) {
             RootStore.setFiltered2()
@@ -169,8 +169,8 @@ object PaperList {
             listHandle.delete(it)
             query.rejectedSet.add(it)
         }
-        writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
-        writeToPath(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
+        mergeTaggedToSetAndWriteIds(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+        mergeTaggedToSetAndWriteIds(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         query.syncBuffers()
     }
 
@@ -179,7 +179,7 @@ object PaperList {
             listHandle.deleteAllFiltered()
             val dois = it.map { p -> p.paperId }.toSet()
             query.acceptedSet.removeIf { acc -> dois.contains(acc) }
-            writeToPath(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
+            mergeTaggedToSetAndWriteIds(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
             query.syncBuffers()
         }
     }
