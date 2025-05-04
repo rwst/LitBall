@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import dialog.AnnotatingFilterDialog
 import dialog.BarChartDialog
+import dialog.InformationalDialog
 import model.AnnotatingRootStore
 
 @Composable
@@ -30,6 +31,10 @@ fun AnnotatingRootContent(
 
     if (state.paperListStore.state.filterDialog) {
         AnnotatingFilterDialog(state.paperListStore)
+    }
+
+    state.exportedNote?.let {
+        InformationalDialog("NOTE", it) { AnnotatingRootStore.setExportedNote(null) }
     }
 
     AnnotatingMainContent(

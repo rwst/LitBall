@@ -4,19 +4,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import common.FileType
+import common.PaperList
+import common.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
-import common.FileType
-import common.PaperList
-import common.Settings
 import util.SystemFunction
 import util.toEpochMilliseconds
+import window.RootType
 import window.components.Icons
 import window.components.RailItem
-import window.RootType
 
 
 object AnnotatingRootStore : ModelHandle {
@@ -78,21 +78,24 @@ object AnnotatingRootStore : ModelHandle {
     }
 
     private fun doExport() {
-        scope?.launch(Dispatchers.IO) {
+        runBlocking {
             PaperList.exportAnnotated()
         }
+        setExportedNote("Exported to ${FileType.EXPORTED_CSV.fileName}.")
     }
 
     private fun doExportText() {
-        scope?.launch(Dispatchers.IO) {
+        runBlocking {
             PaperList.exportText()
         }
+        setExportedNote("Exported to ${FileType.EXPORTED_JSONL.fileName}.")
     }
 
     private fun doExportRIS() {
-        scope?.launch(Dispatchers.IO) {
+        runBlocking {
             PaperList.exportRIS()
         }
+        setExportedNote("Exported to ${FileType.EXPORTED_RIS.fileName}.")
     }
 
     private fun doSave() {
@@ -103,6 +106,10 @@ object AnnotatingRootStore : ModelHandle {
 
     fun setStat(boolean: Boolean) {
         setState { copy(showStats = boolean) }
+    }
+
+    fun setExportedNote(note: String?) {
+        setState { copy(exportedNote = note) }
     }
 
     fun getEpochs(): List<Long> = state.paperListState.items
@@ -120,6 +127,7 @@ data class AnnotatingRootState(
     val openList: Boolean = false,
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
+    val exportedNote: String? = null,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(AnnotatingRootStore),
     val showStats: Boolean = false,
     var paperListState: PaperListScreenState = paperListStore.state
