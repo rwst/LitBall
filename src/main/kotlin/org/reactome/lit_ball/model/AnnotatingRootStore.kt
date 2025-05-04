@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import common.FileType
 import common.PaperList
 import common.Settings
+import dialog.ProgressIndicatorParameter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +20,7 @@ import window.components.Icons
 import window.components.RailItem
 
 
-object AnnotatingRootStore : ModelHandle {
+object AnnotatingRootStore : ModelHandle, ProgressHandler {
     var state: AnnotatingRootState by mutableStateOf(initialState())
 
     override var scope: CoroutineScope? = null
@@ -108,6 +109,42 @@ object AnnotatingRootStore : ModelHandle {
         setState { copy(showStats = boolean) }
     }
 
+    private object Signal {
+        var signal = false
+        fun set() {
+            signal = true
+        }
+
+        fun clear() {
+            signal = false
+        }
+    }
+
+    override fun setProgressIndication(title: String, value: Float, text: String): Boolean {
+        if (Signal.signal) {
+            setState { copy(progressIndication = null) }
+            Signal.clear()
+            return false
+        }
+        if (value >= 0) {
+            setState {
+                copy(progressIndication = ProgressIndicatorParameter(title, value, text) {
+                    Signal.set()
+                    setState { copy(progressIndication = null) }
+                }
+                )
+            }
+        } else {
+            setState { copy(progressIndication = null) }
+            Signal.clear()
+        }
+        return true
+    }
+
+    override fun setInformationalDialog(text: String?) {
+        setState { copy(doInformationalDialog = text) }
+    }
+
     fun setExportedNote(note: String?) {
         setState { copy(exportedNote = note) }
     }
@@ -127,6 +164,8 @@ data class AnnotatingRootState(
     val openList: Boolean = false,
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
+    val progressIndication: ProgressIndicatorParameter? = null,
+    val doInformationalDialog: String? = null,
     val exportedNote: String? = null,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(AnnotatingRootStore),
     val showStats: Boolean = false,
