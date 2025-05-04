@@ -3,6 +3,7 @@ package service
 import kotlinx.coroutines.delay
 import common.QuerySetting
 import common.Settings
+import model.ProgressHandler
 import model.RootStore
 import util.Logger
 import util.S2SearchExpression
@@ -50,24 +51,24 @@ object S2Client : AGService {
                 Logger.i(TAG, "TIMEOUT")
                 Logger.error(e)
                 if (indicatorTitle != null
-                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT")
+                    && !progressHandler.setProgressIndication(indicatorTitle, (1f * index) / size, "TIMEOUT")
                 )
                     return Pair(null, false)
             } catch (e: HttpException) {
                 Logger.i(TAG, "ERROR ${e.code()}")
                 if (indicatorTitle != null
-                    && !RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}")
+                    && !progressHandler.setProgressIndication(indicatorTitle, (1f * index) / size, "ERROR ${e.code()}")
                 )
                     return Pair(null, false)
                 when (e.code()) {
                     400, 404, 500 -> return Pair(null, true) // assume DOI defect or unknown
                     403 -> {
-                        RootStore.setInformationalDialog("API returns 403, bailing out. Is the API key from Semantic Scholar expired?")
+                        progressHandler.setInformationalDialog("API returns 403, bailing out. Is the API key from Semantic Scholar expired?")
                         return Pair(null, false)
                     }
                     429 -> {
                         if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-                            RootStore.setInformationalDialog("API returns 429, bailing out. Suggest getting API key from Semantic Scholar.")
+                            progressHandler.setInformationalDialog("API returns 429, bailing out. Suggest getting API key from Semantic Scholar.")
                             return Pair(null, false)
                         }
                         delay(strategy.delay(false))
@@ -79,7 +80,7 @@ object S2Client : AGService {
                 }
             } catch (e: UnknownHostException) {
                 Logger.i(TAG, "ERROR ${e.message}")
-                RootStore.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
+                progressHandler.setInformationalDialog("Could not get DNA record.\n\nPlease make sure you are connected to the internet.")
                 return Pair(null, false)
             } catch (e: SSLException) { // Proxy glitch? Retry
                 Logger.error(e)
@@ -87,6 +88,8 @@ object S2Client : AGService {
             }
         }
     }
+
+    override var progressHandler: ProgressHandler = RootStore
 
     // Full protocol for bulk download of paper details for a search
     override suspend fun getBulkPaperSearch(
@@ -129,10 +132,10 @@ object S2Client : AGService {
             Logger.i(tag, "Received: $numDone data, token: $token")
             println("Received: $numDone/$total data, token: $token")
             delay(strategy.delay(true))
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f * numDone) / total, "$numDone/$total"))
+            if (!progressHandler.setProgressIndication(indicatorTitle, (1f * numDone) / total, "$numDone/$total"))
                 return false
         }
-        RootStore.setProgressIndication()
+        progressHandler.setProgressIndication()
         return true
     }
 
@@ -157,10 +160,10 @@ object S2Client : AGService {
             delay(strategy.delay(true))
             pair.first?.filterNotNull()?.forEach(action) // DO NOT remove filterNotNull()
             index += paperIds.size
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
+            if (!progressHandler.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
-        RootStore.setProgressIndication()
+        progressHandler.setProgressIndication()
         return true
     }
 
@@ -250,10 +253,10 @@ object S2Client : AGService {
             pair.first?.filterNotNull()
                 ?.forEachIndexed { index, paperRefs -> action(dois[index], paperRefs) } // DO NOT remove filterNotNull()
             index += dois.size
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
+            if (!progressHandler.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
-        RootStore.setProgressIndication()
+        progressHandler.setProgressIndication()
         return true
     }
     override suspend fun getSimilarDetails(
@@ -280,16 +283,16 @@ object S2Client : AGService {
             delay(strategy.delay(true))
             pair.first?.filterNotNull()?.forEach(action) // DO NOT remove filterNotNull()
             index += paperIds.size
-            if (!RootStore.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
+            if (!progressHandler.setProgressIndication(indicatorTitle, (1f * index) / size, "$index/$size"))
                 return false
         }
-        RootStore.setProgressIndication()
+        progressHandler.setProgressIndication()
         return true
     }
 
     private fun checkKey() : Boolean {
         return if (Settings.map["S2-API-key"].isNullOrEmpty()) {
-            RootStore.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
+            progressHandler.setInformationalDialog("Cannot use Semantic Scholar without API key. Apply for a key at https://www.semanticscholar.org/product/api#api-key-form and insert it in the Settings.")
             false
             }
         else true

@@ -2,8 +2,10 @@ package service
 
 import common.QuerySetting
 import common.Settings
+import model.ProgressHandler
 
 interface AGService {
+    var progressHandler: ProgressHandler
     suspend fun getBulkPaperSearch(
         setting: QuerySetting,
         action: (S2Interface.PaperDetails) -> Unit

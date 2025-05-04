@@ -5,24 +5,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.*
+import dialog.ProgressIndicatorParameter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import dialog.ProgressIndicatorParameter
+import service.getAGService
 import util.CantHappenException
 import util.DefaultScripts
 import util.SystemFunction
 import util.openInBrowser
+import window.RootType
 import window.components.Icons
 import window.components.RailItem
 import window.components.SortingControlItem
 import window.components.SortingType
-import window.RootType
 import java.net.URI
 
-object RootStore {
+object RootStore : ProgressHandler {
     var state: RootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
 
@@ -113,6 +114,7 @@ object RootStore {
     }
 
     fun nextAction(status: QueryStatus, id: Int) {
+        getAGService().progressHandler = this
         when (status) {
             QueryStatus.UNINITIALIZED -> onQuerySettingsClicked(id)
             QueryStatus.FILTERED2 -> onDoExpandStarted(id)
@@ -213,7 +215,7 @@ object RootStore {
         }
     }
 
-    fun setProgressIndication(title: String = "", value: Float = -1f, text: String = ""): Boolean {
+    override fun setProgressIndication(title: String, value: Float, text: String): Boolean {
         if (Signal.signal) {
             setState { copy(progressIndication = null) }
             Signal.clear()
@@ -234,7 +236,7 @@ object RootStore {
         return true
     }
 
-    fun setInformationalDialog(text: String?) {
+    override fun setInformationalDialog(text: String?) {
         setState { copy(doInformationalDialog = text) }
     }
 

@@ -4,6 +4,7 @@ package service
 import kotlinx.coroutines.delay
 import common.QuerySetting
 import common.Settings
+import model.ProgressHandler
 import model.RootStore
 import util.Logger
 import util.S2SearchExpression
@@ -18,6 +19,7 @@ object EntrezClient : AGService {
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
     lateinit var strategy: DelayStrategy
+    override var progressHandler: ProgressHandler = RootStore
 
     override suspend fun <T> getDataOrHandleExceptions(
         index: Int,

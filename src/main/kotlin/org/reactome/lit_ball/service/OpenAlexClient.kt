@@ -4,9 +4,12 @@ package service
 //import ktalex.dal.client.WorkClient
 import common.QuerySetting
 import common.Settings
+import model.ProgressHandler
+import model.RootStore
 
 object OpenAlexClient : AGService {
     private const val TAG = "OAClient"
+    override var progressHandler: ProgressHandler = RootStore
 
     override suspend fun <T> getDataOrHandleExceptions(
         index: Int,
@@ -143,7 +146,7 @@ object OpenAlexClient : AGService {
     }
 
     // Full protocol for non-bulk download of paper details for a list of DOIs
-    private suspend fun getSinglePaperDetails(
+    private fun getSinglePaperDetails(
         doiSet: List<String>,
         action: (S2Interface.PaperDetails) -> Unit
     ): Boolean {
@@ -180,7 +183,7 @@ object OpenAlexClient : AGService {
     }
 
     // Full protocol for non-bulk download of paper refs for a list of DOIs
-    private suspend fun getSinglePaperRefs(
+    private fun getSinglePaperRefs(
         doiSet: List<String>,
         action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
@@ -207,7 +210,7 @@ object OpenAlexClient : AGService {
     }
 
     // Full protocol for bulk download of paper details for a list of DOIs
-    private suspend fun getBulkPaperRefs(
+    private fun getBulkPaperRefs(
         doiSet: List<String>,
         action: suspend (String, S2Interface.PaperRefs) -> Unit
     ): Boolean {
