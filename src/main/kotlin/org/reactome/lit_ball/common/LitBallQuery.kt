@@ -234,6 +234,7 @@ data class LitBallQuery(
                         it.tldr?.get("text") ?: "",
                         it.abstract ?: ""
                     )
+                    it.authors = null    // reset unasked for author data
                     if (matcher.match(textsOfPaper.joinToString(" "), it.title ?: ""))
                         paperDetailsList.add(it)
                 }

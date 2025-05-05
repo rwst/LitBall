@@ -72,6 +72,7 @@ object PaperList {
                 ) {
                     val newPaper = Paper(id = maxId, details = it)
                     newPaper.setPaperIdFromDetails().fixNullTldr()
+                    newPaper.details.authors = null
                     papers.add(newPaper)
                     list.add(newPaper.details)
                     maxId += 1
