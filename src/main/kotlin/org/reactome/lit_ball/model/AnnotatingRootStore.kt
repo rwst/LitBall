@@ -8,11 +8,9 @@ import common.FileType
 import common.PaperList
 import common.Settings
 import dialog.ProgressIndicatorParameter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.datetime.LocalDate
+import service.getAGService
 import util.SystemFunction
 import util.toEpochMilliseconds
 import window.RootType
@@ -78,22 +76,25 @@ object AnnotatingRootStore : ModelHandle, ProgressHandler {
         state.paperListStore.refreshList()
     }
 
-    private fun doExport() {
-        runBlocking {
+    private suspend fun doExport() {
+        getAGService().progressHandler = this
+        withContext(Dispatchers.IO) {
             PaperList.exportAnnotated()
         }
         setExportedNote("Exported to ${FileType.EXPORTED_CSV.fileName}.")
     }
 
-    private fun doExportText() {
-        runBlocking {
+    private suspend fun doExportText() {
+        getAGService().progressHandler = this
+        withContext(Dispatchers.IO) {
             PaperList.exportText()
         }
         setExportedNote("Exported to ${FileType.EXPORTED_JSONL.fileName}.")
     }
 
-    private fun doExportRIS() {
-        runBlocking {
+    private suspend fun doExportRIS() {
+        getAGService().progressHandler = this
+        withContext(Dispatchers.IO) {
             PaperList.exportRIS()
         }
         setExportedNote("Exported to ${FileType.EXPORTED_RIS.fileName}.")

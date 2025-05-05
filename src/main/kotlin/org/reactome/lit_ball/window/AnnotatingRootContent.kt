@@ -34,8 +34,8 @@ fun AnnotatingRootContent(
         AnnotatingFilterDialog(state.paperListStore)
     }
 
-    state.progressIndication?.also {
-        ProgressIndicator(state.progressIndication)
+    state.progressIndication?.let {
+        ProgressIndicator(it)
     }
 
     state.doInformationalDialog?.also {
@@ -43,7 +43,7 @@ fun AnnotatingRootContent(
     }
 
     state.exportedNote?.let {
-        InformationalDialog("NOTE", it) { AnnotatingRootStore.setExportedNote(null) }
+        InformationalDialog("NOTE", it) { model.setExportedNote(null) }
     }
 
     AnnotatingMainContent(

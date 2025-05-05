@@ -6,7 +6,7 @@ data class RailItem(
     val iconPainterResource: String,
     val actionIndex: Int,
     val extraAction: (() -> Unit)? = null,
-    val onClicked: () -> Unit,
+    val onClicked: suspend () -> Unit,
 )
 
 
