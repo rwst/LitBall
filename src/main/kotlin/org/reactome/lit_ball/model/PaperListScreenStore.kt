@@ -4,18 +4,17 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import common.Paper
+import common.PaperList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import common.Paper
-import common.PaperList
-import dialog.ProgressIndicatorParameter
+import window.RootType
 import window.components.Icons
 import window.components.SortingControlItem
 import window.components.SortingType
-import window.RootType
 
 interface ModelHandle {
     fun refreshClassifierButton()
@@ -139,6 +138,5 @@ data class PaperListScreenState(
     val classifierAlert: Boolean = false,
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
-    val progressIndication: ProgressIndicatorParameter? = null,
     val filterDialog: Boolean = false,
 )

@@ -7,7 +7,6 @@ import androidx.compose.ui.focus.FocusRequester
 import dialog.ConfirmationDialog
 import dialog.InformationalDialog
 import dialog.PaperDetailDialog
-import dialog.ProgressIndicator
 import model.PaperListScreenStore
 
 @Composable
@@ -22,10 +21,6 @@ fun PaperListScreenEvents(
             model::onEditorCloseClicked,
             focusRequester,
         )
-    }
-
-    state.progressIndication?.also {
-        ProgressIndicator(state.progressIndication)
     }
 
     if (state.classifierAlert) {
