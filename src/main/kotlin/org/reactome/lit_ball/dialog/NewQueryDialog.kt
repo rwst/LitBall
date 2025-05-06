@@ -17,7 +17,6 @@ import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import common.ArticleType
 import common.QueryList
 import common.QueryType
@@ -33,7 +32,7 @@ fun NewQueryDialog(
     onCloseClicked: () -> Unit,
 ) {
     val copyFromValue = rememberSaveable { mutableStateOf("") }
-    val typeValue = rememberSaveable { mutableStateOf(2) }
+    val queryTypeValue = rememberSaveable { mutableStateOf(QueryType.SUPERVISED_SNOWBALLING.ordinal) }
     val fieldValue = rememberSaveable { mutableStateOf("") }
     val nameValue = rememberSaveable { mutableStateOf("") }
     val pubYearValue = rememberSaveable { mutableStateOf("") }
@@ -43,11 +42,10 @@ fun NewQueryDialog(
     val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
-    rememberSaveable { mutableStateOf(null) }
-    val queryPath = Settings.map["path-to-queries"] ?: ""
+    val queryPath = Settings.map["path-to-queries"] ?: throw Exception("Path to queries not set")
 
     AlertDialog(
-        onDismissRequest = { (onCloseClicked)() },
+        onDismissRequest = { onCloseClicked() },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -62,27 +60,38 @@ fun NewQueryDialog(
                         pathWarningValue.value = "Query directory is not writable"
                         return@TextButton
                     }
-                    var dois: List<String>
-                    runBlocking {
-                        dois = fillDOIs(refs)
+                    var dois: List<String> = emptyList()
+                    rootScope.launch(Dispatchers.IO) {
+                        doiWarningValue.value = "Retrieving DOIs of ${refs.size} references..."
+                        try {
+                            dois = fillDOIs(refs)
+                            doiWarningValue.value = null
+                            fieldValue.value = dois.joinToString("\n")
+                            if (dois.any { !it.startsWith("10.") }) {
+                                doiWarningValue.value = "Could not convert all entries to DOI. Please replace or remove."
+                            }
+                        }
+                        catch (e: Exception) {
+                            doiWarningValue.value = "Error: ${e.message}"
+                        }
                     }
-                    fieldValue.value = dois.joinToString("\n")
-                    if (dois.any { !it.startsWith("10.") }) {
-                        doiWarningValue.value = "Could not convert all entries to DOI. Please replace or remove."
-                        return@TextButton
-                    }
-                    checkValue.value = name.isNotEmpty() && (typeValue.value == 0 || dois.isNotEmpty())
+
+                    checkValue.value = name.isNotEmpty()
+                            && (queryTypeValue.value == QueryType.EXPRESSION_SEARCH.ordinal
+                                || (dois.isNotEmpty()
+                                    && dois.none { !it.startsWith("10.") })
+                                )
                     nameCheckValue.value = name !in QueryList.list.map { it.name }
                     if (checkValue.value && nameCheckValue.value) {
                         rootScope.launch(Dispatchers.IO) {
                             QueryList.addNewItem(
-                                QueryType.entries[typeValue.value],
+                                QueryType.entries[queryTypeValue.value],
                                 name,
                                 dois.toSet(),
                                 Pair(pubYearValue.value, flagCheckedValue.value)
                             )
                         }
-                        (onCloseClicked)()
+                        onCloseClicked()
                     }
                 }
             ) {
@@ -90,7 +99,7 @@ fun NewQueryDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = { (onCloseClicked)() } ) {
+            TextButton(onClick = { onCloseClicked() } ) {
                 Text("Dismiss")
             }
         },
@@ -101,7 +110,7 @@ fun NewQueryDialog(
             Column(horizontalAlignment = Alignment.Start) {
                 queryCopyFromComponent(copyFromValue)
                 Spacer(modifier = Modifier.height(8.dp))
-                queryTypeComponent(typeValue, typeWarningValue)
+                queryTypeComponent(queryTypeValue, typeWarningValue)
                 Spacer(modifier = Modifier.height(8.dp))
                 queryNameComponent(nameValue, pathWarningValue)
 
@@ -111,7 +120,7 @@ fun NewQueryDialog(
                         .first { it !in QueryList.list.map { query -> query.name } }
                 }
 
-                if (typeValue.value > 0) {
+                if (queryTypeValue.value > 0) {
                     queryPaperIdsComponent(fieldValue, pathWarningValue, doiWarningValue)
                 } else {
                     queryPublicationDateComponent(pubYearValue)
