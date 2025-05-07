@@ -7,20 +7,19 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import common.ArticleType
 import common.QueryList
 import common.QueryType
 import common.Settings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.isWritable
@@ -31,64 +30,113 @@ fun NewQueryDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {
-    val copyFromValue = rememberSaveable { mutableStateOf("") }
-    val queryTypeValue = rememberSaveable { mutableStateOf(QueryType.SUPERVISED_SNOWBALLING.ordinal) }
-    val fieldValue = rememberSaveable { mutableStateOf("") }
-    val nameValue = rememberSaveable { mutableStateOf("") }
-    val pubYearValue = rememberSaveable { mutableStateOf("") }
-    val flagCheckedValue = rememberSaveable { mutableStateOf(BooleanArray(ArticleType.entries.size) { true }) }
-    val checkValue = rememberSaveable { mutableStateOf(true) }
-    val nameCheckValue = rememberSaveable { mutableStateOf(true) }
-    val typeWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
-    val pathWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
-    val doiWarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    data class QueryDialogState(
+        val copyFrom: String = "",
+        val queryType: Int = QueryType.SUPERVISED_SNOWBALLING.ordinal,
+        val field: String = "",
+        val name: String = "",
+        val pubYear: String = "",
+        val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
+        val check: Boolean = true,
+        val nameCheck: Boolean = true,
+        val typeWarning: String? = null,
+        val pathWarning: String? = null,
+        val doiWarning: String? = null
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as QueryDialogState
+
+            if (queryType != other.queryType) return false
+            if (check != other.check) return false
+            if (nameCheck != other.nameCheck) return false
+            if (copyFrom != other.copyFrom) return false
+            if (field != other.field) return false
+            if (name != other.name) return false
+            if (pubYear != other.pubYear) return false
+            if (!flagChecked.contentEquals(other.flagChecked)) return false
+            if (typeWarning != other.typeWarning) return false
+            if (pathWarning != other.pathWarning) return false
+            if (doiWarning != other.doiWarning) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = queryType
+            result = 31 * result + check.hashCode()
+            result = 31 * result + nameCheck.hashCode()
+            result = 31 * result + copyFrom.hashCode()
+            result = 31 * result + field.hashCode()
+            result = 31 * result + name.hashCode()
+            result = 31 * result + pubYear.hashCode()
+            result = 31 * result + flagChecked.contentHashCode()
+            result = 31 * result + (typeWarning?.hashCode() ?: 0)
+            result = 31 * result + (pathWarning?.hashCode() ?: 0)
+            result = 31 * result + (doiWarning?.hashCode() ?: 0)
+            return result
+        }
+    }
+
+    val state = rememberSaveable { mutableStateOf(QueryDialogState()) }
     val queryPath = Settings.map["path-to-queries"] ?: throw Exception("Path to queries not set")
+
+    fun setState(update: QueryDialogState.() -> QueryDialogState) {
+        state.value = state.value.update()
+    }
 
     AlertDialog(
         onDismissRequest = { onCloseClicked() },
         confirmButton = {
             TextButton(
                 onClick = {
-                    val refs = fieldValue.value.split("\n")
+                    val refs = state.value.field.split("\n")
                         .map { it.trim().transformDOI() }
                         .filter { it.isNotBlank() }
-                    val name = nameValue.value.trim()
-                    pathWarningValue.value = null
-                    doiWarningValue.value = null
+                    val name = state.value.name.trim()
+                    setState { copy(pathWarning = null, doiWarning = null) }
 
                     if (File(queryPath).exists() && !Path(queryPath).isWritable()) {
-                        pathWarningValue.value = "Query directory is not writable"
+                        setState { copy(pathWarning = "Query directory is not writable") }
                         return@TextButton
                     }
                     var dois: List<String> = emptyList()
                     rootScope.launch(Dispatchers.IO) {
-                        doiWarningValue.value = "Retrieving DOIs of ${refs.size} references..."
+                        setState { copy(doiWarning = "Retrieving DOIs of ${refs.size} references...") }
                         try {
                             dois = fillDOIs(refs)
-                            doiWarningValue.value = null
-                            fieldValue.value = dois.joinToString("\n")
-                            if (dois.any { !it.startsWith("10.") }) {
-                                doiWarningValue.value = "Could not convert all entries to DOI. Please replace or remove."
+                            setState {
+                                copy(
+                                    doiWarning = null,
+                                    field = dois.joinToString("\n")
+                                )
                             }
-                        }
-                        catch (e: Exception) {
-                            doiWarningValue.value = "Error: ${e.message}"
+                            if (dois.any { !it.startsWith("10.") }) {
+                                setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove.") }
+                            }
+                        } catch (e: Exception) {
+                            setState { copy(doiWarning = "Error: ${e.message}") }
                         }
                     }
 
-                    checkValue.value = name.isNotEmpty()
-                            && (queryTypeValue.value == QueryType.EXPRESSION_SEARCH.ordinal
-                                || (dois.isNotEmpty()
-                                    && dois.none { !it.startsWith("10.") })
-                                )
-                    nameCheckValue.value = name !in QueryList.list.map { it.name }
-                    if (checkValue.value && nameCheckValue.value) {
+                    setState {
+                        copy(
+                            check = name.isNotEmpty() &&
+                                    (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
+                                            (dois.isNotEmpty() && dois.none { !it.startsWith("10.") })),
+                            nameCheck = name !in QueryList.list.map { it.name }
+                        )
+                    }
+
+                    if (state.value.check && state.value.nameCheck) {
                         rootScope.launch(Dispatchers.IO) {
                             QueryList.addNewItem(
-                                QueryType.entries[queryTypeValue.value],
+                                QueryType.entries[state.value.queryType],
                                 name,
                                 dois.toSet(),
-                                Pair(pubYearValue.value, flagCheckedValue.value)
+                                Pair(state.value.pubYear, state.value.flagChecked)
                             )
                         }
                         onCloseClicked()
@@ -99,7 +147,7 @@ fun NewQueryDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = { onCloseClicked() } ) {
+            TextButton(onClick = { onCloseClicked() }) {
                 Text("Dismiss")
             }
         },
@@ -108,29 +156,36 @@ fun NewQueryDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
-                queryCopyFromComponent(copyFromValue)
+                queryCopyFromComponent(mutableStateOf(state.value.copyFrom))
                 Spacer(modifier = Modifier.height(8.dp))
-                queryTypeComponent(queryTypeValue, typeWarningValue)
+                queryTypeComponent(mutableStateOf(state.value.queryType), mutableStateOf(state.value.typeWarning))
                 Spacer(modifier = Modifier.height(8.dp))
-                queryNameComponent(nameValue, pathWarningValue)
+                queryNameComponent(mutableStateOf(state.value.name), mutableStateOf(state.value.pathWarning))
 
-                if (copyFromValue.value.isNotBlank()) {
-                    nameValue.value = generateSequence(1) { it + 1 }
-                        .map { "${copyFromValue.value}-$it" }
-                        .first { it !in QueryList.list.map { query -> query.name } }
+                if (state.value.copyFrom.isNotBlank()) {
+                    setState {
+                        copy(name = generateSequence(1) { it + 1 }
+                            .map { "${copyFrom}-$it" }
+                            .first { it !in QueryList.list.map { query -> query.name } }
+                        )
+                    }
                 }
 
-                if (queryTypeValue.value > 0) {
-                    queryPaperIdsComponent(fieldValue, pathWarningValue, doiWarningValue)
+                if (state.value.queryType > 0) {
+                    queryPaperIdsComponent(
+                        mutableStateOf(state.value.field),
+                        mutableStateOf(state.value.pathWarning),
+                        mutableStateOf(state.value.doiWarning)
+                    )
                 } else {
-                    queryPublicationDateComponent(pubYearValue)
+                    queryPublicationDateComponent(mutableStateOf(state.value.pubYear))
                     Spacer(modifier = Modifier.height(24.dp))
-                    queryArticleTypeComponent(flagCheckedValue)
+                    queryArticleTypeComponent(mutableStateOf(state.value.flagChecked))
                 }
 
-                if (!checkValue.value)
+                if (!state.value.check)
                     Text("Please fill in the text fields.")
-                if (!nameCheckValue.value)
+                if (!state.value.nameCheck)
                     Text("Query name already exists in directory.")
             }
         },
@@ -139,5 +194,5 @@ fun NewQueryDialog(
             .padding(28.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-        )
+    )
 }
