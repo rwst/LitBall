@@ -87,67 +87,82 @@ fun NewQueryDialog(
         state.value = state.value.update()
     }
 
+    fun processConfirmation() {
+        val refs = state.value.field.split("\n")
+            .map { it.trim().transformDOI() }
+            .filter { it.isNotBlank() }
+        val name = state.value.name.trim()
+        setState { copy(pathWarning = null, doiWarning = null) }
+
+        if (File(queryPath).exists() && !Path(queryPath).isWritable()) {
+            setState { copy(pathWarning = "Query directory is not writable") }
+            return
+        }
+        var dois: List<String> = emptyList()
+        rootScope.launch(Dispatchers.IO) {
+            setState { copy(doiWarning = "Retrieving DOIs of ${refs.size} references...") }
+            try {
+                dois = fillDOIs(refs)
+                setState {
+                    copy(
+                        doiWarning = null,
+                        field = dois.joinToString("\n")
+                    )
+                }
+                if (dois.any { !it.startsWith("10.") }) {
+                    setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove.") }
+                }
+            } catch (e: Exception) {
+                setState { copy(doiWarning = "Error: ${e.message}") }
+            }
+        }
+
+        setState {
+            copy(
+                check = name.isNotEmpty() &&
+                        (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
+                                (dois.isNotEmpty() && dois.all { it.startsWith("10.") })),
+                nameCheck = name !in QueryList.list.map { it.name }
+            )
+        }
+
+        if (state.value.check && state.value.nameCheck) {
+            rootScope.launch(Dispatchers.IO) {
+                QueryList.addNewItem(
+                    QueryType.entries[state.value.queryType],
+                    name,
+                    dois.toSet(),
+                    Pair(state.value.pubYear, state.value.flagChecked)
+                )
+            }
+            onCloseClicked()
+        }
+    }
+
+    fun generateUniqueQueryName() {
+        if (state.value.copyFrom.isNotBlank()) {
+            setState {
+                copy(name = generateSequence(1) { it + 1 }
+                    .map { "${copyFrom}-$it" }
+                    .first { it !in QueryList.list.map { query -> query.name } }
+                )
+            }
+        }
+    }
+
     AlertDialog(
         onDismissRequest = { onCloseClicked() },
         confirmButton = {
             TextButton(
-                onClick = {
-                    val refs = state.value.field.split("\n")
-                        .map { it.trim().transformDOI() }
-                        .filter { it.isNotBlank() }
-                    val name = state.value.name.trim()
-                    setState { copy(pathWarning = null, doiWarning = null) }
-
-                    if (File(queryPath).exists() && !Path(queryPath).isWritable()) {
-                        setState { copy(pathWarning = "Query directory is not writable") }
-                        return@TextButton
-                    }
-                    var dois: List<String> = emptyList()
-                    rootScope.launch(Dispatchers.IO) {
-                        setState { copy(doiWarning = "Retrieving DOIs of ${refs.size} references...") }
-                        try {
-                            dois = fillDOIs(refs)
-                            setState {
-                                copy(
-                                    doiWarning = null,
-                                    field = dois.joinToString("\n")
-                                )
-                            }
-                            if (dois.any { !it.startsWith("10.") }) {
-                                setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove.") }
-                            }
-                        } catch (e: Exception) {
-                            setState { copy(doiWarning = "Error: ${e.message}") }
-                        }
-                    }
-
-                    setState {
-                        copy(
-                            check = name.isNotEmpty() &&
-                                    (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
-                                            (dois.isNotEmpty() && dois.none { !it.startsWith("10.") })),
-                            nameCheck = name !in QueryList.list.map { it.name }
-                        )
-                    }
-
-                    if (state.value.check && state.value.nameCheck) {
-                        rootScope.launch(Dispatchers.IO) {
-                            QueryList.addNewItem(
-                                QueryType.entries[state.value.queryType],
-                                name,
-                                dois.toSet(),
-                                Pair(state.value.pubYear, state.value.flagChecked)
-                            )
-                        }
-                        onCloseClicked()
-                    }
-                }
+                onClick = { processConfirmation() }
             ) {
                 Text("Confirm")
             }
         },
         dismissButton = {
-            TextButton(onClick = { onCloseClicked() }) {
+            TextButton(
+                onClick = { onCloseClicked() }
+            ) {
                 Text("Dismiss")
             }
         },
@@ -162,14 +177,7 @@ fun NewQueryDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 queryNameComponent(mutableStateOf(state.value.name), mutableStateOf(state.value.pathWarning))
 
-                if (state.value.copyFrom.isNotBlank()) {
-                    setState {
-                        copy(name = generateSequence(1) { it + 1 }
-                            .map { "${copyFrom}-$it" }
-                            .first { it !in QueryList.list.map { query -> query.name } }
-                        )
-                    }
-                }
+                generateUniqueQueryName()
 
                 if (state.value.queryType > 0) {
                     queryPaperIdsComponent(
