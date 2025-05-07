@@ -7,18 +7,26 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 
-fun makeQueryDir(queryDir: File) : Boolean {
-    if (queryDir.exists()) {
-        handleException(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
-        return false
-    }
-    try {
-        Files.createDirectory(queryDir.toPath())
+/**
+ * Creates a directory for storing query files if it does not already exist.
+ * Logs an error if the directory already exists or if an exception occurs during creation.
+ *
+ * @param queryDir The directory to be created for storing query files.
+ * @return `true` if the directory was successfully created, `false` otherwise.
+ */
+fun makeQueryDir(queryDir: File): Boolean {
+    return try {
+        if (queryDir.exists()) {
+            Logger.error(IOException("Directory ${queryDir.absolutePath} already exists. Query not created."))
+            false
+        } else {
+            Files.createDirectories(queryDir.toPath())
+            true
+        }
     } catch (e: Exception) {
-        handleException(e)
-        return false
+        Logger.error(e)
+        false
     }
-    return true
 }
 
 /**
