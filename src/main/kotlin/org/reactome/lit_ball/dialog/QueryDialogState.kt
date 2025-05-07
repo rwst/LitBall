@@ -1,0 +1,60 @@
+package dialog
+
+import androidx.compose.runtime.MutableState
+import common.ArticleType
+import common.QueryType
+
+data class QueryDialogState(
+    val copyFrom: String = "",
+    val queryType: Int = QueryType.SUPERVISED_SNOWBALLING.ordinal,
+    val field: String = "",
+    val name: String = "",
+    val pubYear: String = "",
+    val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
+    val check: Boolean = true,
+    val nameCheck: Boolean = true,
+    val typeWarning: String? = null,
+    val pathWarning: String? = null,
+    val doiWarning: String? = null
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as QueryDialogState
+
+        if (queryType != other.queryType) return false
+        if (check != other.check) return false
+        if (nameCheck != other.nameCheck) return false
+        if (copyFrom != other.copyFrom) return false
+        if (field != other.field) return false
+        if (name != other.name) return false
+        if (pubYear != other.pubYear) return false
+        if (!flagChecked.contentEquals(other.flagChecked)) return false
+        if (typeWarning != other.typeWarning) return false
+        if (pathWarning != other.pathWarning) return false
+        if (doiWarning != other.doiWarning) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = queryType
+        result = 31 * result + check.hashCode()
+        result = 31 * result + nameCheck.hashCode()
+        result = 31 * result + copyFrom.hashCode()
+        result = 31 * result + field.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + pubYear.hashCode()
+        result = 31 * result + flagChecked.contentHashCode()
+        result = 31 * result + (typeWarning?.hashCode() ?: 0)
+        result = 31 * result + (pathWarning?.hashCode() ?: 0)
+        result = 31 * result + (doiWarning?.hashCode() ?: 0)
+        return result
+    }
+}
+
+fun MutableState<QueryDialogState>.set(update: QueryDialogState.() -> QueryDialogState)
+{
+    value = value.update()
+}

@@ -44,7 +44,9 @@ private const val doiInputHelpTooltipText = """
                             handled. PMID links will be stripped to just the number"""
 
 @Composable
-fun queryArticleTypeComponent(flagCheckedValue: MutableState<BooleanArray>) {
+fun queryArticleTypeComponent(
+    state: MutableState<QueryDialogState>,
+) {
     Row {
         Tooltip(
             text = """
@@ -59,7 +61,7 @@ fun queryArticleTypeComponent(flagCheckedValue: MutableState<BooleanArray>) {
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
                 ArticleType.entries.forEach { articleType ->
-                    val (checkedState, onStateChange) = remember { mutableStateOf(flagCheckedValue.value[articleType.ordinal]) }
+                    val (checkedState, onStateChange) = remember { mutableStateOf(state.value.flagChecked[articleType.ordinal]) }
                     Row(
                         modifier = Modifier
                             .padding(vertical = 0.dp)
@@ -69,9 +71,11 @@ fun queryArticleTypeComponent(flagCheckedValue: MutableState<BooleanArray>) {
                         Checkbox(
                             checked = checkedState,
                             onCheckedChange = {
-                                if (!checkedState || flagCheckedValue.value.count { it } > 1) {
+                                if (!checkedState || state.value.flagChecked.count { it } > 1) {
                                     onStateChange(!checkedState)
-                                    flagCheckedValue.value[articleType.ordinal] = !checkedState
+                                    val newFlagChecked = state.value.flagChecked.clone()
+                                    newFlagChecked[articleType.ordinal] = !checkedState
+                                    state.set { copy(flagChecked = newFlagChecked) }
                                 }
                             },
                             modifier = Modifier
@@ -88,7 +92,9 @@ fun queryArticleTypeComponent(flagCheckedValue: MutableState<BooleanArray>) {
 }
 
 @Composable
-fun queryPublicationDateComponent(pubYearValue: MutableState<String>) {
+fun queryPublicationDateComponent(
+    state: MutableState<QueryDialogState>,
+) {
     Row {
         Tooltip(
             text = """
@@ -99,9 +105,9 @@ fun queryPublicationDateComponent(pubYearValue: MutableState<String>) {
         }
         Spacer(modifier = Modifier.width(14.dp))
         TextField(
-            value = pubYearValue.value,
+            value = state.value.pubYear,
             onValueChange = {
-                pubYearValue.value = it
+                state.set { copy(pubYear = it) }
             },
             label = { Text("Publication Date (optional)") },
             placeholder = { Text("1900-") }
@@ -111,9 +117,7 @@ fun queryPublicationDateComponent(pubYearValue: MutableState<String>) {
 
 @Composable
 fun queryPaperIdsComponent(
-    fieldValue: MutableState<String>,
-    pathWarningValue: MutableState<String?>,
-    doiWarningValue: MutableState<String?>
+    state: MutableState<QueryDialogState>,
 ) {
     Row {
         Tooltip(
@@ -124,15 +128,21 @@ fun queryPaperIdsComponent(
         }
         Spacer(modifier = Modifier.width(14.dp))
         TextField(
-            value = fieldValue.value,
-            onValueChange = {
-                fieldValue.value = it.split('\n').joinToString("\n") { s -> s.trim().transformDOI() }
-                pathWarningValue.value = null
+            value = state.value.field,
+            onValueChange = { str ->
+                state.set {
+                    copy(
+                        field = str
+                            .split('\n')
+                            .joinToString("\n") { s -> s.trim().transformDOI() } ,
+                        pathWarning = null
+                    )
+                }
             },
             label = { Text("Core DOIs/PMIDs (one per line)") },
             placeholder = { Text("10.XYZ/ABC\n12345678") }
         )
-        doiWarningValue.value?.also {
+        state.value.doiWarning?.also {
             Text(
                 it,
                 color = Color.Red,
@@ -146,8 +156,7 @@ fun queryPaperIdsComponent(
 
 @Composable
 fun queryNameComponent(
-    nameValue: MutableState<String>,
-    pathWarningValue: MutableState<String?>
+    state: MutableState<QueryDialogState>,
 ) {
     Row {
         Tooltip(
@@ -161,13 +170,13 @@ fun queryNameComponent(
         }
         Spacer(modifier = Modifier.width(14.dp))
         TextField(
-            value = nameValue.value,
+            value = state.value.name,
             onValueChange = {
-                nameValue.value = it.substringBefore("/")
+                state.set { copy(name = it.substringBefore("/")) }
             },
             label = { Text("Query name") },
         )
-        pathWarningValue.value?.also {
+        state.value.pathWarning?.also {
             Text(
                 it,
                 color = Color.Red,
@@ -181,8 +190,7 @@ fun queryNameComponent(
 
 @Composable
 fun queryTypeComponent(
-    typeValue: MutableState<Int>,
-    typeWarningValue: MutableState<String?>
+    state: MutableState<QueryDialogState>,
 ) {
     Row {
         Tooltip(
@@ -194,17 +202,19 @@ fun queryTypeComponent(
         Spacer(modifier = Modifier.width(14.dp))
         RadioButtonOptions(
             QueryType.entries.map { it.pretty },
-            typeValue.value,
+            state.value.queryType,
             onOptionSelected = { btn ->
-                if ((btn == 0 || btn == 3) && Settings.map["S2-API-key"].isNullOrEmpty()) {
-                    typeWarningValue.value = "S2 API key needed"
-                } else {
-                    typeWarningValue.value = null
+                state.set {
+                    if ((btn == 0 || btn == 3) && Settings.map["S2-API-key"].isNullOrEmpty()) {
+                        copy(typeWarning = "S2 API key needed")
+                    } else {
+                        copy(typeWarning = null)
+                    }
                 }
-                typeValue.value = btn
+                state.set { copy(queryType = btn) }
             }
         )
-        typeWarningValue.value?.also {
+        state.value.typeWarning?.also {
             Text(
                 it,
                 color = Color.Red,
@@ -218,7 +228,7 @@ fun queryTypeComponent(
 
 @Composable
 fun queryCopyFromComponent(
-    copyFromValue: MutableState<String>
+    state: MutableState<QueryDialogState>,
 ) {
     val copyFromIsSetValue = rememberSaveable { mutableStateOf(false) }
 
@@ -236,18 +246,22 @@ fun queryCopyFromComponent(
         TextButton(
             onClick = { copyFromIsSetValue.value = !copyFromIsSetValue.value },
             modifier = Modifier.align(Alignment.CenterVertically)
-        ) { Text("Copy from query: ${copyFromValue.value}") }
+        ) { Text("Copy from query: ${state.value.copyFrom}") }
         Spacer(modifier = Modifier.width(14.dp))
         if (copyFromIsSetValue.value) {
             Box {
                 DropdownMenu(
                     expanded = copyFromIsSetValue.value,
                     onDismissRequest = {
-                        copyFromValue.value = ""
+                        state.set { copy(copyFrom = "") }
                         copyFromIsSetValue.value = false })
                 {
                     QueryList.list.map { it.name }.forEach {
-                        DropdownMenuItem(onClick = { copyFromValue.value = it; copyFromIsSetValue.value = false })
+                        DropdownMenuItem(
+                            onClick = {
+                                state.set { copy(copyFrom = it) }
+                                copyFromIsSetValue.value = false
+                            })
                         { Text(it) }
                     }
                 }

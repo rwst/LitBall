@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import common.ArticleType
 import common.QueryList
 import common.QueryType
 import common.Settings
@@ -30,55 +29,6 @@ fun NewQueryDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {
-    data class QueryDialogState(
-        val copyFrom: String = "",
-        val queryType: Int = QueryType.SUPERVISED_SNOWBALLING.ordinal,
-        val field: String = "",
-        val name: String = "",
-        val pubYear: String = "",
-        val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
-        val check: Boolean = true,
-        val nameCheck: Boolean = true,
-        val typeWarning: String? = null,
-        val pathWarning: String? = null,
-        val doiWarning: String? = null
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as QueryDialogState
-
-            if (queryType != other.queryType) return false
-            if (check != other.check) return false
-            if (nameCheck != other.nameCheck) return false
-            if (copyFrom != other.copyFrom) return false
-            if (field != other.field) return false
-            if (name != other.name) return false
-            if (pubYear != other.pubYear) return false
-            if (!flagChecked.contentEquals(other.flagChecked)) return false
-            if (typeWarning != other.typeWarning) return false
-            if (pathWarning != other.pathWarning) return false
-            if (doiWarning != other.doiWarning) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = queryType
-            result = 31 * result + check.hashCode()
-            result = 31 * result + nameCheck.hashCode()
-            result = 31 * result + copyFrom.hashCode()
-            result = 31 * result + field.hashCode()
-            result = 31 * result + name.hashCode()
-            result = 31 * result + pubYear.hashCode()
-            result = 31 * result + flagChecked.contentHashCode()
-            result = 31 * result + (typeWarning?.hashCode() ?: 0)
-            result = 31 * result + (pathWarning?.hashCode() ?: 0)
-            result = 31 * result + (doiWarning?.hashCode() ?: 0)
-            return result
-        }
-    }
 
     val state = rememberSaveable { mutableStateOf(QueryDialogState()) }
     val queryPath = Settings.map["path-to-queries"] ?: throw Exception("Path to queries not set")
@@ -171,24 +121,20 @@ fun NewQueryDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
-                queryCopyFromComponent(mutableStateOf(state.value.copyFrom))
+                queryCopyFromComponent(state)
                 Spacer(modifier = Modifier.height(8.dp))
-                queryTypeComponent(mutableStateOf(state.value.queryType), mutableStateOf(state.value.typeWarning))
+                queryTypeComponent(state)
                 Spacer(modifier = Modifier.height(8.dp))
-                queryNameComponent(mutableStateOf(state.value.name), mutableStateOf(state.value.pathWarning))
+                queryNameComponent(state)
 
                 generateUniqueQueryName()
 
                 if (state.value.queryType > 0) {
-                    queryPaperIdsComponent(
-                        mutableStateOf(state.value.field),
-                        mutableStateOf(state.value.pathWarning),
-                        mutableStateOf(state.value.doiWarning)
-                    )
+                    queryPaperIdsComponent(state)
                 } else {
-                    queryPublicationDateComponent(mutableStateOf(state.value.pubYear))
+                    queryPublicationDateComponent(state)
                     Spacer(modifier = Modifier.height(24.dp))
-                    queryArticleTypeComponent(mutableStateOf(state.value.flagChecked))
+                    queryArticleTypeComponent(state)
                 }
 
                 if (!state.value.check)
