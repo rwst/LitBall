@@ -58,7 +58,6 @@ object QueryList {
         name: String,
         dois: Set<String>,
         expSearchParams: Pair<String, BooleanArray>,
-        copyFrom: String,
     ) {
         val cleanedDois = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
         val queryDir = getQueryDir(name)
@@ -83,6 +82,7 @@ object QueryList {
             SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()),
             list.size - 1,
         )
+        RootStore.refreshList()
     }
 
     fun removeDir(id: Int?) {

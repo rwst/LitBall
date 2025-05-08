@@ -19,6 +19,7 @@ import common.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.isWritable
@@ -48,30 +49,34 @@ fun NewQueryDialog(
             setState { copy(pathWarning = "Query directory is not writable") }
             return
         }
-        var dois: List<String> = emptyList()
-        rootScope.launch(Dispatchers.IO) {
-            setState { copy(doiWarning = "Retrieving DOIs of ${refs.size} references...") }
-            try {
-                dois = fillDOIs(refs)
-                setState {
-                    copy(
-                        doiWarning = null,
-                        field = dois.joinToString("\n")
-                    )
+        runBlocking {   // TODO
+            rootScope.launch(Dispatchers.IO) {
+                setState { copy(doiWarning = "Retrieving PaperIds of ${refs.size} PMID references...") }
+                try {
+                    val paperIds = fillDOIs(refs)
+                    setState {
+                        copy(
+                            doiWarning = null,
+                            field = paperIds.joinToString("\n")
+                        )
+                    }
+                    if (paperIds.any { !it.startsWith("10.") && !it.startsWith("s2:") }) {
+                        setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove PMID numbers.") }
+                    }
+                } catch (e: Exception) {
+                    setState { copy(doiWarning = "Error: ${e.message}") }
                 }
-                if (dois.any { !it.startsWith("10.") }) {
-                    setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove.") }
-                }
-            } catch (e: Exception) {
-                setState { copy(doiWarning = "Error: ${e.message}") }
             }
         }
+        val paperIds = state.value.field.split("\n")
+            .map { it.trim().transformDOI() }
+            .filter { it.isNotBlank() }
 
         setState {
             copy(
                 check = name.isNotEmpty() &&
                         (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
-                                (dois.isNotEmpty() && dois.all { it.startsWith("10.") })),
+                                (paperIds.isNotEmpty() && paperIds.all { it.startsWith("10.") || it.startsWith("s2:") })),
                 nameCheck = name !in QueryList.list.map { it.name }
             )
         }
@@ -81,9 +86,8 @@ fun NewQueryDialog(
                 QueryList.addNewItem(
                     QueryType.entries[state.value.queryType],
                     name,
-                    dois.toSet(),
+                    paperIds.toSet(),
                     Pair(state.value.pubYear, state.value.flagChecked),
-                    copyFrom = state.value.copyFrom,
                 )
             }
             onCloseClicked()
@@ -123,12 +127,11 @@ fun NewQueryDialog(
         text = {
             Column(horizontalAlignment = Alignment.Start) {
                 queryCopyFromComponent(state)
+                generateUniqueQueryName()
                 Spacer(modifier = Modifier.height(8.dp))
                 queryTypeComponent(state)
                 Spacer(modifier = Modifier.height(8.dp))
                 queryNameComponent(state)
-
-                generateUniqueQueryName()
 
                 if (state.value.queryType > 0) {
                     queryPaperIdsComponent(state)

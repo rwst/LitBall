@@ -12,10 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import common.ArticleType
-import common.QueryList
-import common.QueryType
-import common.Settings
+import common.*
 import service.getDOIsforPMIDs
 import window.components.Icons
 import window.components.Tooltip
@@ -211,6 +208,7 @@ fun queryTypeComponent(
                         copy(typeWarning = null)
                     }
                 }
+                println(btn)
                 state.set { copy(queryType = btn) }
             }
         )
@@ -236,7 +234,7 @@ fun queryCopyFromComponent(
         Tooltip(
             text = """
                 If set, allows selection of existing query, from which
-                name, DOIs and specific query settings are copied.
+                name, paperIds and specific query settings are copied.
                     """.trimIndent(),
             Modifier.align(Alignment.CenterVertically)
         ) {
@@ -259,8 +257,12 @@ fun queryCopyFromComponent(
                     QueryList.list.map { it.name }.forEach {
                         DropdownMenuItem(
                             onClick = {
-                                state.set { copy(copyFrom = it) }
+                                val newField = getDOIs(getQueryDir(it), FileType.ACCEPTED)
+                                    .joinToString("\n")
                                 copyFromIsSetValue.value = false
+                                state.set {
+                                        copy(copyFrom = it, field = newField)
+                                }
                             })
                         { Text(it) }
                     }
