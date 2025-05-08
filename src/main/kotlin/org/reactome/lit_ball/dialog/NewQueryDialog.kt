@@ -82,7 +82,8 @@ fun NewQueryDialog(
                     QueryType.entries[state.value.queryType],
                     name,
                     dois.toSet(),
-                    Pair(state.value.pubYear, state.value.flagChecked)
+                    Pair(state.value.pubYear, state.value.flagChecked),
+                    copyFrom = state.value.copyFrom,
                 )
             }
             onCloseClicked()

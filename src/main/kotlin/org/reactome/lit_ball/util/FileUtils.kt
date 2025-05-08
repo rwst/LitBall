@@ -65,3 +65,17 @@ suspend fun <T> checkFileInDirectory(
         result.getOrThrow()
     }
 }
+
+suspend fun writeFile(dir: File, fileType: FileType, text: String): Boolean {
+    return withContext(Dispatchers.IO) {
+        if (checkFileInDirectory(dir, fileType) == null) false
+        try {
+            File("${dir.absolutePath}/${FileType.ACCEPTED.fileName}")
+                .writeText(text)
+            true
+        } catch (e: Exception) {
+            Logger.error(e)
+            false
+        }
+    }
+}

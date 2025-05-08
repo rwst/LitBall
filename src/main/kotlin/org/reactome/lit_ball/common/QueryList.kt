@@ -6,6 +6,7 @@ import model.RootStore
 import util.checkFileInDirectory
 import util.handleException
 import util.makeQueryDir
+import util.writeFile
 import window.components.SortingType
 import java.io.File
 
@@ -51,28 +52,33 @@ object QueryList {
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
-    suspend fun addNewItem(type: QueryType, name: String, dois: Set<String>, expSearchParams: Pair<String, BooleanArray>) {
+
+    suspend fun addNewItem(
+        type: QueryType,
+        name: String,
+        dois: Set<String>,
+        expSearchParams: Pair<String, BooleanArray>,
+        copyFrom: String,
+    ) {
+        val cleanedDois = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
         val queryDir = getQueryDir(name)
-        if (!makeQueryDir(queryDir)) return
-        try {
-            File("${queryDir.absolutePath}/${FileType.ACCEPTED.fileName}").writeText(dois.joinToString("\n") + "\n")
-        } catch (e: Exception) {
-            handleException(e)
+        if (!makeQueryDir(queryDir))
             return
-        }
-        list = list.plus(
-            LitBallQuery(
-                id = list.size,
-                type = type,
-                name = name,
-                acceptedSet = dois.filter { doi -> doi.isNotBlank() }.toMutableSet(),
-                expSearchParams = expSearchParams,
-            )
+        if (!writeFile(queryDir, FileType.ACCEPTED, cleanedDois.joinToString("\n") + "\n"))
+            return
+        val newQuery = LitBallQuery(
+            id = list.size,
+            type = type,
+            name = name,
+            acceptedSet = cleanedDois,
+            expSearchParams = expSearchParams,
         )
         if (type == QueryType.SIMILARITY_SEARCH) {
-            list.last().status.value = QueryStatus.FILTERED2
-            list.last().saveSettings()
+            newQuery.status.value = QueryStatus.FILTERED2
+            newQuery.saveSettings()
         }
+        list = list.plus(newQuery)
+
         RootStore.doSort( // TODO
             SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()),
             list.size - 1,
