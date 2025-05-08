@@ -154,18 +154,16 @@ data class LitBallQuery(
         }
 
         suspend fun writeExpandedFile(newDoiSet: Set<String>) {
-            checkFileInDirectory(getQueryDir(name), FileType.EXPANDED)?.let { file ->
-                val text = newDoiSet.joinToString("\n").lowercase() + "\n"
-                status.value = try {
-                    withContext(Dispatchers.IO) {
-                        file.writeText(text)
-                        lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
-                    }
-                    QueryStatus.EXPANDED
-                } catch (e: Exception) {
-                    handleException(e)
-                    QueryStatus.FILTERED2
-                }
+            if (writeFile(getQueryDir(name),
+                    FileType.EXPANDED,
+                    newDoiSet.joinToString("\n").lowercase() + "\n")
+                ) {
+                lastExpansionDate = getFileDate(fileType = FileType.ACCEPTED)
+                status.value = QueryStatus.EXPANDED
+            }
+            else
+            {
+                status.value = QueryStatus.FILTERED2
             }
         }
         val (missingAccepted, allLinkedDois) = fetchMissingReferences()
@@ -267,22 +265,17 @@ data class LitBallQuery(
                     writeNoNewAccepted()
                     return false
                 }
-                try {
-                    val file = File("${queryDir.absolutePath}/${FileType.FILTERED1.fileName}")
-                    withContext(Dispatchers.IO) {
-                        file.writeText(
-                            json.encodeToString(
-                                paperDetailsList.mapIndexed { idx, pd ->
-                                    Paper(idx, pd).setPaperIdFromDetails()
-                                })
-                        )
-                    }
-                    ArchivedCache.init(queryDir)
-                    ArchivedCache.merge(paperDetailsList)
-                } catch (e: Exception) {
-                    handleException(e)
+                if (!writeFile(
+                        queryDir, FileType.FILTERED1,
+                        json.encodeToString(
+                            paperDetailsList.mapIndexed { idx, pd ->
+                                Paper(idx, pd).setPaperIdFromDetails()
+                            })
+                    )
+                )
                     return false
-                }
+                ArchivedCache.init(queryDir)
+                ArchivedCache.merge(paperDetailsList)
             }
             return true
         }
@@ -339,11 +332,12 @@ data class LitBallQuery(
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = idSetFromPaperDetailsList(paperDetailsList)
-        checkFileInDirectory(queryDir, FileType.ACCEPTED)?.let { file ->
-            file.writeText(acceptedSet.joinToString("\n"))
-            ArchivedCache.init(queryDir)
-            ArchivedCache.merge(paperDetailsList)
-        }
+        if (!writeFile(queryDir, FileType.ACCEPTED,
+            acceptedSet.joinToString("\n")
+            ))
+            return
+        ArchivedCache.init(queryDir)
+        ArchivedCache.merge(paperDetailsList)
         noNewAccepted = true
         writeNoNewAccepted()
         status.value = QueryStatus.FILTERED2
@@ -366,11 +360,11 @@ data class LitBallQuery(
         RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = ids.plus(idSetFromPaperDetailsList(paperDetailsList)).toMutableSet()
-        checkFileInDirectory(queryDir, FileType.ACCEPTED)?.let { file ->
-            file.writeText(acceptedSet.joinToString("\n"))
-            ArchivedCache.init(queryDir)
-            ArchivedCache.set(paperDetailsList)
-        }
+        if (!writeFile(queryDir, FileType.ACCEPTED,
+            acceptedSet.joinToString("\n")))
+            return
+        ArchivedCache.init(queryDir)
+        ArchivedCache.set(paperDetailsList)
         status.value = QueryStatus.FILTERED2
     }
 
@@ -451,12 +445,8 @@ data class LitBallQuery(
     }
 
     suspend fun saveSettings() {
-        val queryDir = getQueryDir(name)
-        checkFileInDirectory(queryDir, FileType.SETTINGS)?.let { file ->
-            val json = ConfiguredJson.get()
-            val text = json.encodeToString<QuerySetting>(setting)
-            file.writeText(text)
-        }
+        writeFile(getQueryDir(name), FileType.SETTINGS,
+            ConfiguredJson.get().encodeToString<QuerySetting>(setting))
     }
 }
 

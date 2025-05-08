@@ -66,11 +66,25 @@ suspend fun <T> checkFileInDirectory(
     }
 }
 
+/**
+ * Writes the specified text to a file of the given type within the provided directory.
+ *
+ * The method attempts to locate the specified file type in the directory using the `checkFileInDirectory` function.
+ * If the file exists, it writes the text to the file asynchronously on an IO coroutine dispatcher.
+ * If an error occurs during the file operation, it logs the exception and returns false.
+ *
+ * @param dir The directory where the file will be written.
+ * @param fileType The type of file to be written, represented by the `FileType` enum.
+ * @param text The text content to write into the file.
+ * @return A boolean indicating whether the write operation was successful. Returns true if the file is successfully
+ *         written, false otherwise.
+ */
 suspend fun writeFile(dir: File, fileType: FileType, text: String): Boolean {
     return withContext(Dispatchers.IO) {
-        if (checkFileInDirectory(dir, fileType) == null) false
         try {
-            File("${dir.absolutePath}/${FileType.ACCEPTED.fileName}")
+            if (!dir.isDirectory) false
+            if (!dir.canRead()) false
+            File("${dir.absolutePath}/${fileType.fileName}")
                 .writeText(text)
             true
         } catch (e: Exception) {
