@@ -283,7 +283,7 @@ fun helpIcon(modifier: Modifier) {
 val pmidRegex = "^pmid:*\\h*".toRegex(RegexOption.IGNORE_CASE)
 val slashSuffix = "/$".toRegex()
 fun String.transformDOI(): String {
-    var s = this.uppercase()
+    var s = this.lowercase()
     if (s.startsWith("HTTP"))
         s = URLDecoder.decode(s, StandardCharsets.UTF_8.toString())
     s = s.replaceBefore("10.", "")
