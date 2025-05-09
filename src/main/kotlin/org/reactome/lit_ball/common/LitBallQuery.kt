@@ -434,11 +434,10 @@ data class LitBallQuery(
     suspend fun readNoNewAccepted(): Boolean {
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.NONEWACCEPTED)?.let { file ->
-            try {
-                return file.readText().trim() == "true"
-            } catch (e: FileNotFoundException) {
-                Logger.error(e)
-                return false
+            return try {
+                file.readText().trim() == "true"
+            } catch (_: FileNotFoundException) {
+                false
             }
         }
         return false
