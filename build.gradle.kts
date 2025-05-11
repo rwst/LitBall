@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -99,20 +98,6 @@ kotlin {
 //    project.sourceSets.create("main")
     project.sourceSets.create("commonTest")
     sourceSets {
-        val main: KotlinSourceSet by getting {
-            kotlin.srcDirs("src/main/kotlin/org/reactome/lit_ball")
-            resources.srcDirs("resources")
-        }
-        val commonTest: KotlinSourceSet by getting {
-            kotlin.srcDirs("src/commonTest/kotlin")
-            dependencies {
-                implementation ("org.jetbrains.kotlin:kotlin-test-annotations-common:2.0.0-Beta4")
-                implementation ("org.jetbrains.kotlin:kotlin-test-common:2.0.0-Beta4")
-                implementation ("org.jetbrains.kotlin:kotlin-test:2.0.0-Beta4")
-                implementation("org.testng:testng:7.10.2")
-            }
-            dependsOn(main)
-        }
     }}
 
 val letsPlotVersion = extra["letsPlot.version"] as String
