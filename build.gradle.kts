@@ -7,7 +7,6 @@ plugins {
     id("org.jetbrains.compose") version "1.6.11"
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
     id("com.github.gmazzo.buildconfig") version "5.4.0"
-    id("dev.hydraulic.conveyor") version "1.10"
     id("com.github.ben-manes.versions") version "0.51.0"
 }
 
@@ -145,11 +144,6 @@ dependencies {
     implementation ("org.jetbrains.lets-plot:lets-plot-compose-desktop:${letsPlotSkiaVersion}")
     implementation("org.apache.commons:commons-jexl3:3.5.0")
     implementation("org.apache.jena:jena-arq:5.3.0")
-
-    linuxAmd64(compose.desktop.linux_x64)
-    macAmd64(compose.desktop.macos_x64)
-    macAarch64(compose.desktop.macos_arm64)
-    windowsAmd64(compose.desktop.windows_x64)
 }
 
 
