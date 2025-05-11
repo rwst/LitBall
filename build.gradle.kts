@@ -153,12 +153,15 @@ buildConfig {
     buildConfigField("String", "APP_VERSION", provider { "\"2405\"" })
 }
 
-configurations.all {
-    attributes {
-        attribute(Attribute.of("ui", String::class.java), "awt")
+configurations {
+    all {
+        if (isCanBeResolved || isCanBeConsumed) {
+            attributes {
+                attribute(Attribute.of("ui", String::class.java), "awt")
+            }
+        }
     }
 }
-
 compose.desktop {
     application {
         mainClass = "MainKt"
