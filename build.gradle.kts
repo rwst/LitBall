@@ -1,5 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 plugins {
     kotlin("jvm") version "2.0.20"
     kotlin("plugin.serialization") version "2.0.20"
@@ -98,7 +96,23 @@ kotlin {
 //    project.sourceSets.create("main")
     project.sourceSets.create("commonTest")
     sourceSets {
-    }}
+        @Suppress("unused")
+        val main by getting {
+            kotlin.srcDirs("src/main/kotlin/org/reactome/lit_ball")
+            resources.srcDirs("resources")
+        }
+        val commonTest by getting {
+            kotlin.srcDirs("src/commonTest/kotlin")
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:2.0.0-Beta4")
+                implementation("org.jetbrains.kotlin:kotlin-test-common:2.0.0-Beta4")
+                implementation("org.jetbrains.kotlin:kotlin-test:2.0.0-Beta4")
+                implementation("org.testng:testng:7.10.2")
+            }
+            dependsOn(main)
+        }
+    }
+}
 
 val letsPlotVersion = extra["letsPlot.version"] as String
 val letsPlotKotlinVersion = extra["letsPlotKotlin.version"] as String
@@ -152,10 +166,5 @@ compose.desktop {
         mainClass = "MainKt"
         version = "2405"
         group = "org.reactome"
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "LitBall"
-            packageVersion = "23.08.0"
-        }
     }
 }
