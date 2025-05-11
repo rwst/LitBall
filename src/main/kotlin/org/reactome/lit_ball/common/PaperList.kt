@@ -125,17 +125,11 @@ object PaperList {
      */
     private suspend fun mergeTaggedToSetAndWriteIds(tag: Tag, fileType: FileType, theSet: MutableSet<String>) {
         val pathPrefix = path?.substringBeforeLast("/") ?: return
-        val pathStr = "$pathPrefix/${fileType.fileName}"
+        val dir = File(pathPrefix)
         val thisList = listHandle.getFullList().filter { it.tag == tag }
             .mapNotNull { item -> item.paperId }
         theSet += thisList
-        withContext(Dispatchers.IO) {
-            try {
-                File(pathStr).writeText(theSet.joinToString(separator = "\n", postfix = "\n"))
-            } catch (e: Exception) {
-                handleException(e)
-            }
-        }
+        writeFile(dir, fileType, theSet.joinToString(separator = "\n", postfix = "\n"))
     }
 
     fun acceptFiltered(value: Boolean) {
@@ -190,11 +184,13 @@ object PaperList {
 
     private const val CSV_HEADER = "Title,Review,Date,PMID,PMC,DOI,SScholar,GScholar\n"
     fun exportAnnotated() {
-        val pathPrefix = path?.substringBeforeLast("/")
-        val exportedPath = "$pathPrefix/${FileType.EXPORTED_CSV.fileName}"
-        File(exportedPath).writeText(CSV_HEADER)
-        val exportedUntaggedPath = "$pathPrefix/${FileType.EXPORTED_UNTAGGED_CSV.fileName}"
-        File(exportedUntaggedPath).writeText(CSV_HEADER)
+        val pathPrefix = path?.substringBeforeLast("/") ?: return
+        val queryDir = File(pathPrefix)
+
+        // Initialize files with headers
+        writeFileSync(queryDir, FileType.EXPORTED_CSV, CSV_HEADER)
+        writeFileSync(queryDir, FileType.EXPORTED_UNTAGGED_CSV, CSV_HEADER)
+
         val exportedCatPath = "$pathPrefix/${FileType.EXPORTED_CAT_CSV.fileName}"
         val fileMap = mutableMapOf<String, File>()
         query.setting.annotationClasses.forEach {
@@ -202,8 +198,11 @@ object PaperList {
             file.writeText(CSV_HEADER)
             fileMap[it] = file
         }
+
         val revFile = File(exportedCatPath.replace("$", "Reviews"))
         revFile.writeText(CSV_HEADER)
+
+        // Process each paper
         listHandle.getFullList().forEach {
             val paperId = it.paperId
             val doi = if (paperId?.startsWith("10.") == true) paperId else null
@@ -212,6 +211,8 @@ object PaperList {
             val pmc = it.details.externalIds?.get("PubMedCentral")
             val title = it.details.title ?: ""
             val sanTitle = title.replace(",", "%2C")
+
+            // Create output string
             val outStr = java.lang.StringBuilder()
                 .append("\"$title\",")
                 .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
@@ -226,15 +227,19 @@ object PaperList {
                 )
                 .append("\n")
                 .toString()
-            File(exportedPath).appendText(outStr)
+
+            // Append to appropriate files
+            appendToFileSync(queryDir, FileType.EXPORTED_CSV, outStr)
+
             if (it.flags.isEmpty()) {
-                File(exportedUntaggedPath).appendText(outStr)
+                appendToFileSync(queryDir, FileType.EXPORTED_UNTAGGED_CSV, outStr)
             }
             else {
                 it.flags.forEach { flag ->
                     fileMap[flag]?.appendText(outStr)
                 }
             }
+
             if (it.details.publicationTypes?.contains("Review") == true)
                 revFile.appendText(outStr)
         }
@@ -242,9 +247,12 @@ object PaperList {
 
     suspend fun exportText() {
         getExtendedDetails()
-        val pathPrefix = path?.substringBeforeLast("/")
-        val exportedPath = "$pathPrefix/${FileType.EXPORTED_JSONL.fileName}"
-        File(exportedPath).writeText("")
+        val pathPrefix = path?.substringBeforeLast("/") ?: return
+        val queryDir = File(pathPrefix)
+
+        // Initialize the file with empty content
+        writeFileSync(queryDir, FileType.EXPORTED_JSONL, "")
+
         val json = ConfiguredUglyJson.get()
         listHandle.getFullList().forEach { thePaper ->
             val id = thePaper.paperId
@@ -257,7 +265,7 @@ object PaperList {
                 val text = thePaper.details.abstract ?: tldr
                 if (text.isNotEmpty()) {
                     outMap["text"] = JsonPrimitive(text)
-                    File(exportedPath).appendText(json.encodeToString(outMap) + "\n")
+                    appendToFileSync(queryDir, FileType.EXPORTED_JSONL, json.encodeToString(outMap) + "\n")
                 }
             }
         }
@@ -270,15 +278,8 @@ object PaperList {
                 append(paper.toRIS())
             }
         }.toString()
-        
-        checkFileInDirectory(getQueryDir(query.name), FileType.EXPORTED_RIS) { file ->
-            runCatching {
-                file.writeText(out)
-            }.onFailure { e ->
-                // Handle the error appropriately
-                throw IOException("Failed to write RIS file", e)
-            }
-        }
+
+        writeFileSync(getQueryDir(query.name), FileType.EXPORTED_RIS, out)
     }
 
 //    fun exportBibTex() {

@@ -93,3 +93,56 @@ suspend fun writeFile(dir: File, fileType: FileType, text: String): Boolean {
         }
     }
 }
+
+/**
+ * Creates a file path by combining a directory path and a file name.
+ *
+ * @param dir The directory where the file is located.
+ * @param fileType The type of file, represented by the `FileType` enum.
+ * @return A File object representing the file path.
+ */
+fun createFilePath(dir: File, fileType: FileType): File {
+    return File("${dir.absolutePath}/${fileType.fileName}")
+}
+
+/**
+ * Writes the specified text to a file of the given type within the provided directory.
+ * This is a non-suspend version of writeFile that can be used in non-suspend functions.
+ *
+ * @param dir The directory where the file will be written.
+ * @param fileType The type of file to be written, represented by the `FileType` enum.
+ * @param text The text content to write into the file.
+ * @return A boolean indicating whether the write operation was successful.
+ */
+fun writeFileSync(dir: File, fileType: FileType, text: String): Boolean {
+    return try {
+        if (!dir.isDirectory) return false
+        if (!dir.canRead()) return false
+        createFilePath(dir, fileType).writeText(text)
+        true
+    } catch (e: Exception) {
+        Logger.error(e)
+        false
+    }
+}
+
+/**
+ * Appends the specified text to a file of the given type within the provided directory.
+ * This is a non-suspend version of appendToFile that can be used in non-suspend functions.
+ *
+ * @param dir The directory where the file is located.
+ * @param fileType The type of file to be appended to, represented by the `FileType` enum.
+ * @param text The text content to append to the file.
+ * @return A boolean indicating whether the append operation was successful.
+ */
+fun appendToFileSync(dir: File, fileType: FileType, text: String): Boolean {
+    return try {
+        if (!dir.isDirectory) return false
+        if (!dir.canRead()) return false
+        createFilePath(dir, fileType).appendText(text)
+        true
+    } catch (e: Exception) {
+        Logger.error(e)
+        false
+    }
+}

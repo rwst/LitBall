@@ -61,30 +61,46 @@ object Filtering2RootStore : ModelHandle {
         }
     }
 
-    fun onItemRadioButtonClicked(id: Int, btn: Int) {
-        PaperList.setTag(id, btn)
+    /**
+     * Updates tags and refreshes the list.
+     * This is a utility function to avoid code duplication.
+     *
+     * @param updateTags A function that updates the tags.
+     */
+    private fun updateTagsAndRefresh(updateTags: () -> Unit) {
+        updateTags()
         state.paperListStore.refreshList()
+    }
+
+    fun onItemRadioButtonClicked(id: Int, btn: Int) {
+        updateTagsAndRefresh { PaperList.setTag(id, btn) }
     }
 
     fun acceptAll() {
-        PaperList.listHandle.setFullAllTags(Tag.Accepted)
-        state.paperListStore.refreshList()
+        updateTagsAndRefresh { PaperList.listHandle.setFullAllTags(Tag.Accepted) }
     }
 
     fun rejectAll() {
-        PaperList.listHandle.setFullAllTags(Tag.Rejected)
-        state.paperListStore.refreshList()
+        updateTagsAndRefresh { PaperList.listHandle.setFullAllTags(Tag.Rejected) }
     }
-    private fun doFinish() {
+    /**
+     * Launches a coroutine to perform an IO operation.
+     * This is a utility function to avoid code duplication.
+     *
+     * @param operation A suspend function that performs the IO operation.
+     */
+    private fun launchIOOperation(operation: suspend () -> Unit) {
         scope?.launch(Dispatchers.IO) {
-            PaperList.finish()
+            operation()
         }
     }
 
+    private fun doFinish() {
+        launchIOOperation { PaperList.finish() }
+    }
+
     private fun doSave() {
-        scope?.launch(Dispatchers.IO) {
-            PaperList.saveFiltered()
-        }
+        launchIOOperation { PaperList.saveFiltered() }
     }
 }
 
