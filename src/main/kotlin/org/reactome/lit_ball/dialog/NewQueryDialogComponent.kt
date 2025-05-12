@@ -208,7 +208,6 @@ fun queryTypeComponent(
                         copy(typeWarning = null)
                     }
                 }
-                println(btn)
                 state.set { copy(queryType = btn) }
             }
         )
