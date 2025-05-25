@@ -15,7 +15,6 @@ fun Filtering2RootContent(
     val focusRequester = remember { FocusRequester() }
     val state = model.state
     val scope = rememberCoroutineScope()
-    Filtering2RootStore.scope = scope
     Filtering2RootStore.state = state
     model.rootSwitch = rootSwitch
 

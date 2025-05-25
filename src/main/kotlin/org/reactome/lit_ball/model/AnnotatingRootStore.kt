@@ -20,9 +20,9 @@ import window.components.RailItem
 
 object AnnotatingRootStore : ModelHandle, ProgressHandler {
     var state: AnnotatingRootState by mutableStateOf(initialState())
-
-    override var scope: CoroutineScope? = null
-    override lateinit var rootSwitch: MutableState<RootType>
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+    val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
+    lateinit var rootSwitch: MutableState<RootType>
 
     private fun initialState(): AnnotatingRootState = AnnotatingRootState()
 
@@ -57,6 +57,12 @@ object AnnotatingRootStore : ModelHandle, ProgressHandler {
 
     override fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore) {
         setState { copy(paperListState = paperListScreenStore.state) }
+    }
+
+    override fun modelScope(): CoroutineScope = modelScope
+
+    override fun switchRoot() {
+        rootSwitch.value = RootType.MAIN_ROOT
     }
 
     private fun buttonExit() {
@@ -101,7 +107,7 @@ object AnnotatingRootStore : ModelHandle, ProgressHandler {
     }
 
     private fun doSave() {
-        scope?.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             PaperList.saveAnnotated()
         }
     }

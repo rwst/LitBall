@@ -1,6 +1,5 @@
 package model
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import window.RootType
 import window.components.Icons
 import window.components.SortingControlItem
 import window.components.SortingType
@@ -19,8 +17,8 @@ import window.components.SortingType
 interface ModelHandle {
     fun refreshClassifierButton()
     fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore)
-    var scope: CoroutineScope?
-    var rootSwitch: MutableState<RootType>
+    fun modelScope(): CoroutineScope
+    fun switchRoot()
 }
 
 class PaperListScreenStore(private val handle: ModelHandle) {
@@ -51,7 +49,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         ) { doSort(SortingType.DATE_DESCENDING) },
     )
     private fun doSort(sortingType: SortingType) {
-        handle.scope?.launch(Dispatchers.IO) {
+        handle.modelScope().launch(Dispatchers.IO) {
             PaperList.sort(sortingType)
             refreshList()
 //            delay(100) // TODO: this is a hack
@@ -75,25 +73,25 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
 
     fun onClassifierConfirmed() {
-        handle.scope?.launch(Dispatchers.IO) { PaperList.applyClassifier() }
+        handle.modelScope().launch(Dispatchers.IO) { PaperList.applyClassifier() }
     }
 
     fun onFilterChanged(filter: String) {
-        handle.scope?.launch(Dispatchers.IO) {
+        handle.modelScope().launch(Dispatchers.IO) {
             PaperList.applyFilter(filter)
             refreshList()
         }
     }
 
     fun onRemoveFiltered() {
-        handle.scope?.launch(Dispatchers.IO) {
+        handle.modelScope().launch(Dispatchers.IO) {
             PaperList.deleteFiltered()
             refreshList()
         }
     }
 
     fun onAcceptFiltered(value: Boolean) {
-        handle.scope?.launch(Dispatchers.IO) {
+        handle.modelScope().launch(Dispatchers.IO) {
             PaperList.acceptFiltered(value)
             refreshList()
         }
@@ -104,10 +102,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
             PaperList.saveAnnotated()
         }
         setFilterDialog(false)
-        switchRoot()
-    }
-    fun switchRoot() {
-        handle.rootSwitch.value = RootType.MAIN_ROOT
+        handle.switchRoot()
     }
 
     fun onEditorCloseClicked() {

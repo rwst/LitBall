@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.*
 import dialog.ProgressIndicatorParameter
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.SupervisorJob
 import service.getAGService
 import util.CantHappenException
 import util.DefaultScripts
@@ -26,8 +28,9 @@ import java.net.URI
 object RootStore : ProgressHandler {
     var state: RootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
 
-    lateinit var scope: CoroutineScope
     lateinit var rootSwitch: MutableState<RootType>
 
     private fun initialState(): RootState =
@@ -74,7 +77,7 @@ object RootStore : ProgressHandler {
 
     fun init() {
         if (Settings.initialized) return
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             DefaultScripts.install()
             Settings.load()
             QueryList.fill()
@@ -95,13 +98,13 @@ object RootStore : ProgressHandler {
     }
 
     private fun onDoExpandStarted(id: Int) {
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             QueryList.itemFromId(id)?.expand()
         }
     }
 
     private fun onDoFilter1Started(id: Int) {
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             QueryList.itemFromId(id)?.filter1()
         }
     }
@@ -155,7 +158,7 @@ object RootStore : ProgressHandler {
     }
 
     private fun onDoFilter2Started(id: Int) {
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             PaperList.model = Filtering2RootStore.state.paperListStore
             state.items[id].filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
@@ -164,7 +167,7 @@ object RootStore : ProgressHandler {
     }
 
     fun onAnnotateStarted(id: Int) {
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             PaperList.model = AnnotatingRootStore.state.paperListStore
             state.items[id].annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
@@ -183,7 +186,7 @@ object RootStore : ProgressHandler {
             copy(
                 doConfirmationDialog = Pair(
                     {
-                        scope.launch(Dispatchers.IO) {
+                        modelScope.launch(Dispatchers.IO) {
                             QueryList.removeDir(id)
                             QueryList.fill()
                         }
@@ -199,7 +202,7 @@ object RootStore : ProgressHandler {
     }
 
     fun onQueryPathClicked() {
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             QueryList.fill()
         }
     }
@@ -241,7 +244,7 @@ object RootStore : ProgressHandler {
     }
 
     fun doSort(sortingType: SortingType, scrollTo: Int? = null) {
-        scope.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             if (scrollTo == null) {
                 QueryList.sort(sortingType)
                 refreshList()

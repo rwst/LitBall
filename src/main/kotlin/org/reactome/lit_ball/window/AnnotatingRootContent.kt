@@ -18,7 +18,6 @@ fun AnnotatingRootContent(
     val focusRequester = remember { FocusRequester() }
     val state = model.state
     val scope = rememberCoroutineScope()
-    AnnotatingRootStore.scope = scope
     AnnotatingRootStore.state = state // TODO: is this circular?
     model.rootSwitch = rootSwitch
 
@@ -47,6 +46,7 @@ fun AnnotatingRootContent(
     }
 
     AnnotatingMainContent(
+        scope = scope,
         model = model,
         rootSwitch = rootSwitch,
         focusRequester = focusRequester,

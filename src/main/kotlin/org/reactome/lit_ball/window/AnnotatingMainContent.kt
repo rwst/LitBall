@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import common.Paper
 import common.PaperList
 import dialog.FlagBoxes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import model.AnnotatingRootStore
@@ -41,6 +42,7 @@ private const val TAG = "AnnotatingMainContent"
 @Suppress("FunctionName")
 @Composable
 internal fun AnnotatingMainContent(
+    scope: CoroutineScope,
     model: AnnotatingRootStore,
     rootSwitch: MutableState<RootType>,
     focusRequester: FocusRequester,
@@ -64,6 +66,7 @@ internal fun AnnotatingMainContent(
                 )
             }
             AnnotatingListContent(
+                scope = scope,
                 items = model.state.paperListState.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onFlagSet = model::onFlagSet,
@@ -77,6 +80,7 @@ internal fun AnnotatingMainContent(
 
 @Composable
 fun AnnotatingListContent(
+    scope: CoroutineScope,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onFlagSet: (Int, Int, Boolean) -> Unit,
@@ -105,6 +109,7 @@ fun AnnotatingListContent(
                     items = items,
                 ) { item ->
                     CardWithFlagBoxes(
+                        scope = scope,
                         item = item,
                         onClicked = { onItemClicked(item.id) },
                         onFlagSet = { idx, value -> onFlagSet(item.id, idx, value) },
@@ -124,6 +129,7 @@ fun AnnotatingListContent(
 
 @Composable
 fun CardWithFlagBoxes(
+    scope: CoroutineScope,
     item: Paper,
     onClicked: () -> Unit,
     onFlagSet: (Int, Boolean) -> Unit,
@@ -155,7 +161,7 @@ fun CardWithFlagBoxes(
                 Tooltip(text = "Open PubMed / Semantic Scholar\nin Browser", Modifier.align(Alignment.CenterHorizontally))
                 {
                     IconButton(
-                        onClick = { model.scope?.launch { openInBrowser(item) } },
+                        onClick = { scope.launch { openInBrowser(item) } },
                         modifier = Modifier.padding(0.dp)
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
                             .height(30.dp).width(48.dp)

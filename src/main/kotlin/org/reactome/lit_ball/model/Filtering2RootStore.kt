@@ -8,8 +8,10 @@ import common.FileType
 import common.PaperList
 import common.Settings
 import common.Tag
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import util.SystemFunction
@@ -19,9 +21,9 @@ import window.RootType
 
 object Filtering2RootStore : ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
-
-    override var scope: CoroutineScope? = null
-    override lateinit var rootSwitch: MutableState<RootType>
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+    val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
+    lateinit var rootSwitch: MutableState<RootType>
 
     private fun initialState(): Filtering2RootState = Filtering2RootState()
 
@@ -53,6 +55,12 @@ object Filtering2RootStore : ModelHandle {
 
     override fun refreshStateFromPaperListScreenStore(paperListScreenStore: PaperListScreenStore) {
         setState { copy(paperListStore = paperListScreenStore) }
+    }
+
+    override fun modelScope(): CoroutineScope = modelScope
+
+    override fun switchRoot() {
+        rootSwitch.value = RootType.MAIN_ROOT
     }
 
     private fun buttonExit() {
@@ -90,7 +98,7 @@ object Filtering2RootStore : ModelHandle {
      * @param operation A suspend function that performs the IO operation.
      */
     private fun launchIOOperation(operation: suspend () -> Unit) {
-        scope?.launch(Dispatchers.IO) {
+        modelScope.launch(Dispatchers.IO) {
             operation()
         }
     }

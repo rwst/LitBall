@@ -32,13 +32,13 @@ object YDFService {
             return null
         val stderrReader = BufferedReader(InputStreamReader(process.errorStream))
         val stderrChannel = Channel<String>()
-        Filtering2RootStore.scope?.launch(Dispatchers.IO) {
+        Filtering2RootStore.modelScope.launch(Dispatchers.IO) {
             do {
                 val line = stderrReader.readLine() ?: break
                 stderrChannel.send(line)
             } while (true)
         }
-        Filtering2RootStore.scope?.launch(Dispatchers.IO) {
+        Filtering2RootStore.modelScope.launch(Dispatchers.IO) {
             while (true) {
                 val line = stderrChannel.receive()
                 if (line.startsWith("[INFO "))
@@ -47,11 +47,11 @@ object YDFService {
                     throw Exception(line)
             }
         }
-        val job = Filtering2RootStore.scope?.launch(Dispatchers.IO) {
+        val job = Filtering2RootStore.modelScope.launch(Dispatchers.IO) {
             process.onExit().get()
             stderrChannel.cancel()
         }
-        Filtering2RootStore.scope?.launch(Dispatchers.IO) {
+        Filtering2RootStore.modelScope.launch(Dispatchers.IO) {
             delay(CONSOLE_MAX_LIFE)
             process.destroy()
         }

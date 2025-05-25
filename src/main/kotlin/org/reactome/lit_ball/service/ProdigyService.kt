@@ -35,13 +35,13 @@ object ProdigyService {
             return null
         val stderrReader = BufferedReader(InputStreamReader(process.errorStream))
         val stderrChannel = Channel<String>()
-        AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
+        AnnotatingRootStore.modelScope.launch(Dispatchers.IO) {
             do {
                 val line = stderrReader.readLine() ?: break
                 stderrChannel.send(line)
             } while (true)
         }
-        AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
+        AnnotatingRootStore.modelScope.launch(Dispatchers.IO) {
             while (true) {
                 val line = stderrChannel.receive()
                 if (line.startsWith("[INFO "))
@@ -50,11 +50,11 @@ object ProdigyService {
                     throw Exception(line)
             }
         }
-        val job = AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
+        val job = AnnotatingRootStore.modelScope.launch(Dispatchers.IO) {
             process.onExit().get()
             stderrChannel.cancel()
         }
-        AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
+        AnnotatingRootStore.modelScope.launch(Dispatchers.IO) {
             delay(CONSOLE_MAX_LIFE)
             process.destroy()
         }

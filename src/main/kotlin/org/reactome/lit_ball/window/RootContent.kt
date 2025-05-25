@@ -18,7 +18,6 @@ fun RootContent(
     val state = model.state
     val scope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
-    RootStore.scope = scope
     RootStore.state = state
     RootStore.rootSwitch = rootSwitch
 
