@@ -25,13 +25,12 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-import model.AnnotatingRootStore
 import common.Paper
 import common.PaperList
 import dialog.FlagBoxes
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import model.AnnotatingRootStore
 import util.SystemFunction
 import util.openInBrowser
 import util.setupLazyListScroller
@@ -156,11 +155,7 @@ fun CardWithFlagBoxes(
                 Tooltip(text = "Open PubMed / Semantic Scholar\nin Browser", Modifier.align(Alignment.CenterHorizontally))
                 {
                     IconButton(
-                        onClick = {
-                            AnnotatingRootStore.scope?.launch(Dispatchers.IO) {
-                                openInBrowser(item)
-                            }
-                        },
+                        onClick = { model.scope?.launch { openInBrowser(item) } },
                         modifier = Modifier.padding(0.dp)
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
                             .height(30.dp).width(48.dp)

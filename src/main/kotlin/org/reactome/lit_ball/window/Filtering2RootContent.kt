@@ -28,6 +28,7 @@ fun Filtering2RootContent(
     }
 
     Filtering2MainContent(
+        scope = scope,
         model = model,
         rootSwitch = rootSwitch,
         focusRequester,

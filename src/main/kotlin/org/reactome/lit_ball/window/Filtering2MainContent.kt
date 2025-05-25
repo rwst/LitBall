@@ -24,12 +24,12 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import common.Paper
 import common.Tag
 import dialog.RadioButtonOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import model.Filtering2RootStore
 import util.SystemFunction
 import util.openInBrowser
@@ -41,6 +41,7 @@ private const val TAG = "Filtering2MainContent"
 @Suppress("FunctionName")
 @Composable
 internal fun Filtering2MainContent(
+    scope: CoroutineScope,
     model: Filtering2RootStore,
     rootSwitch: MutableState<RootType>,
     focusRequester: FocusRequester,
@@ -84,6 +85,7 @@ internal fun Filtering2MainContent(
                 }
             }
             Filtering2ListContent(
+                scope,
                 items = model.state.paperListStore.state.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onItemRadioButtonClicked = model::onItemRadioButtonClicked,
@@ -97,6 +99,7 @@ internal fun Filtering2MainContent(
 
 @Composable
 fun Filtering2ListContent(
+    scope: CoroutineScope,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
@@ -124,6 +127,7 @@ fun Filtering2ListContent(
                     items = items,
                 ) { item ->
                     CardWithTextIconAndRadiobutton(
+                        scope,
                         item = item,
                         onClicked = { onItemClicked(item.id) },
                         onOptionSelected = { btn ->
@@ -146,6 +150,7 @@ fun Filtering2ListContent(
 
 @Composable
 fun CardWithTextIconAndRadiobutton(
+    scope: CoroutineScope,
     item: Paper,
     onClicked: () -> Unit,
     onOptionSelected: (btn: Int) -> Unit,
@@ -173,11 +178,7 @@ fun CardWithTextIconAndRadiobutton(
                     Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     IconButton(
-                        onClick = {
-                            Filtering2RootStore.scope?.launch(Dispatchers.IO) {
-                                openInBrowser(item)
-                            }
-                        },
+                        onClick = { scope.launch { openInBrowser(item) } },
                         modifier = Modifier.padding(0.dp)
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
                             .height(30.dp).width(48.dp)

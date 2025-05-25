@@ -1,6 +1,8 @@
 package util
 
 import common.Paper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.awt.Desktop
 import java.net.URI
 import java.util.*
@@ -17,12 +19,14 @@ fun openInBrowser(uri: URI) {
 }
 
 
-fun openInBrowser(paper: Paper) {
+suspend fun openInBrowser(paper: Paper) {
     val pmid = paper.details.externalIds?.get("PubMed")
     val uri = if (pmid != null) {
         URI("https://pubmed.ncbi.nlm.nih.gov/$pmid/")
     } else {
         URI("https://www.semanticscholar.org/paper/${paper.details.paperId}")
     }
-    openInBrowser(uri)
+    withContext(Dispatchers.IO) {
+        openInBrowser(uri)
+    }
 }

@@ -58,6 +58,7 @@ internal fun MainContent(
                 }
             }
             ListContent(
+                model = model,
                 items = model.state.items,
                 onItemClicked = { id -> model.setEditingItemId(id) },
                 onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
@@ -72,6 +73,7 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
+    model: RootStore,
     items: List<LitBallQuery>,
     onItemClicked: (id: Int) -> Unit,
     onItemSettingsClicked: (id: Int?) -> Unit,
@@ -87,7 +89,7 @@ private fun ListContent(
             .focusRequester(focusRequester)
             .clickable { focusRequester.requestFocus() }
     ) {
-        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, RootStore::setupListScroller)
+        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, model::setupListScroller)
         LazyColumn(
             modifier = Modifier.fillMaxSize()
                 .padding(end = 12.dp)
