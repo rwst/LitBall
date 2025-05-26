@@ -2,7 +2,6 @@ package common
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
-import model.RootStore
 import util.checkFileInDirectory
 import util.handleException
 import util.makeQueryDir
@@ -48,7 +47,6 @@ object QueryList {
                 newQuery
             }
         }
-        RootStore.doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
     }
 
     fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
@@ -77,12 +75,6 @@ object QueryList {
             newQuery.saveSettings()
         }
         list = list.plus(newQuery)
-
-        RootStore.doSort( // TODO
-            SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()),
-            list.size - 1,
-        )
-        RootStore.refreshList()
     }
 
     fun removeDir(id: Int?) {

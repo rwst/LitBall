@@ -6,13 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.*
 import dialog.ProgressIndicatorParameter
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.SupervisorJob
 import service.getAGService
 import util.CantHappenException
 import util.DefaultScripts
@@ -25,7 +20,7 @@ import window.components.SortingControlItem
 import window.components.SortingType
 import java.net.URI
 
-object RootStore : ProgressHandler {
+class RootStore : ProgressHandler {
     var state: RootState by mutableStateOf(initialState())
     private var scrollChannel: Channel<Int>? = null
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
@@ -81,7 +76,10 @@ object RootStore : ProgressHandler {
             DefaultScripts.install()
             Settings.load()
             QueryList.fill()
+            doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
+            refreshQueryPathDisplay()
         }
+        getAGService().progressHandler = this
     }
 
     private fun buttonExit() {
@@ -98,14 +96,87 @@ object RootStore : ProgressHandler {
     }
 
     private fun onDoExpandStarted(id: Int) {
-        modelScope.launch(Dispatchers.IO) {
-            QueryList.itemFromId(id)?.expand()
+        val query = QueryList.itemFromId(id) ?: return
+        when (query.type) {
+            QueryType.EXPRESSION_SEARCH -> {
+                modelScope.launch(Dispatchers.IO) {
+                    val noAcc = query.expressionSearch()
+                    when (noAcc) {
+                        0 -> setInformationalDialog("Problem writing ${FileType.ACCEPTED.name}")
+                        -1 -> return@launch
+                        else -> setInformationalDialog("Received $noAcc records\naccepting all. Query finished.")
+                    }
+                    refreshList()
+                }
+            }
+            QueryType.SNOWBALLING -> {
+                modelScope.launch(Dispatchers.IO) {
+                    val noAcc = query.autoSnowBall()
+                    setFiltered2()
+                    Filtering2RootStore.switchRoot()
+                    if (noAcc > 0) {
+                        setInformationalDialog("$noAcc papers added to accepted")
+                    } else {
+                        setInformationalDialog(
+                            """
+                    Number of new DOIs exceeds EXPLODED_LIMIT of $EXPLODED_LIMIT.
+                    Please try again with more specific keywords / expression.
+                    """.trimIndent()
+                        )
+                    }
+                    refreshList()
+                }
+            }
+            QueryType.SUPERVISED_SNOWBALLING -> {
+                modelScope.launch(Dispatchers.IO) {
+                    val (nrNewDois, nrMissing, allNullsMissing) = query.snowBall()
+                    if (nrNewDois > 0 && !allNullsMissing)
+                        setInformationalDialog("Missing papers could not be fetched.")
+                    else if (nrNewDois == 0 && nrMissing != 0)
+                        setInformationalDialog(
+                            """
+                        None of the $nrMissing DOIs was found on Semantic
+                        Scholar. Please check:
+                        1. are you searching outside the biomed or compsci fields?
+                        2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
+                    """.trimIndent()
+                        )
+                    else if (nrNewDois > 0)
+                        setInformationalDialog(
+                            """
+                        Accepted Dois: ${query.acceptedSet.size}
+                        Updated snowball size: ${query.allLinkedDoiSize}
+                        New DOIs: $nrNewDois. Writing to expanded...
+                    """.trimIndent()
+                        )
+                    else
+                        setInformationalDialog("""
+                            Expansion complete. New DOIs can only emerge when new papers are published.
+                            Set \"cache-max-age-days\" to control when expansion cache should be deleted.
+                            """.trimIndent())
+                    refreshList()
+                }
+            }
+            QueryType.SIMILARITY_SEARCH -> {
+                modelScope.launch(Dispatchers.IO) {
+                    val noAcc = query.similaritySearch()
+                    when (noAcc) {
+                        -1 -> setInformationalDialog("Problem writing ${FileType.ACCEPTED.name}")
+                        -2 -> return@launch
+                        else -> setInformationalDialog("Received $noAcc records\naccepting all. Query finished.")
+                    }
+                    refreshList()
+                }
+            }
         }
     }
 
     private fun onDoFilter1Started(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            QueryList.itemFromId(id)?.filter1()
+            val (nrPaperDetails, nrRejectedDOIs) = QueryList.itemFromId(id)?.filter1() ?: return@launch
+            if (nrPaperDetails == 0) return@launch
+            setInformationalDialog("Retained $nrPaperDetails records\n\nrejected $nrRejectedDOIs papers, write to rejected...")
+            refreshList()
         }
     }
 
@@ -141,6 +212,7 @@ object RootStore : ProgressHandler {
         if (!boolean) {
             QueryList.fill()
             refreshQueryPathDisplay()
+            doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         }
         setState { copy(editingSettings = boolean, items = QueryList.list.toList()) }
     }
@@ -155,6 +227,10 @@ object RootStore : ProgressHandler {
 
     fun setNewItem(boolean: Boolean) {
         setState { copy(newItem = boolean) }
+        if (!boolean) {
+            doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
+            refreshList()
+        }
     }
 
     private fun onDoFilter2Started(id: Int) {
@@ -189,6 +265,7 @@ object RootStore : ProgressHandler {
                         modelScope.launch(Dispatchers.IO) {
                             QueryList.removeDir(id)
                             QueryList.fill()
+                            doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
                         }
                     },
                     "You really want to delete Query $name?"
@@ -204,6 +281,7 @@ object RootStore : ProgressHandler {
     fun onQueryPathClicked() {
         modelScope.launch(Dispatchers.IO) {
             QueryList.fill()
+            doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         }
     }
 

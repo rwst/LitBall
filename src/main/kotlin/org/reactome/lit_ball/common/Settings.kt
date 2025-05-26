@@ -3,7 +3,6 @@ package common
 import dev.dirs.ProjectDirectories
 import dev.dirs.UserDirectories
 import kotlinx.serialization.Serializable
-import model.RootStore
 import util.ConfiguredJson
 import util.handleException
 import window.components.SortingType
@@ -44,7 +43,6 @@ object Settings {
             save()
         }
         map += newMap
-        RootStore.refreshQueryPathDisplay()
     }
 
     private fun reset() {

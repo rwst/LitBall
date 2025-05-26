@@ -5,11 +5,10 @@ package service
 import common.QuerySetting
 import common.Settings
 import model.ProgressHandler
-import model.RootStore
 
 object OpenAlexClient : AGService {
     private const val TAG = "OAClient"
-    override var progressHandler: ProgressHandler = RootStore
+    override lateinit var progressHandler: ProgressHandler
 
     override suspend fun <T> getDataOrHandleExceptions(
         index: Int,

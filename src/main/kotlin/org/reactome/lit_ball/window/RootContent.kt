@@ -14,12 +14,11 @@ import model.RootStore
 fun RootContent(
     rootSwitch: MutableState<RootType>,
 ) {
-    val model = remember { RootStore }
+    val model = remember { RootStore() }
     val state = model.state
     val scope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
-    RootStore.state = state
-    RootStore.rootSwitch = rootSwitch
+    model.rootSwitch = rootSwitch
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -31,7 +30,7 @@ fun RootContent(
         focusRequester = focusRequester,
     )
 
-    RootStore.init()
+    model.init()
 
     if (state.newItem) {
         NewQueryDialog(

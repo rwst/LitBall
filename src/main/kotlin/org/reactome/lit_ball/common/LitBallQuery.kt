@@ -2,13 +2,13 @@ package common
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import common.PaperList.listHandle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import model.AnnotatingRootStore
 import model.Filtering2RootStore
-import model.RootStore
 import service.AGService
 import service.S2Interface
 import service.getAGService
@@ -56,6 +56,7 @@ data class LitBallQuery(
     var noNewAccepted: Boolean = false,
     var expSearchParams: Pair<String, BooleanArray>? = null,
     val agService: AGService = getAGService(),
+    var allLinkedDoiSize: Int = 0,
 ) {
     init {
         setting.type = type
@@ -120,19 +121,7 @@ data class LitBallQuery(
 
     private val mutex = Mutex()
 
-    suspend fun expand() {
-        if (!mutex.tryLock()) return
-        when (type) {
-            QueryType.EXPRESSION_SEARCH -> expressionSearch()
-            QueryType.SNOWBALLING -> autoSnowBall()
-            QueryType.SUPERVISED_SNOWBALLING -> snowBall()
-            QueryType.SIMILARITY_SEARCH -> similaritySearch()
-        }
-        mutex.unlock()
-        return
-    }
-
-    private suspend fun snowBall(auto: Boolean = false) {
+    suspend fun snowBall(auto: Boolean = false): Triple<Int, Int, Boolean> {
         val tag = "EXPAND"
         suspend fun fetchMissingReferences(): Pair<Set<String>, MutableSet<String>> {
             ExpandQueryCache.init(getQueryDir(name))
@@ -172,46 +161,27 @@ data class LitBallQuery(
         if (nrMissing != 0) {
             val (status, nulls) = fetchMissingAccepted(missingAccepted, allLinkedDois)
             allNullsMissing = nulls == nrMissing
-            if (!status) return
+            if (!status) return Triple(0, 0, false)
         }
         Logger.i(tag, "New snowball size: ${allLinkedDois.size}")
+        allLinkedDoiSize = allLinkedDois.size
 
         val newDoiSet = allLinkedDois.minus(acceptedSet).minus(rejectedSet)
         if (auto && newDoiSet.size > EXPLODED_LIMIT) {
             status.value = QueryStatus.EXPLODED
-            return
+            return Triple(newDoiSet.size, newDoiSet.size, false)
         }
         Logger.i(tag, "${newDoiSet.size} new DOIs. Writing to expanded...")
 
-        if (!auto) {
-            if (nrMissing != 0 && allNullsMissing)
-                RootStore.setInformationalDialog(
-                    """
-                    None of the $nrMissing DOIs was found on Semantic
-                    Scholar. Please check:
-                    1. are you searching outside the biomed or compsci fields?
-                    2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
-                """.trimIndent()
-                )
-            else
-                RootStore.setInformationalDialog(
-                    """
-                    Accepted Dois: ${acceptedSet.size}. Not cached: $nrMissing
-                    Updated snowball size: ${allLinkedDois.size}
-                    New DOIs: ${newDoiSet.size}. Writing to expanded...
-                """.trimIndent()
-                )
-        }
         if (newDoiSet.isEmpty() && nrMissing != 0 && allNullsMissing) {
-            if (!auto)
-                RootStore.setInformationalDialog("Expansion complete. New DOIs can only emerge when new papers are published.\nSet \"cache-max-age-days\" to control when expansion cache should be deleted.")
             status.value = QueryStatus.FILTERED2
-            return
+            return Triple(0, 0, true)
         }
         writeExpandedFile(newDoiSet)
+        return Triple(newDoiSet.size, nrMissing, false)
     }
 
-    suspend fun filter1(auto: Boolean = false) {
+    suspend fun filter1(): Pair<Int, Int> {
         val tag = "FILTER"
         val queryDir = getQueryDir(name)
         suspend fun fetchDetails(
@@ -296,21 +266,19 @@ data class LitBallQuery(
             val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
             val rejectedDOIs = mutableSetOf<String>()
 
-            if (!fetchDetails(paperDetailsList, rejectedDOIs)) return
+            if (!fetchDetails(paperDetailsList, rejectedDOIs)) return Pair(0, 0)
 
             Logger.i(tag, "rejected ${rejectedDOIs.size} papers, write to rejected...")
-            if (!auto) {
-                RootStore.setInformationalDialog("Retained ${paperDetailsList.size} records\n\nrejected ${rejectedDOIs.size} papers, write to rejected...")
-            }
 
-            if (!writeFiltered(paperDetailsList)) return
-            if (!writeRejected(rejectedDOIs)) return
+            if (!writeFiltered(paperDetailsList)) return Pair(0, 0)
+            if (!writeRejected(rejectedDOIs)) return Pair(0,0)
             File("${queryDir.absolutePath}/${FileType.EXPANDED.fileName}").delete()
             status.value = QueryStatus.FILTERED1
+            Pair(paperDetailsList.size, rejectedDOIs.size)
         }
     }
 
-    private suspend fun expressionSearch() {
+    suspend fun expressionSearch(): Int {
         val tag = "EXPRSEARCH"
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
@@ -325,27 +293,27 @@ data class LitBallQuery(
                 paperDetailsList.add(it)
         }
         // Bail out on Cancel
-        if (!result) return
+        if (!result) return -1
         Logger.i(tag, "Retained ${paperDetailsList.size} records")
         lowercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
-        RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = idSetFromPaperDetailsList(paperDetailsList)
         if (!writeFile(queryDir, FileType.ACCEPTED,
             acceptedSet.joinToString("\n")
             ))
-            return
+            return 0
         ArchivedCache.init(queryDir)
         ArchivedCache.merge(paperDetailsList)
         noNewAccepted = true
         writeNoNewAccepted()
         status.value = QueryStatus.FILTERED2
+        return paperDetailsList.size
     }
 
     // Similarity Search will add 20 new papers. User deletes as much as wanted. Following clicks on Search will
     // add the same amount of what remains accepted, but at least 20.
-    private suspend fun similaritySearch() {
+    suspend fun similaritySearch(): Int {
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
         val ids = acceptedSet.toMutableList()
@@ -353,19 +321,19 @@ data class LitBallQuery(
             paperDetailsList.add(it)
         }
         // Bail out on Cancel
-        if (!result) return
+        if (!result) return -2
         Logger.i(tag, "Retained ${paperDetailsList.size} records")
         lowercaseDois(paperDetailsList)
         sanitize(paperDetailsList)
-        RootStore.setInformationalDialog("Received ${paperDetailsList.size} records\naccepting all. Query finished.")
 
         acceptedSet = ids.plus(idSetFromPaperDetailsList(paperDetailsList)).toMutableSet()
         if (!writeFile(queryDir, FileType.ACCEPTED,
             acceptedSet.joinToString("\n")))
-            return
+            return -1
         ArchivedCache.init(queryDir)
         ArchivedCache.set(paperDetailsList)
         status.value = QueryStatus.FILTERED2
+        return paperDetailsList.size
     }
 
     suspend fun filter2() {
@@ -381,31 +349,34 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.FILTERED1)?.let { file ->
             PaperList.setFromQuery(this, file)
-            PaperList.listHandle.setFullAllTags(Tag.Accepted)
-            PaperList.finish(true)
+            listHandle.setFullAllTags(Tag.Accepted)
+            PaperList.finish()
             syncBuffers()
         }
     }
 
-    private suspend fun autoSnowBall() {
+    suspend fun autoSnowBall(): Int {
         while (true) {
             snowBall(true)
             if (status.value == QueryStatus.FILTERED2 || status.value == QueryStatus.EXPLODED) break
             mutex.unlock()
-            filter1(true)
+            filter1()
             mutex.tryLock()
             if (status.value == QueryStatus.FILTERED2) break
             acceptAll()
         }
+        if (status.value == QueryStatus.FILTERED2) {
+            val noAcc = listHandle.getFullList().count { it.tag == Tag.Accepted }
+            QueryList.itemFromId(id)?.let {
+                it.noNewAccepted = (noAcc == 0)
+                it.writeNoNewAccepted()
+            }
+            return noAcc
+        }
         if (status.value == QueryStatus.EXPLODED) {
-            RootStore.setInformationalDialog(
-                """
-                Number of new DOIs exceeds EXPLODED_LIMIT of $EXPLODED_LIMIT.
-                Please try again with more specific keywords / expression.
-                """.trimIndent()
-            )
             status.value = QueryStatus.FILTERED2
         }
+        return -1
     }
 
     suspend fun annotate() {

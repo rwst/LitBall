@@ -11,7 +11,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromStream
 import model.Filtering2RootStore
 import model.PaperListScreenStore
-import model.RootStore
 import service.NLPService
 import service.S2Interface
 import service.YDFService
@@ -140,24 +139,11 @@ object PaperList {
     /**
      * Finish filtering2 phase by saving accepted/rejected DOIs to their files, adding them to the sets in memory,
      * deleting the FILTERED1 file.
-     *
-     * @param auto When auto is not set, a note appears with the number of accepted papers.
      */
-    suspend fun finish(auto: Boolean = false) {
+    suspend fun finish() {
         mergeTaggedToSetAndWriteIds(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
         mergeTaggedToSetAndWriteIds(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         path?.let { File(it).delete() }
-        if (!auto) {
-            RootStore.setFiltered2()
-            Filtering2RootStore.switchRoot()
-            val noAcc = listHandle.getFullList().count { it.tag == Tag.Accepted }
-            RootStore.setInformationalDialog("$noAcc papers added to accepted")
-            query.let {
-                it.noNewAccepted = (noAcc == 0)
-                it.writeNoNewAccepted()
-            }
-            RootStore.refreshList()
-        }
     }
 
     suspend fun delete(id: Int) {

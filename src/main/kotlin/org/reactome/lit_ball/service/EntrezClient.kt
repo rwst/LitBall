@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED")
 package service
 
+/*
 import kotlinx.coroutines.delay
 import common.QuerySetting
 import common.Settings
@@ -19,7 +20,7 @@ object EntrezClient : AGService {
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
     lateinit var strategy: DelayStrategy
-    override var progressHandler: ProgressHandler = RootStore
+    override lateinit var progressHandler: ProgressHandler
 
     override suspend fun <T> getDataOrHandleExceptions(
         index: Int,
@@ -260,3 +261,4 @@ class DelayStrategy(private val minDelay: Long) {
         val multiplier = listOf(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024)
     }
 }
+*/

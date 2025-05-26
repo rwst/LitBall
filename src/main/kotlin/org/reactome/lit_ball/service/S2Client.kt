@@ -1,13 +1,12 @@
 package service
 
-import kotlinx.coroutines.delay
 import common.QuerySetting
 import common.Settings
+import kotlinx.coroutines.delay
 import model.ProgressHandler
-import model.RootStore
+import retrofit2.HttpException
 import util.Logger
 import util.S2SearchExpression
-import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
@@ -92,7 +91,7 @@ object S2Client : AGService {
         }
     }
 
-    override var progressHandler: ProgressHandler = RootStore
+    override lateinit var progressHandler: ProgressHandler
 
     // Full protocol for bulk download of paper details for a search
     override suspend fun getBulkPaperSearch(
