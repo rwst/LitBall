@@ -5,7 +5,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.*
+import dialog.ExplodedDialogString
+import dialog.MissingNotFoundDialogString
+import dialog.NoNewAcceptedDialogString
+import dialog.NoResultDialogString
+import dialog.ProblemWritingDialogString
 import dialog.ProgressIndicatorParameter
+import dialog.ReceivedAcceptFinishDialogString
+import dialog.ServerProblemWithMissingDialogString
+import dialog.SuccessDialogString
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import service.getAGService
@@ -100,30 +108,26 @@ class RootStore : ProgressHandler {
         when (query.type) {
             QueryType.EXPRESSION_SEARCH -> {
                 modelScope.launch(Dispatchers.IO) {
-                    val noAcc = query.expressionSearch()
-                    when (noAcc) {
-                        -2 -> setInformationalDialog("Problem writing ${FileType.ACCEPTED.fileName}")
+                    val nrAcc = query.expressionSearch()
+                    val dialogString = when (nrAcc) {
+                        -2 -> ProblemWritingDialogString(FileType.ACCEPTED)
                         -1 -> return@launch
-                        0 -> setInformationalDialog("No result received.")
-                        else -> setInformationalDialog("Received $noAcc records\naccepting all. Query finished.")
+                         0 -> NoResultDialogString()
+                        else -> ReceivedAcceptFinishDialogString(nrAcc)
                     }
+                    setInformationalDialog(dialogString)
                     refreshList()
                 }
             }
             QueryType.SNOWBALLING -> {
                 modelScope.launch(Dispatchers.IO) {
-                    val noAcc = query.autoSnowBall()
+                    val nrAcc = query.autoSnowBall()
                     setFiltered2()
                     rootSwitch.value = RootType.MAIN_ROOT
-                    if (noAcc > 0) {
-                        setInformationalDialog("$noAcc papers added to accepted")
+                    if (nrAcc > 0) {
+                        setInformationalDialog(ReceivedAcceptFinishDialogString(nrAcc))
                     } else {
-                        setInformationalDialog(
-                            """
-                    Number of new DOIs exceeds EXPLODED_LIMIT of $EXPLODED_LIMIT.
-                    Please try again with more specific keywords / expression.
-                    """.trimIndent()
-                        )
+                        setInformationalDialog(ExplodedDialogString())
                     }
                     refreshList()
                 }
@@ -131,40 +135,24 @@ class RootStore : ProgressHandler {
             QueryType.SUPERVISED_SNOWBALLING -> {
                 modelScope.launch(Dispatchers.IO) {
                     val (nrNewDois, nrMissing, allNullsMissing) = query.snowBall()
-                    if (nrNewDois > 0 && !allNullsMissing)
-                        setInformationalDialog("Missing papers could not be fetched.")
-                    else if (nrNewDois == 0 && nrMissing != 0)
-                        setInformationalDialog(
-                            """
-                        None of the $nrMissing DOIs was found on Semantic
-                        Scholar. Please check:
-                        1. are you searching outside the biomed or compsci fields?
-                        2. do the DOIs in the file "Query-xyz/accepted.txt" start with "10."?
-                    """.trimIndent()
-                        )
-                    else if (nrNewDois > 0)
-                        setInformationalDialog(
-                            """
-                        Accepted Dois: ${query.acceptedSet.size}
-                        Updated snowball size: ${query.allLinkedDoiSize}
-                        New DOIs: $nrNewDois. Writing to expanded...
-                    """.trimIndent()
-                        )
-                    else
-                        setInformationalDialog("""
-                            Expansion complete. New DOIs can only emerge when new papers are published.
-                            Set \"cache-max-age-days\" to control when expansion cache should be deleted.
-                            """.trimIndent())
+                    val dialogString = when {
+                        nrNewDois > EXPLODED_LIMIT -> ExplodedDialogString()
+                        nrNewDois == 0 && nrMissing == 0 && !allNullsMissing -> ServerProblemWithMissingDialogString()
+                        nrNewDois == 0 && nrMissing != 0 && allNullsMissing -> MissingNotFoundDialogString(nrMissing)
+                        nrNewDois > 0 && nrMissing == 0 -> SuccessDialogString(query, nrNewDois)
+                        else -> NoNewAcceptedDialogString()
+                    }
+                    setInformationalDialog(dialogString)
                     refreshList()
                 }
             }
             QueryType.SIMILARITY_SEARCH -> {
                 modelScope.launch(Dispatchers.IO) {
-                    val noAcc = query.similaritySearch()
-                    when (noAcc) {
-                        -1 -> setInformationalDialog("Problem writing ${FileType.ACCEPTED.name}")
+                    val nrAcc = query.similaritySearch()
+                    when (nrAcc) {
+                        -1 -> setInformationalDialog(ProblemWritingDialogString(FileType.ACCEPTED))
                         -2 -> return@launch
-                        else -> setInformationalDialog("Received $noAcc records\naccepting all. Query finished.")
+                        else -> setInformationalDialog(ReceivedAcceptFinishDialogString(nrAcc))
                     }
                     refreshList()
                 }
