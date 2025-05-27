@@ -18,13 +18,13 @@ import window.components.Icons
 import window.components.RailItem
 
 
-object AnnotatingRootStore : ModelHandle, ProgressHandler {
+class AnnotatingRootStore : ModelHandle, ProgressHandler {
     var state: AnnotatingRootState by mutableStateOf(initialState())
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
     val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
     lateinit var rootSwitch: MutableState<RootType>
 
-    private fun initialState(): AnnotatingRootState = AnnotatingRootState()
+    private fun initialState(): AnnotatingRootState = AnnotatingRootState(modelHandle = this)
 
     private inline fun setState(update: AnnotatingRootState.() -> AnnotatingRootState) {
         state = state.update()
@@ -174,7 +174,8 @@ data class AnnotatingRootState(
     val progressIndication: ProgressIndicatorParameter? = null,
     val doInformationalDialog: String? = null,
     val exportedNote: String? = null,
-    val paperListStore: PaperListScreenStore = PaperListScreenStore(AnnotatingRootStore),
+    val modelHandle: ModelHandle,
+    val paperListStore: PaperListScreenStore = PaperListScreenStore(modelHandle),
     val showStats: Boolean = false,
     var paperListState: PaperListScreenState = paperListStore.state
     )

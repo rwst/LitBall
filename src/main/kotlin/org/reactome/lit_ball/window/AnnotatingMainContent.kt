@@ -67,6 +67,7 @@ internal fun AnnotatingMainContent(
             }
             AnnotatingListContent(
                 scope = scope,
+                model,
                 items = model.state.paperListState.items,
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onFlagSet = model::onFlagSet,
@@ -81,6 +82,7 @@ internal fun AnnotatingMainContent(
 @Composable
 fun AnnotatingListContent(
     scope: CoroutineScope,
+    model: AnnotatingRootStore,
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onFlagSet: (Int, Int, Boolean) -> Unit,
@@ -110,6 +112,7 @@ fun AnnotatingListContent(
                 ) { item ->
                     CardWithFlagBoxes(
                         scope = scope,
+                        model,
                         item = item,
                         onClicked = { onItemClicked(item.id) },
                         onFlagSet = { idx, value -> onFlagSet(item.id, idx, value) },
@@ -130,11 +133,11 @@ fun AnnotatingListContent(
 @Composable
 fun CardWithFlagBoxes(
     scope: CoroutineScope,
+    model: AnnotatingRootStore,
     item: Paper,
     onClicked: () -> Unit,
     onFlagSet: (Int, Boolean) -> Unit,
 ) {
-    val model = AnnotatingRootStore
     val cardTitle = item.details.title
     val year = item.details.publicationDate?.substringBefore("-") ?: ""
     val cardYear = if (year == "null") "" else year

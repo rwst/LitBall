@@ -14,11 +14,10 @@ import model.AnnotatingRootStore
 fun AnnotatingRootContent(
     rootSwitch: MutableState<RootType>,
 ) {
-    val model = remember { AnnotatingRootStore }
+    val model = remember { AnnotatingRootStore() }
     val focusRequester = remember { FocusRequester() }
     val state = model.state
     val scope = rememberCoroutineScope()
-    AnnotatingRootStore.state = state // TODO: is this circular?
     model.rootSwitch = rootSwitch
 
     LaunchedEffect(Unit) {

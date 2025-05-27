@@ -245,15 +245,16 @@ class RootStore : ProgressHandler {
 
     fun onAnnotateStarted(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            PaperList.model = AnnotatingRootStore.state.paperListStore
+//            PaperList.model = AnnotatingRootStore.state.paperListStore
             state.items[id].annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
             setState { copy(doAnnotate = id) }
+            refreshList()
         }
     }
 
     fun onQuerySettingsClicked(id: Int?) {
-        AnnotatingRootStore.state.paperListStore.refreshList()
+//        AnnotatingRootStore.state.paperListStore.refreshList()
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
