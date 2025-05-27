@@ -102,8 +102,9 @@ class RootStore : ProgressHandler {
                 modelScope.launch(Dispatchers.IO) {
                     val noAcc = query.expressionSearch()
                     when (noAcc) {
-                        0 -> setInformationalDialog("Problem writing ${FileType.ACCEPTED.name}")
+                        -2 -> setInformationalDialog("Problem writing ${FileType.ACCEPTED.fileName}")
                         -1 -> return@launch
+                        0 -> setInformationalDialog("No result received.")
                         else -> setInformationalDialog("Received $noAcc records\naccepting all. Query finished.")
                     }
                     refreshList()

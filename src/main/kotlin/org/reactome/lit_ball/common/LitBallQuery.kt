@@ -300,7 +300,7 @@ data class LitBallQuery(
         if (!writeFile(queryDir, FileType.ACCEPTED,
             acceptedSet.joinToString("\n")
             ))
-            return 0
+            return -2
         ArchivedCache.init(queryDir)
         ArchivedCache.merge(paperDetailsList)
         noNewAccepted = true
