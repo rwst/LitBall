@@ -19,7 +19,6 @@ import common.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.isWritable
@@ -49,26 +48,25 @@ fun NewQueryDialog(
             setState { copy(pathWarning = "Query directory is not writable") }
             return
         }
-        runBlocking {   // TODO
-            rootScope.launch(Dispatchers.IO) {
-                setState { copy(doiWarning = "Retrieving PaperIds of ${refs.size} PMID references...") }
-                try {
-                    val paperIds = fillDOIs(refs)
-                    setState {
-                        copy(
-                            doiWarning = null,
-                            field = paperIds.joinToString("\n")
-                        )
-                    }
-                    if (paperIds.any { !it.startsWith("10.") && !it.startsWith("s2:") }) {
-                        setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove PMID numbers.") }
-                    }
-                } catch (e: Exception) {
-                    setState { copy(doiWarning = "Error: ${e.message}") }
+        setState { copy(doiWarning = "Retrieving PaperIds of ${refs.size} PMID references...") }
+        var paperIds: List<String>
+        rootScope.launch(Dispatchers.IO) {
+            try {
+                paperIds = fillDOIs(refs)
+                setState {
+                    copy(
+                        doiWarning = null,
+                        field = paperIds.joinToString("\n")
+                    )
                 }
+                if (paperIds.any { !it.startsWith("10.") && !it.startsWith("s2:") }) {
+                    setState { copy(doiWarning = "Could not convert all entries to DOI. Please replace or remove PMID numbers.") }
+                }
+            } catch (e: Exception) {
+                setState { copy(doiWarning = "Error: ${e.message}") }
             }
         }
-        val paperIds = state.value.field.split("\n")
+        val newPaperIds = state.value.field.split("\n")
             .map { it.trim().transformDOI() }
             .filter { it.isNotBlank() }
 
@@ -76,7 +74,7 @@ fun NewQueryDialog(
             copy(
                 check = name.isNotEmpty() &&
                         (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
-                                (paperIds.isNotEmpty() && paperIds.all { it.startsWith("10.") || it.startsWith("s2:") })),
+                                (newPaperIds.isNotEmpty() && newPaperIds.all { it.startsWith("10.") || it.startsWith("s2:") })),
                 nameCheck = name !in QueryList.list.map { it.name }
             )
         }
@@ -86,11 +84,11 @@ fun NewQueryDialog(
                 QueryList.addNewItem(
                     QueryType.entries[state.value.queryType],
                     name,
-                    paperIds.toSet(),
+                    newPaperIds.toSet(),
                     Pair(state.value.pubYear, state.value.flagChecked),
                 )
+                onCloseClicked()
             }
-            onCloseClicked()
         }
     }
 

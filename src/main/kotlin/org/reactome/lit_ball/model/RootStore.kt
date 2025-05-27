@@ -226,11 +226,11 @@ class RootStore : ProgressHandler {
     }
 
     fun setNewItem(boolean: Boolean) {
-        setState { copy(newItem = boolean) }
         if (!boolean) {
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
             refreshList()
         }
+        setState { copy(newItem = boolean) }
     }
 
     private fun onDoFilter2Started(id: Int) {
@@ -323,24 +323,10 @@ class RootStore : ProgressHandler {
         setState { copy(doInformationalDialog = text) }
     }
 
-    fun doSort(sortingType: SortingType, scrollTo: Int? = null) {
+    fun doSort(sortingType: SortingType) {
         modelScope.launch(Dispatchers.IO) {
-            if (scrollTo == null) {
-                QueryList.sort(sortingType)
-                refreshList()
-                delay(100) // TODO: this is a hack
-                scrollChannel?.send(0)
-            } else {
-                val name = QueryList.list[scrollTo].name
-                QueryList.sort(sortingType)
-                refreshList()
-                delay(100) // TODO: this is a hack
-                val index = QueryList.list.indexOfFirst { it.name == name }
-                if (index >= 0)
-                    scrollChannel?.send(index)
-                else
-                    scrollChannel?.send(0)
-            }
+            QueryList.sort(sortingType)
+            refreshList()
         }
     }
 
