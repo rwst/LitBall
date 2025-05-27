@@ -1,5 +1,6 @@
 package common
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -9,7 +10,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromStream
-import model.Filtering2RootStore
 import model.PaperListScreenStore
 import service.NLPService
 import service.S2Interface
@@ -362,6 +362,7 @@ object PaperList {
         YDFService.path = Settings.map["path-to-YDF"] ?: ""
         val processJob = try {
             YDFService.doPredict(
+                modelScope = CoroutineScope(Dispatchers.Default),
                 modelPath = classifierPath,
                 datasetPath = datasetPath,
                 resultPath = resultPath,
@@ -384,7 +385,6 @@ object PaperList {
                 Tag.Rejected
         }
         listHandle.setFullTagsFromPaperIdMap(tagMap)
-        Filtering2RootStore.state.paperListStore.refreshList()
     }
 
     fun applyFilter(filterString: String) {

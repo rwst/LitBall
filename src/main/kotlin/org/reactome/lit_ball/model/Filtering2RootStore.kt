@@ -19,13 +19,13 @@ import window.components.Icons
 import window.components.RailItem
 import window.RootType
 
-object Filtering2RootStore : ModelHandle {
+class Filtering2RootStore : ModelHandle {
     var state: Filtering2RootState by mutableStateOf(initialState())
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
     val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
     lateinit var rootSwitch: MutableState<RootType>
 
-    private fun initialState(): Filtering2RootState = Filtering2RootState()
+    private fun initialState(): Filtering2RootState = Filtering2RootState(modelHandle = this)
 
     private inline fun setState(update: Filtering2RootState.() -> Filtering2RootState) {
         state = state.update()
@@ -121,6 +121,7 @@ data class Filtering2RootState(
     val openList: Boolean = false,
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
-    val paperListStore: PaperListScreenStore = PaperListScreenStore(Filtering2RootStore),
+    val modelHandle: ModelHandle,
+    val paperListStore: PaperListScreenStore = PaperListScreenStore(modelHandle),
     var paperListState: PaperListScreenState = paperListStore.state
 )

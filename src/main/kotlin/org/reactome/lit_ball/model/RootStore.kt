@@ -113,7 +113,7 @@ class RootStore : ProgressHandler {
                 modelScope.launch(Dispatchers.IO) {
                     val noAcc = query.autoSnowBall()
                     setFiltered2()
-                    Filtering2RootStore.switchRoot()
+                    rootSwitch.value = RootType.MAIN_ROOT
                     if (noAcc > 0) {
                         setInformationalDialog("$noAcc papers added to accepted")
                     } else {
@@ -235,10 +235,11 @@ class RootStore : ProgressHandler {
 
     private fun onDoFilter2Started(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            PaperList.model = Filtering2RootStore.state.paperListStore
+//            PaperList.model = Filtering2RootStore.state.paperListStore
             state.items[id].filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
             setState { copy(doFilter2 = id) }
+            refreshList()
         }
     }
 

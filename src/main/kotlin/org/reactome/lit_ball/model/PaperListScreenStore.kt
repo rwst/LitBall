@@ -73,7 +73,11 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
 
     fun onClassifierConfirmed() {
-        handle.modelScope().launch(Dispatchers.IO) { PaperList.applyClassifier() }
+        handle.modelScope().launch(Dispatchers.IO)
+        {
+            PaperList.applyClassifier()
+            refreshList()
+        }
     }
 
     fun onFilterChanged(filter: String) {

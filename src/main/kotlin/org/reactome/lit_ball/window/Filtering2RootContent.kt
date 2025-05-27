@@ -11,11 +11,10 @@ import model.Filtering2RootStore
 fun Filtering2RootContent(
     rootSwitch: MutableState<RootType>,
 ) {
-    val model = remember { Filtering2RootStore }
+    val model = remember { Filtering2RootStore() }
     val focusRequester = remember { FocusRequester() }
     val state = model.state
     val scope = rememberCoroutineScope()
-    Filtering2RootStore.state = state
     model.rootSwitch = rootSwitch
 
     LaunchedEffect(Unit) {

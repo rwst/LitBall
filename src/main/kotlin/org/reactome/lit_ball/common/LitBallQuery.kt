@@ -8,7 +8,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import model.AnnotatingRootStore
-import model.Filtering2RootStore
 import service.AGService
 import service.S2Interface
 import service.getAGService
@@ -340,7 +339,6 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         checkFileInDirectory(queryDir, FileType.FILTERED1)?.let { file ->
             PaperList.setFromQuery(this, file)
-            Filtering2RootStore.state.paperListStore.refreshList()
         }
     }
 
