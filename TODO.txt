@@ -1,20 +1,28 @@
- - investigate rejected papers in WNV query
- - query type 3: accepted get presented again, even rejected get presented?
- - query type 3: initial accepted not accessible
- - filter reject does not work
- - 's2:null' in rejected.txt
- - sort annotated by unannotated first
- - TEST THIS: if 0 papers added in snowball, don't write expanded.txt, don't advance status
- - new query from old (allowing change of keywords but shortcutting some download)
- - new query from old (type 1,2,3 from type 1)
+ - something wrong with expr search and sim search: HTTP 400
+ - on snowball expand IO errors will still set no-new-accepted
+ - no progress indicator? (getting data for filter1 works)
+
+ - expr search: pub type no longer accessible after new query
+ - new query from old (type 1,2,3 from type 1): copy keywords
+ - new query from old: copy more data (archived...)
  - easy change/selection of query path
+ - any IO-dispatched code affecting the UI should change state when finished
  - going Main from annotate resets list pos
  - TAB does not advance field in new query dialog etc
  - manually add IDs to accepted by adding an IDs field to query settings dialog
  - add global option to set logging in S2RetrofitHelper, default NONE
  - focus: opening/closing filter dialog removes focus on list
  - focus: clicking sort in Annotate still grabs focus
+ - focus: changing virtual desktop in Annotate loses focus
  - focus: when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
+ - focus: press A-Z keys to scroll filtered2 and annotated lists in alnum mode
+ - 's2:null' in rejected.txt
+ - sort annotated by unannotated first (do we really want this, better as additional sorting type?)
+ - similarity search finds 20, accepts, doesn't update card:Accepted
+ - obsolete RootStore.refreshList() by adding state. it is used:
+   - 2x in RootStore.doSort()
+   - in QueryList:85 after call to RootStore.doSort()
+   - at the end of PaperList.finish()
 
 Doc:
  - json export
@@ -26,6 +34,8 @@ Doc:
    - local Chinese papers are underrepresented in S2
 
 Features:
+ - night mode
+ - Zotero integration == RIS, BibTeX output
  - DB: use Exposed to handle simple text or JSON files
        alternatively use Exposed with SQLite, see below for both
  - remove all instances of delay()
