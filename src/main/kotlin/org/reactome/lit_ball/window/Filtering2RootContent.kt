@@ -5,6 +5,7 @@ package window
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import dialog.Filtering2FilterDialog
+import dialog.InformationalDialog
 import model.Filtering2RootStore
 
 @Composable
@@ -19,6 +20,10 @@ fun Filtering2RootContent(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    state.doInformationalDialog?.also {
+        InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
     }
 
     if (state.paperListStore.state.filterDialog) {

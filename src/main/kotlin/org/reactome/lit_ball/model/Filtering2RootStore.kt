@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.FileType
 import common.PaperList
+import common.QueryStatus
 import common.Settings
 import common.Tag
 import kotlinx.coroutines.CoroutineDispatcher
@@ -104,11 +105,28 @@ class Filtering2RootStore : ModelHandle {
     }
 
     private fun doFinish() {
-        launchIOOperation { PaperList.finish() }
+        launchIOOperation {
+            PaperList.finish()
+            PaperList.query.let {
+                it.syncBuffers()
+                it.status.value = QueryStatus.FILTERED2
+            }
+            val nrAcc = PaperList.listHandle.getFullList().count { it.tag == Tag.Accepted }
+            setInformationalDialog("$nrAcc papers added to accepted")
+            PaperList.query.let {
+                it.noNewAccepted = (nrAcc == 0)
+                it.writeNoNewAccepted()
+            }
+            switchRoot()
+        }
     }
 
     private fun doSave() {
         launchIOOperation { PaperList.saveFiltered() }
+    }
+
+    fun setInformationalDialog(text: String?) {
+        setState { copy(doInformationalDialog = text) }
     }
 }
 
@@ -121,6 +139,7 @@ data class Filtering2RootState(
     val openList: Boolean = false,
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
+    val doInformationalDialog: String? = null,
     val modelHandle: ModelHandle,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(modelHandle),
     var paperListState: PaperListScreenState = paperListStore.state
