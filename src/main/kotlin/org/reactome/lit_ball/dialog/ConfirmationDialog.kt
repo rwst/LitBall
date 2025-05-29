@@ -41,7 +41,7 @@ internal fun ConfirmationDialog(
 @Composable
 internal fun InformationalDialog(
     title: String,
-    text: String,
+    text: String?,
     onCloseClicked: () -> Unit,
 ) {
     AlertDialog(
@@ -55,6 +55,6 @@ internal fun InformationalDialog(
                 Text("Dismiss")
             }
         },
-        text = { Text(text) }
+        text = { text?.let { Text(text) } }
     )
 }

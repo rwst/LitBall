@@ -112,12 +112,11 @@ class Filtering2RootStore : ModelHandle {
                 it.status.value = QueryStatus.FILTERED2
             }
             val nrAcc = PaperList.listHandle.getFullList().count { it.tag == Tag.Accepted }
-            setInformationalDialog("$nrAcc papers added to accepted")
             PaperList.query.let {
                 it.noNewAccepted = (nrAcc == 0)
                 it.writeNoNewAccepted()
             }
-            switchRoot()
+            setInformationalDialog("$nrAcc papers added to accepted") { switchRoot() }
         }
     }
 
@@ -125,8 +124,8 @@ class Filtering2RootStore : ModelHandle {
         launchIOOperation { PaperList.saveFiltered() }
     }
 
-    fun setInformationalDialog(text: String?) {
-        setState { copy(doInformationalDialog = text) }
+    fun setInformationalDialog(text: String?, runAfter: () -> Unit = {}) {
+        setState { copy(doInformationalDialog = Pair(text, runAfter)) }
     }
 }
 
@@ -139,7 +138,7 @@ data class Filtering2RootState(
     val openList: Boolean = false,
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
-    val doInformationalDialog: String? = null,
+    val doInformationalDialog: Pair<String?, () -> Unit> = Pair(null) {},
     val modelHandle: ModelHandle,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(modelHandle),
     var paperListState: PaperListScreenState = paperListStore.state

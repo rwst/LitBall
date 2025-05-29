@@ -22,8 +22,13 @@ fun Filtering2RootContent(
         focusRequester.requestFocus()
     }
 
-    state.doInformationalDialog?.also {
-        InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
+    state.doInformationalDialog.also {
+        if (it.first != null) {
+            InformationalDialog(title = "NOTE", text = it.first) {
+                model.setInformationalDialog(null)
+                it.second.invoke()
+            }
+        }
     }
 
     if (state.paperListStore.state.filterDialog) {
