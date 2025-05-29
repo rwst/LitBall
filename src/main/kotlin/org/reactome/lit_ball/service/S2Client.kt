@@ -16,7 +16,8 @@ object S2Client : AGService {
     const val SINGLE_QUERY_DELAY = 100L
     private const val BULK_QUERY_DELAY = 1000L
     private const val TAG = "S2Client"
-    private const val DEFAULT_PAPER_FIELDS = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate"
+    private const val DEFAULT_PAPER_FIELDS = "paperId,externalIds,title,abstract,tldr,publicationTypes,publicationDate"
+    private const val PAPER_FIELDS_NO_TLDR = "paperId,externalIds,title,abstract,publicationTypes,publicationDate"
     private const val REFS_FIELDS = "paperId,citations,citations.externalIds,references,references.externalIds"
 
     lateinit var strategy: DelayStrategy
@@ -102,10 +103,10 @@ object S2Client : AGService {
         val tag = "BULKSEARCH"
         strategy = DelayStrategy(BULK_QUERY_DELAY)
         val s2expr = S2SearchExpression.from(setting)
-        val indicatorTitle = "Downloading titles, TLDRs, and abstracts\nof matching papers"
+        val indicatorTitle = "Downloading titles and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
             S2Interface.getBulkPaperSearch(
-                query = s2expr, DEFAULT_PAPER_FIELDS
+                query = s2expr, PAPER_FIELDS_NO_TLDR
             )
         }
         if (!pair.second) return false
@@ -119,7 +120,7 @@ object S2Client : AGService {
         while (total > numDone) {
             pair = getDataOrHandleExceptions(numDone, total, indicatorTitle) {
                 S2Interface.getBulkPaperSearch(
-                    query = s2expr, DEFAULT_PAPER_FIELDS, token,
+                    query = s2expr, PAPER_FIELDS_NO_TLDR, token,
                 )
             }
             if (!pair.second) return false
@@ -218,7 +219,7 @@ object S2Client : AGService {
             val paperIds = ids.map { if (it.startsWith("s2:")) it.substring(3) else it }
             val pair = getDataOrHandleExceptions(index, size, indicatorTitle) {
                 S2Interface.getBulkRecommendedDetails(
-                    paperIds, DEFAULT_PAPER_FIELDS, limit
+                    paperIds, PAPER_FIELDS_NO_TLDR, limit
                 )
             }
             if (!pair.second) return false
