@@ -61,8 +61,8 @@ fun RootContent(
         AboutDialog { model.setAboutDialog(false) }
     }
 
-    state.doInformationalDialog?.also {
-        InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
+    state.doInformationalDialog?.let {
+        InformationalDialog(title = "NOTE", it)
     }
 
     if (state.doConfirmationDialog.first != null) {

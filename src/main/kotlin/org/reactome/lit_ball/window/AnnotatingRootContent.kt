@@ -36,12 +36,8 @@ fun AnnotatingRootContent(
         ProgressIndicator(it)
     }
 
-    state.doInformationalDialog?.also {
-        InformationalDialog(title = "NOTE", text = it) { model.setInformationalDialog(null) }
-    }
-
-    state.exportedNote?.let {
-        InformationalDialog("NOTE", it) { model.setExportedNote(null) }
+    state.doInformationalDialog?.let {
+        InformationalDialog(title = "NOTE", it)
     }
 
     AnnotatingMainContent(

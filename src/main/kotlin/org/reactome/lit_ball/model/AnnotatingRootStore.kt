@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import common.FileType
 import common.PaperList
 import common.Settings
+import dialog.DialogParameters
 import dialog.ProgressIndicatorParameter
 import kotlinx.coroutines.*
 import kotlinx.datetime.LocalDate
@@ -148,12 +149,19 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
         return true
     }
 
+    fun setInformationalDialog2(text: String?, runAfter: () -> Unit = {}) {
+        if (text == null)
+            setState { copy(doInformationalDialog = null) }
+        else
+            setState { copy(doInformationalDialog = DialogParameters(text, {}, runAfter)) }
+    }
+
     override fun setInformationalDialog(text: String?) {
-        setState { copy(doInformationalDialog = text) }
+        setInformationalDialog2(text) { setInformationalDialog2(null) }
     }
 
     fun setExportedNote(note: String?) {
-        setState { copy(exportedNote = note) }
+        setInformationalDialog2(note) { setInformationalDialog2(null) }
     }
 
     fun getEpochs(): List<Long> = state.paperListState.items
@@ -172,8 +180,8 @@ data class AnnotatingRootState(
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
     val progressIndication: ProgressIndicatorParameter? = null,
-    val doInformationalDialog: String? = null,
-    val exportedNote: String? = null,
+    val doInformationalDialog: DialogParameters? = null,
+    val exportedNote: DialogParameters? = null,
     val modelHandle: ModelHandle,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(modelHandle),
     val showStats: Boolean = false,

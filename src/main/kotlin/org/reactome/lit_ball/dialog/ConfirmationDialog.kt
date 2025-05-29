@@ -7,6 +7,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 
+data class DialogParameters(
+    val text: String,
+    val onConfirmClicked: () -> Unit,
+    val onDismissClicked: () -> Unit,
+)
+
 @Composable
 internal fun ConfirmationDialog(
     title: String,
@@ -41,20 +47,19 @@ internal fun ConfirmationDialog(
 @Composable
 internal fun InformationalDialog(
     title: String,
-    text: String?,
-    onCloseClicked: () -> Unit,
+    dialogParameters: DialogParameters,
 ) {
     AlertDialog(
         title = { Text(title) },
-        onDismissRequest = onCloseClicked,
+        onDismissRequest = dialogParameters.onDismissClicked,
         confirmButton = {},
         dismissButton = {
             TextButton(
-                onClick = onCloseClicked
+                onClick = dialogParameters.onDismissClicked
             ) {
                 Text("Dismiss")
             }
         },
-        text = { text?.let { Text(text) } }
+        text = { Text(dialogParameters.text) }
     )
 }

@@ -9,6 +9,7 @@ import common.PaperList
 import common.QueryStatus
 import common.Settings
 import common.Tag
+import dialog.DialogParameters
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -125,7 +126,10 @@ class Filtering2RootStore : ModelHandle {
     }
 
     fun setInformationalDialog(text: String?, runAfter: () -> Unit = {}) {
-        setState { copy(doInformationalDialog = Pair(text, runAfter)) }
+        if (text == null)
+            setState { copy(doInformationalDialog = null) }
+        else
+            setState { copy(doInformationalDialog = DialogParameters(text, {}, runAfter)) }
     }
 }
 
@@ -138,7 +142,7 @@ data class Filtering2RootState(
     val openList: Boolean = false,
     val doImport: Boolean = false,
     val isClassifierSet: Boolean = false,
-    val doInformationalDialog: Pair<String?, () -> Unit> = Pair(null) {},
+    val doInformationalDialog: DialogParameters? = null,
     val modelHandle: ModelHandle,
     val paperListStore: PaperListScreenStore = PaperListScreenStore(modelHandle),
     var paperListState: PaperListScreenState = paperListStore.state
