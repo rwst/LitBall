@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
 
+import java.util.concurrent.atomic.AtomicInteger
+
 fun formatDateToyyyyMMMddFormat(date: Date?): String {
     if (date == null) return "-.-"
     val format = SimpleDateFormat("yyyy-MMM-dd", Locale.ENGLISH)
@@ -112,5 +114,13 @@ class DateMatcher(filteredDate: String?) {
             return (pYear in fromYear..toYear)
         }
         return true
+    }
+}
+
+object UniqueIdGenerator {
+    private val idCounter = AtomicInteger(0) // Start from 0, or any other Int
+
+    fun nextId(): Int {
+        return idCounter.getAndIncrement()
     }
 }

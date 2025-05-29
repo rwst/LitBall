@@ -2,6 +2,7 @@ package common
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
+import util.UniqueIdGenerator
 import util.checkFileInDirectory
 import util.handleException
 import util.makeQueryDir
@@ -23,7 +24,7 @@ object QueryList {
         list = MutableList(dirs.size) { index ->
             dirs[index].let {
                 val newQuery = LitBallQuery(
-                    id = index,
+                    id = UniqueIdGenerator.nextId(),
                     name = it.name.removePrefix(prefix),
                     status = mutableStateOf(getStatus(it)),
                     acceptedSet = getDOIs(it, FileType.ACCEPTED).filter { doi -> doi.isNotBlank() }
@@ -64,7 +65,7 @@ object QueryList {
         if (!writeFile(queryDir, FileType.ACCEPTED, cleanedDois.joinToString("\n") + "\n"))
             return
         val newQuery = LitBallQuery(
-            id = list.size,
+            id = UniqueIdGenerator.nextId(),
             type = type,
             name = name,
             acceptedSet = cleanedDois,
@@ -100,13 +101,8 @@ object QueryList {
             else ->
                 throw Exception("can't happen: $type")
         }
-        updateIds()
         Settings.map["query-sort-type"] = type.toString()
         Settings.save()
-    }
-
-    private fun updateIds() {
-        list.forEachIndexed { index, it -> it.id = index }
     }
 }
 

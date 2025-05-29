@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import common.LitBallQuery
 import common.QueryStatus
 import model.RootStore
-import util.Logger
 import util.setupLazyListScroller
 import window.components.*
 
@@ -97,13 +96,7 @@ private fun ListContent(
             lazyListState
         ) {
             items(
-                key = {
-                    try {
-                        it.hashCode()
-                    } catch (e: ConcurrentModificationException) {
-                        Logger.error(e)
-                    }
-                },
+                key = { it.id },
                 items = items,
             ) { item ->
                 QueryCard(
