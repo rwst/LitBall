@@ -95,6 +95,7 @@ class RootStore : ProgressHandler {
     }
 
     fun refreshList() {
+        // TODO
         setState { copy(items = QueryList.list.toList()) }
     }
 
