@@ -140,7 +140,7 @@ class RootStore : ProgressHandler {
                         nrNewDois > EXPLODED_LIMIT -> ExplodedDialogString()
                         nrNewDois == 0 && nrMissing == 0 && !allNullsMissing -> ServerProblemWithMissingDialogString()
                         nrNewDois == 0 && nrMissing != 0 && allNullsMissing -> MissingNotFoundDialogString(nrMissing)
-                        nrNewDois > 0 && nrMissing == 0 -> SuccessDialogString(query, nrNewDois)
+                        nrNewDois > 0 -> SuccessDialogString(query, nrNewDois)
                         else -> NoNewAcceptedDialogString()
                     }
                     setInformationalDialog(dialogString)
