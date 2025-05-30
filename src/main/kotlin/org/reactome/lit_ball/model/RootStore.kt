@@ -95,9 +95,15 @@ class RootStore : ProgressHandler {
         SystemFunction.exitApplication()
     }
 
-    fun refreshList() {
-        // TODO
-        setState { copy(items = QueryList.list.toList()) }
+    private fun refreshList(itemId: Int? = -1) {
+        itemId?.let {
+            if (itemId == -1)
+                setState { copy(items = QueryList.list.toList()) }
+            else {
+                val newList = QueryList.touchItem(itemId)
+                newList?.let { setState { copy(items = newList) } }
+            }
+        }
     }
 
     fun refreshQueryPathDisplay() {
@@ -118,7 +124,7 @@ class RootStore : ProgressHandler {
                         else -> ReceivedAcceptFinishDialogString(nrAcc)
                     }
                     setInformationalDialog(dialogString)
-                    refreshList()
+                    refreshList(query.id)
                 }
             }
             QueryType.SNOWBALLING -> {
@@ -131,7 +137,7 @@ class RootStore : ProgressHandler {
                     } else {
                         setInformationalDialog(ExplodedDialogString())
                     }
-                    refreshList()
+                    refreshList(query.id)
                 }
             }
             QueryType.SUPERVISED_SNOWBALLING -> {
@@ -145,7 +151,7 @@ class RootStore : ProgressHandler {
                         else -> NoNewAcceptedDialogString()
                     }
                     setInformationalDialog(dialogString)
-                    refreshList()
+                    refreshList(query.id)
                 }
             }
             QueryType.SIMILARITY_SEARCH -> {
@@ -156,7 +162,7 @@ class RootStore : ProgressHandler {
                         -2 -> return@launch
                         else -> setInformationalDialog(ReceivedAcceptFinishDialogString(nrAcc))
                     }
-                    refreshList()
+                    refreshList(query.id)
                 }
             }
         }
@@ -167,7 +173,7 @@ class RootStore : ProgressHandler {
             val (nrPaperDetails, nrRejectedDOIs) = QueryList.itemFromId(id)?.filter1() ?: return@launch
             if (nrPaperDetails == 0) return@launch
             setInformationalDialog("Retained $nrPaperDetails records\n\nrejected $nrRejectedDOIs papers, write to rejected...")
-            refreshList()
+            refreshList(id)
         }
     }
 
@@ -194,7 +200,7 @@ class RootStore : ProgressHandler {
         if (query.status.value == QueryStatus.UNINITIALIZED && query.setting.mandatoryKeyWords.isNotEmpty()
         ) {
             query.status.value = QueryStatus.FILTERED2
-            setState { copy(items = QueryList.list.toList()) }
+            refreshList(query.id)
         }
         setState { copy(editingQuerySettings = null) }
     }
@@ -205,7 +211,8 @@ class RootStore : ProgressHandler {
             refreshQueryPathDisplay()
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         }
-        setState { copy(editingSettings = boolean, items = QueryList.list.toList()) }
+        setState { copy(editingSettings = boolean) }
+        refreshList()
     }
 
     fun setAboutDialog(boolean: Boolean) {
@@ -219,33 +226,29 @@ class RootStore : ProgressHandler {
     fun setNewItem(boolean: Boolean) {
         if (!boolean) {
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
-            refreshList()
         }
         setState { copy(newItem = boolean) }
     }
 
     private fun onDoFilter2Started(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-//            PaperList.model = Filtering2RootStore.state.paperListStore
             state.items[id].filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
             setState { copy(doFilter2 = id) }
-            refreshList()
+            refreshList(id)
         }
     }
 
     fun onAnnotateStarted(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-//            PaperList.model = AnnotatingRootStore.state.paperListStore
             state.items[id].annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
             setState { copy(doAnnotate = id) }
-            refreshList()
+            refreshList(id)
         }
     }
 
     fun onQuerySettingsClicked(id: Int?) {
-//        AnnotatingRootStore.state.paperListStore.refreshList()
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
@@ -318,7 +321,7 @@ class RootStore : ProgressHandler {
     }
 
     override fun setInformationalDialog(text: String?) {
-        setInformationalDialog2(text) { setInformationalDialog2(null) }
+        setInformationalDialog2(text = text, runAfter = { setInformationalDialog2(null) })
     }
 
     fun doSort(sortingType: SortingType) {
