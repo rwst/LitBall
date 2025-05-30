@@ -146,9 +146,10 @@ class RootStore : ProgressHandler {
                     val dialogString = when {
                         nrNewDois > EXPLODED_LIMIT -> ExplodedDialogString()
                         nrNewDois == 0 && nrMissing == 0 && !allNullsMissing -> ServerProblemWithMissingDialogString()
+                        nrNewDois == 0 && nrMissing == 0 && allNullsMissing -> NoNewAcceptedDialogString()
                         nrNewDois == 0 && nrMissing != 0 && allNullsMissing -> MissingNotFoundDialogString(nrMissing)
                         nrNewDois > 0 -> SuccessDialogString(query, nrNewDois)
-                        else -> NoNewAcceptedDialogString()
+                        else -> "Can't happen: nrNewDois: $nrNewDois,\nnrMissing: $nrMissing, allNullsMissing: $allNullsMissing"
                     }
                     setInformationalDialog(dialogString)
                     refreshList(query.id)

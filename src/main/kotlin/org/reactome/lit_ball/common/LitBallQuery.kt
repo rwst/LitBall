@@ -153,6 +153,7 @@ data class LitBallQuery(
                 status.value = QueryStatus.FILTERED2
             }
         }
+        if (readNoNewAccepted()) return Triple(0, 0, true)
         val (missingAccepted, allLinkedDois) = fetchMissingReferences()
         val nrMissing = missingAccepted.size
         var allNullsMissing = false
