@@ -80,15 +80,17 @@ object QueryList {
 
     fun touchItem(id: Int?): List<LitBallQuery>? {
         id?.let {
-            return list.map {
+            list = list.map {
                 if (it.id == id) {
                     it.id = UniqueIdGenerator.nextId()
                 }
                 it
             }
+            return list
         }
         return null
     }
+
     fun removeDir(id: Int?) {
         val name = itemFromId(id)?.name
         val queryDir = name?.let { getQueryDir(it) }

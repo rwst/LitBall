@@ -232,7 +232,7 @@ class RootStore : ProgressHandler {
 
     private fun onDoFilter2Started(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            state.items[id].filter2()
+            QueryList.itemFromId(id)?.filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
             setState { copy(doFilter2 = id) }
             refreshList(id)
@@ -241,7 +241,7 @@ class RootStore : ProgressHandler {
 
     fun onAnnotateStarted(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            state.items[id].annotate()
+            QueryList.itemFromId(id)?.annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
             setState { copy(doAnnotate = id) }
             refreshList(id)
