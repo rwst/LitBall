@@ -13,10 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import common.LitBallQuery
+import common.QueryType
+import common.boolArrayToTypeStrings
+import common.typeStringsToBoolArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import common.LitBallQuery
 import util.StringPatternMatcher
 import util.splitToSet
 import window.components.Icons
@@ -37,7 +40,9 @@ fun QuerySettingsDialog(
         rememberSaveable { mutableStateOf(item.setting.annotationClasses.joinToString(separator = ", ")) }
     val keyword1WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val keyword2WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
-    val typeState = rememberSaveable { mutableStateOf(ArticleTypeDialogState()) }
+    val typeState =
+        rememberSaveable { mutableStateOf(
+            ArticleTypeDialogState(flagChecked = typeStringsToBoolArray(item.setting.pubType))) }
 
     AlertDialog(
         onDismissRequest = {
@@ -65,6 +70,8 @@ fun QuerySettingsDialog(
                     item.setting.annotationClasses.clear()
                     item.setting.annotationClasses.addAll(field4Value.value.splitToSet(","))
                     item.setting.type = item.type
+                    item.setting.pubType.clear()
+                    item.setting.pubType.addAll(boolArrayToTypeStrings( typeState.value.flagChecked))
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }
@@ -229,6 +236,9 @@ fun QuerySettingsDialog(
                     )
                     Spacer(modifier = Modifier.width(14.dp))
 
+                }
+                if (item.type == QueryType.EXPRESSION_SEARCH) {
+                    queryArticleTypeComponent(typeState)
                 }
             }
         },

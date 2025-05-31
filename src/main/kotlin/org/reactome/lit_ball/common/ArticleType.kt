@@ -12,6 +12,10 @@ fun typeStringsToBoolArray(types: List<String>): BooleanArray {
     }
 }
 
+fun boolArrayToTypeStrings(types: BooleanArray): List<String> {
+    return ArticleType.entries.filterIndexed { index, _ -> types[index] }.map { it.s2name }
+}
+
 fun typeMatches(publicationTypes: List<String>?, filteredTypes: BooleanArray?): Boolean {
     publicationTypes?.let { pTypes ->
         filteredTypes?.let { fTypes ->
