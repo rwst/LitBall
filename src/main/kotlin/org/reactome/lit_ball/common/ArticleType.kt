@@ -2,7 +2,10 @@ package common
 
 enum class ArticleType(val s2name: String) {
     ARTICLE("JournalArticle"),
+    CASEREPORT("CaseReport"),
+    CLI8NICALTRIAL("ClinicalTrial"),
     CONFERENCE("Conference"),
+    EDITORIAL("Editorial"),
     REVIEW("Review");
 }
 
