@@ -40,9 +40,10 @@ private const val doiInputHelpTooltipText = """
                             before the “10.” part, so simply copypasting a DOI link will be
                             handled. PMID links will be stripped to just the number"""
 
+@Suppress("UNCHECKED_CAST")
 @Composable
-fun queryArticleTypeComponent(
-    state: MutableState<QueryDialogState>,
+fun <T : ArticleTypeState> queryArticleTypeComponent(
+    state: MutableState<T>,
 ) {
     Row {
         Tooltip(
@@ -72,7 +73,7 @@ fun queryArticleTypeComponent(
                                     onStateChange(!checkedState)
                                     val newFlagChecked = state.value.flagChecked.clone()
                                     newFlagChecked[articleType.ordinal] = !checkedState
-                                    state.set { copy(flagChecked = newFlagChecked) }
+                                    state.set { state.value.update(flagChecked = newFlagChecked) as T }
                                 }
                             },
                             modifier = Modifier
@@ -201,15 +202,15 @@ fun queryTypeComponent(
             QueryType.entries.map { it.pretty },
             state.value.queryType,
             onOptionSelected = { btn ->
-                state.set {
-                    if ((btn == 0 || btn == 3) && Settings.map["S2-API-key"].isNullOrEmpty()) {
-                        copy(typeWarning = "S2 API key needed")
-                    } else {
-                        copy(typeWarning = null)
-                    }
-                }
-                state.set { copy(queryType = btn) }
-            }
+//                state.set {
+//                    if ((btn == 0 || btn == 3) && Settings.map["S2-API-key"].isNullOrEmpty()) {
+//                        copy(typeWarning = "S2 API key needed")
+//                    } else {
+//                        copy(typeWarning = null)
+//                    }
+//                }
+
+                state.set { state.value.copy(queryType = btn) }           }
         )
         state.value.typeWarning?.also {
             Text(

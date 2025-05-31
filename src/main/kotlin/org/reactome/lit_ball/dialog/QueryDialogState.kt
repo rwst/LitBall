@@ -4,19 +4,45 @@ import androidx.compose.runtime.MutableState
 import common.ArticleType
 import common.QueryType
 
+interface ArticleTypeState {
+    val flagChecked: BooleanArray
+    fun update(flagChecked: BooleanArray): ArticleTypeState
+}
+
+data class ArticleTypeDialogState(
+    override val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true }
+) : ArticleTypeState {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ArticleTypeDialogState
+
+        return flagChecked.contentEquals(other.flagChecked)
+    }
+
+    override fun hashCode(): Int = flagChecked.contentHashCode()
+
+    override fun update(flagChecked: BooleanArray): ArticleTypeState {
+        return ArticleTypeDialogState(flagChecked = flagChecked)
+    }
+}
+
 data class QueryDialogState(
     val copyFrom: String = "",
     val queryType: Int = QueryType.SUPERVISED_SNOWBALLING.ordinal,
     val field: String = "",
     val name: String = "",
     val pubYear: String = "",
-    val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
+    override val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
     val check: Boolean = true,
     val nameCheck: Boolean = true,
     val typeWarning: String? = null,
     val pathWarning: String? = null,
     val doiWarning: String? = null
-) {
+) : ArticleTypeState {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -52,9 +78,22 @@ data class QueryDialogState(
         result = 31 * result + (doiWarning?.hashCode() ?: 0)
         return result
     }
+
+    override fun update(flagChecked: BooleanArray): ArticleTypeState {
+        return QueryDialogState(
+            copyFrom = copyFrom,
+            field = field,
+            name = name,
+            pubYear = pubYear,
+            flagChecked = flagChecked,
+            queryType = queryType,
+            typeWarning = typeWarning,
+            pathWarning = pathWarning,
+            doiWarning = doiWarning,
+        )
+    }
 }
 
-fun MutableState<QueryDialogState>.set(update: QueryDialogState.() -> QueryDialogState)
-{
-    value = value.update()
+inline fun <T> MutableState<T>.set(block: T.() -> T) {
+    this.value = this.value.block()
 }

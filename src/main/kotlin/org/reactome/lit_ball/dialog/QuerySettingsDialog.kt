@@ -37,6 +37,7 @@ fun QuerySettingsDialog(
         rememberSaveable { mutableStateOf(item.setting.annotationClasses.joinToString(separator = ", ")) }
     val keyword1WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
     val keyword2WarningValue: MutableState<String?> = rememberSaveable { mutableStateOf(null) }
+    val typeState = rememberSaveable { mutableStateOf(ArticleTypeDialogState()) }
 
     AlertDialog(
         onDismissRequest = {
@@ -227,6 +228,7 @@ fun QuerySettingsDialog(
                         placeholder = { Text("text1, text2, ...") }
                     )
                     Spacer(modifier = Modifier.width(14.dp))
+
                 }
             }
         },
