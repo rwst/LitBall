@@ -133,6 +133,7 @@ object S2Interface {
         suspend fun getRequest(
             @Query("query") query: String,
             @Query("fields") fields: String,
+            @Query("publicationTypes") publicationTypes: String,
         ): Response<SearchResult>
 
         @GET("/graph/v1/paper/search/bulk")
@@ -140,19 +141,21 @@ object S2Interface {
             @Query("query") query: String,
             @Query("token") token: String,
             @Query("fields") fields: String,
+            @Query("publicationTypes") publicationTypes: String,
         ): Response<SearchResult>
     }
 
     suspend fun getBulkPaperSearch(
         query: String,
         fields: String,
+        publicationTypes: String,
         token: String? = null,
     ): SearchResult? {
         val api = S2RetrofitHelper.getBulkInstance().create(BulkPaperSearchApi::class.java)
         val result = if (token != null)
-            api.getRequestWithToken(query, token, fields)
+            api.getRequestWithToken(query = query, publicationTypes = publicationTypes, token = token, fields = fields)
         else
-            api.getRequest(query, fields)
+            api.getRequest(query = query, fields = fields, publicationTypes = publicationTypes)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()

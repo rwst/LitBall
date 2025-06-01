@@ -28,6 +28,8 @@ data class QuerySetting(
             ")"
     }
 
+    fun pubTypeString(): String = pubType.joinToString(separator = ",")
+
     companion object {
         private val json = ConfiguredJson.get()
         

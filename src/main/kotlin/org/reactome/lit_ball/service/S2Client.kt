@@ -106,7 +106,7 @@ object S2Client : AGService {
         val indicatorTitle = "Downloading titles and abstracts\nof matching papers"
         var pair = getDataOrHandleExceptions(1, 1, indicatorTitle) {
             S2Interface.getBulkPaperSearch(
-                query = s2expr, PAPER_FIELDS_NO_TLDR
+                query = s2expr, publicationTypes = setting.pubTypeString(), fields = PAPER_FIELDS_NO_TLDR,
             )
         }
         if (!pair.second) return false
@@ -120,7 +120,7 @@ object S2Client : AGService {
         while (total > numDone) {
             pair = getDataOrHandleExceptions(numDone, total, indicatorTitle) {
                 S2Interface.getBulkPaperSearch(
-                    query = s2expr, PAPER_FIELDS_NO_TLDR, token,
+                    query = s2expr, publicationTypes = setting.pubTypeString(), fields = PAPER_FIELDS_NO_TLDR, token = token,
                 )
             }
             if (!pair.second) return false
