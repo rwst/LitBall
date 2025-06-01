@@ -238,6 +238,7 @@ fun QuerySettingsDialog(
 
                 }
                 if (item.type == QueryType.EXPRESSION_SEARCH) {
+                    Spacer(modifier = Modifier.height(14.dp))
                     queryArticleTypeComponent(typeState)
                 }
             }
