@@ -282,14 +282,8 @@ data class LitBallQuery(
         val queryDir = getQueryDir(name)
         val paperDetailsList = mutableListOf<S2Interface.PaperDetails>()
 
-        val matcher = StringPatternMatcher(setting)
-        val dateMatcher = DateMatcher(expSearchParams?.first)
         val result = agService.getBulkPaperSearch(setting) {
-            if (typeMatches(it.publicationTypes, expSearchParams?.second)
-                && dateMatcher.matches(it.publicationDate)
-                && !matcher.parser2.match(it.title ?: "")
-            )
-                paperDetailsList.add(it)
+            paperDetailsList.add(it)
         }
         // Bail out on Cancel
         if (!result) return -1
