@@ -9,6 +9,11 @@ interface ArticleTypeState {
     fun update(flagChecked: BooleanArray): ArticleTypeState
 }
 
+interface PublicationDateState {
+    val pubYear: String
+    fun update(pubYear: String): PublicationDateState
+}
+
 data class ArticleTypeDialogState(
     override val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true }
 ) : ArticleTypeState {
@@ -29,19 +34,27 @@ data class ArticleTypeDialogState(
     }
 }
 
+data class PublicationDateDialogState(
+    override val pubYear: String = ""
+) : PublicationDateState {
+    override fun update(pubYear: String): PublicationDateState {
+        return PublicationDateDialogState(pubYear = pubYear)
+    }
+}
+
 data class QueryDialogState(
     val copyFrom: String = "",
     val queryType: Int = QueryType.SUPERVISED_SNOWBALLING.ordinal,
     val field: String = "",
     val name: String = "",
-    val pubYear: String = "",
+    override val pubYear: String = "",
     override val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
     val check: Boolean = true,
     val nameCheck: Boolean = true,
     val typeWarning: String? = null,
     val pathWarning: String? = null,
     val doiWarning: String? = null
-) : ArticleTypeState {
+) : ArticleTypeState, PublicationDateState {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -80,6 +93,20 @@ data class QueryDialogState(
     }
 
     override fun update(flagChecked: BooleanArray): ArticleTypeState {
+        return QueryDialogState(
+            copyFrom = copyFrom,
+            field = field,
+            name = name,
+            pubYear = pubYear,
+            flagChecked = flagChecked,
+            queryType = queryType,
+            typeWarning = typeWarning,
+            pathWarning = pathWarning,
+            doiWarning = doiWarning,
+        )
+    }
+
+    override fun update(pubYear: String): PublicationDateState {
         return QueryDialogState(
             copyFrom = copyFrom,
             field = field,

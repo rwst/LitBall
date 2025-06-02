@@ -89,9 +89,10 @@ fun <T : ArticleTypeState> queryArticleTypeComponent(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Composable
-fun queryPublicationDateComponent(
-    state: MutableState<QueryDialogState>,
+fun <T: PublicationDateState> queryPublicationDateComponent(
+    state: MutableState<T>,
 ) {
     Row {
         Tooltip(
@@ -105,7 +106,7 @@ fun queryPublicationDateComponent(
         TextField(
             value = state.value.pubYear,
             onValueChange = {
-                state.set { copy(pubYear = it) }
+                state.set { state.value.update(pubYear = it) as T }
             },
             label = { Text("Publication Date (optional)") },
             placeholder = { Text("1900-") }
