@@ -101,7 +101,7 @@ class RootStore : ProgressHandler {
                 setState { copy(items = QueryList.list.toList()) }
             else {
                 val newList = QueryList.touchItem(itemId)
-                newList?.let { setState { copy(items = newList) } }
+                newList?.let { setState { copy(items = it) } }
             }
         }
     }
