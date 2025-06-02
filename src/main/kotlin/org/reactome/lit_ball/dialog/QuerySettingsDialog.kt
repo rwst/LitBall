@@ -43,6 +43,8 @@ fun QuerySettingsDialog(
     val typeState =
         rememberSaveable { mutableStateOf(
             ArticleTypeDialogState(flagChecked = typeStringsToBoolArray(item.setting.pubType))) }
+    val dateState =
+        rememberSaveable { mutableStateOf(PublicationDateDialogState(pubYear = item.setting.pubDate)) }
 
     AlertDialog(
         onDismissRequest = {
@@ -72,6 +74,8 @@ fun QuerySettingsDialog(
                     item.setting.type = item.type
                     item.setting.pubType.clear()
                     item.setting.pubType.addAll(boolArrayToTypeStrings( typeState.value.flagChecked))
+                    item.setting.pubDate = dateState.value.pubYear.trim()
+
                     rootScope.launch(Dispatchers.IO) {
                         item.saveSettings()
                     }
@@ -238,6 +242,8 @@ fun QuerySettingsDialog(
 
                 }
                 if (item.type == QueryType.EXPRESSION_SEARCH) {
+                    Spacer(modifier = Modifier.height(14.dp))
+                    queryPublicationDateComponent(dateState)
                     Spacer(modifier = Modifier.height(14.dp))
                     queryArticleTypeComponent(typeState)
                 }
