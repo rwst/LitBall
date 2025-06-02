@@ -121,10 +121,10 @@ class RootStore : ProgressHandler {
                         -2 -> ProblemWritingDialogString(FileType.ACCEPTED)
                         -1 -> return@launch
                          0 -> NoResultDialogString()
-                        else -> ReceivedAcceptFinishDialogString(nrAcc)
+                        else -> ReceivedAcceptFinishDialogString(noAcc = query.nrAccepted())
                     }
                     setInformationalDialog(dialogString)
-                    refreshList(query.id)
+                    refreshList(id)
                 }
             }
             QueryType.SNOWBALLING -> {
