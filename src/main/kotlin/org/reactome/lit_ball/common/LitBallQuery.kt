@@ -359,10 +359,8 @@ data class LitBallQuery(
         }
         if (status.value == QueryStatus.FILTERED2) {
             val noAcc = listHandle.getFullList().count { it.tag == Tag.Accepted }
-            QueryList.itemFromId(id)?.let {
-                it.noNewAccepted = (noAcc == 0)
-                it.writeNoNewAccepted()
-            }
+            noNewAccepted = (noAcc == 0)
+            writeNoNewAccepted()
             return noAcc
         }
         if (status.value == QueryStatus.EXPLODED) {
