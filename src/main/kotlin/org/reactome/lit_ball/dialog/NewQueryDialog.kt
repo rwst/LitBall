@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import common.QueryList
 import common.QueryType
 import common.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +26,12 @@ import kotlin.io.path.isWritable
 @Composable
 fun NewQueryDialog(
     rootScope: CoroutineScope,
+    queryNames: List<String>,
+    onAddItem: suspend (
+        type: QueryType,
+        name: String,
+        dois: Set<String>,
+        expSearchParams: Pair<String, BooleanArray>, ) -> Unit,
     onCloseClicked: () -> Unit,
 ) {
 
@@ -75,13 +80,13 @@ fun NewQueryDialog(
                 check = name.isNotEmpty() &&
                         (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
                                 (newPaperIds.isNotEmpty() && newPaperIds.all { it.startsWith("10.") || it.startsWith("s2:") })),
-                nameCheck = name !in QueryList.list.map { it.name }
+                nameCheck = name !in queryNames,
             )
         }
 
         if (state.value.check && state.value.nameCheck) {
             rootScope.launch(Dispatchers.IO) {
-                QueryList.addNewItem(
+                onAddItem(
                     QueryType.entries[state.value.queryType],
                     name,
                     newPaperIds.toSet(),
@@ -97,7 +102,7 @@ fun NewQueryDialog(
             setState {
                 copy(name = generateSequence(1) { it + 1 }
                     .map { "${copyFrom}-$it" }
-                    .first { it !in QueryList.list.map { query -> query.name } }
+                    .first { it !in queryNames }
                 )
             }
         }
@@ -124,7 +129,7 @@ fun NewQueryDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
-                queryCopyFromComponent(state)
+                queryCopyFromComponent(state, queryNames)
                 generateUniqueQueryName()
                 Spacer(modifier = Modifier.height(8.dp))
                 queryTypeComponent(state)

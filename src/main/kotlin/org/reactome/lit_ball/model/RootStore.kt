@@ -84,7 +84,7 @@ class RootStore : ProgressHandler {
         modelScope.launch(Dispatchers.IO) {
             DefaultScripts.install()
             Settings.load()
-            QueryList.fill()
+            state.items.fill()
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
             refreshQueryPathDisplay()
         }
@@ -95,15 +95,10 @@ class RootStore : ProgressHandler {
         SystemFunction.exitApplication()
     }
 
-    private fun refreshList(itemId: Int? = -1) {
-        itemId?.let {
-            if (itemId == -1)
-                setState { copy(items = QueryList.list.toList()) }
-            else {
-                val newList = QueryList.touchItem(itemId)
-                newList?.let { setState { copy(items = it) } }
-            }
-        }
+    private fun refreshList() {
+        val newList = QueryList()
+        newList.list.addAll(state.items.list) // TODO: also change the ids?
+        setState { copy(items = newList) }
     }
 
     fun refreshQueryPathDisplay() {
@@ -112,7 +107,7 @@ class RootStore : ProgressHandler {
     }
 
     private fun onDoExpandStarted(id: Int) {
-        val query = QueryList.itemFromId(id) ?: return
+        val query = state.items.itemFromId(id) ?: return
         when (query.type) {
             QueryType.EXPRESSION_SEARCH -> {
                 modelScope.launch(Dispatchers.IO) {
@@ -124,7 +119,7 @@ class RootStore : ProgressHandler {
                         else -> ReceivedAcceptFinishDialogString(noAcc = query.nrAccepted())
                     }
                     setInformationalDialog(dialogString)
-                    refreshList(id)
+                    refreshList()
                 }
             }
             QueryType.SNOWBALLING -> {
@@ -137,7 +132,7 @@ class RootStore : ProgressHandler {
                     } else {
                         setInformationalDialog(ExplodedDialogString())
                     }
-                    refreshList(query.id)
+                    refreshList()
                 }
             }
             QueryType.SUPERVISED_SNOWBALLING -> {
@@ -152,7 +147,7 @@ class RootStore : ProgressHandler {
                         else -> "Can't happen: nrNewDois: $nrNewDois,\nnrMissing: $nrMissing, allNullsMissing: $allNullsMissing"
                     }
                     setInformationalDialog(dialogString)
-                    refreshList(query.id)
+                    refreshList()
                 }
             }
             QueryType.SIMILARITY_SEARCH -> {
@@ -163,7 +158,7 @@ class RootStore : ProgressHandler {
                         -2 -> return@launch
                         else -> setInformationalDialog(ReceivedAcceptFinishDialogString(nrAcc))
                     }
-                    refreshList(query.id)
+                    refreshList()
                 }
             }
         }
@@ -171,15 +166,15 @@ class RootStore : ProgressHandler {
 
     private fun onDoFilter1Started(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            val (nrPaperDetails, nrRejectedDOIs) = QueryList.itemFromId(id)?.filter1() ?: return@launch
+            val (nrPaperDetails, nrRejectedDOIs) = state.items.itemFromId(id)?.filter1() ?: return@launch
             if (nrPaperDetails == 0) return@launch
             setInformationalDialog("Retained $nrPaperDetails records\n\nrejected $nrRejectedDOIs papers, write to rejected...")
-            refreshList(id)
+            refreshList()
         }
     }
 
     fun setFiltered2() {
-        QueryList.itemFromId(state.doFilter2)?.let {
+        state.items.itemFromId(state.doFilter2)?.let {
             it.syncBuffers()
             it.status.value = QueryStatus.FILTERED2
         }
@@ -201,14 +196,14 @@ class RootStore : ProgressHandler {
         if (query.status.value == QueryStatus.UNINITIALIZED && query.setting.mandatoryKeyWords.isNotEmpty()
         ) {
             query.status.value = QueryStatus.FILTERED2
-            refreshList(query.id)
+            refreshList()
         }
         setState { copy(editingQuerySettings = null) }
     }
 
     suspend fun setEditingSettings(boolean: Boolean) {
         if (!boolean) {
-            QueryList.fill()
+            state.items.fill()
             refreshQueryPathDisplay()
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         }
@@ -233,35 +228,35 @@ class RootStore : ProgressHandler {
 
     private fun onDoFilter2Started(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            QueryList.itemFromId(id)?.filter2()
+            state.items.itemFromId(id)?.filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
             setState { copy(doFilter2 = id) }
-            refreshList(id)
+            refreshList()
         }
     }
 
     fun onAnnotateStarted(id: Int) {
         modelScope.launch(Dispatchers.IO) {
-            QueryList.itemFromId(id)?.annotate()
+            state.items.itemFromId(id)?.annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
             setState { copy(doAnnotate = id) }
-            refreshList(id)
+            refreshList()
         }
     }
 
     fun onQuerySettingsClicked(id: Int?) {
-        setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
+        setState { copy(editingQuerySettings = state.items.itemFromId(id)) }
     }
 
     fun onDeleteQueryClicked(id: Int?) {
-        val name = QueryList.itemFromId(id)?.name
+        val name = state.items.itemFromId(id)?.name
         setState {
             copy(
                 doConfirmationDialog = Pair(
                     {
                         modelScope.launch(Dispatchers.IO) {
-                            QueryList.removeDir(id)
-                            QueryList.fill()
+                            state.items.removeDir(id)
+                            state.items.fill()
                             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
                         }
                     },
@@ -277,7 +272,7 @@ class RootStore : ProgressHandler {
 
     fun onQueryPathClicked() {
         modelScope.launch(Dispatchers.IO) {
-            QueryList.fill()
+            state.items.fill()
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         }
     }
@@ -326,19 +321,27 @@ class RootStore : ProgressHandler {
     }
 
     fun doSort(sortingType: SortingType) {
-        modelScope.launch(Dispatchers.IO) {
-            QueryList.sort(sortingType)
-            refreshList()
-        }
+        state.items.sort(sortingType)
+        refreshList()
     }
 
     fun setupListScroller(theChannel: Channel<Int>) {
         scrollChannel = theChannel
     }
+
+    suspend fun addItem (
+        type: QueryType,
+        name: String,
+        dois: Set<String>,
+        expSearchParams: Pair<String, BooleanArray>,)
+    {
+        state.items.addNewItem(type, name, dois, expSearchParams)
+    }
+
 }
 
 data class RootState(
-    val items: List<LitBallQuery> = QueryList.list,
+    val items: QueryList = QueryList(),
     val queryPath: String? = null,
     val activeRailItem: String = "",
     val newItem: Boolean = false,

@@ -228,6 +228,7 @@ fun queryTypeComponent(
 @Composable
 fun queryCopyFromComponent(
     state: MutableState<QueryDialogState>,
+    queryNames: List<String>,
 ) {
     val copyFromIsSetValue = rememberSaveable { mutableStateOf(false) }
 
@@ -255,7 +256,7 @@ fun queryCopyFromComponent(
                         state.set { copy(copyFrom = "") }
                         copyFromIsSetValue.value = false })
                 {
-                    QueryList.list.map { it.name }.forEach {
+                    queryNames.forEach {
                         DropdownMenuItem(
                             onClick = {
                                 val newField = getDOIs(getQueryDir(it), FileType.ACCEPTED)

@@ -35,6 +35,8 @@ fun RootContent(
     if (state.newItem) {
         NewQueryDialog(
             scope,
+            queryNames = state.items.list.map { it.name },
+            onAddItem = model::addItem,
             onCloseClicked = { model.setNewItem(false) },
         )
     }
