@@ -58,7 +58,7 @@ internal fun MainContent(
             }
             ListContent(
                 model = model,
-                items = model.state.items.list,
+                items = model.state.items,
                 onItemClicked = { id -> model.setEditingItemId(id) },
                 onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
                 onItemGoClicked = { status, id -> model.nextAction(status, id) },

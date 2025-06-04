@@ -3,12 +3,10 @@ package common
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import common.PaperList.listHandle
-import kotlinx.serialization.Serializable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Contextual
 import service.AGService
 import service.S2Interface
 import service.getAGService
@@ -44,7 +42,6 @@ fun getDOIs(dir: File, fileType: FileType): MutableSet<String> {
     return mutableSetOf()
 }
 
-@Serializable
 data class LitBallQuery(
     var id: Int,
     val name: String = "",
@@ -53,7 +50,7 @@ data class LitBallQuery(
     var setting: QuerySetting = QuerySetting(),
     var acceptedSet: MutableSet<String> = mutableSetOf(),
     var rejectedSet: MutableSet<String> = mutableSetOf(),
-    var lastExpansionDate: @Contextual Date? = null,
+    var lastExpansionDate: Date? = null,
     var noNewAccepted: Boolean = false,
     var expSearchParams: Pair<String, BooleanArray>? = null,
     val agService: AGService = getAGService(),
