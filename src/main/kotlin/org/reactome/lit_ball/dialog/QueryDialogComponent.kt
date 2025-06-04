@@ -203,14 +203,6 @@ fun queryTypeComponent(
             QueryType.entries.map { it.pretty },
             state.value.queryType,
             onOptionSelected = { btn ->
-//                state.set {
-//                    if ((btn == 0 || btn == 3) && Settings.map["S2-API-key"].isNullOrEmpty()) {
-//                        copy(typeWarning = "S2 API key needed")
-//                    } else {
-//                        copy(typeWarning = null)
-//                    }
-//                }
-
                 state.set { state.value.copy(queryType = btn) }           }
         )
         state.value.typeWarning?.also {
