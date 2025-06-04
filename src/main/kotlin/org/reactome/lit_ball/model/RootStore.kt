@@ -95,15 +95,8 @@ class RootStore : ProgressHandler {
         SystemFunction.exitApplication()
     }
 
-    private fun refreshList(itemId: Int? = -1) {
-        itemId?.let {
-            if (itemId == -1)
-                setState { copy(items = QueryList.list.toList()) }
-            else {
-                val newList = QueryList.touchItem(itemId)
-                newList?.let { setState { copy(items = it) } }
-            }
-        }
+    private fun refreshList(itemId: Int?) {
+        itemId?.let { QueryList.touchItem(itemId) }
     }
 
     fun refreshQueryPathDisplay() {
@@ -213,7 +206,6 @@ class RootStore : ProgressHandler {
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
         }
         setState { copy(editingSettings = boolean) }
-        refreshList()
     }
 
     fun setAboutDialog(boolean: Boolean) {
@@ -328,7 +320,6 @@ class RootStore : ProgressHandler {
     fun doSort(sortingType: SortingType) {
         modelScope.launch(Dispatchers.IO) {
             QueryList.sort(sortingType)
-            refreshList()
         }
     }
 
@@ -338,7 +329,6 @@ class RootStore : ProgressHandler {
 }
 
 data class RootState(
-    val items: List<LitBallQuery> = QueryList.list,
     val queryPath: String? = null,
     val activeRailItem: String = "",
     val newItem: Boolean = false,

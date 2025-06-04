@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import common.LitBallQuery
+import common.QueryList
 import common.QueryStatus
 import model.RootStore
 import util.setupLazyListScroller
@@ -58,7 +60,7 @@ internal fun MainContent(
             }
             ListContent(
                 model = model,
-                items = model.state.items,
+                items = remember { QueryList.list },
                 onItemClicked = { id -> model.setEditingItemId(id) },
                 onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
                 onItemGoClicked = { status, id -> model.nextAction(status, id) },

@@ -1,5 +1,6 @@
 package common
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 import util.UniqueIdGenerator
@@ -14,39 +15,37 @@ const val DAY_IN_MS = 1000L * 60 * 60 * 24
 
 @Serializable
 object QueryList {
-    var list: List<LitBallQuery> = listOf()
+    var list = mutableStateListOf<LitBallQuery>()
 
     suspend fun fill() {
-        list = listOf()
         val queryPath = Settings.map["path-to-queries"] ?: ""
         val prefix = Settings.map["directory-prefix"] ?: ""
         val dirs = queryDirectories(queryPath, prefix)
-        list = MutableList(dirs.size) { index ->
-            dirs[index].let {
-                val newQuery = LitBallQuery(
-                    id = UniqueIdGenerator.nextId(),
-                    name = it.name.removePrefix(prefix),
-                    status = mutableStateOf(getStatus(it)),
-                    acceptedSet = getDOIs(it, FileType.ACCEPTED).filter { doi -> doi.isNotBlank() }
-                        .toMutableSet(),
-                    rejectedSet = getDOIs(it, FileType.REJECTED).filter { doi -> doi.isNotBlank() }
-                        .toMutableSet(),
-                )
-                newQuery.setting = getSetting(it)
-                newQuery.lastExpansionDate = newQuery.getFileDate(fromFile = true, FileType.ACCEPTED)
-                newQuery.noNewAccepted = newQuery.readNoNewAccepted()
-                if (newQuery.noNewAccepted) {
-                    val now = System.currentTimeMillis()
-                    val cacheMillis = DAY_IN_MS * (Settings.map["cache-max-age-days"] ?: "30").toInt()
-                    if (now - (newQuery.lastExpansionDate?.time ?: 0) > cacheMillis) {
-                        newQuery.noNewAccepted = false
-                    }
+        list.clear()
+        dirs.forEach {
+            val newQuery = LitBallQuery(
+                id = UniqueIdGenerator.nextId(),
+                name = it.name.removePrefix(prefix),
+                status = mutableStateOf(getStatus(it)),
+                acceptedSet = getDOIs(it, FileType.ACCEPTED).filter { doi -> doi.isNotBlank() }
+                    .toMutableSet(),
+                rejectedSet = getDOIs(it, FileType.REJECTED).filter { doi -> doi.isNotBlank() }
+                    .toMutableSet(),
+            )
+            newQuery.setting = getSetting(it)
+            newQuery.lastExpansionDate = newQuery.getFileDate(fromFile = true, FileType.ACCEPTED)
+            newQuery.noNewAccepted = newQuery.readNoNewAccepted()
+            if (newQuery.noNewAccepted) {
+                val now = System.currentTimeMillis()
+                val cacheMillis = DAY_IN_MS * (Settings.map["cache-max-age-days"] ?: "30").toInt()
+                if (now - (newQuery.lastExpansionDate?.time ?: 0) > cacheMillis) {
+                    newQuery.noNewAccepted = false
                 }
-                newQuery.type = newQuery.setting.type
-                newQuery.expSearchParams =
-                    Pair(newQuery.setting.pubDate, typeStringsToBoolArray(newQuery.setting.pubType))
-                newQuery
             }
+            newQuery.type = newQuery.setting.type
+            newQuery.expSearchParams =
+                Pair(newQuery.setting.pubDate, typeStringsToBoolArray(newQuery.setting.pubType))
+            list.add(newQuery)
         }
     }
 
@@ -75,20 +74,14 @@ object QueryList {
             newQuery.status.value = QueryStatus.FILTERED2
             newQuery.saveSettings()
         }
-        list = list.plus(newQuery)
+        list.add(newQuery)
     }
 
-    fun touchItem(id: Int?): List<LitBallQuery>? {
-        id?.let {
-            list = list.map {
-                if (it.id == id) {
-                    it.id = UniqueIdGenerator.nextId()
-                }
-                it
-            }
-            return list
-        }
-        return null
+    fun touchItem(id: Int?) {
+        val index = list.indexOfFirst { id == it.id }
+        val newItem = list[index].copy()
+        newItem.id = UniqueIdGenerator.nextId()
+        list[index] = newItem
     }
 
     fun removeDir(id: Int?) {
@@ -106,7 +99,7 @@ object QueryList {
     }
 
     fun sort(type: SortingType) {
-        list = when (type) {
+        val newList = when (type) {
             SortingType.ALPHA_ASCENDING -> list.sortedBy { it.name }
             SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.name }
             SortingType.NUMER_ASCENDING -> list.sortedBy { it.lastExpansionDate }
@@ -116,6 +109,8 @@ object QueryList {
         }
         Settings.map["query-sort-type"] = type.toString()
         Settings.save()
+        list.clear()
+        list.addAll(newList)
     }
 }
 
