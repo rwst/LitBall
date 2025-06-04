@@ -13,12 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import common.QueryList
-import common.QueryType
-import common.Settings
+import common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import util.CantHappenException
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.isWritable
@@ -92,13 +91,29 @@ fun NewQueryDialog(
         }
     }
 
-    fun generateUniqueQueryName() {
-        if (state.value.copyFrom.isNotBlank()) {
-            setState {
-                copy(name = generateSequence(1) { it + 1 }
-                    .map { "${copyFrom}-$it" }
-                    .first { it !in QueryList.list.map { query -> query.name } }
-                )
+    fun processCopyFrom() {
+        val fromName = state.value.copyFrom
+        val fromQuery = QueryList.list.find { it.name == fromName } ?: throw CantHappenException()
+
+        setState {
+            copy(name = generateSequence(1) { it + 1 }
+                .map { "${copyFrom}-$it" }
+                .first { it !in QueryList.list.map { query -> query.name } }
+            )
+        }
+        if (state.value.queryType != QueryType.EXPRESSION_SEARCH.ordinal) {
+            val newField = getDOIs(getQueryDir(fromName), FileType.ACCEPTED)
+                .joinToString("\n")
+            setState { copy(field = newField) }
+        }
+        else {
+            if (fromQuery.type == QueryType.EXPRESSION_SEARCH) {
+                setState {
+                    copy(
+                        flagChecked = typeStringsToBoolArray(fromQuery.setting.pubType),
+                        pubYear = fromQuery.setting.pubDate,
+                        )
+                }
             }
         }
     }
@@ -124,10 +139,12 @@ fun NewQueryDialog(
         },
         text = {
             Column(horizontalAlignment = Alignment.Start) {
-                queryCopyFromComponent(state)
-                generateUniqueQueryName()
-                Spacer(modifier = Modifier.height(8.dp))
+                if (state.value.copyFrom.isNotBlank()) {
+                    processCopyFrom()
+                }
                 queryTypeComponent(state)
+                Spacer(modifier = Modifier.height(8.dp))
+                queryCopyFromComponent(state)
                 Spacer(modifier = Modifier.height(8.dp))
                 queryNameComponent(state)
 

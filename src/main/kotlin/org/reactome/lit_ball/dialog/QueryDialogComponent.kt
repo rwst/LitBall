@@ -247,17 +247,13 @@ fun queryCopyFromComponent(
                         state.set { copy(copyFrom = "") }
                         copyFromIsSetValue.value = false })
                 {
-                    QueryList.list.map { it.name }.forEach {
+                    QueryList.list.map { it.name }.forEach { name ->
                         DropdownMenuItem(
                             onClick = {
-                                val newField = getDOIs(getQueryDir(it), FileType.ACCEPTED)
-                                    .joinToString("\n")
                                 copyFromIsSetValue.value = false
-                                state.set {
-                                        copy(copyFrom = it, field = newField)
-                                }
+                                state.set { copy(copyFrom = name) }
                             })
-                        { Text(it) }
+                        { Text(name) }
                     }
                 }
             }
