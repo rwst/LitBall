@@ -19,6 +19,8 @@ import window.components.Tooltip
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
+const val NOCOPY = "---no copy---"
+
 private const val queryTypeTooltipText = """
                         Available query types are:
                         1. Simple expression search: your positive and negative
@@ -247,11 +249,11 @@ fun queryCopyFromComponent(
                         state.set { copy(copyFrom = "") }
                         copyFromIsSetValue.value = false })
                 {
-                    QueryList.list.map { it.name }.forEach { name ->
+                    (listOf(NOCOPY) + QueryList.list.map { it.name }).forEach { name ->
                         DropdownMenuItem(
                             onClick = {
                                 copyFromIsSetValue.value = false
-                                state.set { copy(copyFrom = name) }
+                                state.set { copy(copyFrom = if (name != NOCOPY) name else "") }
                             })
                         { Text(name) }
                     }
