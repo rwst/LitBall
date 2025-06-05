@@ -164,7 +164,7 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
         setInformationalDialog2(note) { setInformationalDialog2(null) }
     }
 
-    fun getEpochs(): List<Long> = state.paperListState.items
+    fun getEpochs(): List<Long> = PaperList.listHandle.getFullList()
         .mapNotNull { it.details.publicationDate }
         .filter { it.isNotEmpty() }
         .map { LocalDate.parse(it).toEpochMilliseconds() }

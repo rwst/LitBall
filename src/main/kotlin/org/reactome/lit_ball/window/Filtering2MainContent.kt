@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import common.Paper
+import common.PaperList
 import common.Tag
 import dialog.RadioButtonOptions
 import kotlinx.coroutines.CoroutineScope
@@ -86,7 +87,7 @@ internal fun Filtering2MainContent(
             }
             Filtering2ListContent(
                 scope,
-                items = model.state.paperListStore.state.items,
+                items = PaperList.listHandle.getFullList(),
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onItemRadioButtonClicked = model::onItemRadioButtonClicked,
                 lazyListState = lazyListState,
@@ -123,7 +124,7 @@ fun Filtering2ListContent(
                 lazyListState
             ) {
                 items(
-                    key = { it.hashCode() },
+                    key = { it.id },
                     items = items,
                 ) { item ->
                     CardWithTextIconAndRadiobutton(

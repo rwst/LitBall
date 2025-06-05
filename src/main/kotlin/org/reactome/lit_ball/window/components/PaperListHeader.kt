@@ -27,7 +27,7 @@ fun paperListHeader(
         onClick = {},
         modifier = Modifier.padding(0.dp)
     ) {
-        Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + model.state.items.size.toString())
+        Text(PaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + PaperList.listHandle.getFullList().size.toString())
     }
     Spacer(modifier = Modifier.width(8.dp))
     Tooltip("Save and go back\nto main screen", alignmentModifier) {

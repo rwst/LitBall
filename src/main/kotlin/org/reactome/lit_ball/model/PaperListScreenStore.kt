@@ -3,7 +3,6 @@ package model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import common.Paper
 import common.PaperList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +60,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
 
     fun refreshList() {
-        setState { copy(items = PaperList.toList()) }
+//        setState { copy(items = PaperList.toList()) }
     }
 
     fun refreshClassifierButton() {
@@ -132,7 +131,6 @@ class PaperListScreenStore(private val handle: ModelHandle) {
 }
 
 data class PaperListScreenState(
-    val items: List<Paper> = PaperList.toList(),
     val editingItemId: Int? = null,
     val classifierAlert: Boolean = false,
     val classifierExceptionAlert: Boolean = false,

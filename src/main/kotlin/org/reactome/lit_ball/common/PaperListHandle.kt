@@ -1,5 +1,7 @@
 package common
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import window.components.SortingType
 
 /**
@@ -7,7 +9,7 @@ import window.components.SortingType
  * It also encapsuloates low level list handling to relieve class PaperList.
  */
 class PaperListHandle {
-    private var fullList: List<Paper> = listOf()
+    private var fullList = mutableStateListOf<Paper>()
     private var filteredList: List<Paper>? = null
     private var fullShadowMap: MutableMap<Int, Int> = mutableMapOf()
     private var filteredShadowMap: MutableMap<Int, Int>? = null
@@ -64,10 +66,10 @@ class PaperListHandle {
                 if (isChanged)
                     fullList = fullList.toMutableList().apply {
                         this[index] = newPaper
-                    }.toList()
+                    }.toMutableStateList()
             }
         }
-        fullList = list
+        fullList = list.toMutableStateList()
         filteredList = null
         sanitize()
         updateShadowMap()
@@ -86,7 +88,7 @@ class PaperListHandle {
             return
         fullList = fullList.toMutableList().apply {
             this[index] = new
-        }.toList()
+        }.toMutableStateList()
         filteredList?.let {
             val findex = filteredShadowMap?.get(id) ?: return
             filteredList = it.toMutableList().apply {
@@ -113,7 +115,7 @@ class PaperListHandle {
         if (doi.isNullOrEmpty()) return
         val tmp1 = fullList.toMutableList()
         tmp1.removeIf { p -> p.paperId?.let { it == doi } ?: false }
-        fullList = tmp1.toList()
+        fullList = tmp1.toMutableStateList()
         filteredList?.let { list ->
             val tmp2 = list.toMutableList()
             tmp2.removeIf { p -> p.paperId?.let { it == doi } ?: false }
@@ -127,7 +129,7 @@ class PaperListHandle {
             val dois = list.map { it.paperId }.toSet()
             val fList = fullList.toMutableList()
             fList.removeIf { dois.contains(it.paperId) }
-            fullList = fList.toList()
+            fullList = fList.toMutableStateList()
             filteredList = null
             updateShadowMap()
         }
@@ -141,7 +143,7 @@ class PaperListHandle {
     fun setFullAllTags(tag: Tag) {
         val list = fullList.toMutableList()
         list.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
-        fullList = list.toList()
+        fullList = list.toMutableStateList()
     }
 
     /**
@@ -169,7 +171,7 @@ class PaperListHandle {
             val newTag = tagMap[paper.paperId] ?: Tag.Accepted
             if (paper.tag == newTag) paper
             else paper.copy(newTag)
-        }
+        }.toMutableStateList()
     }
     fun setTag(id: Int, tag: Tag) {
         updateItemInBothLists(id) {
@@ -192,7 +194,7 @@ class PaperListHandle {
     }
 
     fun sort(type: SortingType) {
-        fullList = sort(fullList, type)
+        fullList = sort(fullList, type).toMutableStateList()
         filteredList?.let {
             filteredList = sort(it, type)
         }

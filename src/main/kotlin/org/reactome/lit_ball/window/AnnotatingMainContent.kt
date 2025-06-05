@@ -68,7 +68,7 @@ internal fun AnnotatingMainContent(
             AnnotatingListContent(
                 scope = scope,
                 model,
-                items = model.state.paperListState.items,
+                items = PaperList.listHandle.getFullList(),
                 onItemClicked = { model.state.paperListStore.onItemClicked(it) },
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,
@@ -107,7 +107,7 @@ fun AnnotatingListContent(
                 lazyListState
             ) {
                 items(
-                    key = { it.hashCode() },
+                    key = { it.id },
                     items = items,
                 ) { item ->
                     CardWithFlagBoxes(
