@@ -84,16 +84,19 @@ object QueryList {
         list[index] = newItem
     }
 
-    fun removeDir(id: Int?) {
-        val name = itemFromId(id)?.name
-        val queryDir = name?.let { getQueryDir(it) }
-        if (queryDir != null) {
-            if (queryDir.exists()) {
-                try {
-                    queryDir.deleteRecursively()
-                } catch (e: Exception) {
-                    handleException(e)
-                }
+    fun remove(id: Int) {
+        val query = itemFromId(id)
+        list.remove(query)
+        query?.name?.let { removeDir(it) }
+    }
+
+    fun removeDir(name: String) {
+        val queryDir = getQueryDir(name)
+        if (queryDir.exists()) {
+            try {
+                queryDir.deleteRecursively()
+            } catch (e: Exception) {
+                handleException(e)
             }
         }
     }

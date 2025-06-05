@@ -245,18 +245,12 @@ class RootStore : ProgressHandler {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
-    fun onDeleteQueryClicked(id: Int?) {
+    fun onDeleteQueryClicked(id: Int) {
         val name = QueryList.itemFromId(id)?.name
         setState {
             copy(
                 doConfirmationDialog = Pair(
-                    {
-                        modelScope.launch(Dispatchers.IO) {
-                            QueryList.removeDir(id)
-                            QueryList.fill()
-                            doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
-                        }
-                    },
+                    { QueryList.remove(id) },
                     "You really want to delete Query $name?"
                 )
             )
