@@ -79,7 +79,6 @@ class Filtering2RootStore : ModelHandle {
      */
     private fun updateTagsAndRefresh(updateTags: () -> Unit) {
         updateTags()
-        state.paperListStore.refreshList()
     }
 
     fun onItemRadioButtonClicked(id: Int, btn: Int) {

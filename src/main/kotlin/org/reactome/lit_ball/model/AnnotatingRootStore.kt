@@ -80,7 +80,6 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
         runBlocking {
             PaperList.delete(id)
         }
-        state.paperListStore.refreshList()
     }
 
     private suspend fun doExport() {

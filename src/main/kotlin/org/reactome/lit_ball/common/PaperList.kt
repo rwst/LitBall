@@ -2,7 +2,6 @@ package common
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -36,10 +35,6 @@ object PaperList {
         fileName = file.name
         path = file.absolutePath
         readAcceptedDetailsFromFile(file, accepted)
-    }
-
-    fun toList(): List<Paper> {
-        return listHandle.getList()
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -90,8 +85,6 @@ object PaperList {
                     Settings.map["paper-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()
                 )
             )
-            delay(200) // TODO
-            model?.refreshList()
             model?.refreshClassifierButton()
         }
     }

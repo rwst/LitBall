@@ -2,6 +2,7 @@ package common
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
+import util.CantHappenException
 import window.components.SortingType
 
 /**
@@ -86,9 +87,7 @@ class PaperListHandle {
         val new = transformer(old)
         if (old == new)
             return
-        fullList = fullList.toMutableList().apply {
-            this[index] = new
-        }.toMutableStateList()
+        fullList[index] = new
         filteredList?.let {
             val findex = filteredShadowMap?.get(id) ?: return
             filteredList = it.toMutableList().apply {
@@ -113,9 +112,7 @@ class PaperListHandle {
 
     fun delete(doi: String?) {
         if (doi.isNullOrEmpty()) return
-        val tmp1 = fullList.toMutableList()
-        tmp1.removeIf { p -> p.paperId?.let { it == doi } ?: false }
-        fullList = tmp1.toMutableStateList()
+        fullList.removeIf { p -> p.paperId?.let { it == doi } ?: false }
         filteredList?.let { list ->
             val tmp2 = list.toMutableList()
             tmp2.removeIf { p -> p.paperId?.let { it == doi } ?: false }
@@ -141,9 +138,7 @@ class PaperListHandle {
      * @param tag
      */
     fun setFullAllTags(tag: Tag) {
-        val list = fullList.toMutableList()
-        list.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
-        fullList = list.toMutableStateList()
+        fullList.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
     }
 
     /**
@@ -167,12 +162,14 @@ class PaperListHandle {
     }
 
     fun setFullTagsFromPaperIdMap(tagMap: Map<String, Tag>) {
-        fullList = fullList.map { paper ->
+        fullList.forEachIndexed { index, paper ->
             val newTag = tagMap[paper.paperId] ?: Tag.Accepted
-            if (paper.tag == newTag) paper
-            else paper.copy(newTag)
-        }.toMutableStateList()
+            if (paper.tag != newTag) {
+                fullList[index] = paper.copy(newTag)
+            }
+        }
     }
+
     fun setTag(id: Int, tag: Tag) {
         updateItemInBothLists(id) {
             if (it.tag == tag)
@@ -194,7 +191,7 @@ class PaperListHandle {
     }
 
     fun sort(type: SortingType) {
-        fullList = sort(fullList, type).toMutableStateList()
+        sortInPlace(fullList, type)
         filteredList?.let {
             filteredList = sort(it, type)
         }
@@ -222,6 +219,17 @@ class PaperListHandle {
         var result = fullList.hashCode()
         result = 31 * result + (filteredList?.hashCode() ?: 0)
         return result
+    }
+}
+
+fun sortInPlace(list: MutableList<Paper>, type: SortingType) {
+    when (type) {
+        SortingType.ALPHA_ASCENDING -> list.sortBy { it.details.title?.uppercase() }
+        SortingType.ALPHA_DESCENDING -> list.sortByDescending { it.details.title?.uppercase() }
+        SortingType.DATE_ASCENDING -> list.sortBy { it.details.publicationDate }
+        SortingType.DATE_DESCENDING -> list.sortByDescending { it.details.publicationDate }
+        else ->
+            throw CantHappenException()
     }
 }
 

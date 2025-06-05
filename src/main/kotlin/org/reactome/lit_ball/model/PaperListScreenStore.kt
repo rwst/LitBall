@@ -50,17 +50,10 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     private fun doSort(sortingType: SortingType) {
         handle.modelScope().launch(Dispatchers.IO) {
             PaperList.sort(sortingType)
-            refreshList()
-//            delay(100) // TODO: this is a hack
-//            scrollChannel?.send(0)
         }
     }
     fun setupListScroller(theChannel: Channel<Int>) {
         scrollChannel = theChannel
-    }
-
-    fun refreshList() {
-//        setState { copy(items = PaperList.toList()) }
     }
 
     fun refreshClassifierButton() {
@@ -75,28 +68,24 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         handle.modelScope().launch(Dispatchers.IO)
         {
             PaperList.applyClassifier()
-            refreshList()
         }
     }
 
     fun onFilterChanged(filter: String) {
         handle.modelScope().launch(Dispatchers.IO) {
             PaperList.applyFilter(filter)
-            refreshList()
         }
     }
 
     fun onRemoveFiltered() {
         handle.modelScope().launch(Dispatchers.IO) {
             PaperList.deleteFiltered()
-            refreshList()
         }
     }
 
     fun onAcceptFiltered(value: Boolean) {
         handle.modelScope().launch(Dispatchers.IO) {
             PaperList.acceptFiltered(value)
-            refreshList()
         }
     }
 
