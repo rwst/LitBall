@@ -51,10 +51,10 @@ object PaperList {
         }
         papers.forEachIndexed { index, it ->
             it.setPaperIdFromDetails()
+            it.uniqueId = UniqueIdGenerator.nextId()
         }
         accepted?.let {
             papers = papers.distinctBy { it.paperId }.filter { it.paperId in accepted }.toMutableList()
-            var maxId = papers.size
             val acceptedWithDetails = papers.map { it.paperId ?: "" }.toSet()
             val acceptedWithoutDetails = accepted.minus(acceptedWithDetails).toList()
             if (acceptedWithoutDetails.isNotEmpty()) {
@@ -68,7 +68,6 @@ object PaperList {
                     newPaper.details.authors = null
                     papers.add(newPaper)
                     list.add(newPaper.details)
-                    maxId += 1
                 }
                 // case not handled: DOIs that are referred to by S2 but don't exist
                 if (list.isNotEmpty()) {
