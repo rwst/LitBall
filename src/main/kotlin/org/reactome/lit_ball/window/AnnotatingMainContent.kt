@@ -107,15 +107,15 @@ fun AnnotatingListContent(
                 lazyListState
             ) {
                 items(
-                    key = { it.id },
+                    key = { it.uniqueId },
                     items = items,
                 ) { item ->
                     CardWithFlagBoxes(
                         scope = scope,
                         model,
                         item = item,
-                        onClicked = { onItemClicked(item.id) },
-                        onFlagSet = { idx, value -> onFlagSet(item.id, idx, value) },
+                        onClicked = { onItemClicked(item.uniqueId) },
+                        onFlagSet = { idx, value -> onFlagSet(item.uniqueId, idx, value) },
                     )
                     Divider()
                 }
@@ -195,7 +195,7 @@ fun CardWithFlagBoxes(
             Spacer(modifier = Modifier.width(16.dp))
             Tooltip("Remove paper from accepted", Modifier.align(Alignment.CenterVertically)) {
                 IconButton(
-                    onClick = { model.deleteClicked(item.id) },
+                    onClick = { model.deleteClicked(item.uniqueId) },
                     modifier = Modifier
                         .size(height = 30.dp, width = 30.dp)
                         .align(Alignment.CenterVertically)

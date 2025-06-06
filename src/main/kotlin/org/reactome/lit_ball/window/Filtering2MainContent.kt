@@ -124,15 +124,15 @@ fun Filtering2ListContent(
                 lazyListState
             ) {
                 items(
-                    key = { it.id },
+                    key = { it.uniqueId },
                     items = items,
                 ) { item ->
                     CardWithTextIconAndRadiobutton(
                         scope,
                         item = item,
-                        onClicked = { onItemClicked(item.id) },
+                        onClicked = { onItemClicked(item.uniqueId) },
                         onOptionSelected = { btn ->
-                            onItemRadioButtonClicked(item.id, btn)
+                            onItemRadioButtonClicked(item.uniqueId, btn)
                             focusRequester.requestFocus()
                         },
                     )

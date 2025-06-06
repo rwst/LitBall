@@ -51,7 +51,6 @@ object PaperList {
         }
         papers.forEachIndexed { index, it ->
             it.setPaperIdFromDetails()
-            it.id = index
         }
         accepted?.let {
             papers = papers.distinctBy { it.paperId }.filter { it.paperId in accepted }.toMutableList()
@@ -64,7 +63,7 @@ object PaperList {
                     acceptedWithoutDetails,
                     fields = "paperId,externalIds,title,abstract,publicationTypes,tldr,publicationDate",
                 ) {
-                    val newPaper = Paper(id = maxId, details = it)
+                    val newPaper = Paper(uniqueId = UniqueIdGenerator.nextId(), details = it)
                     newPaper.setPaperIdFromDetails().fixNullTldr()
                     newPaper.details.authors = null
                     papers.add(newPaper)
@@ -140,12 +139,10 @@ object PaperList {
     }
 
     suspend fun delete(id: Int) {
-        val p = listHandle.getDisplayedPaper(id) ?: return
-        p.paperId?.let {
-            query.acceptedSet.remove(it)
-            listHandle.delete(it)
-            query.rejectedSet.add(it)
-        }
+        val p = listHandle.getPaperFromId(id) ?: throw CantHappenException()
+        listHandle.delete(p.uniqueId)
+        query.acceptedSet.remove(p.paperId)
+        p.paperId?.let { query.rejectedSet.add(it) }
         mergeTaggedToSetAndWriteIds(Tag.Accepted, FileType.ACCEPTED, query.acceptedSet)
         mergeTaggedToSetAndWriteIds(Tag.Rejected, FileType.REJECTED, query.rejectedSet)
         query.syncBuffers()
@@ -328,7 +325,7 @@ object PaperList {
     }
 
     fun pretty(id: Int): String {
-        val p = listHandle.getDisplayedPaper(id) ?: return "CAN'T HAPPEN: shadowMap[id] == null"
+        val p = listHandle.getPaperFromId(id) ?: throw CantHappenException()
         val pmId = p.details.externalIds?.get("PubMed")
         val textPMID = if (pmId != null) "PMID: $pmId" else ""
         return """

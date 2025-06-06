@@ -3,6 +3,7 @@ package common
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import service.S2Interface
+import util.UniqueIdGenerator
 
 enum class Tag {
     @SerialName("REJECTED")
@@ -14,17 +15,17 @@ enum class Tag {
 
 @Serializable
 class Paper(
-    var id: Int = -1,
+    var uniqueId: Int = -1,
     val details: S2Interface.PaperDetails = S2Interface.PaperDetails(),
     var tag: Tag = Tag.Rejected,
     var flags: MutableSet<String> = mutableSetOf(),
     var paperId: String? = null,
 ) {
 
-    fun copy(newTag: Tag = this.tag) = Paper(id, details, newTag, flags, paperId)
+    fun copy(newTag: Tag = this.tag) = Paper(UniqueIdGenerator.nextId(), details, newTag, flags, paperId)
 
     override fun toString(): String {
-        return "Paper(id=$id, details=$details, tag=$tag, flags=$flags, paperId=$paperId)"
+        return "Paper(id=$uniqueId, details=$details, tag=$tag, flags=$flags, paperId=$paperId)"
     }
 
     fun setPaperIdFromDetails(): Paper {

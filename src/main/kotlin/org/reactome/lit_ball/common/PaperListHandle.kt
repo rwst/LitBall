@@ -3,6 +3,7 @@ package common
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import util.CantHappenException
+import util.UniqueIdGenerator
 import window.components.SortingType
 
 /**
@@ -24,12 +25,6 @@ class PaperListHandle {
                         || it.details.abstract?.contains(string) ?: false
             }
         updateShadowMap()
-    }
-
-    fun getList(): List<Paper> {
-        if (filteredList == null)
-            return fullList
-        return filteredList as List<Paper>
     }
 
     fun getFullList(): List<Paper> {
@@ -76,46 +71,46 @@ class PaperListHandle {
         updateShadowMap()
     }
 
-    private fun getShadowMap(): MutableMap<Int, Int> {
-        if (filteredShadowMap == null) return fullShadowMap
-        return filteredShadowMap as MutableMap<Int, Int>
-    }
-
     private fun updateItemInBothLists(id: Int, transformer: (Paper) -> Paper) {
-        val index = fullShadowMap[id] ?: return
-        val old = fullList[index]
-        val new = transformer(old)
-        if (old == new)
-            return
-        fullList[index] = new
-        filteredList?.let {
-            val findex = filteredShadowMap?.get(id) ?: return
-            filteredList = it.toMutableList().apply {
-                this[findex] = new
-            }.toList()
+        var new: Paper? = null
+        fullList.forEachIndexed { index, paper ->
+            if (paper.uniqueId == id) {
+                new = transformer(paper)
+                if (paper == new)
+                    return
+                new.uniqueId = UniqueIdGenerator.nextId()
+                fullList[index] = new
+            }
+        }
+        new?.let {
+            filteredList?.let {
+                val findex = filteredShadowMap?.get(id) ?: return
+                filteredList = it.toMutableList().apply {
+                    this[findex] = new
+                }.toList()
+            }
         }
     }
 
     private fun updateShadowMap() {
         fullShadowMap.clear()
         fullList.forEachIndexed { index, paper ->
-            fullShadowMap[paper.id] = index
+            fullShadowMap[paper.uniqueId] = index
         }
         filteredShadowMap = filteredList?.let {
             val map: MutableMap<Int, Int> = mutableMapOf()
             it.forEachIndexed { index, paper ->
-                map[paper.id] = index
+                map[paper.uniqueId] = index
             }
             map
         }
     }
 
-    fun delete(doi: String?) {
-        if (doi.isNullOrEmpty()) return
-        fullList.removeIf { p -> p.paperId?.let { it == doi } ?: false }
+    fun delete(id: Int) {
+        fullList.removeIf { p -> p.uniqueId == id }
         filteredList?.let { list ->
             val tmp2 = list.toMutableList()
-            tmp2.removeIf { p -> p.paperId?.let { it == doi } ?: false }
+            tmp2.removeIf { p -> p.uniqueId == id }
             filteredList = tmp2.toList()
         }
         updateShadowMap()
@@ -138,7 +133,7 @@ class PaperListHandle {
      * @param tag
      */
     fun setFullAllTags(tag: Tag) {
-        fullList.replaceAll { Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
+        fullList.replaceAll { Paper(UniqueIdGenerator.nextId(), it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
     }
 
     /**
@@ -175,7 +170,7 @@ class PaperListHandle {
             if (it.tag == tag)
                 it
             else
-                Paper(it.id, it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase())
+                Paper(UniqueIdGenerator.nextId(), it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase())
         }
     }
 
@@ -198,9 +193,8 @@ class PaperListHandle {
         updateShadowMap()
     }
 
-    fun getDisplayedPaper(index: Int): Paper? {
-        val i = getShadowMap()[index] ?: return null
-        return getList()[i]
+    fun getPaperFromId(id: Int): Paper? {
+        return fullList.find { it.uniqueId == id }
     }
 
     override fun equals(other: Any?): Boolean {
