@@ -13,7 +13,6 @@ import window.components.SortingType
 class PaperListHandle {
     private var fullList = mutableStateListOf<Paper>()
     private var filteredList: List<Paper>? = null
-    private var fullShadowMap: MutableMap<Int, Int> = mutableMapOf()
     private var filteredShadowMap: MutableMap<Int, Int>? = null
 
     fun applyFilter(string: String) {
@@ -93,10 +92,6 @@ class PaperListHandle {
     }
 
     private fun updateShadowMap() {
-        fullShadowMap.clear()
-        fullList.forEachIndexed { index, paper ->
-            fullShadowMap[paper.uniqueId] = index
-        }
         filteredShadowMap = filteredList?.let {
             val map: MutableMap<Int, Int> = mutableMapOf()
             it.forEachIndexed { index, paper ->
