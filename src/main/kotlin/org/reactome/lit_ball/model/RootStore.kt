@@ -237,7 +237,6 @@ class RootStore : ProgressHandler {
             QueryList.itemFromId(id)?.annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
             setState { copy(doAnnotate = id) }
-            refreshList(id)
         }
     }
 
