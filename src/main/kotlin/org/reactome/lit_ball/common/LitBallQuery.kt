@@ -21,7 +21,7 @@ import kotlin.io.path.Path
 
 enum class QueryStatus { UNINITIALIZED, FILTERED2, EXPANDED, FILTERED1, EXPLODED }
 
-const val EXPLODED_LIMIT = 20000
+const val EXPLODED_LIMIT = 50000
 
 fun getQueryDir(name: String): File {
     val queryPath = Settings.map["path-to-queries"] ?: ""
