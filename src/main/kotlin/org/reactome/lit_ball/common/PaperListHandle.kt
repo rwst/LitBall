@@ -122,7 +122,7 @@ class PaperListHandle {
      * @param tag
      */
     fun setFullAllTags(tag: Tag) {
-        fullList.replaceAll { Paper(UniqueIdGenerator.nextId(), it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase()) }
+        fullList.replaceAll { paper -> paper.copy(tag) }
     }
 
     /**
@@ -159,7 +159,7 @@ class PaperListHandle {
             if (it.tag == tag)
                 it
             else
-                Paper(UniqueIdGenerator.nextId(), it.details, tag, it.flags, it.details.externalIds?.get("DOI")?.lowercase())
+                it.copy(tag)
         }
     }
 
