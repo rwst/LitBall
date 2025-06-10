@@ -15,7 +15,7 @@ const val DAY_IN_MS = 1000L * 60 * 60 * 24
 
 @Serializable
 object QueryList {
-    var list = mutableStateListOf<LitBallQuery>()
+    val list = mutableStateListOf<LitBallQuery>()
 
     suspend fun fill() {
         val queryPath = Settings.map["path-to-queries"] ?: ""

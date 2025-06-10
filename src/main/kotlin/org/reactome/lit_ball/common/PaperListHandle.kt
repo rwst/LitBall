@@ -1,7 +1,6 @@
 package common
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import util.CantHappenException
 import util.UniqueIdGenerator
 import window.components.SortingType
@@ -11,7 +10,7 @@ import window.components.SortingType
  * It also encapsuloates low level list handling to relieve class PaperList.
  */
 class PaperListHandle {
-    private var fullList = mutableStateListOf<Paper>()
+    private val fullList = mutableStateListOf<Paper>()
     private var filteredList: List<Paper>? = null
     private var filteredShadowMap: MutableMap<Int, Int>? = null
 
@@ -47,24 +46,18 @@ class PaperListHandle {
         }
 
         fun sanitize() {
-            fullList.forEachIndexed { index, paper ->
-                val newPaper: Paper = paper
-                var isChanged = false
+            fullList.forEach { paper ->
                 sanitizeMap(paper.details.externalIds) {
-                    newPaper.details.externalIds = it
-                    isChanged = true
+                    paper.details.externalIds = it
                 }
                 sanitizeMap(paper.details.tldr) {
-                    newPaper.details.tldr = it
-                    isChanged = true
+                    paper.details.tldr = it
                 }
-                if (isChanged)
-                    fullList = fullList.toMutableList().apply {
-                        this[index] = newPaper
-                    }.toMutableStateList()
             }
         }
-        fullList = list.toMutableStateList()
+
+        fullList.clear()
+        fullList.addAll(list)
         filteredList = null
         sanitize()
         updateShadowMap()
@@ -116,7 +109,8 @@ class PaperListHandle {
             val dois = list.map { it.paperId }.toSet()
             val fList = fullList.toMutableList()
             fList.removeIf { dois.contains(it.paperId) }
-            fullList = fList.toMutableStateList()
+            fullList.clear()
+            fullList.addAll(fList)
             filteredList = null
             updateShadowMap()
         }
