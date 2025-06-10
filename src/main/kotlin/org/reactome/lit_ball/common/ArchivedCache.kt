@@ -29,7 +29,7 @@ object ArchivedCache {
     suspend fun set(list: MutableList<S2Interface.PaperDetails>) {
         val papers: MutableSet<Paper> = emptySet<Paper>().toMutableSet()
         papers.addAll(list.map {
-            Paper(papers.size, it).apply {
+            Paper(0, it).apply {   // since uniqueId is reset on read, we can zero it here
                 tag = Tag.Accepted
                 setPaperIdFromDetails()
             }})
