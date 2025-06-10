@@ -11,7 +11,6 @@ import dialog.DialogParameters
 import dialog.ProgressIndicatorParameter
 import kotlinx.coroutines.*
 import kotlinx.datetime.LocalDate
-import service.getAGService
 import util.SystemFunction
 import util.toEpochMilliseconds
 import window.RootType
@@ -83,7 +82,7 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
     }
 
     private suspend fun doExport() {
-        getAGService().progressHandler = this
+        PaperList.query.agService.progressHandler = this
         withContext(Dispatchers.IO) {
             PaperList.exportAnnotated()
         }
@@ -91,7 +90,7 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
     }
 
     private suspend fun doExportText() {
-        getAGService().progressHandler = this
+        PaperList.query.agService.progressHandler = this
         withContext(Dispatchers.IO) {
             PaperList.exportText()
         }
@@ -99,7 +98,7 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
     }
 
     private suspend fun doExportRIS() {
-        getAGService().progressHandler = this
+        PaperList.query.agService.progressHandler = this
         withContext(Dispatchers.IO) {
             PaperList.exportRIS()
         }
