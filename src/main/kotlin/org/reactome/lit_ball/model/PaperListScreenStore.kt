@@ -81,6 +81,8 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun onRemoveFiltered() {
         handle.modelScope().launch(Dispatchers.IO) {
             PaperList.deleteFiltered()
+            setFilterDialog(false)
+            setState { copy(filterString = null) }
         }
     }
 
