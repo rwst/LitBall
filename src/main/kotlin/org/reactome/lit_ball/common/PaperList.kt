@@ -137,7 +137,7 @@ object PaperList {
         path?.let { File(it).delete() }
     }
 
-    suspend fun delete(id: Int) {
+    suspend fun delete(id: Long) {
         val p = listHandle.getPaperFromId(id) ?: throw CantHappenException()
         listHandle.delete(p.uniqueId)
         query.acceptedSet.remove(p.paperId)
@@ -312,7 +312,7 @@ object PaperList {
         saveAnnotated()
     }
 
-    fun setTag(id: Int, btn: Int) {
+    fun setTag(id: Long, btn: Int) {
         val newTag = Tag.entries[btn]
         listHandle.setTag(id, newTag)
     }
@@ -323,7 +323,7 @@ object PaperList {
         Settings.save()
     }
 
-    fun pretty(id: Int): String {
+    fun pretty(id: Long): String {
         val p = listHandle.getPaperFromId(id) ?: throw CantHappenException()
         val pmId = p.details.externalIds?.get("PubMed")
         val textPMID = if (pmId != null) "PMID: $pmId" else ""

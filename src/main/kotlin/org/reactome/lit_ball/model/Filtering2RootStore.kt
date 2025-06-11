@@ -81,7 +81,7 @@ class Filtering2RootStore : ModelHandle {
         updateTags()
     }
 
-    fun onItemRadioButtonClicked(id: Int, btn: Int) {
+    fun onItemRadioButtonClicked(id: Long, btn: Int) {
         updateTagsAndRefresh { PaperList.setTag(id, btn) }
     }
 

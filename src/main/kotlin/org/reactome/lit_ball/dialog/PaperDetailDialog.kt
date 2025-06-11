@@ -12,7 +12,7 @@ import common.PaperList
 
 @Suppress("FunctionName")
 @Composable
-internal fun PaperDetailDialog(id: Int, onDoneClicked: () -> Unit, focusRequester: FocusRequester) {
+internal fun PaperDetailDialog(id: Long, onDoneClicked: () -> Unit, focusRequester: FocusRequester) {
     ScrollbarDialog(
         topComposable = {},
         scrollableContent = {

@@ -71,11 +71,11 @@ class AnnotatingRootStore : ModelHandle, ProgressHandler {
         }
     }
 
-    fun onFlagSet(id: Int, flagNo: Int, value: Boolean) {
+    fun onFlagSet(id: Long, flagNo: Int, value: Boolean) {
         PaperList.listHandle.setFlag(id, flagNo, value)
     }
 
-    fun deleteClicked(id: Int) {
+    fun deleteClicked(id: Long) {
         runBlocking {
             PaperList.delete(id)
         }

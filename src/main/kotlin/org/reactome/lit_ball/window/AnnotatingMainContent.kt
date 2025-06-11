@@ -84,11 +84,11 @@ fun AnnotatingListContent(
     scope: CoroutineScope,
     model: AnnotatingRootStore,
     items: List<Paper>,
-    onItemClicked: (id: Int) -> Unit,
-    onFlagSet: (Int, Int, Boolean) -> Unit,
+    onItemClicked: (id: Long) -> Unit,
+    onFlagSet: (Long, Int, Boolean) -> Unit,
     lazyListState: LazyListState,
     focusRequester: FocusRequester,
-    setupListScroller: (Channel<Int>) -> Unit,
+    setupListScroller: (Channel<Long>) -> Unit,
 ) {
     val onKeyDown: (KeyEvent) -> Boolean = handleKeyPressed(lazyListState)
 

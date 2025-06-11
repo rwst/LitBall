@@ -29,8 +29,8 @@ import window.MARGIN_SCROLLBAR
 fun QueryCard(
     item: LitBallQuery,
     onClicked: () -> Unit,
-    onSettingsClicked: (Int?) -> Unit,
-    onGoClicked: (status: QueryStatus, id: Int) -> Unit,
+    onSettingsClicked: (Long?) -> Unit,
+    onGoClicked: (status: QueryStatus, id: Long) -> Unit,
     onAnnotateClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
 ) {

@@ -24,7 +24,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     var state: PaperListScreenState by mutableStateOf(initialState())
 
     private fun initialState(): PaperListScreenState = PaperListScreenState()
-    private var scrollChannel: Channel<Int>? = null
+    private var scrollChannel: Channel<Long>? = null
     private inline fun setState(update: PaperListScreenState.() -> PaperListScreenState) {
         state = state.update()
         handle.refreshStateFromPaperListScreenStore(this)
@@ -52,7 +52,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
             PaperList.sort(sortingType)
         }
     }
-    fun setupListScroller(theChannel: Channel<Int>) {
+    fun setupListScroller(theChannel: Channel<Long>) {
         scrollChannel = theChannel
     }
 
@@ -60,7 +60,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         handle.refreshClassifierButton()
     }
 
-    fun onItemClicked(id: Int) {
+    fun onItemClicked(id: Long) {
         setState { copy(editingItemId = id) }
     }
 
@@ -120,7 +120,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
 }
 
 data class PaperListScreenState(
-    val editingItemId: Int? = null,
+    val editingItemId: Long? = null,
     val classifierAlert: Boolean = false,
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,

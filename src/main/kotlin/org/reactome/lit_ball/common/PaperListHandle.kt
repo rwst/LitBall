@@ -12,7 +12,7 @@ import window.components.SortingType
 class PaperListHandle {
     private val fullList = mutableStateListOf<Paper>()
     private var filteredList: List<Paper>? = null
-    private var filteredShadowMap: MutableMap<Int, Int>? = null
+    private var filteredShadowMap: MutableMap<Long, Int>? = null
 
     fun applyFilter(string: String) {
         filteredList = if (string.isEmpty()) null
@@ -63,7 +63,7 @@ class PaperListHandle {
         updateShadowMap()
     }
 
-    private fun updateItemInBothLists(id: Int, transformer: (Paper) -> Paper) {
+    private fun updateItemInBothLists(id: Long, transformer: (Paper) -> Paper) {
         var new: Paper? = null
         fullList.forEachIndexed { index, paper ->
             if (paper.uniqueId == id) {
@@ -86,7 +86,7 @@ class PaperListHandle {
 
     private fun updateShadowMap() {
         filteredShadowMap = filteredList?.let {
-            val map: MutableMap<Int, Int> = mutableMapOf()
+            val map: MutableMap<Long, Int> = mutableMapOf()
             it.forEachIndexed { index, paper ->
                 map[paper.uniqueId] = index
             }
@@ -94,7 +94,7 @@ class PaperListHandle {
         }
     }
 
-    fun delete(id: Int) {
+    fun delete(id: Long) {
         fullList.removeIf { p -> p.uniqueId == id }
         filteredList?.let { list ->
             val tmp2 = list.toMutableList()
@@ -154,7 +154,7 @@ class PaperListHandle {
         }
     }
 
-    fun setTag(id: Int, tag: Tag) {
+    fun setTag(id: Long, tag: Tag) {
         updateItemInBothLists(id) {
             if (it.tag == tag)
                 it
@@ -163,7 +163,7 @@ class PaperListHandle {
         }
     }
 
-    fun setFlag(id: Int, flagNo: Int, value: Boolean) {
+    fun setFlag(id: Long, flagNo: Int, value: Boolean) {
         val flag = PaperList.flagList[flagNo]
         updateItemInBothLists(id) {
             if (!value)
@@ -182,7 +182,7 @@ class PaperListHandle {
         updateShadowMap()
     }
 
-    fun getPaperFromId(id: Int): Paper? {
+    fun getPaperFromId(id: Long): Paper? {
         return fullList.find { it.uniqueId == id }
     }
 

@@ -76,11 +76,11 @@ internal fun MainContent(
 private fun ListContent(
     model: RootStore,
     items: List<LitBallQuery>,
-    onItemClicked: (id: Int) -> Unit,
-    onItemSettingsClicked: (id: Int?) -> Unit,
-    onItemGoClicked: (status: QueryStatus, id: Int) -> Unit,
-    onItemAnnotateClicked: (id: Int) -> Unit,
-    onDeleteClicked: (id: Int) -> Unit,
+    onItemClicked: (id: Long) -> Unit,
+    onItemSettingsClicked: (id: Long?) -> Unit,
+    onItemGoClicked: (status: QueryStatus, id: Long) -> Unit,
+    onItemAnnotateClicked: (id: Long) -> Unit,
+    onDeleteClicked: (id: Long) -> Unit,
     focusRequester: FocusRequester,
 ) {
     val lazyListState = rememberLazyListState()

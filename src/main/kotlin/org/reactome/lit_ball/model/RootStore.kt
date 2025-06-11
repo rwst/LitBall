@@ -31,7 +31,7 @@ import java.net.URI
 
 class RootStore : ProgressHandler {
     var state: RootState by mutableStateOf(initialState())
-    private var scrollChannel: Channel<Int>? = null
+    private var scrollChannel: Channel<Long>? = null
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
     private val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
 
@@ -95,7 +95,7 @@ class RootStore : ProgressHandler {
         SystemFunction.exitApplication()
     }
 
-    private fun refreshList(itemId: Int?) {
+    private fun refreshList(itemId: Long?) {
         itemId?.let { QueryList.touchItem(itemId) }
     }
 
@@ -104,7 +104,7 @@ class RootStore : ProgressHandler {
         setState { copy(queryPath = stringBuilder.toString()) }
     }
 
-    private fun onDoExpandStarted(id: Int) {
+    private fun onDoExpandStarted(id: Long) {
         val query = QueryList.itemFromId(id) ?: return
         when (query.type) {
             QueryType.EXPRESSION_SEARCH -> {
@@ -162,7 +162,7 @@ class RootStore : ProgressHandler {
         }
     }
 
-    private fun onDoFilter1Started(id: Int) {
+    private fun onDoFilter1Started(id: Long) {
         modelScope.launch(Dispatchers.IO) {
             val (nrPaperDetails, nrRejectedDOIs) = QueryList.itemFromId(id)?.filter1() ?: return@launch
             if (nrPaperDetails == 0) return@launch
@@ -178,7 +178,7 @@ class RootStore : ProgressHandler {
         }
     }
 
-    fun nextAction(status: QueryStatus, id: Int) {
+    fun nextAction(status: QueryStatus, id: Long) {
         getAGService().progressHandler = this
         when (status) {
             QueryStatus.UNINITIALIZED -> onQuerySettingsClicked(id)
@@ -212,7 +212,7 @@ class RootStore : ProgressHandler {
         setState { copy(aboutDialog = boolean) }
     }
 
-    fun setEditingItemId(id: Int) {
+    fun setEditingItemId(id: Long) {
         setState { copy(editingItemId = id) }
     }
 
@@ -223,7 +223,7 @@ class RootStore : ProgressHandler {
         setState { copy(newItem = boolean) }
     }
 
-    private fun onDoFilter2Started(id: Int) {
+    private fun onDoFilter2Started(id: Long) {
         modelScope.launch(Dispatchers.IO) {
             QueryList.itemFromId(id)?.filter2()
             rootSwitch.value = RootType.FILTER2_ROOT
@@ -232,7 +232,7 @@ class RootStore : ProgressHandler {
         }
     }
 
-    fun onAnnotateStarted(id: Int) {
+    fun onAnnotateStarted(id: Long) {
         modelScope.launch(Dispatchers.IO) {
             QueryList.itemFromId(id)?.annotate()
             rootSwitch.value = RootType.ANNOTATE_ROOT
@@ -240,11 +240,11 @@ class RootStore : ProgressHandler {
         }
     }
 
-    fun onQuerySettingsClicked(id: Int?) {
+    fun onQuerySettingsClicked(id: Long?) {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
 
-    fun onDeleteQueryClicked(id: Int) {
+    fun onDeleteQueryClicked(id: Long) {
         val name = QueryList.itemFromId(id)?.name
         setState {
             copy(
@@ -316,7 +316,7 @@ class RootStore : ProgressHandler {
         }
     }
 
-    fun setupListScroller(theChannel: Channel<Int>) {
+    fun setupListScroller(theChannel: Channel<Long>) {
         scrollChannel = theChannel
     }
 }
@@ -325,11 +325,11 @@ data class RootState(
     val queryPath: String? = null,
     val activeRailItem: String = "",
     val newItem: Boolean = false,
-    val editingItemId: Int? = null,
+    val editingItemId: Long? = null,
     val editingSettings: Boolean = false,
     val editingQuerySettings: LitBallQuery? = null, // TODO: refactor this to Int?
-    val doFilter2: Int? = null,
-    val doAnnotate: Int? = null,
+    val doFilter2: Long? = null,
+    val doAnnotate: Long? = null,
     val progressIndication: ProgressIndicatorParameter? = null,
     val doInformationalDialog: DialogParameters? = null,
     val aboutDialog: Boolean = false,

@@ -49,7 +49,7 @@ object QueryList {
         }
     }
 
-    fun itemFromId(id: Int?): LitBallQuery? = id?.let { list.find { id == it.id } }
+    fun itemFromId(id: Long?): LitBallQuery? = id?.let { list.find { id == it.id } }
 
     suspend fun addNewItem(
         type: QueryType,
@@ -77,14 +77,14 @@ object QueryList {
         list.add(newQuery)
     }
 
-    fun touchItem(id: Int?) {
+    fun touchItem(id: Long?) {
         val index = list.indexOfFirst { id == it.id }
         val newItem = list[index].copy()
         newItem.id = UniqueIdGenerator.nextId()
         list[index] = newItem
     }
 
-    fun remove(id: Int) {
+    fun remove(id: Long) {
         val query = itemFromId(id)
         list.remove(query)
         query?.name?.let { removeDir(it) }

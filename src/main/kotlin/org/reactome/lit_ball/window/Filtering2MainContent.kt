@@ -102,11 +102,11 @@ internal fun Filtering2MainContent(
 fun Filtering2ListContent(
     scope: CoroutineScope,
     items: List<Paper>,
-    onItemClicked: (id: Int) -> Unit,
-    onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
+    onItemClicked: (id: Long) -> Unit,
+    onItemRadioButtonClicked: (id: Long, btn: Int) -> Unit,
     lazyListState: LazyListState,
     focusRequester: FocusRequester,
-    setupListScroller: (Channel<Int>) -> Unit,
+    setupListScroller: (Channel<Long>) -> Unit,
 ) {
     val onKeyDown: (KeyEvent) -> Boolean = handleKeyPressed(lazyListState)
 

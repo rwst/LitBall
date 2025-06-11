@@ -43,7 +43,7 @@ fun getDOIs(dir: File, fileType: FileType): MutableSet<String> {
 }
 
 data class LitBallQuery(
-    var id: Int,
+    var id: Long,
     val name: String = "",
     var type: QueryType = QueryType.SUPERVISED_SNOWBALLING,
     val status: MutableState<QueryStatus> = mutableStateOf(QueryStatus.UNINITIALIZED),
@@ -237,8 +237,8 @@ data class LitBallQuery(
                 if (!writeFile(
                         queryDir, FileType.FILTERED1,
                         json.encodeToString(
-                            paperDetailsList.mapIndexed { idx, pd ->
-                                Paper(idx, pd).setPaperIdFromDetails()
+                            paperDetailsList.map { pd ->
+                                Paper(0L, pd).setPaperIdFromDetails()
                             })
                     )
                 )

@@ -9,9 +9,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.properties.Delegates
-
-import java.util.concurrent.atomic.AtomicInteger
 
 fun formatDateToyyyyMMMddFormat(date: Date?): String {
     if (date == null) return "-.-"
@@ -25,15 +24,15 @@ fun setupLazyListScroller(
     tag: String,
     scope: CoroutineScope,
     state: LazyListState,
-    setupAction: (Channel<Int>) -> Unit,
+    setupAction: (Channel<Long>) -> Unit,
 ) {
     if (tag == scrollerTag) return
     scrollerTag = tag
-    val scrollChannel = Channel<Int>()
+    val scrollChannel = Channel<Long>()
     scope.launch {
         while (true) {
             val pos = scrollChannel.receive()
-            state.scrollToItem(pos)
+            state.scrollToItem(pos.toInt())
         }
     }
     setupAction(scrollChannel)
@@ -118,9 +117,9 @@ class DateMatcher(filteredDate: String?) {
 }
 
 object UniqueIdGenerator {
-    private val idCounter = AtomicInteger(0) // Start from 0, or any other Int
+    private val idCounter = AtomicLong(0) // Start from 0, or any other Int
 
-    fun nextId(): Int {
+    fun nextId(): Long {
         return idCounter.getAndIncrement()
     }
 }
