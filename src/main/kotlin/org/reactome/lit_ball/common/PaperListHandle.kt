@@ -11,18 +11,16 @@ import window.components.SortingType
  */
 class PaperListHandle {
     private val fullList = mutableStateListOf<Paper>()
-    private var filteredList: List<Paper>? = null
-    private var filteredShadowMap: MutableMap<Long, Int>? = null
+    private val filteredList = mutableStateListOf<Paper>()
 
     fun applyFilter(string: String) {
-        filteredList = if (string.isEmpty()) null
-        else
-            fullList.filter {
-                it.details.title?.contains(string) ?: false
-                        || it.details.tldr?.get("text")?.contains(string) ?: false
-                        || it.details.abstract?.contains(string) ?: false
-            }
-        updateShadowMap()
+        filteredList.clear()
+        if (string.isEmpty()) return
+        filteredList.addAll(fullList.filter {
+            it.details.title?.contains(string) ?: false
+                    || it.details.tldr?.get("text")?.contains(string) ?: false
+                    || it.details.abstract?.contains(string) ?: false
+            } )
     }
 
     fun getFullList(): List<Paper> {
@@ -33,87 +31,56 @@ class PaperListHandle {
         return filteredList
     }
 
-    @Suppress("SENSELESS_COMPARISON")
     fun setFullList(list: List<Paper>) {
-        fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
-            val extIds = map?.toMutableMap()
-            extIds?.entries?.forEach {
-                if (it.value == null) {
-                    extIds.remove(it.key)
-                    onChanged(extIds)
-                }
-            }
-        }
-
-        fun sanitize() {
-            fullList.forEach { paper ->
-                sanitizeMap(paper.details.externalIds) {
-                    paper.details.externalIds = it
-                }
-                sanitizeMap(paper.details.tldr) {
-                    paper.details.tldr = it
-                }
-            }
-        }
+//        fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
+//            val extIds = map?.toMutableMap()
+//            extIds?.entries?.forEach {
+//                if (it.value == null) {
+//                    println("Senseless: ${it.key} ${it.value}}")
+//                    extIds.remove(it.key)
+//                    onChanged(extIds)
+//                }
+//            }
+//        }
+//
+//        fun sanitize() {
+//            fullList.forEach { paper ->
+//                sanitizeMap(paper.details.externalIds) {
+//                    paper.details.externalIds = it
+//                }
+//                sanitizeMap(paper.details.tldr) {
+//                    paper.details.tldr = it
+//                }
+//            }
+//        }
 
         fullList.clear()
         fullList.addAll(list)
-        filteredList = null
-        sanitize()
-        updateShadowMap()
+        filteredList.clear()
+//        sanitize()
     }
 
     private fun updateItemInBothLists(id: Long, transformer: (Paper) -> Paper) {
-        var new: Paper? = null
-        fullList.forEachIndexed { index, paper ->
-            if (paper.uniqueId == id) {
-                new = transformer(paper)
-                if (paper == new)
-                    return
-                new.uniqueId = UniqueIdGenerator.nextId()
-                fullList[index] = new
-            }
-        }
-        new?.let {
-            filteredList?.let {
-                val findex = filteredShadowMap?.get(id) ?: return
-                filteredList = it.toMutableList().apply {
-                    this[findex] = new
-                }.toList()
-            }
-        }
-    }
-
-    private fun updateShadowMap() {
-        filteredShadowMap = filteredList?.let {
-            val map: MutableMap<Long, Int> = mutableMapOf()
-            it.forEachIndexed { index, paper ->
-                map[paper.uniqueId] = index
-            }
-            map
-        }
+        val idx = fullList.indexOfFirst { it.uniqueId == id }
+        if (idx == -1) return
+        val old = fullList[idx]
+        val new = transformer(old).also { it.uniqueId = UniqueIdGenerator.nextId() }
+        if (old == new) return
+        fullList[idx] = new
+        if (filteredList.isEmpty()) return
+        val index = filteredList.indexOfFirst { it.uniqueId == id }
+        if (index == -1) return
+        filteredList[index] = new
     }
 
     fun delete(id: Long) {
         fullList.removeIf { p -> p.uniqueId == id }
-        filteredList?.let { list ->
-            val tmp2 = list.toMutableList()
-            tmp2.removeIf { p -> p.uniqueId == id }
-            filteredList = tmp2.toList()
-        }
-        updateShadowMap()
+        filteredList.removeIf { p -> p.uniqueId == id }
     }
 
     fun deleteAllFiltered() {
-        filteredList?.let { list ->
-            val dois = list.map { it.paperId }.toSet()
-            val fList = fullList.toMutableList()
-            fList.removeIf { dois.contains(it.paperId) }
-            fullList.clear()
-            fullList.addAll(fList)
-            filteredList = null
-            updateShadowMap()
-        }
+        val uniqueIds = filteredList.map { it.uniqueId }.toSet()
+        fullList.removeIf { uniqueIds.contains(it.uniqueId) }
     }
 
     /**
@@ -132,16 +99,14 @@ class PaperListHandle {
      * @param newTag The tag to be applied to all papers in the filtered list
      */
     fun setFilteredAllTags(newTag: Tag) {
-        filteredList?.let { papers ->
-            val updatedPapers = papers.map { paper ->
-                if (paper.tag == newTag) paper else paper.copy(newTag)
+        filteredList.forEachIndexed { index, paper ->
+            if (paper.tag != newTag)
+                filteredList[index] = paper.copy(newTag)
             }
-            filteredList = updatedPapers
-        }
     }
 
     fun setFullTagsFromFiltered() {
-        val tagMap: Map<String, Tag> = filteredList?.associate { Pair(it.paperId ?: "", it.tag) } ?: emptyMap()
+        val tagMap: Map<String, Tag> = filteredList.associate { Pair(it.paperId ?: "", it.tag) }
         setFullTagsFromPaperIdMap(tagMap)
     }
 
@@ -176,10 +141,7 @@ class PaperListHandle {
 
     fun sort(type: SortingType) {
         sortInPlace(fullList, type)
-        filteredList?.let {
-            filteredList = sort(it, type)
-        }
-        updateShadowMap()
+        sortInPlace(filteredList, type)
     }
 
     fun getPaperFromId(id: Long): Paper? {
@@ -200,7 +162,7 @@ class PaperListHandle {
 
     override fun hashCode(): Int {
         var result = fullList.hashCode()
-        result = 31 * result + (filteredList?.hashCode() ?: 0)
+        result = 31 * result + filteredList.hashCode()
         return result
     }
 }
