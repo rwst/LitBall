@@ -65,15 +65,17 @@ internal fun AnnotatingMainContent(
                     Modifier.align(Alignment.CenterVertically),
                 )
             }
+            val pLStore = model.state.paperListStore
+            val list = if (pLStore.state.filterString.isNullOrEmpty()) PaperList.listHandle.getFullList() else PaperList.listHandle.getFilteredList()
             AnnotatingListContent(
                 scope = scope,
                 model,
-                items = PaperList.listHandle.getFullList(),
-                onItemClicked = { model.state.paperListStore.onItemClicked(it) },
+                items = list,
+                onItemClicked = { pLStore.onItemClicked(it) },
                 onFlagSet = model::onFlagSet,
                 lazyListState = lazyListState,
                 focusRequester = focusRequester,
-                setupListScroller = { model.state.paperListStore.setupListScroller(it) },
+                setupListScroller = { pLStore.setupListScroller(it) },
             )
         }
     }

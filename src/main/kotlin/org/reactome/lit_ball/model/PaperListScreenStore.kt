@@ -74,6 +74,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     fun onFilterChanged(filter: String) {
         handle.modelScope().launch(Dispatchers.IO) {
             PaperList.applyFilter(filter)
+            setState { copy(filterString = filter) }
         }
     }
 
@@ -125,4 +126,5 @@ data class PaperListScreenState(
     val classifierExceptionAlert: Boolean = false,
     val ydfNotFoundAlert: Boolean = false,
     val filterDialog: Boolean = false,
+    val filterString: String? = null,
 )

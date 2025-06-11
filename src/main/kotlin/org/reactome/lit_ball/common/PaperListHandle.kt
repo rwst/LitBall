@@ -27,37 +27,14 @@ class PaperListHandle {
         return fullList
     }
 
-    fun getFilteredList(): List<Paper>? {
+    fun getFilteredList(): List<Paper> {
         return filteredList
     }
 
     fun setFullList(list: List<Paper>) {
-//        fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
-//            val extIds = map?.toMutableMap()
-//            extIds?.entries?.forEach {
-//                if (it.value == null) {
-//                    println("Senseless: ${it.key} ${it.value}}")
-//                    extIds.remove(it.key)
-//                    onChanged(extIds)
-//                }
-//            }
-//        }
-//
-//        fun sanitize() {
-//            fullList.forEach { paper ->
-//                sanitizeMap(paper.details.externalIds) {
-//                    paper.details.externalIds = it
-//                }
-//                sanitizeMap(paper.details.tldr) {
-//                    paper.details.tldr = it
-//                }
-//            }
-//        }
-
         fullList.clear()
         fullList.addAll(list)
         filteredList.clear()
-//        sanitize()
     }
 
     private fun updateItemInBothLists(id: Long, transformer: (Paper) -> Paper) {
