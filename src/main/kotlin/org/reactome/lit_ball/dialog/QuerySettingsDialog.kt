@@ -25,14 +25,24 @@ fun QuerySettingsDialog(
     onCloseClicked: () -> Unit,
 ) {
     val entries = mutableListOf<QuerySettingEntry>()
-    entries.add(MandatoryKeywordsEntry(item.setting.mandatoryKeyWords.toList()))
-    entries.add(ForbiddenKeywordsEntry(item.setting.forbiddenKeyWords.toList()))
-    entries.add(ClassifierEntry(item.setting.classifier))
-    entries.add(AnnotationClassesEntry(item.setting.annotationClasses.toList()))
+    when (item.type) {
+        QueryType.EXPRESSION_SEARCH -> {
+            entries.add(MandatoryKeywordsEntry(item.setting.mandatoryKeyWords.toList()))
+            entries.add(ForbiddenKeywordsEntry(item.setting.forbiddenKeyWords.toList()))
+            entries.add(PublicationDateSettingEntry(item.setting.pubDate))
+            entries.add(ArticleTypeSettingEntry(item.setting.pubType))
+        }
 
-    if (item.type == QueryType.EXPRESSION_SEARCH) {
-        entries.add(PublicationDateSettingEntry(item.setting.pubDate))
-        entries.add(ArticleTypeSettingEntry(item.setting.pubType))
+        QueryType.SIMILARITY_SEARCH -> {
+
+        }
+
+        else -> {
+            entries.add(MandatoryKeywordsEntry(item.setting.mandatoryKeyWords.toList()))
+            entries.add(ForbiddenKeywordsEntry(item.setting.forbiddenKeyWords.toList()))
+            entries.add(ClassifierEntry(item.setting.classifier))
+            entries.add(AnnotationClassesEntry(item.setting.annotationClasses.toList()))
+        }
     }
 
     QuerySettingsDialog(

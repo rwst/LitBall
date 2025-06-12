@@ -16,31 +16,12 @@ import common.*
 import service.getDOIsforPMIDs
 import window.components.Icons
 import window.components.Tooltip
+import window.components.doiInputHelpTooltipText
+import window.components.queryTypeTooltipText
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
 const val NOCOPY = "---no copy---"
-
-private const val queryTypeTooltipText = """
-                        Available query types are:
-                        1. Simple expression search: your positive and negative
-                           keyphrases/expressions are sent to Semantic Scholar
-                           for a search over the whole graph. Starting DOIs are
-                           ignored.
-                        2. Snowballing with automated keyphrase/expression
-                           filtering. No supervised filtering (all matches are
-                           accepted).
-                        3. (default) Snowballing with automated and supervised
-                           filtering.
-                        4. Similarity search: give some DOI/PMID(s) and get a number
-                           of "recommended papers" from S2
-                    """
-
-private const val doiInputHelpTooltipText = """
-                            Input one DOI/PMID per line. It is not necessary to manually trim
-                            the DOI strings. LitBall will automatically chop off everything
-                            before the “10.” part, so simply copypasting a DOI link will be
-                            handled. PMID links will be stripped to just the number"""
 
 @Suppress("UNCHECKED_CAST")
 @Composable

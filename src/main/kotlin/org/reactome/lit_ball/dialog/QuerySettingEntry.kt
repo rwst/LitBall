@@ -17,6 +17,10 @@ import common.typeStringsToBoolArray
 import util.StringPatternMatcher
 import util.splitToSet
 import window.components.Tooltip
+import window.components.annotationClassesTooltipText
+import window.components.classifierTooltipText
+import window.components.forbiddenKeywordsTooltipText
+import window.components.mandatoryKeywordsTooltipText
 import kotlin.collections.joinToString
 
 // Interface for individual setting components
@@ -29,15 +33,6 @@ interface QuerySettingEntry {
 
 // --- Implementations of QuerySettingEntry ---
 
-private const val mandatoryKeywordsTooltipText = """
-Enter either
-1. keywords/phrases separated by comma, no wildcards, or
-2. logical expression of keywords/phrases starting with
-   open parenthesis and containing operators "or", "and", 
-   "not", wildcard "*", and matched parentheses.
-In both cases keyphrases are matched to words in title,
-abstract, and TLDR for a positive match.
-"""
 class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     val initialValue = initialValue.joinToString(", ")
     private lateinit var fieldValue: MutableState<String>
@@ -91,15 +86,6 @@ class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     }
 }
 
-private const val forbiddenKeywordsTooltipText = """
-Optionally enter either
-1. keywords/phrases separated by comma, no wildcards, or
-2. logical expression of keywords/phrases starting with
-   open parenthesis and containing operators "or", "and", 
-   "not", wildcard "*", and matched parentheses.
-In both cases keyphrases are matched to words in title,
-for a negative match.
-"""
 class ForbiddenKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     val fieldValue = mutableStateOf(initialValue.joinToString(", "))
     val warningValue: MutableState<String?> = mutableStateOf(null)
@@ -144,12 +130,6 @@ class ForbiddenKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     }
 }
 
-private const val classifierTooltipText = """
-On Linux, if the YDF package is installed, this
-is the name of the model that will be used for
-automated filtering in the Supervised Filtering
-screen.
-"""
 class ClassifierEntry(val initialValue: String) : QuerySettingEntry {
     private lateinit var fieldValue: MutableState<String>
 
@@ -175,14 +155,6 @@ class ClassifierEntry(val initialValue: String) : QuerySettingEntry {
     }
 }
 
-private const val annotationClassesTooltipText = """
-If this field contains words separated
-by comma, the same words will appear as
-clickboxes in the Annotation Screen on every
-paper. Tagged papers will, on export, be
-sorted in tag-associated CSV files inside
-the query directory.
-"""
 class AnnotationClassesEntry(initialValue: List<String>) : QuerySettingEntry {
     private var fieldValue: MutableState<String> = mutableStateOf(initialValue.joinToString(", "))
 
