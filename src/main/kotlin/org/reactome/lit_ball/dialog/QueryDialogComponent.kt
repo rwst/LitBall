@@ -56,7 +56,7 @@ fun <T : ArticleTypeState> queryArticleTypeComponent(
                                     onStateChange(!checkedState)
                                     val newFlagChecked = state.value.flagChecked.clone()
                                     newFlagChecked[articleType.ordinal] = !checkedState
-                                    state.set { state.value.update(flagChecked = newFlagChecked) as T }
+                                    state.set { state.value.withFlagChecked(flagChecked = newFlagChecked) as T }
                                 }
                             },
                             modifier = Modifier
@@ -89,7 +89,7 @@ fun <T: PublicationDateState> queryPublicationDateComponent(
         TextField(
             value = state.value.pubYear,
             onValueChange = {
-                state.set { state.value.update(pubYear = it) as T }
+                state.set { state.value.withPubYear(pubYear = it) as T }
             },
             label = { Text("Publication Date (optional)") },
             placeholder = { Text("1900-") }
@@ -97,9 +97,10 @@ fun <T: PublicationDateState> queryPublicationDateComponent(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Composable
-fun queryPaperIdsComponent(
-    state: MutableState<QueryDialogState>,
+fun <T: PaperIdsState> queryPaperIdsComponent(
+    state: MutableState<T>,
 ) {
     Row {
         Tooltip(
@@ -110,16 +111,12 @@ fun queryPaperIdsComponent(
         }
         Spacer(modifier = Modifier.width(14.dp))
         TextField(
-            value = state.value.field,
+            value = state.value.paperIds,
             onValueChange = { str ->
-                state.set {
-                    copy(
-                        field = str
-                            .split('\n')
-                            .joinToString("\n") { s -> s.trim().transformDOI() } ,
-                        pathWarning = null
-                    )
-                }
+                val newPaperIds = str
+                    .split('\n')
+                    .joinToString("\n") { s -> s.trim().transformDOI() }
+                state.value = state.value.withPaperIds(paperIds = newPaperIds) as T
             },
             label = { Text("Core DOIs/PMIDs (one per line)") },
             placeholder = { Text("10.XYZ/ABC\n12345678") }

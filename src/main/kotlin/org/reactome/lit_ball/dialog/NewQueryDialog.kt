@@ -37,7 +37,7 @@ fun NewQueryDialog(
     }
 
     fun processConfirmation() {
-        val refs = state.value.field.split("\n")
+        val refs = state.value.paperIds.split("\n")
             .map { it.trim().transformDOI() }
             .filter { it.isNotBlank() }
         val name = state.value.name.trim()
@@ -55,7 +55,7 @@ fun NewQueryDialog(
                 setState {
                     copy(
                         doiWarning = null,
-                        field = paperIds.joinToString("\n")
+                        paperIds = paperIds.joinToString("\n")
                     )
                 }
                 if (paperIds.any { !it.startsWith("10.") && !it.startsWith("s2:") }) {
@@ -65,7 +65,7 @@ fun NewQueryDialog(
                 setState { copy(doiWarning = "Error: ${e.message}") }
             }
         }
-        val newPaperIds = state.value.field.split("\n")
+        val newPaperIds = state.value.paperIds.split("\n")
             .map { it.trim().transformDOI() }
             .filter { it.isNotBlank() }
 
@@ -104,7 +104,7 @@ fun NewQueryDialog(
         if (state.value.queryType != QueryType.EXPRESSION_SEARCH.ordinal) {
             val newField = getDOIs(getQueryDir(fromName), FileType.ACCEPTED)
                 .joinToString("\n")
-            setState { copy(field = newField) }
+            setState { copy(paperIds = newField) }
         }
         else {
             if (fromQuery.type == QueryType.EXPRESSION_SEARCH) {

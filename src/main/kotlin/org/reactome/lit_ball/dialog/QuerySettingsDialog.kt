@@ -31,17 +31,18 @@ fun QuerySettingsDialog(
             entries.add(ForbiddenKeywordsEntry(item.setting.forbiddenKeyWords.toList()))
             entries.add(PublicationDateSettingEntry(item.setting.pubDate))
             entries.add(ArticleTypeSettingEntry(item.setting.pubType))
+            entries.add(AnnotationClassesEntry(item.setting.annotationClasses.toList()))
         }
-
         QueryType.SIMILARITY_SEARCH -> {
-
+            entries.add(PaperIdsSettingEntry(""))
+            entries.add(AnnotationClassesEntry(item.setting.annotationClasses.toList()))
         }
-
         else -> {
             entries.add(MandatoryKeywordsEntry(item.setting.mandatoryKeyWords.toList()))
             entries.add(ForbiddenKeywordsEntry(item.setting.forbiddenKeyWords.toList()))
             entries.add(ClassifierEntry(item.setting.classifier))
             entries.add(AnnotationClassesEntry(item.setting.annotationClasses.toList()))
+            entries.add(PaperIdsSettingEntry(""))
         }
     }
 

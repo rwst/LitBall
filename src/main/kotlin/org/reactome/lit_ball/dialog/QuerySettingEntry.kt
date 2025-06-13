@@ -33,6 +33,19 @@ interface QuerySettingEntry {
 
 // --- Implementations of QuerySettingEntry ---
 
+class PaperIdsSettingEntry(initialValue: String) : QuerySettingEntry {
+    private val state = mutableStateOf(PaperIdsDialogState(paperIds = initialValue))
+
+    @Composable
+    override fun View() {
+        queryPaperIdsComponent(state)
+    }
+
+    override fun validate(): Boolean = true
+
+    override fun applyTo(setting: QuerySetting) {
+    }
+}
 class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     val initialValue = initialValue.joinToString(", ")
     private lateinit var fieldValue: MutableState<String>

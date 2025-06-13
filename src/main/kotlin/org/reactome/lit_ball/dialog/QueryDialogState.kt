@@ -6,12 +6,18 @@ import common.QueryType
 
 interface ArticleTypeState {
     val flagChecked: BooleanArray
-    fun update(flagChecked: BooleanArray): ArticleTypeState
+    fun withFlagChecked(flagChecked: BooleanArray): ArticleTypeState
 }
 
 interface PublicationDateState {
     val pubYear: String
-    fun update(pubYear: String): PublicationDateState
+    fun withPubYear(pubYear: String): PublicationDateState
+}
+
+interface PaperIdsState {
+    val paperIds: String
+    val doiWarning: String?
+    fun withPaperIds(paperIds: String): PaperIdsState
 }
 
 data class ArticleTypeDialogState(
@@ -29,7 +35,7 @@ data class ArticleTypeDialogState(
 
     override fun hashCode(): Int = flagChecked.contentHashCode()
 
-    override fun update(flagChecked: BooleanArray): ArticleTypeState {
+    override fun withFlagChecked(flagChecked: BooleanArray): ArticleTypeState {
         return ArticleTypeDialogState(flagChecked = flagChecked)
     }
 }
@@ -37,24 +43,34 @@ data class ArticleTypeDialogState(
 data class PublicationDateDialogState(
     override val pubYear: String = ""
 ) : PublicationDateState {
-    override fun update(pubYear: String): PublicationDateState {
+    override fun withPubYear(pubYear: String): PublicationDateState {
         return PublicationDateDialogState(pubYear = pubYear)
+    }
+}
+
+data class PaperIdsDialogState(
+    override val paperIds: String = "",
+    override val doiWarning: String? = null
+) : PaperIdsState {
+    override fun withPaperIds(paperIds: String): PaperIdsState {
+        // When user types, update the text and clear any previous warning
+        return copy(paperIds = paperIds, doiWarning = null)
     }
 }
 
 data class QueryDialogState(
     val copyFrom: String = "",
     val queryType: Int = QueryType.SUPERVISED_SNOWBALLING.ordinal,
-    val field: String = "",
     val name: String = "",
+    override val paperIds: String = "",
     override val pubYear: String = "",
     override val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
     val check: Boolean = true,
     val nameCheck: Boolean = true,
     val typeWarning: String? = null,
     val pathWarning: String? = null,
-    val doiWarning: String? = null
-) : ArticleTypeState, PublicationDateState {
+    override val doiWarning: String? = null,
+) : ArticleTypeState, PublicationDateState, PaperIdsState {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -66,7 +82,7 @@ data class QueryDialogState(
         if (check != other.check) return false
         if (nameCheck != other.nameCheck) return false
         if (copyFrom != other.copyFrom) return false
-        if (field != other.field) return false
+        if (paperIds != other.paperIds) return false
         if (name != other.name) return false
         if (pubYear != other.pubYear) return false
         if (!flagChecked.contentEquals(other.flagChecked)) return false
@@ -82,7 +98,7 @@ data class QueryDialogState(
         result = 31 * result + check.hashCode()
         result = 31 * result + nameCheck.hashCode()
         result = 31 * result + copyFrom.hashCode()
-        result = 31 * result + field.hashCode()
+        result = 31 * result + paperIds.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + pubYear.hashCode()
         result = 31 * result + flagChecked.contentHashCode()
@@ -92,31 +108,18 @@ data class QueryDialogState(
         return result
     }
 
-    override fun update(flagChecked: BooleanArray): ArticleTypeState {
-        return QueryDialogState(
-            copyFrom = copyFrom,
-            field = field,
-            name = name,
-            pubYear = pubYear,
-            flagChecked = flagChecked,
-            queryType = queryType,
-            typeWarning = typeWarning,
-            pathWarning = pathWarning,
-            doiWarning = doiWarning,
-        )
+    override fun withFlagChecked(flagChecked: BooleanArray): ArticleTypeState {
+        return this.copy(flagChecked = flagChecked)
     }
 
-    override fun update(pubYear: String): PublicationDateState {
-        return QueryDialogState(
-            copyFrom = copyFrom,
-            field = field,
-            name = name,
-            pubYear = pubYear,
-            flagChecked = flagChecked,
-            queryType = queryType,
-            typeWarning = typeWarning,
-            pathWarning = pathWarning,
-            doiWarning = doiWarning,
+    override fun withPubYear(pubYear: String): PublicationDateState {
+        return this.copy(pubYear = pubYear)
+    }
+
+    override fun withPaperIds(paperIds: String): PaperIdsState {
+        return this.copy(
+            paperIds = paperIds,
+            doiWarning = null // When user types, clear any existing DOI/PMID-related warning
         )
     }
 }
