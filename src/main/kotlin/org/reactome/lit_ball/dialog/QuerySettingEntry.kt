@@ -30,8 +30,9 @@ interface QuerySettingEntry {
 
 // --- Implementations of QuerySettingEntry ---
 
-class PaperIdsSettingEntry(initialValue: String) : QuerySettingEntry {
-    private val state = mutableStateOf(PaperIdsDialogState(paperIds = initialValue))
+class PaperIdsSettingEntry(initialValue: Set<String>) : QuerySettingEntry {
+    private val initialString = initialValue.joinToString("\n").trim()
+    private val state = mutableStateOf(PaperIdsDialogState(paperIds = initialString))
 
     @Composable
     override fun View() {

@@ -1,6 +1,10 @@
 package dialog
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -110,17 +114,31 @@ fun <T: PaperIdsState> queryPaperIdsComponent(
             helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
         }
         Spacer(modifier = Modifier.width(14.dp))
-        TextField(
-            value = state.value.paperIds,
-            onValueChange = { str ->
-                val newPaperIds = str
-                    .split('\n')
-                    .joinToString("\n") { s -> s.trim().transformDOI() }
-                state.value = state.value.withPaperIds(paperIds = newPaperIds) as T
-            },
-            label = { Text("Core DOIs/PMIDs (one per line)") },
-            placeholder = { Text("10.XYZ/ABC\n12345678") }
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth().height(200.dp)
+        ) {
+            val scrollState = rememberScrollState()
+            TextField(
+                value = state.value.paperIds,
+                onValueChange = { str ->
+                    val newPaperIds = str
+                        .split('\n')
+                        .joinToString("\n") { s -> s.trim().transformDOI() }
+                    state.value = state.value.withPaperIds(paperIds = newPaperIds) as T
+                },
+                label = { Text("Core DOIs/PMIDs (one per line)") },
+                placeholder = { Text("10.XYZ/ABC\n12345678") },
+                modifier = Modifier.fillMaxSize().verticalScroll(scrollState)
+            )
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                // 5. Link the scrollbar to the same scroll state.
+                adapter = rememberScrollbarAdapter(
+                    scrollState = scrollState
+                )
+            )
+        }
     }
 }
 
