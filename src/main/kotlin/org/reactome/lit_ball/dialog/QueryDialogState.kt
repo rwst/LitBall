@@ -16,7 +16,6 @@ interface PublicationDateState {
 
 interface PaperIdsState {
     val paperIds: String
-    val doiWarning: String?
     fun withPaperIds(paperIds: String): PaperIdsState
 }
 
@@ -49,12 +48,10 @@ data class PublicationDateDialogState(
 }
 
 data class PaperIdsDialogState(
-    override val paperIds: String = "",
-    override val doiWarning: String? = null
-) : PaperIdsState {
+    override val paperIds: String = "") : PaperIdsState {
     override fun withPaperIds(paperIds: String): PaperIdsState {
         // When user types, update the text and clear any previous warning
-        return copy(paperIds = paperIds, doiWarning = null)
+        return copy(paperIds = paperIds)
     }
 }
 
@@ -69,8 +66,8 @@ data class QueryDialogState(
     val nameCheck: Boolean = true,
     val typeWarning: String? = null,
     val pathWarning: String? = null,
-    override val doiWarning: String? = null,
-) : ArticleTypeState, PublicationDateState, PaperIdsState {
+    val doiWarning: String? = null,
+    ) : ArticleTypeState, PublicationDateState, PaperIdsState {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -88,7 +85,6 @@ data class QueryDialogState(
         if (!flagChecked.contentEquals(other.flagChecked)) return false
         if (typeWarning != other.typeWarning) return false
         if (pathWarning != other.pathWarning) return false
-        if (doiWarning != other.doiWarning) return false
 
         return true
     }
@@ -104,7 +100,6 @@ data class QueryDialogState(
         result = 31 * result + flagChecked.contentHashCode()
         result = 31 * result + (typeWarning?.hashCode() ?: 0)
         result = 31 * result + (pathWarning?.hashCode() ?: 0)
-        result = 31 * result + (doiWarning?.hashCode() ?: 0)
         return result
     }
 
@@ -119,7 +114,6 @@ data class QueryDialogState(
     override fun withPaperIds(paperIds: String): PaperIdsState {
         return this.copy(
             paperIds = paperIds,
-            doiWarning = null // When user types, clear any existing DOI/PMID-related warning
         )
     }
 }

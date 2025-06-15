@@ -121,15 +121,6 @@ fun <T: PaperIdsState> queryPaperIdsComponent(
             label = { Text("Core DOIs/PMIDs (one per line)") },
             placeholder = { Text("10.XYZ/ABC\n12345678") }
         )
-        state.value.doiWarning?.also {
-            Text(
-                it,
-                color = Color.Red,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 24.dp)
-            )
-        }
     }
 }
 

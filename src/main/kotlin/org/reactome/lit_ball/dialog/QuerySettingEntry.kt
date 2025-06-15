@@ -1,6 +1,9 @@
 package dialog
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -9,25 +12,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import common.QuerySetting
 import common.boolArrayToTypeStrings
 import common.typeStringsToBoolArray
 import util.StringPatternMatcher
 import util.splitToSet
-import window.components.Tooltip
-import window.components.annotationClassesTooltipText
-import window.components.classifierTooltipText
-import window.components.forbiddenKeywordsTooltipText
-import window.components.mandatoryKeywordsTooltipText
-import kotlin.collections.joinToString
+import window.components.*
 
 // Interface for individual setting components
 interface QuerySettingEntry {
     @Composable
     fun View()
-    fun validate(): Boolean
+    fun validate(warnString: MutableState<String?>): Boolean
     fun applyTo(setting: QuerySetting)
 }
 
@@ -41,20 +38,19 @@ class PaperIdsSettingEntry(initialValue: String) : QuerySettingEntry {
         queryPaperIdsComponent(state)
     }
 
-    override fun validate(): Boolean = true
+    override fun validate(warnString: MutableState<String?>): Boolean = true
 
     override fun applyTo(setting: QuerySetting) {
     }
 }
+
 class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     val initialValue = initialValue.joinToString(", ")
     private lateinit var fieldValue: MutableState<String>
-    private lateinit var warningValue: MutableState<String?>
 
     @Composable
     override fun View() {
         fieldValue = rememberSaveable { mutableStateOf(initialValue) }
-        warningValue = rememberSaveable { mutableStateOf(null) }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Tooltip(
@@ -68,28 +64,20 @@ class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
                 value = fieldValue.value,
                 onValueChange = {
                     fieldValue.value = it
-                    warningValue.value = null
                 },
                 label = { Text("Mandatory keywords / expression") },
                 placeholder = { Text("") },
                 modifier = Modifier.weight(1f)
             )
-            warningValue.value?.also {
-                Text(
-                    it,
-                    color = Color.Red,
-                    modifier = Modifier.padding(start = 8.dp).align(Alignment.CenterVertically)
-                )
-            }
         }
     }
 
-    override fun validate(): Boolean {
+    override fun validate(warnString: MutableState<String?>): Boolean {
         if (!StringPatternMatcher.validateSetting(fieldValue.value)) {
-            warningValue.value = "Invalid expression"
+            warnString.value = "Invalid expression"
             return false
         }
-        warningValue.value = null
+        warnString.value = null
         return true
     }
 
@@ -101,7 +89,6 @@ class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
 
 class ForbiddenKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     val fieldValue = mutableStateOf(initialValue.joinToString(", "))
-    val warningValue: MutableState<String?> = mutableStateOf(null)
 
     @Composable
     override fun View() {
@@ -114,29 +101,22 @@ class ForbiddenKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
                 value = fieldValue.value,
                 onValueChange = {
                     fieldValue.value = it
-                    warningValue.value = null
                 },
                 label = { Text("Forbidden keywords / expression") },
                 placeholder = { Text("") },
                 modifier = Modifier.weight(1f)
             )
-            warningValue.value?.also {
-                Text(
-                    it,
-                    color = Color.Red,
-                    modifier = Modifier.padding(start = 8.dp).align(Alignment.CenterVertically)
-                )
-            }
         }
     }
-    override fun validate(): Boolean {
+    override fun validate(warnString: MutableState<String?>): Boolean {
         if (!StringPatternMatcher.validateSetting(fieldValue.value)) {
-            warningValue.value = "Invalid expression"
+            warnString.value = "Invalid expression"
             return false
         }
-        warningValue.value = null
+        warnString.value = null
         return true
     }
+
     override fun applyTo(setting: QuerySetting) {
         setting.forbiddenKeyWords.clear()
         setting.forbiddenKeyWords.addAll(StringPatternMatcher.patternSettingFrom(fieldValue.value))
@@ -162,7 +142,7 @@ class ClassifierEntry(val initialValue: String) : QuerySettingEntry {
             )
         }
     }
-    override fun validate(): Boolean = true
+    override fun validate(warnString: MutableState<String?>): Boolean = true
     override fun applyTo(setting: QuerySetting) {
         setting.classifier = fieldValue.value.trim()
     }
@@ -187,7 +167,7 @@ class AnnotationClassesEntry(initialValue: List<String>) : QuerySettingEntry {
             )
         }
     }
-    override fun validate(): Boolean = true
+    override fun validate(warnString: MutableState<String?>): Boolean = true
     override fun applyTo(setting: QuerySetting) {
         setting.annotationClasses.clear()
         setting.annotationClasses.addAll(fieldValue.value.splitToSet(","))
@@ -202,7 +182,7 @@ class PublicationDateSettingEntry(initialPubDate: String) : QuerySettingEntry {
         queryPublicationDateComponent(dateState) // Reuses component from QueryDialogComponent.kt
     }
 
-    override fun validate(): Boolean = true // Add specific validation if needed
+    override fun validate(warnString: MutableState<String?>): Boolean = true // Add specific validation if needed
     override fun applyTo(setting: QuerySetting) {
         setting.pubDate = dateState.value.pubYear.trim()
     }
@@ -217,7 +197,7 @@ class ArticleTypeSettingEntry(initialPubTypes: List<String>) : QuerySettingEntry
     override fun View() {
         queryArticleTypeComponent(typeState) // Reuses component from QueryDialogComponent.kt
     }
-    override fun validate(): Boolean = true
+    override fun validate(warnString: MutableState<String?>): Boolean = true
     override fun applyTo(setting: QuerySetting) {
         setting.pubType.clear()
         setting.pubType.addAll(boolArrayToTypeStrings(typeState.value.flagChecked))

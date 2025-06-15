@@ -41,7 +41,7 @@ fun NewQueryDialog(
             .map { it.trim().transformDOI() }
             .filter { it.isNotBlank() }
         val name = state.value.name.trim()
-        setState { copy(pathWarning = null, doiWarning = null) }
+        setState { copy(pathWarning = null) }
 
         if (File(queryPath).exists() && !Path(queryPath).isWritable()) {
             setState { copy(pathWarning = "Query directory is not writable") }
