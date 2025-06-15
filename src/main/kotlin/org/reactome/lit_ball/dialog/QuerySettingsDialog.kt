@@ -59,13 +59,7 @@ fun QuerySettingsDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    var allValid = true
-                    for (entry in entries) {
-                        if (!entry.validate(warning)) {
-                            allValid = false
-                        }
-                    }
-
+                    val allValid = entries.all { it.validate(warning) }
                     if (allValid) {
                         warning.value = null
                         entries.forEach { entry ->

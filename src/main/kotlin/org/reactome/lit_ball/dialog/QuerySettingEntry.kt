@@ -74,7 +74,7 @@ class MandatoryKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
 
     override fun validate(warnString: MutableState<String?>): Boolean {
         if (!StringPatternMatcher.validateSetting(fieldValue.value)) {
-            warnString.value = "Invalid expression"
+            warnString.value = "Mandatory keywords: Invalid expression"
             return false
         }
         warnString.value = null
@@ -110,7 +110,7 @@ class ForbiddenKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     }
     override fun validate(warnString: MutableState<String?>): Boolean {
         if (!StringPatternMatcher.validateSetting(fieldValue.value)) {
-            warnString.value = "Invalid expression"
+            warnString.value = "Forbidden keywords: Invalid expression"
             return false
         }
         warnString.value = null
@@ -179,10 +179,10 @@ class PublicationDateSettingEntry(initialPubDate: String) : QuerySettingEntry {
 
     @Composable
     override fun View() {
-        queryPublicationDateComponent(dateState) // Reuses component from QueryDialogComponent.kt
+        queryPublicationDateComponent(dateState)
     }
 
-    override fun validate(warnString: MutableState<String?>): Boolean = true // Add specific validation if needed
+    override fun validate(warnString: MutableState<String?>): Boolean = true
     override fun applyTo(setting: QuerySetting) {
         setting.pubDate = dateState.value.pubYear.trim()
     }
@@ -195,7 +195,7 @@ class ArticleTypeSettingEntry(initialPubTypes: List<String>) : QuerySettingEntry
 
     @Composable
     override fun View() {
-        queryArticleTypeComponent(typeState) // Reuses component from QueryDialogComponent.kt
+        queryArticleTypeComponent(typeState)
     }
     override fun validate(warnString: MutableState<String?>): Boolean = true
     override fun applyTo(setting: QuerySetting) {
@@ -203,4 +203,3 @@ class ArticleTypeSettingEntry(initialPubTypes: List<String>) : QuerySettingEntry
         setting.pubType.addAll(boolArrayToTypeStrings(typeState.value.flagChecked))
     }
 }
-
