@@ -124,31 +124,6 @@ class ForbiddenKeywordsEntry(initialValue: List<String>) : QuerySettingEntry {
     }
 }
 
-class ClassifierEntry(val initialValue: String) : QuerySettingEntry {
-    private lateinit var fieldValue: MutableState<String>
-
-    @Composable
-    override fun View() {
-        fieldValue = rememberSaveable { mutableStateOf(initialValue) }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Tooltip(text = classifierTooltipText.trimIndent(), Modifier.align(Alignment.CenterVertically)) {
-                helpIcon(Modifier.size(20.dp).align(Alignment.CenterVertically))
-            }
-            Spacer(modifier = Modifier.width(14.dp))
-            TextField(
-                value = fieldValue.value,
-                onValueChange = { fieldValue.value = it },
-                label = { Text("Classifier model name") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-    override fun validate(warnString: MutableState<String?>): Boolean = true
-    override fun applyTo(setting: QuerySetting) {
-        setting.classifier = fieldValue.value.trim()
-    }
-}
-
 class AnnotationClassesEntry(initialValue: List<String>) : QuerySettingEntry {
     private var fieldValue: MutableState<String> = mutableStateOf(initialValue.joinToString(", "))
 
