@@ -16,7 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import common.*
+import androidx.compose.ui.unit.sp
+import common.ArticleType
+import common.QueryList
+import common.QueryType
 import service.getDOIsforPMIDs
 import window.components.Icons
 import window.components.Tooltip
@@ -68,6 +71,7 @@ fun <T : ArticleTypeState> queryArticleTypeComponent(
                         )
                         Text(
                             text = articleType.s2name,
+                            lineHeight = 16.sp,
                         )
                     }
                 }

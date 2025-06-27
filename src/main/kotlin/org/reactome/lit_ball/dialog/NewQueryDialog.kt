@@ -3,16 +3,20 @@
 package dialog
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Text
+import androidx.compose.material.Surface
 import androidx.compose.material.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Dialog
 import common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +32,6 @@ fun NewQueryDialog(
     rootScope: CoroutineScope,
     onCloseClicked: () -> Unit,
 ) {
-
     val state = rememberSaveable { mutableStateOf(QueryDialogState()) }
     val queryPath = Settings.map["path-to-queries"] ?: throw Exception("Path to queries not set")
 
@@ -97,7 +100,7 @@ fun NewQueryDialog(
 
         setState {
             copy(name = generateSequence(1) { it + 1 }
-                .map { "${copyFrom}-$it" }
+                .map { "${fromName}-$it" }
                 .first { it !in QueryList.list.map { query -> query.name } }
             )
         }
@@ -105,67 +108,80 @@ fun NewQueryDialog(
             val newField = getDOIs(getQueryDir(fromName), FileType.ACCEPTED)
                 .joinToString("\n")
             setState { copy(paperIds = newField) }
-        }
-        else {
+        } else {
             if (fromQuery.type == QueryType.EXPRESSION_SEARCH) {
                 setState {
                     copy(
                         flagChecked = typeStringsToBoolArray(fromQuery.setting.pubType),
                         pubYear = fromQuery.setting.pubDate,
-                        )
+                    )
                 }
             }
         }
     }
 
-    AlertDialog(
-        onDismissRequest = { onCloseClicked() },
-        confirmButton = {
-            TextButton(
-                onClick = { processConfirmation() }
+    Dialog(onDismissRequest = { rootScope.launch { onCloseClicked() } }) {
+        Surface(
+            modifier = Modifier
+                .width(700.dp)
+                .wrapContentHeight(),
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Text("Confirm")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onCloseClicked() }
-            ) {
-                Text("Dismiss")
-            }
-        },
-        title = {
-            Text("Create new query")
-        },
-        text = {
-            Column(horizontalAlignment = Alignment.Start) {
-                if (state.value.copyFrom.isNotBlank()) {
-                    processCopyFrom()
+                LaunchedEffect(state.value.copyFrom) {
+                    if (state.value.copyFrom.isNotBlank()) {
+                        processCopyFrom()
+                    }
                 }
+                Text(
+                    text = "Create new query",
+                    style = MaterialTheme.typography.titleMedium
+                )
                 queryTypeComponent(state)
-                Spacer(modifier = Modifier.height(8.dp))
                 queryCopyFromComponent(state)
-                Spacer(modifier = Modifier.height(8.dp))
                 queryNameComponent(state)
 
                 if (state.value.queryType > 0) {
                     queryPaperIdsComponent(state)
                 } else {
                     queryPublicationDateComponent(state)
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     queryArticleTypeComponent(state)
                 }
 
                 if (!state.value.check)
-                    Text("Please fill in the text fields.")
+                    Text(
+                        "Please fill in the text fields.",
+                        color = Color.Red,
+                    )
                 if (!state.value.nameCheck)
-                    Text("Query name already exists in directory.")
+                    Text(
+                        "Query name already exists in directory.",
+                        color = Color.Red,
+                    )
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = { onCloseClicked() }
+                    ) {
+                        Text("Dismiss")
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Button(
+                        onClick = { processConfirmation() }
+                    ) {
+                        Text("Confirm")
+                    }
+                }
             }
-        },
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier
-            .padding(28.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-    )
+        }
+    }
 }
