@@ -56,6 +56,8 @@ object QueryList {
         name: String,
         dois: Set<String>,
         expSearchParams: Pair<String, BooleanArray>,
+        mandatoryKeyWords: List<String> = emptyList(),
+        forbiddenKeyWords: List<String> = emptyList(),
     ) {
         val cleanedDois = dois.filter { doi -> doi.isNotBlank() }.toMutableSet()
         val queryDir = getQueryDir(name)
@@ -70,10 +72,12 @@ object QueryList {
             acceptedSet = cleanedDois,
             expSearchParams = expSearchParams,
         )
+        newQuery.setting.mandatoryKeyWords = mandatoryKeyWords.toMutableSet()
+        newQuery.setting.forbiddenKeyWords = forbiddenKeyWords.toMutableSet()
         if (type == QueryType.SIMILARITY_SEARCH) {
             newQuery.status.value = QueryStatus.FILTERED2
-            newQuery.saveSettings()
         }
+        newQuery.saveSettings()
         list.add(newQuery)
     }
 

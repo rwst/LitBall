@@ -62,6 +62,8 @@ data class QueryDialogState(
     override val paperIds: String = "",
     override val pubYear: String = "",
     override val flagChecked: BooleanArray = BooleanArray(ArticleType.entries.size) { true },
+    val mandatoryKeyWords: List<String> = emptyList(),
+    val forbiddenKeyWords: List<String> = emptyList(),
     val check: Boolean = true,
     val nameCheck: Boolean = true,
     val typeWarning: String? = null,
@@ -83,6 +85,8 @@ data class QueryDialogState(
         if (name != other.name) return false
         if (pubYear != other.pubYear) return false
         if (!flagChecked.contentEquals(other.flagChecked)) return false
+        if (mandatoryKeyWords != other.mandatoryKeyWords) return false
+        if (forbiddenKeyWords != other.forbiddenKeyWords) return false
         if (typeWarning != other.typeWarning) return false
         if (pathWarning != other.pathWarning) return false
 
@@ -98,6 +102,8 @@ data class QueryDialogState(
         result = 31 * result + name.hashCode()
         result = 31 * result + pubYear.hashCode()
         result = 31 * result + flagChecked.contentHashCode()
+        result = 31 * result + mandatoryKeyWords.hashCode()
+        result = 31 * result + forbiddenKeyWords.hashCode()
         result = 31 * result + (typeWarning?.hashCode() ?: 0)
         result = 31 * result + (pathWarning?.hashCode() ?: 0)
         return result

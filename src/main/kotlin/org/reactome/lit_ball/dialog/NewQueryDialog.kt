@@ -88,6 +88,8 @@ fun NewQueryDialog(
                     name,
                     newPaperIds.toSet(),
                     Pair(state.value.pubYear, state.value.flagChecked),
+                    state.value.mandatoryKeyWords,
+                    state.value.forbiddenKeyWords,
                 )
                 onCloseClicked()
             }
@@ -116,6 +118,16 @@ fun NewQueryDialog(
                         pubYear = fromQuery.setting.pubDate,
                     )
                 }
+            }
+        }
+        if (fromQuery.type == QueryType.EXPRESSION_SEARCH &&
+            state.value.queryType != QueryType.SIMILARITY_SEARCH.ordinal
+        ) {
+            setState {
+                copy(
+                    mandatoryKeyWords = fromQuery.setting.mandatoryKeyWords.toList(),
+                    forbiddenKeyWords = fromQuery.setting.forbiddenKeyWords.toList(),
+                )
             }
         }
     }

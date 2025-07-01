@@ -8,8 +8,8 @@ import java.io.File
 data class QuerySetting(
     val startDois: MutableList<String> = mutableListOf(),
     var type: QueryType = QueryType.SUPERVISED_SNOWBALLING,
-    val mandatoryKeyWords: MutableSet<String> = mutableSetOf(),
-    val forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
+    var mandatoryKeyWords: MutableSet<String> = mutableSetOf(),
+    var forbiddenKeyWords: MutableSet<String> = mutableSetOf(),
     var classifier: String = "",
     val annotationClasses: MutableSet<String> = mutableSetOf(),
     var pubDate: String = "",
