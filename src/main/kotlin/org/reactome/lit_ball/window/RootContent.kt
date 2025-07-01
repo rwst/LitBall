@@ -65,6 +65,13 @@ fun RootContent(
         InformationalDialog(title = "NOTE", it)
     }
 
+    state.doPathSelector?.let {
+        PathSelectorDialog(initialPath = it,
+            onDismiss = { model.onQueryPathClicked(false) },
+            onPathSelected = model::onQueryPathChanged,
+            )
+    }
+
     if (state.doConfirmationDialog.first != null) {
         ConfirmationDialog(
             title = "NOTE",

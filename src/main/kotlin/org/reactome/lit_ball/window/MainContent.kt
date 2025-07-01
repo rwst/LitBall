@@ -51,7 +51,7 @@ internal fun MainContent(
                 Spacer(modifier = Modifier.width(8.dp))
                 Tooltip("Refresh from disk", Modifier.align(Alignment.CenterVertically)) {
                     TextButton(
-                        onClick = model::onQueryPathClicked,
+                        onClick = { model.onQueryPathClicked(true) },
                         modifier = Modifier.padding(0.dp)
                     ) {
                         model.state.queryPath?.let { Text(it) }

@@ -260,7 +260,16 @@ class RootStore : ProgressHandler {
         setState { copy(doConfirmationDialog = Pair(null, "")) }
     }
 
-    fun onQueryPathClicked() {
+    fun onQueryPathClicked(doPathSelector: Boolean) {
+        if (doPathSelector)
+            setState { copy(doPathSelector = queryPath) }
+        else
+            setState { copy(doPathSelector = null) }
+    }
+
+    fun onQueryPathChanged(newPath: String) {
+        Settings.map["path-to-queries"] = newPath
+        setState { copy(queryPath = newPath) }
         modelScope.launch(Dispatchers.IO) {
             QueryList.fill()
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
@@ -332,6 +341,7 @@ data class RootState(
     val doAnnotate: Long? = null,
     val progressIndication: ProgressIndicatorParameter? = null,
     val doInformationalDialog: DialogParameters? = null,
+    val doPathSelector: String? = null,
     val aboutDialog: Boolean = false,
     val doConfirmationDialog: Pair<(() -> Unit)?, String> = Pair(null, ""),
 )
