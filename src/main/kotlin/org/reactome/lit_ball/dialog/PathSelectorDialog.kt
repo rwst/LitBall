@@ -4,6 +4,8 @@ package dialog
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,15 +13,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import window.components.Icons.Article
-import window.components.Icons.Folder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.launch
+import window.components.Icons.Article
+import window.components.Icons.Folder
 import java.io.File
 
 @Composable
@@ -36,13 +42,40 @@ fun PathSelectorDialog(
     }
     val listState = rememberLazyListState()
     val scrollbarAdapter = rememberScrollbarAdapter(scrollState = listState)
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
 
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier
                 .width(600.dp)
-                .height(500.dp),
+                .height(500.dp)
+                .focusRequester(focusRequester)
+                .focusable()
+                .onPreviewKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown) {
+                        when (event.key) {
+                            Key.DirectionDown -> {
+                                coroutineScope.launch {
+                                    listState.animateScrollBy(100f)
+                                }
+                                return@onPreviewKeyEvent true
+                            }
+
+                            Key.DirectionUp -> {
+                                coroutineScope.launch {
+                                    listState.animateScrollBy(-100f)
+                                }
+                                return@onPreviewKeyEvent true
+                            }
+                        }
+                    }
+                    false
+                },
             shape = MaterialTheme.shapes.medium,
             tonalElevation = 8.dp
         ) {
@@ -78,7 +111,11 @@ fun PathSelectorDialog(
                         Text("..")
                     }
                 }
-                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
@@ -114,11 +151,12 @@ fun PathSelectorDialog(
                         }
                     }
                     VerticalScrollbar(
-                        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .fillMaxHeight(),
                         adapter = scrollbarAdapter
                     )
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
