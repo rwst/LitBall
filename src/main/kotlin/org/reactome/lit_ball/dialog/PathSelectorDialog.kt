@@ -28,15 +28,28 @@ import window.components.Icons.Article
 import window.components.Icons.Folder
 import java.io.File
 
+/**
+ * A dialog for selecting a directory from the file system.
+ * Written by Gemini 2.5 Pro, following directions by R. Stephan
+ *
+ * @param initialPath The starting path to display in the selector.
+ * @param onPathSelected A callback function that is invoked when the user confirms a path selection.
+ *                       The selected path is passed as a String.
+ * @param onDismiss A callback function that is invoked when the dialog is dismissed.
+ */
 @Composable
 fun PathSelectorDialog(
     initialPath: String,
     onPathSelected: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    // State for the currently displayed path. Initialized with the provided initialPath.
     var currentPath by remember { mutableStateOf(File(initialPath).absoluteFile) }
     val parentPath = currentPath.parentFile
 
+    // Derived state to get the list of files and directories in the current path.
+    // It automatically recalculates when `currentPath` changes.
+    // The list is sorted to show directories first, then by name alphabetically.
     val filesAndDirs by derivedStateOf {
         currentPath.listFiles()?.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() })) ?: emptyList()
     }
@@ -45,6 +58,7 @@ fun PathSelectorDialog(
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
 
+    // Request focus on the dialog when it's first composed to enable keyboard navigation.
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -57,15 +71,17 @@ fun PathSelectorDialog(
                 .focusRequester(focusRequester)
                 .focusable()
                 .onPreviewKeyEvent { event ->
+                    // Handle keyboard events for navigation within the file list.
                     if (event.type == KeyEventType.KeyDown) {
                         when (event.key) {
+                            // Scroll down on down arrow press.
                             Key.DirectionDown -> {
                                 coroutineScope.launch {
                                     listState.animateScrollBy(100f)
                                 }
                                 return@onPreviewKeyEvent true
                             }
-
+                            // Scroll up on up arrow press.
                             Key.DirectionUp -> {
                                 coroutineScope.launch {
                                     listState.animateScrollBy(-100f)
@@ -73,6 +89,7 @@ fun PathSelectorDialog(
                                 return@onPreviewKeyEvent true
                             }
                         }
+                        // Jump to the first directory starting with the pressed letter key.
                         val char = event.utf16CodePoint.toChar()
                         if (char.isLetter()) {
                             val index = filesAndDirs.indexOfFirst {
@@ -100,6 +117,7 @@ fun PathSelectorDialog(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
+                // Read-only text field to display the current absolute path.
                 OutlinedTextField(
                     value = currentPath.absolutePath,
                     onValueChange = { },
@@ -110,6 +128,7 @@ fun PathSelectorDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // "Go to parent directory" button, visible only if a parent exists.
                 if (parentPath != null) {
                     Row(
                         modifier = Modifier
@@ -128,6 +147,7 @@ fun PathSelectorDialog(
                         .weight(1f)
                         .fillMaxWidth()
                 ) {
+                    // The scrollable list of files and directories.
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
@@ -144,6 +164,7 @@ fun PathSelectorDialog(
                                     .padding(vertical = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                // Display a folder or file icon.
                                 Icon(
                                     painter = if (file.isDirectory) painterResource(Folder) else painterResource(Article),
                                     contentDescription = if (file.isDirectory) "Directory" else "File",
@@ -152,6 +173,7 @@ fun PathSelectorDialog(
                                     )
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
+                                // Display the file/directory name. Non-directories are dimmed.
                                 Text(
                                     text = file.name,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -162,6 +184,7 @@ fun PathSelectorDialog(
                             }
                         }
                     }
+                    // The scrollbar for the LazyColumn.
                     VerticalScrollbar(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
@@ -171,6 +194,7 @@ fun PathSelectorDialog(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Dialog action buttons (Cancel, Confirm).
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
