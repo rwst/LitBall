@@ -49,12 +49,13 @@ internal fun MainContent(
             Row(modifier = Modifier.fillMaxWidth().height(42.dp)) {
                 SortingControls(model.sortingControls)
                 Spacer(modifier = Modifier.width(8.dp))
-                Tooltip("Refresh from disk", Modifier.align(Alignment.CenterVertically)) {
-                    TextButton(
-                        onClick = { model.onQueryPathClicked(true) },
-                        modifier = Modifier.padding(0.dp)
-                    ) {
-                        model.state.queryPath?.let { Text(it) }
+                model.state.queryPath?.let { queryPath ->
+                    Tooltip("Refresh from disk", Modifier.align(Alignment.CenterVertically)) {
+                        TextButton(
+                            onClick = { model.onQueryPathClicked(true) },
+                            modifier = Modifier.padding(0.dp)
+                        ) {
+                            Text(queryPath) }
                     }
                 }
             }
