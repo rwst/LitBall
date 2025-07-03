@@ -80,7 +80,10 @@ class RootStore : ProgressHandler {
     )
 
     fun init() {
-        if (Settings.initialized) return
+        if (Settings.initialized) {
+            refreshQueryPathDisplay()
+            return
+        }
         modelScope.launch(Dispatchers.IO) {
             DefaultScripts.install()
             Settings.load()

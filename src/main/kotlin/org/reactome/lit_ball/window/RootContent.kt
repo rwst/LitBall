@@ -5,9 +5,6 @@ package window
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import dialog.*
-import dialog.AboutDialog
-import dialog.ConfirmationDialog
-import dialog.InformationalDialog
 import model.RootStore
 
 @Composable
@@ -22,6 +19,7 @@ fun RootContent(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+        model.init()
     }
 
     MainContent(
@@ -29,8 +27,6 @@ fun RootContent(
         rootSwitch = rootSwitch,
         focusRequester = focusRequester,
     )
-
-    model.init()
 
     if (state.newItem) {
         NewQueryDialog(
