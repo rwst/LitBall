@@ -73,6 +73,18 @@ fun PathSelectorDialog(
                                 return@onPreviewKeyEvent true
                             }
                         }
+                        val char = event.utf16CodePoint.toChar()
+                        if (char.isLetter()) {
+                            val index = filesAndDirs.indexOfFirst {
+                                it.isDirectory && it.name.startsWith(char, ignoreCase = true)
+                            }
+                            if (index != -1) {
+                                coroutineScope.launch {
+                                    listState.scrollToItem(index)
+                                }
+                                return@onPreviewKeyEvent true
+                            }
+                        }
                     }
                     false
                 },
