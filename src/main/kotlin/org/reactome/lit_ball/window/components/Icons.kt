@@ -14,6 +14,7 @@ object Icons {
     const val Info = "drawable/info.svg"
     const val FilterList = "drawable/filter_list.svg"
     const val FilterListOff = "drawable/filter_list_off.svg"
+    const val Folder = "drawable/folder.svg"
     const val Logo = "drawable/litball-small.png"
     const val Logout = "drawable/logout.svg"
     const val Save = "drawable/save.svg"

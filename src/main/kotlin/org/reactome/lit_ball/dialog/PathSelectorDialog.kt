@@ -2,18 +2,22 @@
 
 package dialog
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
+import window.components.Icons.Article
+import window.components.Icons.Folder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import java.io.File
@@ -30,6 +34,9 @@ fun PathSelectorDialog(
     val filesAndDirs by derivedStateOf {
         currentPath.listFiles()?.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() })) ?: emptyList()
     }
+    val listState = rememberLazyListState()
+    val scrollbarAdapter = rememberScrollbarAdapter(scrollState = listState)
+
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -71,35 +78,45 @@ fun PathSelectorDialog(
                         Text("..")
                     }
                 }
-
-                LazyColumn(
-                    modifier = Modifier.weight(1f).fillMaxWidth()
-                ) {
-                    items(filesAndDirs) { file ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable(enabled = file.isDirectory) {
-                                    if (file.isDirectory) {
-                                        currentPath = file
+                Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filesAndDirs) { file ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(enabled = file.isDirectory) {
+                                        if (file.isDirectory) {
+                                            currentPath = file
+                                        }
                                     }
-                                }
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = if (file.isDirectory) Icons.Filled.Email else Icons.Filled.Info,
-                                contentDescription = if (file.isDirectory) "Directory" else "File",
-                                tint = if (file.isDirectory) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = file.name,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (file.isDirectory) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            )
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = if (file.isDirectory) painterResource(Folder) else painterResource(Article),
+                                    contentDescription = if (file.isDirectory) "Directory" else "File",
+                                    tint = if (file.isDirectory) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.6f
+                                    )
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text(
+                                    text = file.name,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (file.isDirectory) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = 0.6f
+                                    )
+                                )
+                            }
                         }
                     }
+                    VerticalScrollbar(
+                        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                        adapter = scrollbarAdapter
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
