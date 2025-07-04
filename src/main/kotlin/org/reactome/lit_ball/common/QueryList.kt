@@ -12,13 +12,29 @@ import util.writeFile
 import window.components.SortingType
 import java.io.File
 
+/**
+ * A constant representing the number of milliseconds in a day.
+ */
 const val DAY_IN_MS = 1000L * 60 * 60 * 24
 
+/**
+ * A serializable singleton object that manages the list of [LitBallQuery] items.
+ * It is responsible for loading, creating, deleting, and sorting queries,
+ * as well as interfacing with the file system to persist query data.
+ */
 @Serializable
 object QueryList {
+    // Internal mutable state flow to hold the list of queries.
     private val _list = MutableStateFlow<List<LitBallQuery>>(emptyList())
+    /**
+     * The public, read-only state flow of the query list, suitable for collection by UI components.
+     */
     val list = _list.asStateFlow()
 
+    /**
+     * Populates the query list by scanning the query directory specified in the settings.
+     * It reads each query's data from its subdirectory and constructs [LitBallQuery] objects.
+     */
     suspend fun fill() {
         val queryPath = Settings.map["path-to-queries"] ?: ""
         val prefix = Settings.map["directory-prefix"] ?: ""
@@ -37,6 +53,7 @@ object QueryList {
             newQuery.setting = getSetting(it)
             newQuery.lastExpansionDate = newQuery.getFileDate(fromFile = true, FileType.ACCEPTED)
             newQuery.noNewAccepted = newQuery.readNoNewAccepted()
+            // Invalidate `noNewAccepted` flag if cache is older than max age
             if (newQuery.noNewAccepted) {
                 val now = System.currentTimeMillis()
                 val cacheMillis = DAY_IN_MS * (Settings.map["cache-max-age-days"] ?: "30").toInt()
@@ -52,8 +69,22 @@ object QueryList {
         _list.value = newList
     }
 
+    /**
+     * Retrieves a [LitBallQuery] from the list by its unique ID.
+     * @param id The ID of the query to find.
+     * @return The [LitBallQuery] if found, otherwise null.
+     */
     fun itemFromId(id: Long?): LitBallQuery? = id?.let { _list.value.find { id == it.id } }
 
+    /**
+     * Creates a new query, saves its initial data to the file system, and adds it to the list.
+     * @param type The [QueryType] of the new query.
+     * @param name The name for the new query.
+     * @param dois The initial set of DOIs for the accepted list.
+     * @param expSearchParams Parameters for expression-based searches.
+     * @param mandatoryKeyWords A list of mandatory keywords for the query.
+     * @param forbiddenKeyWords A list of forbidden keywords for the query.
+     */
     suspend fun addNewItem(
         type: QueryType,
         name: String,
@@ -84,8 +115,15 @@ object QueryList {
         _list.value = _list.value + newQuery
     }
 
+    /**
+     * "Touches" an item in the list to trigger a UI recomposition.
+     * This is achieved by creating a copy of the item with a new unique ID and replacing
+     * the original item in the list. This ensures that StateFlow collectors see a new list instance.
+     * @param id The ID of the item to touch.
+     */
     fun touchItem(id: Long?) {
         val index = _list.value.indexOfFirst { id == it.id }
+        if (index < 0) return
         val newList = _list.value.toMutableList()
         val newItem = newList[index].copy()
         newItem.id = UniqueIdGenerator.nextId()
@@ -93,12 +131,20 @@ object QueryList {
         _list.value = newList
     }
 
+    /**
+     * Removes a query from the list and deletes its associated directory from the file system.
+     * @param id The ID of the query to remove.
+     */
     fun remove(id: Long) {
         val query = itemFromId(id)
         _list.value = _list.value.filterNot { it.id == id }
         query?.name?.let { removeDir(it) }
     }
 
+    /**
+     * Deletes the directory associated with a query name.
+     * @param name The name of the query whose directory should be removed.
+     */
     fun removeDir(name: String) {
         val queryDir = getQueryDir(name)
         if (queryDir.exists()) {
@@ -110,12 +156,18 @@ object QueryList {
         }
     }
 
+    /**
+     * Sorts the query list based on the specified [SortingType].
+     * The chosen sort type is persisted in the application settings.
+     * @param type The [SortingType] to apply.
+     */
     fun sort(type: SortingType) {
         val newList = when (type) {
             SortingType.ALPHA_ASCENDING -> _list.value.sortedBy { it.name }
             SortingType.ALPHA_DESCENDING -> _list.value.sortedByDescending { it.name }
             SortingType.NUMER_ASCENDING -> _list.value.sortedBy { it.lastExpansionDate }
             SortingType.NUMER_DESCENDING -> _list.value.sortedByDescending { it.lastExpansionDate }
+            // This case should not be reachable if all SortingType enum values are handled.
             else ->
                 throw Exception("can't happen: $type")
         }
@@ -125,6 +177,14 @@ object QueryList {
     }
 }
 
+/**
+ * Scans a given directory path for valid query directories.
+ * A valid query directory is a readable directory whose name starts with the specified prefix.
+ * @param directoryPath The path to the parent directory containing all query directories.
+ * @param prefix The prefix that query directory names must have.
+ * @return A list of [File] objects representing the valid query directories.
+ * @throws IllegalArgumentException if the path does not exist or is not a directory.
+ */
 private fun queryDirectories(directoryPath: String, prefix: String): List<File> {
     val directory = File(directoryPath)
     if (!directory.exists()) {
@@ -140,6 +200,12 @@ private fun queryDirectories(directoryPath: String, prefix: String): List<File> 
     return directories?.toList() ?: emptyList()
 }
 
+/**
+ * Determines the [QueryStatus] of a query by inspecting the files in its directory.
+ * The status reflects the latest completed step in the literature search workflow.
+ * @param dir The query's directory as a [File] object.
+ * @return The determined [QueryStatus].
+ */
 private fun getStatus(dir: File): QueryStatus {
     val fileNames = dir.listFiles { file ->
         file.isFile && file.canRead()
@@ -154,6 +220,11 @@ private fun getStatus(dir: File): QueryStatus {
     return QueryStatus.UNINITIALIZED
 }
 
+/**
+ * Reads and deserializes the [QuerySetting] from the settings file within a query's directory.
+ * @param dir The query's directory as a [File] object.
+ * @return The deserialized [QuerySetting] object, or a default instance if the file doesn't exist or fails to parse.
+ */
 private suspend fun getSetting(dir: File): QuerySetting {
     return checkFileInDirectory(dir, FileType.SETTINGS,
         QuerySetting::fromFile
