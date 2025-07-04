@@ -80,13 +80,11 @@ class RootStore : ProgressHandler {
     )
 
     fun init() {
-        if (Settings.initialized) {
-            refreshQueryPathDisplay()
-            return
-        }
         modelScope.launch(Dispatchers.IO) {
-            DefaultScripts.install()
-            Settings.load()
+            if (!Settings.initialized) {
+                DefaultScripts.install()
+                Settings.load()
+            }
             QueryList.fill()
             doSort(SortingType.valueOf(Settings.map["query-sort-type"] ?: SortingType.ALPHA_ASCENDING.toString()))
             refreshQueryPathDisplay()

@@ -1,7 +1,8 @@
 package common
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 import util.UniqueIdGenerator
 import util.checkFileInDirectory
@@ -15,13 +16,14 @@ const val DAY_IN_MS = 1000L * 60 * 60 * 24
 
 @Serializable
 object QueryList {
-    val list = mutableStateListOf<LitBallQuery>()
+    private val _list = MutableStateFlow<List<LitBallQuery>>(emptyList())
+    val list = _list.asStateFlow()
 
     suspend fun fill() {
         val queryPath = Settings.map["path-to-queries"] ?: ""
         val prefix = Settings.map["directory-prefix"] ?: ""
         val dirs = queryDirectories(queryPath, prefix)
-        list.clear()
+        val newList = mutableListOf<LitBallQuery>()
         dirs.forEach {
             val newQuery = LitBallQuery(
                 id = UniqueIdGenerator.nextId(),
@@ -45,11 +47,12 @@ object QueryList {
             newQuery.type = newQuery.setting.type
             newQuery.expSearchParams =
                 Pair(newQuery.setting.pubDate, typeStringsToBoolArray(newQuery.setting.pubType))
-            list.add(newQuery)
+            newList.add(newQuery)
         }
+        _list.value = newList
     }
 
-    fun itemFromId(id: Long?): LitBallQuery? = id?.let { list.find { id == it.id } }
+    fun itemFromId(id: Long?): LitBallQuery? = id?.let { _list.value.find { id == it.id } }
 
     suspend fun addNewItem(
         type: QueryType,
@@ -78,19 +81,21 @@ object QueryList {
             newQuery.status.value = QueryStatus.FILTERED2
         }
         newQuery.saveSettings()
-        list.add(newQuery)
+        _list.value = _list.value + newQuery
     }
 
     fun touchItem(id: Long?) {
-        val index = list.indexOfFirst { id == it.id }
-        val newItem = list[index].copy()
+        val index = _list.value.indexOfFirst { id == it.id }
+        val newList = _list.value.toMutableList()
+        val newItem = newList[index].copy()
         newItem.id = UniqueIdGenerator.nextId()
-        list[index] = newItem
+        newList[index] = newItem
+        _list.value = newList
     }
 
     fun remove(id: Long) {
         val query = itemFromId(id)
-        list.remove(query)
+        _list.value = _list.value.filterNot { it.id == id }
         query?.name?.let { removeDir(it) }
     }
 
@@ -107,17 +112,16 @@ object QueryList {
 
     fun sort(type: SortingType) {
         val newList = when (type) {
-            SortingType.ALPHA_ASCENDING -> list.sortedBy { it.name }
-            SortingType.ALPHA_DESCENDING -> list.sortedByDescending { it.name }
-            SortingType.NUMER_ASCENDING -> list.sortedBy { it.lastExpansionDate }
-            SortingType.NUMER_DESCENDING -> list.sortedByDescending { it.lastExpansionDate }
+            SortingType.ALPHA_ASCENDING -> _list.value.sortedBy { it.name }
+            SortingType.ALPHA_DESCENDING -> _list.value.sortedByDescending { it.name }
+            SortingType.NUMER_ASCENDING -> _list.value.sortedBy { it.lastExpansionDate }
+            SortingType.NUMER_DESCENDING -> _list.value.sortedByDescending { it.lastExpansionDate }
             else ->
                 throw Exception("can't happen: $type")
         }
         Settings.map["query-sort-type"] = type.toString()
         Settings.save()
-        list.clear()
-        list.addAll(newList)
+        _list.value = newList
     }
 }
 

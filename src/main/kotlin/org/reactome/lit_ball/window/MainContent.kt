@@ -12,10 +12,7 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -39,6 +36,8 @@ internal fun MainContent(
     rootSwitch: MutableState<RootType>,
     focusRequester: FocusRequester,
 ) {
+    val queries by QueryList.list.collectAsState()
+
     Row(modifier = Modifier.fillMaxSize()) {
         Rail(
             railItems = model.railItems,
@@ -61,7 +60,7 @@ internal fun MainContent(
             }
             ListContent(
                 model = model,
-                items = remember { QueryList.list },
+                items = queries,
                 onItemClicked = { id -> model.setEditingItemId(id) },
                 onItemSettingsClicked = { id -> model.onQuerySettingsClicked(id) },
                 onItemGoClicked = { status, id -> model.nextAction(status, id) },

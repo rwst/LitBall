@@ -77,7 +77,7 @@ fun NewQueryDialog(
                 check = name.isNotEmpty() &&
                         (queryType == QueryType.EXPRESSION_SEARCH.ordinal ||
                                 (newPaperIds.isNotEmpty() && newPaperIds.all { it.startsWith("10.") || it.startsWith("s2:") })),
-                nameCheck = name !in QueryList.list.map { it.name }
+                nameCheck = name !in QueryList.list.value.map { it.name }
             )
         }
 
@@ -98,12 +98,12 @@ fun NewQueryDialog(
 
     fun processCopyFrom() {
         val fromName = state.value.copyFrom
-        val fromQuery = QueryList.list.find { it.name == fromName } ?: throw CantHappenException()
+        val fromQuery = QueryList.list.value.find { it.name == fromName } ?: throw CantHappenException()
 
         setState {
             copy(name = generateSequence(1) { it + 1 }
                 .map { "${fromName}-$it" }
-                .first { it !in QueryList.list.map { query -> query.name } }
+                .first { it !in QueryList.list.value.map { query -> query.name } }
             )
         }
         if (state.value.queryType != QueryType.EXPRESSION_SEARCH.ordinal) {

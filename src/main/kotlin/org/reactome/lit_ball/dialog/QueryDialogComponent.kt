@@ -240,7 +240,7 @@ fun queryCopyFromComponent(
                         state.set { copy(copyFrom = "") }
                         copyFromIsSetValue.value = false })
                 {
-                    (listOf(NOCOPY) + QueryList.list.map { it.name }).forEach { name ->
+                    (listOf(NOCOPY) + QueryList.list.value.map { it.name }).forEach { name ->
                         DropdownMenuItem(
                             onClick = {
                                 copyFromIsSetValue.value = false
