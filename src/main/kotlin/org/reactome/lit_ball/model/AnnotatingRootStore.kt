@@ -20,8 +20,8 @@ import window.components.RailItem
 
 class AnnotatingRootStore : ModelHandle, ProgressHandler {
     var state: AnnotatingRootState by mutableStateOf(initialState())
-    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
-    val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
+    val modelScope = CoroutineScope(SupervisorJob() + mainDispatcher)
     lateinit var rootSwitch: MutableState<RootType>
 
     private fun initialState(): AnnotatingRootState = AnnotatingRootState(modelHandle = this)

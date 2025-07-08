@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.PaperList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -48,9 +47,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
         ) { doSort(SortingType.DATE_DESCENDING) },
     )
     private fun doSort(sortingType: SortingType) {
-        handle.modelScope().launch(Dispatchers.IO) {
-            PaperList.sort(sortingType)
-        }
+        PaperList.sort(sortingType)
     }
     fun setupListScroller(theChannel: Channel<Long>) {
         scrollChannel = theChannel
@@ -65,21 +62,19 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
 
     fun onClassifierConfirmed() {
-        handle.modelScope().launch(Dispatchers.IO)
+        handle.modelScope().launch()
         {
             PaperList.applyClassifier()
         }
     }
 
     fun onFilterChanged(filter: String) {
-        handle.modelScope().launch(Dispatchers.IO) {
-            PaperList.applyFilter(filter)
-            setState { copy(filterString = filter) }
-        }
+        PaperList.applyFilter(filter)
+        setState { copy(filterString = filter) }
     }
 
     fun onRemoveFiltered() {
-        handle.modelScope().launch(Dispatchers.IO) {
+        handle.modelScope().launch {
             PaperList.deleteFiltered()
             setFilterDialog(false)
             setState { copy(filterString = null) }
@@ -87,9 +82,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
     }
 
     fun onAcceptFiltered(value: Boolean) {
-        handle.modelScope().launch(Dispatchers.IO) {
-            PaperList.acceptFiltered(value)
-        }
+        PaperList.acceptFiltered(value)
     }
 
     fun onDoAnnotateStopped() {
