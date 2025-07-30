@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import common.PaperList
+import common.QueryList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -90,6 +91,7 @@ class PaperListScreenStore(private val handle: ModelHandle) {
             PaperList.saveAnnotated()
         }
         setFilterDialog(false)
+        QueryList.lastAnnotatedQName = QueryList.itemFromId(PaperList.query.id)?.name
         handle.switchRoot()
     }
 

@@ -24,11 +24,9 @@ import common.LitBallQuery
 import common.QueryList
 import common.QueryStatus
 import model.RootStore
-import util.setupLazyListScroller
 import window.components.*
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
-private const val TAG = "MainContent"
 
 @Composable
 internal fun MainContent(
@@ -36,6 +34,9 @@ internal fun MainContent(
     rootSwitch: MutableState<RootType>,
     focusRequester: FocusRequester,
 ) {
+    LaunchedEffect(Unit) {
+        model.onMainContentReady()
+    }
     val queries by QueryList.list.collectAsState()
 
     Row(modifier = Modifier.fillMaxSize()) {
@@ -90,7 +91,13 @@ private fun ListContent(
             .focusRequester(focusRequester)
             .clickable { focusRequester.requestFocus() }
     ) {
-        setupLazyListScroller(TAG, rememberCoroutineScope(), lazyListState, model::setupListScroller)
+        // This LaunchedEffect will listen for scroll events from the RootStore
+        LaunchedEffect(Unit) {
+            model.scrollEvents.collect { queryName ->
+                lazyListState.animateScrollToItem(QueryList.indexOfName(queryName))
+            }
+        }
+
         LazyColumn(
             modifier = Modifier.fillMaxSize()
                 .padding(end = 12.dp)

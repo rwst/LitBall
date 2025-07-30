@@ -1,6 +1,8 @@
 package common
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
@@ -30,6 +32,7 @@ object QueryList {
      * The public, read-only state flow of the query list, suitable for collection by UI components.
      */
     val list = _list.asStateFlow()
+    var lastAnnotatedQName: String? by mutableStateOf(null)
 
     /**
      * Populates the query list by scanning the query directory specified in the settings.
@@ -75,6 +78,8 @@ object QueryList {
      * @return The [LitBallQuery] if found, otherwise null.
      */
     fun itemFromId(id: Long?): LitBallQuery? = id?.let { _list.value.find { id == it.id } }
+
+    fun  indexOfName(name: String): Int = _list.value.indexOfFirst { name == it.name }
 
     /**
      * Creates a new query, saves its initial data to the file system, and adds it to the list.

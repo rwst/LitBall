@@ -16,7 +16,8 @@ import dialog.ReceivedAcceptFinishDialogString
 import dialog.ServerProblemWithMissingDialogString
 import dialog.SuccessDialogString
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import service.getAGService
 import util.CantHappenException
 import util.DefaultScripts
@@ -31,11 +32,12 @@ import java.net.URI
 
 class RootStore : ProgressHandler {
     var state: RootState by mutableStateOf(initialState())
-    private var scrollChannel: Channel<Long>? = null
+    private val _scrollEvents = MutableSharedFlow<String>(replay = 1)
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
     private val modelScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
 
     lateinit var rootSwitch: MutableState<RootType>
+    val scrollEvents = _scrollEvents.asSharedFlow()
 
     private fun initialState(): RootState =
         RootState()
@@ -241,6 +243,13 @@ class RootStore : ProgressHandler {
         }
     }
 
+    fun onMainContentReady() {
+        QueryList.lastAnnotatedQName?.let { id ->
+            modelScope.launch { _scrollEvents.emit(id) }
+            QueryList.lastAnnotatedQName = null
+        }
+    }
+
     fun onQuerySettingsClicked(id: Long?) {
         setState { copy(editingQuerySettings = QueryList.itemFromId(id)) }
     }
@@ -324,10 +333,6 @@ class RootStore : ProgressHandler {
         modelScope.launch(Dispatchers.IO) {
             QueryList.sort(sortingType)
         }
-    }
-
-    fun setupListScroller(theChannel: Channel<Long>) {
-        scrollChannel = theChannel
     }
 }
 
