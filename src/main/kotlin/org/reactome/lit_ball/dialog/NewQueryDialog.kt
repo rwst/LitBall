@@ -16,7 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.rememberDialogState
 import common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,10 +133,14 @@ fun NewQueryDialog(
         }
     }
 
-    Dialog(onDismissRequest = { rootScope.launch { onCloseClicked() } }) {
+    val dialogState = rememberDialogState(width = 800.dp, height = 650.dp)
+    DialogWindow(
+        title = "New Query",
+        onCloseRequest = { rootScope.launch { onCloseClicked() } },
+        state = dialogState,
+    ) {
         Surface(
             modifier = Modifier
-                .width(700.dp)
                 .wrapContentHeight(),
             shape = MaterialTheme.shapes.medium,
         ) {

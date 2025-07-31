@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
@@ -27,26 +26,36 @@ fun RadioButtonOptions(
     onOptionSelected: (Int) -> Unit
 ) {
     var selectedOptionIndex by remember { mutableStateOf(defaultSelectedOptionIndex) }
-    options.forEachIndexed { index, option ->
-        Row(
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(
-                modifier = Modifier.size(8.dp).focusProperties { canFocus = false },
-                selected = index == selectedOptionIndex,
-                onClick = {
-                    selectedOptionIndex = index
-                    onOptionSelected(selectedOptionIndex)
-                }
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = option,
-                fontSize = 8.sp,
-                color = Color.Black
-            )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        options.forEachIndexed { index, option ->
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .toggleable(
+                        value = index == selectedOptionIndex,
+                        role = Role.RadioButton,
+                        onValueChange = {
+                            selectedOptionIndex = index
+                            onOptionSelected(selectedOptionIndex)
+                        }
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    selected = index == selectedOptionIndex,
+                    onClick = null,
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = option,
+                    fontSize = 14.sp,
+                    lineHeight = 16.sp,
+                    color = Color.Black
+                )
+            }
         }
     }
 }
