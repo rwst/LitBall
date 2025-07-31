@@ -1,28 +1,19 @@
- - something wrong with expr search and sim search: HTTP 400
- - on snowball expand IO errors will still set no-new-accepted
- - no progress indicator? (getting data for filter1 works)
-
- - expr search: pub type no longer accessible after new query
- - new query from old (type 1,2,3 from type 1): copy keywords
- - new query from old: copy more data (archived...)
- - easy change/selection of query path
- - any IO-dispatched code affecting the UI should change state when finished
- - going Main from annotate resets list pos
  - TAB does not advance field in new query dialog etc
- - manually add IDs to accepted by adding an IDs field to query settings dialog
  - add global option to set logging in S2RetrofitHelper, default NONE
+ - StringPatternMatcher thinks "()x)" is valid
  - focus: opening/closing filter dialog removes focus on list
+ - focus: in filter2 click Save loses focus
  - focus: clicking sort in Annotate still grabs focus
  - focus: changing virtual desktop in Annotate loses focus
  - focus: when in paper detail dialog, cursor up/down still moves list (instead of scrolling details)
  - focus: press A-Z keys to scroll filtered2 and annotated lists in alnum mode
+ - filter2: button to scroll to bottommost accepted paper
+ - annotate: button to scroll to earliest non-annotated paper
  - 's2:null' in rejected.txt
  - sort annotated by unannotated first (do we really want this, better as additional sorting type?)
  - similarity search finds 20, accepts, doesn't update card:Accepted
- - obsolete RootStore.refreshList() by adding state. it is used:
-   - 2x in RootStore.doSort()
-   - in QueryList:85 after call to RootStore.doSort()
-   - at the end of PaperList.finish()
+ - no-new-accepted set after annotate=0 is not reflected as bold font in query card (touch item)
+ - check: no progress indicator when accessing S2 in exportRIS()
 
 Doc:
  - json export
@@ -32,10 +23,10 @@ Doc:
    - missing keywords
    - keywords too specific (stemness)
    - local Chinese papers are underrepresented in S2
+ - Zotero integration == RIS, BibTeX output
 
 Features:
  - night mode
- - Zotero integration == RIS, BibTeX output
  - DB: use Exposed to handle simple text or JSON files
        alternatively use Exposed with SQLite, see below for both
  - remove all instances of delay()
@@ -44,7 +35,9 @@ Features:
  - HTTP buffer
  - complain if Q1 date filter in wrong format
  - settings mutex
+ - any IO-dispatched code affecting the UI should change state when finished
  - on clicking Annotate: if papers not in archive: either 1. ask to dl or 2. have a frequency for doing auto
+ - new query from old: copy more data (archived...), but what if that data is too old?
 
 Other ideas:
  - replace 404 msg with "Paper not found"
