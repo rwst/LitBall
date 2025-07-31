@@ -16,7 +16,7 @@ object S2RetrofitHelper {
     private var logging = HttpLoggingInterceptor()
 
     fun getInstance(headers: Map<String, String> = emptyMap(), timeout: Long = 30): Retrofit {
-        logging.level = HttpLoggingInterceptor.Level.BASIC
+        logging.level = if (Settings.map["Retrofit-logging"] == "BASIC") HttpLoggingInterceptor.Level.BASIC else HttpLoggingInterceptor.Level.NONE
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(logging)
             .readTimeout(timeout, TimeUnit.SECONDS)
@@ -50,7 +50,7 @@ object EntrezRetrofitHelper {
     private var logging = HttpLoggingInterceptor()
 
     fun getInstance(headers: Map<String, String> = emptyMap(), timeout: Long = 30): Retrofit {
-        logging.level = HttpLoggingInterceptor.Level.BASIC
+        logging.level = if (Settings.map["Retrofit-logging"] == "BASIC") HttpLoggingInterceptor.Level.BASIC else HttpLoggingInterceptor.Level.NONE
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(logging)
             .readTimeout(timeout, TimeUnit.SECONDS)

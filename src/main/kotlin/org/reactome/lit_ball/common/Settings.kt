@@ -59,6 +59,7 @@ object Settings {
         map["OpenAlex-email"] = ""
         map["Entrez-API-key"] = ""
         map["PYTHONPATH"] = System.getenv("PYTHONPATH") ?: ""
+        map["Retrofit-logging"] = "NONE"
     }
 
     fun save() {
@@ -123,7 +124,11 @@ object Settings {
         """.trimIndent(),
         "AG-service" to """
             S2 is the only choice at the moment.
-        """.trimIndent()
+        """.trimIndent(),
 //            One of S2 / OpenAlex.
+        "Retrofit-logging" to """
+            Set to BASIC to see extensive logging of server requests.
+            Default is NONE.
+        """.trimIndent()
     )
 }

@@ -126,6 +126,7 @@ dependencies {
     implementation("org.jetbrains.compose.foundation:foundation:1.6.11")
     implementation("org.jetbrains.compose.ui:ui:1.6.11")
     implementation("org.jetbrains.compose.components:components-resources:1.6.11") // Resources module
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     implementation("com.squareup.okio:okio:3.11.0")
