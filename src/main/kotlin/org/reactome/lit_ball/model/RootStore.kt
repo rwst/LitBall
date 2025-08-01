@@ -168,7 +168,6 @@ class RootStore : ProgressHandler {
     private fun onDoFilter1Started(id: Long) {
         modelScope.launch(Dispatchers.IO) {
             val (nrPaperDetails, nrRejectedDOIs) = QueryList.itemFromId(id)?.filter1() ?: return@launch
-            if (nrPaperDetails == 0) return@launch
             setInformationalDialog("Retained $nrPaperDetails records\n\nrejected $nrRejectedDOIs papers, write to rejected...")
             refreshList(id)
         }
