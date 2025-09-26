@@ -27,7 +27,6 @@ fun RadioButtonOptions(
 ) {
     var selectedOptionIndex by remember { mutableStateOf(defaultSelectedOptionIndex) }
     Row(
-        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         options.forEachIndexed { index, option ->

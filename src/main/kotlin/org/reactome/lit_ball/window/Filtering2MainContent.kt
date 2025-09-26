@@ -169,7 +169,9 @@ fun CardWithTextIconAndRadiobutton(
         backgroundColor = if (!isReview) Color.White else Color.LightGray,
     ) {
         Row(
-            modifier = Modifier.padding(0.dp),
+            modifier = Modifier
+                .padding(0.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
@@ -196,7 +198,8 @@ fun CardWithTextIconAndRadiobutton(
             paperTextComposable(
                 cardTitle,
                 modifier = Modifier
-                    .weight(1F).align(Alignment.CenterVertically)
+                    .weight(1F)
+                    .align(Alignment.CenterVertically)
                     .clickable { onClicked() },
                 )
             Spacer(modifier = Modifier.width(16.dp))
@@ -208,4 +211,3 @@ fun CardWithTextIconAndRadiobutton(
         }
     }
 }
-
