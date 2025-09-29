@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.serialization") version "2.0.20"
     id("org.jetbrains.compose") version "1.6.11"
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.github.gmazzo.buildconfig") version "5.4.0"
     id("com.github.ben-manes.versions") version "0.51.0"
 }
@@ -18,6 +19,12 @@ repositories {
 }
 
 tasks {
+    shadowJar {
+        archiveClassifier.set("") // Makes it the default JAR without -all suffix
+        manifest {
+            attributes["Main-Class"] = "MainKt" // Replace with your actual main class, e.g., MainKt
+        }
+    }
     named<Test>("test") {
         useTestNG()
         testLogging.showExceptions = true
